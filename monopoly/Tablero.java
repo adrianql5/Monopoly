@@ -336,4 +336,7 @@ public class Tablero {
         }
         else return null;
     }
+    public ArrayList<ArrayList<Casilla>> getPosiciones() {
+        return posiciones;
+    }
 }

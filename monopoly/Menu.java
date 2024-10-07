@@ -38,7 +38,7 @@ public class Menu {
         this.jugadores = new ArrayList<Jugador>();
         this.avatares = new ArrayList<Avatar>();
         
-        this.jugadores.add(banca);
+        //lathis.jugadores.add(banca);
         this.avatares.add(null);
 
         this.tablero=new Tablero(banca);
@@ -47,6 +47,7 @@ public class Menu {
         Scanner scan= new Scanner(System.in);
         
         System.out.println("La partida ha iniciado, esperamos que disfruteis la experiencia.");
+
 
         while (!partidaTerminada){
             System.out.println("Introduce la instruccion: ");
@@ -76,6 +77,11 @@ public class Menu {
                 partidaTerminada= true;
                 break;
 
+
+            case "iniciar":
+                buclepartida();
+                break;
+
             //Indicar jugador que tiene el turno
             case "jugador":
                 jugadorTurno();
@@ -83,7 +89,8 @@ public class Menu {
 
             //Lanzar los dados
             case "lanzar dados":
-                lanzarDados();
+                buclepartida();
+                //lanzarDados();
                 break;
 
             //Salir de la cárcel
@@ -182,6 +189,42 @@ public class Menu {
         }
     }
 
+
+    private void buclepartida() {
+        Jugador jugador = obtenerTurno();
+        Avatar avatar = jugador.getAvatar();
+        int resultado1 = dado1.tirarDado();
+        int resultado2 = dado2.tirarDado();
+        Casilla salida = avatar.getLugar();
+        if(resultado2 ==resultado1){
+            if (jugador.isEnCarcel()){
+                System.out.println("Sales de la carcel");
+                jugador.setEnCarcel(false);
+            }
+        }
+        else if (jugador.isEnCarcel()) {
+
+            System.out.println("Continúas en la carcel.");
+            jugador.sumarTiradaCarcel();
+            return;}
+        int suma_ambas = resultado1 + resultado2;
+
+
+        avatar.moverAvatar(tablero.getPosiciones(),  suma_ambas);
+
+        Casilla destino = avatar.getLugar();
+
+        System.out.println("El avatar " + avatar.getId() + " avanza " + (suma_ambas) + " casillas desde " + salida.getNombre() + " hasta " + destino.getNombre());
+
+        if (destino.getNombre().equals("IrCarcel")){
+            Casilla carcel = tablero.encontrar_casilla("Carcel"); // Asumiendo que existe la función en Tablero
+
+            jugador.getAvatar().setLugar(carcel);
+            jugador.setEnCarcel(true);
+        }
+    }
+
+
     //IMPLEMENTACIÓN DE LOS MÉTODOS
     //Métodos de comandos que no dependen de una instancia
 
@@ -248,17 +291,42 @@ public class Menu {
      * @param n Número de casillas que se debe avanzar
      */
     private void avanzar(int n) {
+        Jugador jugador = obtenerTurno();
+        Avatar avatar = jugador.getAvatar();
+
+        Casilla salida = avatar.getLugar();
+
+
+        jugador.sumarTiradaCarcel();
+
+        avatar.moverAvatar(tablero.getPosiciones(),  n);
+
+        Casilla destino = avatar.getLugar();
+
+        System.out.println("El avatar " + avatar.getId() + " avanza " + (n) + " casillas desde " + salida.getNombre() + " hasta " + destino.getNombre());
+
+        if (destino.getNombre().equals("IrCarcel")){
+            Casilla carcel = tablero.encontrar_casilla("Carcel"); // Asumiendo que existe la función en Tablero
+
+            jugador.getAvatar().setLugar(carcel);
+            jugador.setEnCarcel(true);
+        }
     }
 
     /**Método que ejecuta todas las acciones realizadas con el comando 'comprar nombre_casilla'.
      * @param nombre Cadena de caracteres con el nombre de la casilla.
      */
     private void comprar(String nombre) {
-        Casilla casilla = tablero.encontrar_casilla(nombre);
+        Jugador jugador = obtenerTurno();
+        Casilla casilla = obtenerTurno().getAvatar().getLugar();
 
-        Jugador actual = this.jugadores.get(turno);
 
-        casilla.evaluarCasilla(actual, banca, 0); //esto hay que corregirlo
+        if(casilla.posiblecompra(jugador, banca)) {
+            System.out.println(jugador.getNombre() + " compra la propiedad " + nombre + " por " + casilla.getValor() + ".");
+            casilla.comprarCasilla(jugador, banca);
+        } else {
+            System.out.println("No  es posible comprar " + nombre);
+    }
     }
 
     /**Método que realiza las acciones asociadas al comando 'crear jugador'.
@@ -266,25 +334,28 @@ public class Menu {
      * @param avatar Tipo de avatar
      */
     private void crearJugador(String nombre, String avatar) {
-        if(!Avatar.esTipoAvatar(nombre)){
+       /* if(!Avatar.esTipoAvatar(nombre)){
             System.out.println("Tipo Incorrecto");
             return;
         }
-        
+        */
         // Definir la casilla de inicio. Por ejemplo, la primera casilla del tablero
         Casilla casillaInicio = tablero.getCasilla(0);  // Asumiendo que tienes un método para obtener la casilla inicial
 
         // Crear nuevo jugador tipo coche porque si
-        Jugador nuevoJugador = new Jugador(nombre, "coche", casillaInicio, avatares);
+        Jugador nuevoJugador = new Jugador(nombre, "Coche", casillaInicio, avatares);
 
         // Añadir el jugador a la lista de jugadores
         this.jugadores.add(nuevoJugador);
+        this.avatares.add(nuevoJugador.getAvatar()) ;;
 
         // Imprimir detalles del jugador recién creado
+
         System.out.println("Jugador creado: ");
         nuevoJugador.infoJugador();
+        casillaInicio.anhadirAvatar(nuevoJugador.getAvatar());
 
-        this.tablero.getCasilla(0).anhadirAvatar(nuevoJugador.getAvatar());
+
 
     }
 
@@ -316,7 +387,7 @@ public class Menu {
             case "IrCarcel": case "Caja": case "Suerte":
                 //pone que es inecesario
                 break;
-            case "Serv 1": case "Serv 2": case "Trans 1": case "Trans 2": case "Trans 3": case "Trans 4":
+            case "Serv1": case "Serv2": case "Trans1": case "Trans2": case "Trans3": case "Trans4":
                 Casilla casillaEncontrada1 = tablero.encontrar_casilla(nombre); // Llamada al método
                 // Aquí puedes manejar la casilla encontrada (por ejemplo, imprimir su descripción)
                 System.out.println("Tipo: " + casillaEncontrada1.getTipo());
@@ -326,14 +397,14 @@ public class Menu {
 
                 break;
 
-            case "Solar 1": case "Solar 2": case "Solar 3": case "Solar 4":
-            case "Solar 5": case "Solar 6": case "Solar 7": case "Solar 8": case "Solar 9": case "Solar 10":
-            case "Solar 11": case "Solar 12": case "Solar 13": case "Solar 14": case "Solar 15":
-            case "Solar 16": case "Solar 17": case "Solar 18": case "Solar 19": case "Solar 20": case "Solar 21": case "Solar 22":
+            case "Solar1": case "Solar2": case "Solar3": case "Solar4":
+            case "Solar5": case "Solar 6": case "Solar7": case "Solar8": case "Solar9": case "Solar10":
+            case "Solar11": case "Solar12": case "Solar13": case "Solar14": case "Solar15":
+            case "Solar16": case "Solar17": case "Solar18": case "Solar19": case "Solar20": case "Solar21": case "Solar22":
                 Casilla casillaEncontrada3 = tablero.encontrar_casilla(nombre); // Llamada al método
                 casillaEncontrada3.infoCasilla();
                 break;
-            case "Imp 1": case "Imp 2":
+            case "Imp1": case "Imp2":
                 Casilla casillaEncontrada2 = tablero.encontrar_casilla(nombre); // Llamada al método
                 // Aquí puedes manejar la casilla encontrada (por ejemplo, imprimir su descripción)
                 System.out.println("Tipo: " + casillaEncontrada2.getTipo());
@@ -380,5 +451,10 @@ public class Menu {
         // Si no encuentra el avatar, muestra un mensaje de error
         System.out.println("Avatar con ID " + ID + " no encontrado.");
     }
+
+    public Jugador obtenerTurno() {
+        return jugadores.get(turno);
+    }
 }
+
 

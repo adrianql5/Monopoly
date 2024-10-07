@@ -309,4 +309,14 @@ public class Casilla {
     public boolean estaHipotecada() {
         return true;
     }
+
+    public boolean posiblecompra(Jugador comprador, Jugador banca) {
+        boolean esTipoComprable = "solar".equals(tipo) || "transporte".equals(tipo) || "servicio".equals(tipo);
+        boolean esDueñoBanca = (duenho == banca);
+        boolean tieneSuficienteFortuna = valor <= comprador.getFortuna();
+
+        return esTipoComprable && esDueñoBanca && tieneSuficienteFortuna;
+    }
+
+
 }

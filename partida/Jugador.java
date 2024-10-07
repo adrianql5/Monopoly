@@ -195,4 +195,6 @@ public class Jugador {
             System.out.println("]");
         }
     }
+
+    public void sumarTiradaCarcel() {tiradasCarcel++;}
 }

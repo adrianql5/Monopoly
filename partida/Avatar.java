@@ -21,17 +21,19 @@ public class Avatar {
     public Avatar() {
     }
 
-    /**Constructor principal.
-     * @param tipo Tipo del avatar
-     * @param jugador Jugador al que pertenece
-     * @param lugar Lugar en el que está ubicado
+    /**
+     * Constructor principal.
+     *
+     * @param tipo      Tipo del avatar
+     * @param jugador   Jugador al que pertenece
+     * @param lugar     Lugar en el que está ubicado
      * @param avCreados Arraylist con los avatares creados (usado para crear un ID distinto a los demás)
      */
     public Avatar(String tipo, Jugador jugador, Casilla lugar, ArrayList<Avatar> avCreados) {
-        this.tipo=tipo;
-        this.jugador=jugador;
-        this.lugar=lugar;
-        this.avCreados=avCreados;
+        this.tipo = tipo;
+        this.jugador = jugador;
+        this.lugar = lugar;
+        this.avCreados = avCreados;
         generarId(avCreados);
         this.avCreados.add(this);
     }
@@ -56,12 +58,12 @@ public class Avatar {
     //SETTERS
     //El id no necesita setter porque se le asigna un valor al crear el Avatar y no hay que modificarlo nunca
     public void setTipo(String tipo_avatar) {
-        switch(tipo_avatar) {
+        switch (tipo_avatar) {
             case "Sombrero":
             case "Esfinge":
             case "Pelota":
             case "Coche":
-                this.tipo=tipo_avatar;
+                this.tipo = tipo_avatar;
                 break;
             default:
                 System.out.println(tipo_avatar + " no es un tipo de avatar válido.\n");
@@ -69,19 +71,20 @@ public class Avatar {
     }
 
     public void setJugador(Jugador jugador_avatar) {
-        this.jugador=jugador_avatar;
+        this.jugador = jugador_avatar;
     }
 
     public void setLugar(Casilla casilla_avatar) {
-        this.lugar=casilla_avatar;
+        this.lugar = casilla_avatar;
     }
-
 
 
     //OTROS MÉTODOS
 
-    /** Método que permite generar un ID para un avatar. Sólo lo usamos en esta clase (por ello es privado).
+    /**
+     * Método que permite generar un ID para un avatar. Sólo lo usamos en esta clase (por ello es privado).
      * El ID generado será una letra mayúscula entre A y Z.
+     *
      * @param avCreados Arraylist de los avatares ya creados (objetivo: evitar que se generen dos ID iguales)
      */
     private void generarId(ArrayList<Avatar> avCreados) {
@@ -94,7 +97,7 @@ public class Avatar {
             ID = String.valueOf((char) (num.nextInt(26) + 'A'));
 
             for (Avatar a : avCreados) {
-                if (a.getId().equals(ID)) {
+                if (a != null && a.getId().equals(ID)) {
                     repetido = true;
                     break;  //Si uno es igual no hace falta comprobar el resto
                 }
@@ -106,20 +109,21 @@ public class Avatar {
     }
 
 
-    public String infoAvatar(){
+    public String infoAvatar() {
         String str = new String();
 
-        str= "ID:"+this.id+"\n"+"Tipo:"+this.tipo+"\n"+
-        "Jugador:"+this.jugador.getNombre()+"\n"+"Casilla:"+this.lugar.getNombre()+"\n";
+        str = "ID:" + this.id + "\n" + "Tipo:" + this.tipo + "\n" +
+                "Jugador:" + this.jugador.getNombre() + "\n" + "Casilla:" + this.lugar.getNombre() + "\n";
 
         return str;
     }
 
 
-
-    /**Método que permite mover a un avatar a una casilla concreta.
+    /**
+     * Método que permite mover a un avatar a una casilla concreta.
      * EN ESTA VERSIÓN SUPONEMOS QUE valorTirada SIEMPRE ES POSITIVO.
-     * @param casillas Array con las casillas del tablero. Se trata de un arrayList de arrayList de casillas (uno por lado)
+     *
+     * @param casillas    Array con las casillas del tablero. Se trata de un arrayList de arrayList de casillas (uno por lado)
      * @param valorTirada Entero que indica el numero de casillas a moverse (será el valor sacado en la tirada de los dados).
      */
     public void moverAvatar(ArrayList<ArrayList<Casilla>> casillas, int valorTirada) {
@@ -127,7 +131,7 @@ public class Avatar {
         int posicionActual = this.lugar.getPosicion();
 
         // Calcular la nueva posición en el tablero después de la tirada
-        int nuevaPosicion = (posicionActual + valorTirada)%40;
+        int nuevaPosicion = (posicionActual + valorTirada) % 40;
 
         // Eliminar el avatar de la casilla actual
         this.lugar.eliminarAvatar(this);
@@ -145,14 +149,15 @@ public class Avatar {
         // Añadir el avatar a la nueva casilla
         this.lugar.anhadirAvatar(this);
     }
+}
         
-
+/*
     public static boolean esTipoAvatar(String str){
         if(str.equals("Coche") || str.equals("Esfinge") || str.equals("Sombrero") || str.equals("Pelota")){
             return true;
         }
         return false;
-    }   
+    }
 
+*/
 
-}
