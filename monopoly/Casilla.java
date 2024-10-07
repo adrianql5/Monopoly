@@ -170,7 +170,7 @@ public class Casilla {
     /** Método para mostrar información de una casilla en venta.
      * Valor devuelto: texto con esa información.
      */
-    public String casEnVenta() {
+    public String casaEnVenta() {
         if(this.duenho==null || this.duenho.getNombre()=="Banca"){
             return "La casilla" + this.nombre + "está en venta por un precio de " + this.valor +"\n";
         }
@@ -265,20 +265,14 @@ public class Casilla {
     }
 
     public void setDuenho(Jugador duenho_casilla) {
-        if (duenho_casilla != null && !duenho_casilla.getNombre().isEmpty()) {
-            boolean existeEnAvatares = false; // Variable para verificar si el jugador está en avatares
-
-            for (Avatar avatar : this.avatares) {//deberia ir ni ideaaaaaaaaaaaaa
-                if (avatar.getJugador().getNombre().equals(duenho_casilla.getNombre()))  {
-                    existeEnAvatares = true; // Si el jugador es el dueño de algún avatar en la casilla
+        if (duenho_casilla != null) {
+            for (Avatar avatar : this.avatares) {
+                if (avatar.getJugador().getNombre().equals(duenho_casilla.getNombre()))  { // Si el jugador es el dueño de algún avatar en la casilla
                     break;
                 }
-            }
-            if (existeEnAvatares) {
-                this.duenho = duenho; // Asigna el nuevo dueño
-            }
-            else {
-                System.out.println("Error con el avatar.\n");
+                else{
+                    this.duenho = duenho_casilla; // Asigna el nuevo dueño
+                }
             }
         }
         else {
@@ -312,6 +306,7 @@ public class Casilla {
             System.out.println("La hipoteca debe ser un valor positivo.\n");
         }
     }
-    public boolean estaHipotecada() {return true;
+    public boolean estaHipotecada() {
+        return true;
     }
 }

@@ -31,19 +31,25 @@ public class Menu {
 
     // Método para inciar una partida: crea los jugadores y avatares.
     private void iniciarPartida() {
+        this.dado1= new Dado();
+        this.dado2= new Dado();
         Jugador banca = new Jugador();
-        this.jugadores = new ArrayList<>();
+
+        this.jugadores = new ArrayList<Jugador>();
+        this.avatares = new ArrayList<Avatar>();
+        
         this.jugadores.add(banca);
+        this.avatares.add(null);
+
         this.tablero=new Tablero(banca);
-        verTablero();
+        
         this.turno=0;
         Scanner scan= new Scanner(System.in);
-        this.avatares = new ArrayList<>();
-        this.avatares.add(null);
+        
         System.out.println("La partida ha iniciado, esperamos que disfruteis la experiencia.");
 
-
         while (!partidaTerminada){
+            System.out.println("Introduce la instruccion: ");
             analizarComando(scan.nextLine());
 
         }
@@ -248,6 +254,11 @@ public class Menu {
      * @param nombre Cadena de caracteres con el nombre de la casilla.
      */
     private void comprar(String nombre) {
+        Casilla casilla = tablero.encontrar_casilla(nombre);
+
+        Jugador actual = this.jugadores.get(turno);
+
+        casilla.evaluarCasilla(actual, banca, 0); //esto hay que corregirlo
     }
 
     /**Método que realiza las acciones asociadas al comando 'crear jugador'.
@@ -255,23 +266,25 @@ public class Menu {
      * @param avatar Tipo de avatar
      */
     private void crearJugador(String nombre, String avatar) {
+        if(!Avatar.esTipoAvatar(nombre)){
+            System.out.println("Tipo Incorrecto");
+            return;
+        }
+        
         // Definir la casilla de inicio. Por ejemplo, la primera casilla del tablero
         Casilla casillaInicio = tablero.getCasilla(0);  // Asumiendo que tienes un método para obtener la casilla inicial
-
-        // Asegurarse de que la lista de avatares ya creados está disponible
-        if (avatares == null) {
-            avatares = new ArrayList<>();
-        }
 
         // Crear nuevo jugador tipo coche porque si
         Jugador nuevoJugador = new Jugador(nombre, "coche", casillaInicio, avatares);
 
         // Añadir el jugador a la lista de jugadores
-        jugadores.add(nuevoJugador);
+        this.jugadores.add(nuevoJugador);
 
         // Imprimir detalles del jugador recién creado
         System.out.println("Jugador creado: ");
         nuevoJugador.infoJugador();
+
+        this.tablero.getCasilla(0).anhadirAvatar(nuevoJugador.getAvatar());
 
     }
 

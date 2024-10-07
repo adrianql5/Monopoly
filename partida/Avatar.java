@@ -69,11 +69,11 @@ public class Avatar {
     }
 
     public void setJugador(Jugador jugador_avatar) {
-
+        this.jugador=jugador_avatar;
     }
 
     public void setLugar(Casilla casilla_avatar) {
-
+        this.lugar=casilla_avatar;
     }
 
 
@@ -145,5 +145,14 @@ public class Avatar {
         // Añadir el avatar a la nueva casilla
         this.lugar.anhadirAvatar(this);
     }
+        
+
+    public static boolean esTipoAvatar(String str){
+        if(str.equals("Coche") || str.equals("Esfinge") || str.equals("Sombrero") || str.equals("Pelota")){
+            return true;
+        }
+        return false;
+    }   
+
 
 }

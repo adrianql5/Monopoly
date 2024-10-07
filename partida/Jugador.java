@@ -36,18 +36,19 @@ public class Jugador {
      * que dos avatares tengan mismo ID). Desde este constructor también se crea el avatar.
      */
     public Jugador(String nombre, String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados) {
-        if ((nombre != null) && (tipoAvatar != null) ) {
-            this.nombre = nombre;
-            this.fortuna = Valor.FORTUNA_INICIAL;  // Initial fortune from Valor
-            this.gastos = 0;
-            this.enCarcel = false;
-            this.tiradasCarcel = 0;
-            this.vueltas = 0;
-            this.propiedades = new ArrayList<>();
-            this.avatar = new Avatar(tipoAvatar, this, inicio, avCreados);
-        } else {
-            System.out.println("Error al crear el jugaodr.\n");
-        }
+        
+        this.nombre = nombre;
+        this.avatar = new Avatar(tipoAvatar, this, inicio, avCreados);
+        this.avatar.setTipo(tipoAvatar);
+        this.avatar.setLugar(inicio);
+        this.fortuna = Valor.FORTUNA_INICIAL;  // Initial fortune from Valor
+        this.gastos = 0;
+        this.enCarcel = false;
+        this.tiradasCarcel = 0;
+        this.vueltas = 0;
+        this.avatar.setJugador(this);
+        this.propiedades = new ArrayList<>();
+
     }
 
 
@@ -95,7 +96,9 @@ public class Jugador {
             }
         }
     }
-    public void sumarVuelta(){vueltas++;}
+    public void sumarVuelta(){
+        vueltas++;
+    }
 
     //esto aun no esta pero hace falta
     public boolean estaHipotecada() {return true;}
@@ -130,23 +133,41 @@ public class Jugador {
 
 
 
-    public Avatar getAvatar() {return avatar;}
+    public Avatar getAvatar() {
+        return avatar;
+    }
 
-    public float getGastos() {return gastos;}
+    public float getGastos() {
+        return gastos;
+    }
 
-    public void setGastos(float gastos) {this.gastos = gastos;}
+    public void setGastos(float gastos) {
+        this.gastos = gastos;
+    }
 
-    public boolean isEnCarcel() {return enCarcel;}
+    public boolean isEnCarcel() {
+        return enCarcel;
+    }
 
-    public void setEnCarcel(boolean enCarcel) {this.enCarcel = enCarcel;}
+    public void setEnCarcel(boolean enCarcel) {
+        this.enCarcel = enCarcel;
+    }
 
-    public void setTiradasCarcel(int tiradasCarcel) {this.tiradasCarcel = tiradasCarcel;}
+    public void setTiradasCarcel(int tiradasCarcel) {
+        this.tiradasCarcel = tiradasCarcel;
+    }
 
-    public int getVueltas() {return vueltas;}
+    public int getVueltas() {
+        return vueltas;
+    }
 
-    public void setVueltas(int vueltas) {this.vueltas = vueltas;}
+    public void setVueltas(int vueltas) {
+        this.vueltas = vueltas;
+    }
 
-    public ArrayList<Casilla> getPropiedades() {return propiedades;}
+    public ArrayList<Casilla> getPropiedades() {
+        return propiedades;
+    }
 
 
 
