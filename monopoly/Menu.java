@@ -79,7 +79,7 @@ public class Menu {
 
 
             case "iniciar":
-                buclepartida();
+                iniciarPartida();
                 break;
 
             //Indicar jugador que tiene el turno
@@ -89,7 +89,7 @@ public class Menu {
 
             //Lanzar los dados
             case "lanzar dados":
-                buclepartida();
+                lanzarDados();
                 //lanzarDados();
                 break;
 
@@ -190,7 +190,25 @@ public class Menu {
     }
 
 
-    private void buclepartida() {
+    //IMPLEMENTACIÓN DE LOS MÉTODOS
+    //Métodos de comandos que no dependen de una instancia
+
+    /**Método que ejecuta todas las acciones relacionadas con el comando 'jugador'.*/
+    private void jugadorTurno() { //aqui tiene q printear esto
+        /*
+         * $> jugador
+                {
+                nombre: Maria,
+                avatar: M
+            }
+         */
+
+
+
+    }
+
+    /**Método que ejecuta todas las acciones relacionadas con el comando 'lanzar dados'.*/
+    private void lanzarDados() {
         Jugador jugador = obtenerTurno();
         Avatar avatar = jugador.getAvatar();
         int resultado1 = dado1.tirarDado();
@@ -222,30 +240,23 @@ public class Menu {
             jugador.getAvatar().setLugar(carcel);
             jugador.setEnCarcel(true);
         }
-    }
-
-
-    //IMPLEMENTACIÓN DE LOS MÉTODOS
-    //Métodos de comandos que no dependen de una instancia
-
-    /**Método que ejecuta todas las acciones relacionadas con el comando 'jugador'.*/
-    private void jugadorTurno() {
-
-    }
-
-    /**Método que ejecuta todas las acciones relacionadas con el comando 'lanzar dados'.*/
-    private void lanzarDados() {
 
 
     }
 
     /**Método que ejecuta todas las acciones relacionadas con el comando 'salir carcel'. */
-    private void salirCarcel() {
+    private void salirCarcel() {//saca al avatar de la carcel
+        /*
+         * Maria paga 500000€ y sale de la cárcel. Puede lanzar los dados.
+         */
 
     }
 
     /**Método que realiza las acciones asociadas al comando 'acabar turno'.*/
-    private void acabarTurno() {
+    private void acabarTurno() {//estoy cambia del avatar actual al siguiente y devuelve esto
+        /*
+         * El jugador actual es Maria. donde maría es el siguiente jugador
+         */
     }
 
     /**Método que realiza las acciones asociadas al comando 'ver tablero'*/
@@ -267,7 +278,7 @@ public class Menu {
     /**Método que realiza las acciones asociadas al comando 'listar avatares'.*/
     private void listarAvatares() {
         for(Avatar a: avatares){
-            if(a!=null) a.infoAvatar();
+            if(a!=null) a.infoAvatar();//mirar el infoavatar o esto no funciona
         }
     }
 
@@ -316,7 +327,7 @@ public class Menu {
     /**Método que ejecuta todas las acciones realizadas con el comando 'comprar nombre_casilla'.
      * @param nombre Cadena de caracteres con el nombre de la casilla.
      */
-    private void comprar(String nombre) {
+    private void comprar(String nombre) { //REVISAR
         Jugador jugador = obtenerTurno();
         Casilla casilla = obtenerTurno().getAvatar().getLugar();
 
