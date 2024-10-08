@@ -194,17 +194,14 @@ public class Menu {
     //Métodos de comandos que no dependen de una instancia
 
     /**Método que ejecuta todas las acciones relacionadas con el comando 'jugador'.*/
-    private void jugadorTurno() { //aqui tiene q printear esto
-        /*
-         * $> jugador
-                {
-                nombre: Maria,
-                avatar: M
-            }
-         */
+    private void jugadorTurno() {
+        Jugador jugador = obtenerTurno(); // Obtener el jugador actual
 
-
-
+        // Imprimir el nombre y el avatar en el formato requerid
+        System.out.println("{");
+        System.out.println("    nombre: " + jugador.getNombre() + ",");
+        System.out.println("    avatar: " + jugador.getAvatar().getId());
+        System.out.println("}");
     }
 
     /**Método que ejecuta todas las acciones relacionadas con el comando 'lanzar dados'.*/
