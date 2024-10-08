@@ -22,7 +22,7 @@ public class Tablero {
     public Tablero(Jugador banca) {
         this.banca=banca;
         this.grupos = new HashMap<String,Grupo>();
-        generarCasillas();   
+        generarCasillas(); 
     }
 
 
@@ -52,8 +52,14 @@ public class Tablero {
 
         posiciones.add(ladoSur);
 
-        grupos.put("WHITE",new Grupo(getCasilla(1), getCasilla(3),"WHITE"));
-        grupos.put("CYAN",new Grupo(getCasilla(6),getCasilla(8),getCasilla(9),"CYAN"));
+        this.grupos.put("WHITE",new Grupo(getCasilla(1), getCasilla(3),"WHITE"));
+        getCasilla(1).setGrupo(grupos.get("WHITE"));
+        getCasilla(3).setGrupo(grupos.get("WHITE"));
+
+        this.grupos.put("CYAN",new Grupo(getCasilla(6),getCasilla(8),getCasilla(9),"CYAN"));
+        getCasilla(6).setGrupo(grupos.get("CYAN"));
+        getCasilla(8).setGrupo(grupos.get("CYAN"));
+        getCasilla(9).setGrupo(grupos.get("CYAN"));
     }
 
     //Método que inserta casillas del lado oeste.
@@ -73,8 +79,15 @@ public class Tablero {
 
         posiciones.add(ladoOeste);
 
-        grupos.put("BLUE",new Grupo(getCasilla(11), getCasilla(13),getCasilla(14),"BLUE"));
-        grupos.put("YELLOW",new Grupo(getCasilla(16), getCasilla(18),getCasilla(19),"YELLOW"));
+        this.grupos.put("BLUE",new Grupo(getCasilla(11), getCasilla(13),getCasilla(14),"BLUE"));
+        getCasilla(11).setGrupo(grupos.get("BLUE"));
+        getCasilla(13).setGrupo(grupos.get("BLUE"));
+        getCasilla(14).setGrupo(grupos.get("BLUE"));
+
+        this.grupos.put("YELLOW",new Grupo(getCasilla(16), getCasilla(18),getCasilla(19),"YELLOW"));
+        getCasilla(16).setGrupo(grupos.get("YELLOW"));
+        getCasilla(18).setGrupo(grupos.get("YELLOW"));
+        getCasilla(19).setGrupo(grupos.get("YELLOW"));
     }
 
     //Método para insertar las casillas del lado norte.
@@ -93,8 +106,14 @@ public class Tablero {
 
         posiciones.add(ladoNorte);
 
-        grupos.put("BLACK",new Grupo(getCasilla(21), getCasilla(23),getCasilla(24),"BLACK"));
-        grupos.put("GREEN",new Grupo(getCasilla(26), getCasilla(27),getCasilla(29),"GREEN"));
+        this.grupos.put("BLACK",new Grupo(getCasilla(21), getCasilla(23),getCasilla(24),"BLACK"));
+        getCasilla(21).setGrupo(grupos.get("BLACK"));
+        getCasilla(23).setGrupo(grupos.get("BLACK"));
+        getCasilla(24).setGrupo(grupos.get("BLACK"));
+        this.grupos.put("GREEN",new Grupo(getCasilla(26), getCasilla(27),getCasilla(29),"GREEN"));
+        getCasilla(26).setGrupo(grupos.get("GREEN"));
+        getCasilla(27).setGrupo(grupos.get("GREEN"));
+        getCasilla(29).setGrupo(grupos.get("GREEN"));
     }
 
 
@@ -114,9 +133,15 @@ public class Tablero {
 
 
         posiciones.add(ladoEste);
+        this.grupos.put("RED",new Grupo(getCasilla(31), getCasilla(32),getCasilla(34),"RED"));
+        getCasilla(31).setGrupo(grupos.get("RED"));
+        getCasilla(32).setGrupo(grupos.get("RED"));
+        getCasilla(34).setGrupo(grupos.get("RED"));
 
-        grupos.put("RED",new Grupo(getCasilla(31), getCasilla(32),getCasilla(34),"RED"));
-        grupos.put("PURPLE",new Grupo(getCasilla(37), getCasilla(39),"PURPLE"));
+        this.grupos.put("PURPLE",new Grupo(getCasilla(37), getCasilla(39),"PURPLE"));
+        getCasilla(37).setGrupo(grupos.get("PURPLE"));
+        getCasilla(39).setGrupo(grupos.get("PURPLE"));
+        
     }
 
 
@@ -299,27 +324,27 @@ public class Tablero {
             if (i%2!=0) /**LÍNEAS IMPARES: parte superior de la fila de casillas correspondientes*/ {
 
                 tabla += Valor.BARRA;
-                tabla += formatoNombre(posiciones.get(1).get(10-(i-1)/2));  //Casilla de la izquierda
+                tabla += formatoNombre(getCasilla(20-(i-1)/2));  //Casilla de la izquierda
 
                 //Añadimos los espacios del medio (se resta 1 porque hay un borde antes de la siguiente casilla)
                 int nesp = (Valor.NCASILLAS_POR_FILA-2)*(Valor.NCHARS_CASILLA+1)-1;   //Pa que se vea un poco mejor
                 tabla += conEspacios(nesp);
 
                 //Barra + Casilla de la derecha
-                tabla += Valor.BARRA + formatoNombre(posiciones.get(3).get((i-1)/2)) + "\n";
+                tabla += Valor.BARRA + formatoNombre(getCasilla(30+(i-1)/2)) + "\n";
 
             }
             else /**LÍNEAS PARES: parte inferior de la fila de casillas correspondientes*/ {
 
                 tabla += Valor.BARRA;
-                tabla += formatoFichas(posiciones.get(1).get(11-i/2));  //Casilla de la izquierda
+                tabla += formatoFichas(getCasilla(21-i/2));  //Casilla de la izquierda
 
                 //Añadimos los espacios del medio (se resta 1 porque hay un borde antes de la siguiente casilla)
                 int nesp = (Valor.NCASILLAS_POR_FILA-2)*(Valor.NCHARS_CASILLA+1)-1;   //Pa que se vea un poco mejor
                 tabla += conEspacios(nesp);
 
                 //Barra + Casilla de la derecha
-                tabla += Valor.BARRA + formatoFichas(posiciones.get(3).get(i/2-1)) + "\n";
+                tabla += Valor.BARRA + formatoFichas(getCasilla(29+i/2)) + "\n";
 
             }
         }
@@ -380,6 +405,7 @@ public class Tablero {
         }
         else return null;
     }
+
     public ArrayList<ArrayList<Casilla>> getPosiciones() {
         return posiciones;
     }

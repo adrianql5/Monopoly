@@ -98,5 +98,7 @@ class Grupo {
         this.numCasillas=numCasillas;
     }
 
+    
+
 
 }

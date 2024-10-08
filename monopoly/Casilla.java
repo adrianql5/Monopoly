@@ -20,9 +20,9 @@ public class Casilla {
     private ArrayList<Avatar> avatares; //Avatares que están situados en la casilla.
 
     //SECCION DE CONSTRUCTORES
+    
     public Casilla() {
     }//Parámetros vacíos
-
 
     /**Constructor para casillas tipo Solar, Servicios y Transporte.
      * @param nombre Nombre de la casilla
@@ -72,7 +72,6 @@ public class Casilla {
 
     
     //SECCIÓN DE MÉTODOS ÚTILES
-
     /**Método utilizado para añadir un avatar al array de avatares en casilla.*/
     public void anhadirAvatar(Avatar av) {
         this.avatares.add(av);
