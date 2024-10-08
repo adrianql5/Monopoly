@@ -67,7 +67,6 @@ public class Tablero {
         ArrayList<Casilla> ladoOeste = new ArrayList<Casilla>();
         ladoOeste.add(new Casilla("Carcel","Especial",10,banca));
         ladoOeste.add(new Casilla("Solar6","Solar",11,1000,banca));
-
         ladoOeste.add(new Casilla("Serv1","Servicios",12,2500,banca));
         ladoOeste.add(new Casilla("Solar7","Solar",13,1000,banca));
         ladoOeste.add(new Casilla("Solar8","Solar",14,1000,banca));
@@ -131,8 +130,8 @@ public class Tablero {
         ladoEste.add(new Casilla("Imp2",38,500,banca));
         ladoEste.add(new Casilla("Solar22","Solar",39,1000,banca));
 
-
         posiciones.add(ladoEste);
+
         this.grupos.put("RED",new Grupo(getCasilla(31), getCasilla(32),getCasilla(34),"RED"));
         getCasilla(31).setGrupo(grupos.get("RED"));
         getCasilla(32).setGrupo(grupos.get("RED"));
@@ -232,7 +231,7 @@ public class Tablero {
             fichas += conEspacios(Valor.NCHARS_CASILLA);   //No hay ninguna ficha en la casilla
         }
         else {
-            fichas += "&";
+            fichas += Valor.BOLD_STRING + "&";  //La negrita ya se resetea en formatoFichas junto con el subrayado
             int i;
             for(i=0;i<nj;i++) {
                 fichas += casilla.getAvatares().get(i).getId();   //Vamos imprimiendo cada identificador después del &

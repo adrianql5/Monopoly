@@ -31,6 +31,7 @@ public class Menu {
 
     // Método para inciar una partida: crea los jugadores y avatares.
     private void iniciarPartida() {
+        //Reservamos memoria para los objetos necesarios
         this.dado1= new Dado();
         this.dado2= new Dado();
         Jugador banca = new Jugador();
@@ -302,7 +303,9 @@ public class Menu {
      * @param n Número de casillas que se debe avanzar
      */
     private void avanzar(int n) {
+        //Establecemos el jugador que tiene el turno
         Jugador jugador = obtenerTurno();
+        //
         Avatar avatar = jugador.getAvatar();
 
         Casilla salida = avatar.getLugar();

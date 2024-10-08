@@ -151,7 +151,6 @@ public class Casilla {
 
     /**Método para mostrar información sobre una casilla.
      * Devuelve una cadena con información específica de cada tipo de casilla.
-     * @param nombre_casilla Nombre de la casilla.
      */
     public String infoCasilla() {
         String info= new String();
