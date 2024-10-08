@@ -198,7 +198,7 @@ public class Menu {
     private void jugadorTurno() {
         Jugador jugador = obtenerTurno(); // Obtener el jugador actual
 
-        // Imprimir el nombre y el avatar en el formato requerid
+        // Imprimir el nombre y el avatar en el formato requerido
         System.out.println("{");
         System.out.println("    nombre: " + jugador.getNombre() + ",");
         System.out.println("    avatar: " + jugador.getAvatar().getId());
@@ -276,6 +276,7 @@ public class Menu {
             }
         }
         System.out.println("}");
+
     }
 
     /**Método que realiza las acciones asociadas al comando 'listar avatares'.*/
