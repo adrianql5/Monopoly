@@ -90,7 +90,7 @@ public class Menu {
             //Lanzar los dados
             case "lanzar dados":
                 lanzarDados();
-                //lanzarDados();
+                verTablero();
                 break;
 
             //Salir de la cárcel
@@ -141,6 +141,7 @@ public class Menu {
                             int ncasillas = Integer.parseInt(comando[1]);
                             //Ahora sí podemos usar el método avanzar
                             avanzar(ncasillas);
+                            verTablero();
                             break;
 
                         //Para comprar una casilla

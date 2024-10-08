@@ -181,41 +181,38 @@ public class Tablero {
         String nombreColoreado = new String();
 
         //Escogemos el color en función del grupo al que pertenece la casilla
-        if(casilla.getGrupo()!=null) {
-            switch (casilla.getGrupo().getColorGrupo()) {
-                case "BLACK":
-                    nombreColoreado = Valor.BLACK;
-                    break;
-                case "RED":
-                    nombreColoreado = Valor.RED;
-                    break;
-                case "GREEN":
-                    nombreColoreado = Valor.GREEN;
-                    break;
-                case "YELLOW":
-                    nombreColoreado = Valor.YELLOW;
-                    break;
-                case "BLUE":
-                    nombreColoreado = Valor.BLUE;
-                    break;
-                case "PURPLE":
-                    nombreColoreado = Valor.PURPLE;
-                    break;
-                case "CYAN":
-                    nombreColoreado = Valor.CYAN;
-                    break;
-                case "WHITE":
-                    nombreColoreado = Valor.WHITE;
-                    break;
-                default:
-                    System.out.println(casilla.getNombre() + " no es una casilla de tipo Solar.\n");
-                    nombreColoreado = "";
-                    break;
-            }
+        
+        switch (casilla.getGrupo().getColorGrupo()) {
+            case "BLACK":
+                nombreColoreado = Valor.BLACK;
+                break;
+            case "RED":
+                nombreColoreado = Valor.RED;
+                break;
+            case "GREEN":
+                nombreColoreado = Valor.GREEN;
+                break;
+            case "YELLOW":
+                nombreColoreado = Valor.YELLOW;
+                break;
+            case "BLUE":
+                nombreColoreado = Valor.BLUE;
+                break;
+            case "PURPLE":
+                nombreColoreado = Valor.PURPLE;
+                break;
+            case "CYAN":
+                nombreColoreado = Valor.CYAN;
+                break;
+            case "WHITE":
+                nombreColoreado = Valor.WHITE;
+                break;
+            default:
+                System.out.println(casilla.getNombre() + " no es una casilla de tipo Solar.\n");
+                nombreColoreado = "";
+                break;
         }
-        else {
-            System.out.println("Que ostia pasa con la casilla " + casilla.getNombre() + ".\n");
-        }
+
         nombreColoreado += casilla.getNombre() + Valor.RESET;
 
         return nombreColoreado;
