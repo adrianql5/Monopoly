@@ -31,7 +31,6 @@ public class Menu {
 
     // Método para inciar una partida: crea los jugadores y avatares.
     private void iniciarPartida() {
-        //Reservamos memoria para los objetos necesarios
         this.dado1= new Dado();
         this.dado2= new Dado();
         Jugador banca = new Jugador();
@@ -51,7 +50,7 @@ public class Menu {
 
 
         while (!partidaTerminada){
-            System.out.println("Introduce la instruccion: ");
+            System.out.println("\n ");
             analizarComando(scan.nextLine());
 
         }
@@ -208,6 +207,7 @@ public class Menu {
 
     /**Método que ejecuta todas las acciones relacionadas con el comando 'lanzar dados'.*/
     private void lanzarDados() {
+        System.out.println("{");
         Jugador jugador = obtenerTurno();
         Avatar avatar = jugador.getAvatar();
         int resultado1 = dado1.tirarDado();
@@ -223,6 +223,7 @@ public class Menu {
 
             System.out.println("Continúas en la carcel.");
             jugador.sumarTiradaCarcel();
+            System.out.println("}");
             return;}
         int suma_ambas = resultado1 + resultado2;
 
@@ -240,7 +241,7 @@ public class Menu {
             jugador.setEnCarcel(true);
         }
 
-
+        System.out.println("}");
     }
 
     /**Método que ejecuta todas las acciones relacionadas con el comando 'salir carcel'. */
@@ -267,24 +268,30 @@ public class Menu {
 
     /**Método que realiza las acciones asociadas al comando 'listar jugadores'.*/
     private void listarJugadores() {
+        System.out.println("{");
         for(Jugador j: jugadores){
             if(j!=banca){
                 j.infoJugador();
+                System.out.println("\n");
             }
         }
+        System.out.println("}");
     }
 
     /**Método que realiza las acciones asociadas al comando 'listar avatares'.*/
     private void listarAvatares() {
+        System.out.println("{");
         for (Avatar a : avatares) {
             if (a != null) {
                 a.infoAvatar(); // Llama a la función infoAvatar para imprimir los detalles del avatar
             }
         }
+        System.out.println("}");
     }
 
     /**Método que realiza las acciones asociadas al comando 'listar enventa'.*/
     private void listarVenta() {
+        System.out.println("{");
         int i;
         for(i=0; i<40; i++){
             if((this.tablero.getCasilla(i).getDuenho()==banca) &&
@@ -293,6 +300,7 @@ public class Menu {
                 this.tablero.getCasilla(i).infoCasilla();
             }
         }
+        System.out.println("}");
     }
 
 
@@ -303,9 +311,8 @@ public class Menu {
      * @param n Número de casillas que se debe avanzar
      */
     private void avanzar(int n) {
-        //Establecemos el jugador que tiene el turno
+        System.out.println("{");
         Jugador jugador = obtenerTurno();
-        //
         Avatar avatar = jugador.getAvatar();
 
         Casilla salida = avatar.getLugar();
@@ -331,6 +338,7 @@ public class Menu {
      * @param nombre Cadena de caracteres con el nombre de la casilla.
      */
     private void comprar(String nombre) { //REVISAR
+        System.out.println("{");
         Jugador jugador = obtenerTurno();
         Casilla casilla = obtenerTurno().getAvatar().getLugar();
 
@@ -353,6 +361,8 @@ public class Menu {
             return;
         }
         */
+
+
         // Definir la casilla de inicio. Por ejemplo, la primera casilla del tablero
         Casilla casillaInicio = tablero.getCasilla(0);  // Asumiendo que tienes un método para obtener la casilla inicial
 
@@ -365,12 +375,12 @@ public class Menu {
 
         // Imprimir detalles del jugador recién creado
 
-        System.out.println("Jugador creado: ");
-        nuevoJugador.infoJugador();
+        jugadorTurno();
+
         casillaInicio.anhadirAvatar(nuevoJugador.getAvatar());
 
 
-
+        verTablero();
     }
 
     //"Sobrecarga" del método asociado al comando 'describir'
@@ -382,6 +392,7 @@ public class Menu {
      * @param nombre Nombre de la casilla a describir
      */
     private void descCasilla(String nombre) {
+        System.out.println("{");
         switch (nombre) {
             case "Salida":
                 // Imprimir el valor de vuelta con separador de miles
@@ -429,6 +440,7 @@ public class Menu {
             default:
                 System.out.println(nombre + " no es un nombre de casilla válido.\n");
         }
+        System.out.println("}");
     }
 
 
@@ -437,6 +449,7 @@ public class Menu {
      */
     private void descJugador(String[] partes) {
         boolean encontrado = false;
+        System.out.println("{");
         // en partes esta el nombre comprueba que el nombre del jugador existe y saca su info si existe
         for (Jugador jugador : jugadores) {
             if (jugador.getNombre().equals(partes[2])) {
@@ -449,12 +462,14 @@ public class Menu {
         if(!encontrado){
             System.out.println("No se ha encontrado el jugador buscado");
         }
+        System.out.println("}");
     }
 
     /**Método que realiza las acciones asociadas al comando 'describir avatar'.
      * @param ID id del avatar a describir
      */
     private void descAvatar(String ID) {
+        System.out.println("{");
         // lista llamada avatares se recorre
         for (Avatar avatar : avatares) { // Busca el avatar en la lista
             if (avatar.getId().equals(ID)) {
@@ -464,6 +479,7 @@ public class Menu {
         }
         // Si no encuentra el avatar, muestra un mensaje de error
         System.out.println("Avatar con ID " + ID + " no encontrado.");
+        System.out.println("}");
     }
 
     public Jugador obtenerTurno() {
