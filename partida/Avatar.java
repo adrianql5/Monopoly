@@ -109,13 +109,14 @@ public class Avatar {
     }
 
 
-    public String infoAvatar() {
-        String str = new String();
+    public void infoAvatar() {
+        String str = "ID: " + this.id + "\n" +
+                "Tipo: " + this.tipo + "\n" +
+                "Jugador: " + this.jugador.getNombre() + "\n" +
+                "Casilla: " + this.lugar.getNombre() + "\n";
 
-        str = "ID:" + this.id + "\n" + "Tipo:" + this.tipo + "\n" +
-                "Jugador:" + this.jugador.getNombre() + "\n" + "Casilla:" + this.lugar.getNombre() + "\n";
-
-        return str;
+        // Imprimir directamente el string
+        System.out.println(str);
     }
 
 

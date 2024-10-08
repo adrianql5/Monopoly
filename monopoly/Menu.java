@@ -39,7 +39,7 @@ public class Menu {
         this.avatares = new ArrayList<Avatar>();
         
         //lathis.jugadores.add(banca);
-        this.avatares.add(null);
+       // this.avatares.add(null);
 
         this.tablero=new Tablero(banca);
         
@@ -194,17 +194,14 @@ public class Menu {
     //Métodos de comandos que no dependen de una instancia
 
     /**Método que ejecuta todas las acciones relacionadas con el comando 'jugador'.*/
-    private void jugadorTurno() { //aqui tiene q printear esto
-        /*
-         * $> jugador
-                {
-                nombre: Maria,
-                avatar: M
-            }
-         */
+    private void jugadorTurno() {
+        Jugador jugador = obtenerTurno(); // Obtener el jugador actual
 
-
-
+        // Imprimir el nombre y el avatar en el formato requerid
+        System.out.println("{");
+        System.out.println("    nombre: " + jugador.getNombre() + ",");
+        System.out.println("    avatar: " + jugador.getAvatar().getId());
+        System.out.println("}");
     }
 
     /**Método que ejecuta todas las acciones relacionadas con el comando 'lanzar dados'.*/
@@ -277,8 +274,10 @@ public class Menu {
 
     /**Método que realiza las acciones asociadas al comando 'listar avatares'.*/
     private void listarAvatares() {
-        for(Avatar a: avatares){
-            if(a!=null) a.infoAvatar();//mirar el infoavatar o esto no funciona
+        for (Avatar a : avatares) {
+            if (a != null) {
+                a.infoAvatar(); // Llama a la función infoAvatar para imprimir los detalles del avatar
+            }
         }
     }
 
@@ -358,7 +357,7 @@ public class Menu {
 
         // Añadir el jugador a la lista de jugadores
         this.jugadores.add(nuevoJugador);
-        this.avatares.add(nuevoJugador.getAvatar()) ;;
+
 
         // Imprimir detalles del jugador recién creado
 
@@ -381,52 +380,52 @@ public class Menu {
     private void descCasilla(String nombre) {
         switch (nombre) {
             case "Salida":
-
-                System.out.println("Pago por vuelta:" + Valor.DINERO_VUELTA );
-
+                // Imprimir el valor de vuelta con separador de miles
+                System.out.printf("Pago por vuelta: %,.0f%n", Valor.DINERO_VUELTA);
                 break;
+
             case "Carcel":
-                System.out.println("Pago salir:" + Valor.DINERO_SALIR_CARCEL );
-                Casilla casilla_a_buscar = tablero.encontrar_casilla(nombre); // Llamada al método
-
+                // Imprimir el valor para salir de la cárcel con separador de miles
+                System.out.printf("Pago salir: %,.0f%n", Valor.DINERO_SALIR_CARCEL);
+                Casilla casilla_a_buscar = tablero.encontrar_casilla(nombre);
                 break;
+
             case "Parking":
-                // hay que crear varialble bote
-
-
+                // Añadir lógica para imprimir el bote si se añade más tarde
                 break;
+
             case "IrCarcel": case "Caja": case "Suerte":
-                //pone que es inecesario
+                // No es necesario imprimir nada aquí
                 break;
+
             case "Serv1": case "Serv2": case "Trans1": case "Trans2": case "Trans3": case "Trans4":
-                Casilla casillaEncontrada1 = tablero.encontrar_casilla(nombre); // Llamada al método
-                // Aquí puedes manejar la casilla encontrada (por ejemplo, imprimir su descripción)
+                Casilla casillaEncontrada1 = tablero.encontrar_casilla(nombre);
                 System.out.println("Tipo: " + casillaEncontrada1.getTipo());
                 System.out.println("Duenho: " + casillaEncontrada1.getDuenho());
-                System.out.println("Precio: " + casillaEncontrada1.getValor());
-                System.out.println("Hipoteca: " + casillaEncontrada1.getHipoteca());
-
+                // Imprimir el valor de la casilla y el valor de hipoteca con separador de miles
+                System.out.printf("Precio: %,.0f%n", casillaEncontrada1.getValor());
+                System.out.printf("Hipoteca: %,.0f%n", casillaEncontrada1.getHipoteca());
                 break;
 
             case "Solar1": case "Solar2": case "Solar3": case "Solar4":
-            case "Solar5": case "Solar 6": case "Solar7": case "Solar8": case "Solar9": case "Solar10":
+            case "Solar5": case "Solar6": case "Solar7": case "Solar8": case "Solar9": case "Solar10":
             case "Solar11": case "Solar12": case "Solar13": case "Solar14": case "Solar15":
             case "Solar16": case "Solar17": case "Solar18": case "Solar19": case "Solar20": case "Solar21": case "Solar22":
-                Casilla casillaEncontrada3 = tablero.encontrar_casilla(nombre); // Llamada al método
+                Casilla casillaEncontrada3 = tablero.encontrar_casilla(nombre);
                 casillaEncontrada3.infoCasilla();
                 break;
-            case "Imp1": case "Imp2":
-                Casilla casillaEncontrada2 = tablero.encontrar_casilla(nombre); // Llamada al método
-                // Aquí puedes manejar la casilla encontrada (por ejemplo, imprimir su descripción)
-                System.out.println("Tipo: " + casillaEncontrada2.getTipo());
-                System.out.println("apagar: " + casillaEncontrada2.getImpuesto());
 
+            case "Imp1": case "Imp2":
+                Casilla casillaEncontrada2 = tablero.encontrar_casilla(nombre);
+                System.out.println("Tipo: " + casillaEncontrada2.getTipo());
+                // Imprimir el impuesto con separador de miles
+                System.out.printf("apagar: %,.0f%n", casillaEncontrada2.getImpuesto());
                 break;
+
             default:
                 System.out.println(nombre + " no es un nombre de casilla válido.\n");
         }
     }
-
 
 
     /**Método que realiza las acciones asociadas al comando 'describir jugador'.
@@ -436,7 +435,7 @@ public class Menu {
         boolean encontrado = false;
         // en partes esta el nombre comprueba que el nombre del jugador existe y saca su info si existe
         for (Jugador jugador : jugadores) {
-            if (jugador.getNombre().equals(partes[0])) {
+            if (jugador.getNombre().equals(partes[2])) {
                 encontrado = true;
                 // Llamar a la función infoJugador del jugador encontrado
                 jugador.infoJugador();
