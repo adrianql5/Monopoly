@@ -378,8 +378,6 @@ public class Tablero {
         return tabla;
     }
 
-
-
     //METODOS ÚTILES DEL TABLERO
 
     /**Método usado para buscar la casilla con el nombre pasado como argumento.

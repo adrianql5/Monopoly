@@ -2,8 +2,7 @@ package partida;
 
 import java.util.ArrayList;
 
-import monopoly.Casilla;
-import monopoly.Valor;
+import monopoly.*;
 
 
 public class Jugador {
@@ -101,7 +100,9 @@ public class Jugador {
     }
 
     //esto aun no esta pero hace falta
-    public boolean estaHipotecada() {return true;}
+    public boolean estaHipotecado() {
+        return false;
+    }
 
 
     public boolean estaEnBancarrota() {

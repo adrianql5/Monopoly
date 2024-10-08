@@ -1,9 +1,10 @@
 package monopoly;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
-import partida.Avatar;
-import partida.Jugador;
+import partida.*;
+
 
 
 public class Casilla {
@@ -97,56 +98,160 @@ public class Casilla {
      * @param tirada Valor de la tirada (para determinar impuesto a pagar en casillas de servicios)
      * @return TRUE en caso de ser solvente (es decir, de cumplir las deudas), y FALSE en caso de no serlo
      */
-    public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
-        if (this.tipo.equals("Solar")) {
-            // Si el jugador tiene suficiente dinero y la casilla pertenece a la banca, puede comprarla
-            if (actual.getFortuna() >= this.valor && this.duenho.equals(banca)) {
-                comprarCasilla(actual, banca);
-                return true;
-            }
-            return false; // No tiene suficiente dinero o la casilla ya tiene dueño
-        }
-        else if (this.tipo.equals("Especial")) {
-            // Las casillas especiales no requieren acciones monetarias
-            return true; // No hay deudas que pagar aquí, así que es solvente
+public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
+    Scanner scan = new Scanner(System.in);
+    String opcion;
 
-        }
-        else if (this.tipo.equals("Caja de comunidad")){
-            return true; // ns que acciones puede haber
-        }
-        else if (this.tipo.equals("Suerte")){
-            return true;//lo mismo
-        }
+    switch (this.tipo) {
+        case "Solar":
+            if (this.duenho == banca && actual.getFortuna() >= this.valor) {
+                System.out.println("Puedes comprar la casilla " + this.nombre + " por el módico precio de " + this.valor);
+                actual.sumarGastos(this.valor);
+                banca.sumarFortuna(this.valor);
+                this.duenho = actual;
+                return true;
+            } else if (this.duenho != banca && !this.duenho.estaHipotecado() && !actual.estaEnBancarrota() && actual.getFortuna() >= this.impuesto) {
+                System.out.println(actual.getNombre() + " debe pagarle el alquiler a " + this.duenho.getNombre());
+                actual.sumarGastos(this.impuesto);
+                this.duenho.sumarFortuna(this.impuesto);
+                return true;
+            } else {
+                return false;
+            }
 
-        else if (this.tipo.equals("Impuesto")) {
-            // Si el jugador puede pagar el impuesto
-            if (actual.getFortuna() >= this.impuesto) {
-                comprarCasilla(actual, banca);
+        case "Especial":
+            if (this.nombre.equals("Carcel")) {
+                System.out.println("Tienes 3 opciones para salir: Pagar, Usar Carta de Suerte o Sacar Dados Dobles.\n");
+                opcion = scan.nextLine();
+                switch (opcion) {
+                    case "Pagar":
+                        if (actual.getFortuna() >= Valor.DINERO_SALIR_CARCEL) {
+                            actual.sumarGastos(Valor.DINERO_SALIR_CARCEL);
+                            banca.sumarFortuna(Valor.DINERO_SALIR_CARCEL);
+                            return true;
+                        } else {
+                            System.out.println("No tiene suficiente dinero para realizar esta acción.\n");
+                            return false;
+                        }
+
+                    case "Usar Carta de Suerte":
+                        // Implementar lógica para usar carta de suerte
+                        return true;
+
+                    case "Sacar Dados Dobles":
+                        // Implementar lógica para sacar dados dobles
+                        return true;
+
+                    default:
+                        System.out.println("Opción inválida.");
+                        return false;
+                }
+
+            } else if (this.nombre.equals("Parking")) {
+                System.out.println("Enhorabuena, has ganado el bote almacenado por impuestos, tasas y multas.\n");
+                actual.sumarFortuna(this.valor);
+                this.valor = 0;
+                return true;
+
+            } else if (this.nombre.equals("IrCarcel")) {
+                System.out.println("Mala suerte, te vas a la cárcel.\n");
+                return true;
+
+            } else if (this.nombre.equals("Salida")) {
+                System.out.println("Has pasado por la salida. Has cobrado " + Valor.SUMA_VUELTA);
+                actual.sumarFortuna(Valor.SUMA_VUELTA);
                 return true;
             }
-            return false; // No tiene suficiente dinero para pagar el impuesto
-        }
-        else if (this.tipo.equals("Servicios")) {
-            // Si el jugador puede pagar el alquiler basado en la tirada
-            float alquiler = this.valor * tirada; // Valor multiplicado por la tirada (o la lógica correspondiente)
-            if (actual.getFortuna() >= alquiler) {
-                actual.sumarGastos(alquiler); // El jugador paga el alquiler
-                this.duenho.sumarFortuna(alquiler);// El dueño recibe el alquiler
+
+            break;
+
+        case "Transporte":
+            float multiplicador = 0; // Inicialización de multiplicador
+            if (this.duenho == banca && actual.getFortuna() >= this.valor) {
+                System.out.println("Puedes comprar la casilla " + this.nombre + " por el módico precio de " + this.valor);
+                actual.sumarGastos(this.valor);
+                banca.sumarFortuna(this.valor);
+                this.duenho = actual;
+                return true;
+
+            } else if (this.duenho != banca && !this.duenho.estaHipotecado() && !actual.estaEnBancarrota()) {
+               /* 
+                if (this.duenho.esDuenhoCasilla(actual,encontrar_casilla("Trans1"))) multiplicador += 0.25;
+                if (this.duenho.esDuenhoCasilla(actual,encontrar_casilla("Trans2"))) multiplicador += 0.25;
+                if (this.duenho.esDuenhoCasilla(actual,encontrar_casilla("Trans3"))) multiplicador += 0.25;
+                if (this.duenho.esDuenhoCasilla(actual, encontrar_casilla("Trans4"))) multiplicador += 0.25;
+                */ //ni puta idea d por q no funciona
+                float total = multiplicador * this.valor;
+                actual.sumarGastos(total);
+                this.duenho.sumarFortuna(total);
+
+                System.out.println(actual.getNombre() + " debe pagarle el servicio de transporte a " + this.duenho.getNombre());
                 return true;
             }
-            return false; // No tiene suficiente dinero para pagar el alquiler
-        }
-        return true; // Si no se necesita acción monetaria, consideramos que es solvente
+
+            break;
+
+        case "Impuestos":
+            System.out.println("Vaya! Debes pagar tus impuestos a la banca.\n");
+            if (!actual.estaEnBancarrota() && actual.getFortuna() >= this.valor) {
+                actual.sumarGastos(this.valor);
+                banca.sumarFortuna(this.valor);
+                return true;
+            } else {
+                return false;
+            }
+
+        case "Servicios":
+            if (this.duenho == banca && actual.getFortuna() >= this.valor) {
+                System.out.println("Puedes comprar la casilla " + this.nombre + " por el módico precio de " + this.valor);
+                actual.sumarGastos(this.valor);
+                banca.sumarFortuna(this.valor);
+                this.duenho = actual;
+                return true;
+
+            } else if (this.duenho != banca && !this.duenho.estaHipotecado() && !actual.estaEnBancarrota() && actual.getFortuna() >= (4 * tirada * this.valor)) {
+                System.out.println(actual.getNombre() + " debe pagarle el servicio a " + this.duenho.getNombre());
+                actual.sumarGastos(4 * tirada * this.valor);
+                this.duenho.sumarFortuna(4 * tirada * this.valor);
+                return true;
+            }
+
+            break;
+
+        default:
+            System.out.println("Error en evaluarCasilla.\n");
+            return false;
     }
+
+    return false;
+}
+
+
 
     /** Método usado para comprar una casilla determinada.
      * @param solicitante Jugador que solicita la compra de la casilla
      * @param banca La banca es el dueño de las casillas no compradas aún
      */
     public void comprarCasilla(Jugador solicitante, Jugador banca) {
-        solicitante.sumarGastos(this.valor); // El jugador paga a la banca
-        banca.sumarFortuna(this.valor); // La banca recibe el dinero
-        this.duenho = solicitante; // El nuevo dueño es el solicitante       
+        if(solicitante.getFortuna()>=this.valor && this.duenho==banca){
+            solicitante.sumarGastos(this.valor);
+            banca.sumarFortuna(this.valor);
+            banca.eliminarPropiedad(this);
+            solicitante.anhadirPropiedad(this);
+            this.duenho=solicitante;
+
+            System.out.println(solicitante.getNombre()+" ha comprado la propiedad "+this.getNombre()+" por el precio de "+this.valor);
+        
+        }
+        else if(this.duenho!=banca){
+            System.out.println("Esta casilla no está en venta");
+    
+        }
+
+        else{
+            System.out.println("No tienes dinero para comprar esta casilla");
+        }
+ 
     }
 
     /**Método para mostrar información sobre una casilla.
@@ -176,6 +281,10 @@ public class Casilla {
         return "Esta casilla no está en venta";
     }
 
+    public boolean esDuenhoCasilla(Jugador jugador, Casilla casilla){
+        if (casilla.duenho==jugador) return true;
+        else return false;
+    }
 
     //SECCIÓN DE GETTERS Y SETTERS
 
