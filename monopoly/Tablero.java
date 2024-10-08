@@ -40,18 +40,18 @@ public class Tablero {
     private void insertarLadoSur() {
         ArrayList<Casilla> ladoSur = new ArrayList<Casilla>();
         ladoSur.add(new Casilla("Salida","Especial",0,banca));
-        ladoSur.add(new Casilla(Valor.WHITE+"Solar 1"+Valor.RESET,"Solar",1,1000,banca));
+        ladoSur.add(new Casilla("Solar1","Solar",1,1000,banca));
         ladoSur.add(new Casilla("Caja","Caja de comunidad",2,banca));
-        ladoSur.add(new Casilla(Valor.WHITE+"Solar 2"+Valor.RESET,"Solar",3,1000,banca));
-        ladoSur.add(new Casilla("Imp 1",4,500,banca));
-        ladoSur.add(new Casilla("Trans 1","Transporte",5,2000,banca));
-        ladoSur.add(new Casilla(Valor.CYAN+"Solar 3"+Valor.RESET,"Solar",6,1000,banca));
+        ladoSur.add(new Casilla("Solar2","Solar",3,1000,banca));
+        ladoSur.add(new Casilla("Imp1",4,500,banca));
+        ladoSur.add(new Casilla("Trans1","Transporte",5,2000,banca));
+        ladoSur.add(new Casilla("Solar3","Solar",6,1000,banca));
         ladoSur.add(new Casilla("Suerte","Suerte",7,banca));
-        ladoSur.add(new Casilla(Valor.CYAN+"Solar 4"+Valor.RESET,"Solar",8,1000,banca));
-        ladoSur.add(new Casilla(Valor.CYAN+"Solar 5"+Valor.RESET,"Solar",9,1000,banca));
- 
+        ladoSur.add(new Casilla("Solar4","Solar",8,1000,banca));
+        ladoSur.add(new Casilla("Solar5","Solar",9,1000,banca));
+
         posiciones.add(ladoSur);
-        
+
         grupos.put("WHITE",new Grupo(getCasilla(1), getCasilla(3),"WHITE"));
         grupos.put("CYAN",new Grupo(getCasilla(6),getCasilla(8),getCasilla(9),"CYAN"));
     }
@@ -60,19 +60,19 @@ public class Tablero {
     private void insertarLadoOeste() {
         ArrayList<Casilla> ladoOeste = new ArrayList<Casilla>();
         ladoOeste.add(new Casilla("Carcel","Especial",10,banca));
-        ladoOeste.add(new Casilla(Valor.BLUE+"Solar 6"+Valor.RESET,"Solar",11,1000,banca));
+        ladoOeste.add(new Casilla("Solar6","Solar",11,1000,banca));
 
-        ladoOeste.add(new Casilla("Serv 1","Servicios",12,2500,banca));
-        ladoOeste.add(new Casilla(Valor.BLUE+"Solar 7"+Valor.RESET,"Solar",13,1000,banca));
-        ladoOeste.add(new Casilla(Valor.BLUE+"Solar 8"+Valor.RESET,"Solar",14,1000,banca));
-        ladoOeste.add(new Casilla("Trans 2","Transporte",15,2000,banca));
-        ladoOeste.add(new Casilla(Valor.YELLOW+"Solar 9"+Valor.RESET,"Solar",16,1000,banca));
+        ladoOeste.add(new Casilla("Serv1","Servicios",12,2500,banca));
+        ladoOeste.add(new Casilla("Solar7","Solar",13,1000,banca));
+        ladoOeste.add(new Casilla("Solar8","Solar",14,1000,banca));
+        ladoOeste.add(new Casilla("Trans2","Transporte",15,2000,banca));
+        ladoOeste.add(new Casilla("Solar9","Solar",16,1000,banca));
         ladoOeste.add(new Casilla("Caja","Caja de comunidad",17,banca));
-        ladoOeste.add(new Casilla(Valor.YELLOW+"Solar 10"+Valor.RESET,"Solar",18,1000,banca));
-        ladoOeste.add(new Casilla(Valor.YELLOW+"Solar 11"+Valor.RESET,"Solar",19,banca));
-        
+        ladoOeste.add(new Casilla("Solar10","Solar",18,1000,banca));
+        ladoOeste.add(new Casilla("Solar11","Solar",19,banca));
+
         posiciones.add(ladoOeste);
-        
+
         grupos.put("BLUE",new Grupo(getCasilla(11), getCasilla(13),getCasilla(14),"BLUE"));
         grupos.put("YELLOW",new Grupo(getCasilla(16), getCasilla(18),getCasilla(19),"YELLOW"));
     }
@@ -81,16 +81,16 @@ public class Tablero {
     private void insertarLadoNorte() {
         ArrayList<Casilla> ladoNorte = new ArrayList<Casilla>();
         ladoNorte.add(new Casilla("Parking","Especial",20,banca));
-        ladoNorte.add(new Casilla(Valor.BLACK+"Solar 12"+Valor.RESET,"Solar",21,1000,banca));
+        ladoNorte.add(new Casilla("Solar12","Solar",21,1000,banca));
         ladoNorte.add(new Casilla("Suerte","Suerte",22,banca));
-        ladoNorte.add(new Casilla(Valor.BLACK+"Solar 13"+Valor.RESET,"Solar",23,1000,banca));
-        ladoNorte.add(new Casilla(Valor.BLACK+"Solar 14"+Valor.RESET,"Solar",24,1000,banca));
-        ladoNorte.add(new Casilla("Trans 3","Transporte",25,2000,banca));
-        ladoNorte.add(new Casilla(Valor.GREEN+"Solar 15"+Valor.RESET,"Solar",26,1000,banca));
-        ladoNorte.add(new Casilla(Valor.GREEN+"Solar 16"+Valor.RESET,"Solar",27,1000,banca));
-        ladoNorte.add(new Casilla("Serv 2","Servicios",28,2500,banca));
-        ladoNorte.add(new Casilla(Valor.GREEN+"Solar 17"+Valor.RESET,"Solar",29,1000,banca));
-        
+        ladoNorte.add(new Casilla("Solar13","Solar",23,1000,banca));
+        ladoNorte.add(new Casilla("Solar14","Solar",24,1000,banca));
+        ladoNorte.add(new Casilla("Trans3","Transporte",25,2000,banca));
+        ladoNorte.add(new Casilla("Solar15","Solar",26,1000,banca));
+        ladoNorte.add(new Casilla("Solar16","Solar",27,1000,banca));
+        ladoNorte.add(new Casilla("Serv2","Servicios",28,2500,banca));
+        ladoNorte.add(new Casilla("Solar17","Solar",29,1000,banca));
+
         posiciones.add(ladoNorte);
 
         grupos.put("BLACK",new Grupo(getCasilla(21), getCasilla(23),getCasilla(24),"BLACK"));
@@ -102,19 +102,19 @@ public class Tablero {
     private void insertarLadoEste() {
         ArrayList<Casilla> ladoEste = new ArrayList<Casilla>();
         ladoEste.add(new Casilla("IrCarcel","Especial",30,banca));
-        ladoEste.add(new Casilla(Valor.RED+"Solar 18"+Valor.RESET,"Solar",31,1000,banca));
-        ladoEste.add(new Casilla(Valor.RED+"Serv 19"+Valor.RESET,"Servicios",32,2500,banca));
+        ladoEste.add(new Casilla("Solar18","Solar",31,1000,banca));
+        ladoEste.add(new Casilla("Serv19","Servicios",32,2500,banca));
         ladoEste.add(new Casilla("Caja","Caja de comunidad",33,banca));
-        ladoEste.add(new Casilla(Valor.RED+"Solar 20"+Valor.RESET,"Solar",34,1000,banca));
-        ladoEste.add(new Casilla("Trans 4","Transporte",35,2000,banca));
+        ladoEste.add(new Casilla("Solar20","Solar",34,1000,banca));
+        ladoEste.add(new Casilla("Trans4","Transporte",35,2000,banca));
         ladoEste.add(new Casilla("Suerte","Suerte",36,banca));
-        ladoEste.add(new Casilla(Valor.PURPLE+"Solar 21"+Valor.RESET,"Solar",37,1000,banca));
-        ladoEste.add(new Casilla("Imp 2",38,500,banca));
-        ladoEste.add(new Casilla(Valor.PURPLE+"Solar 22"+Valor.RESET,"Solar",39,1000,banca));
-        
-        
+        ladoEste.add(new Casilla("Solar21","Solar",37,1000,banca));
+        ladoEste.add(new Casilla("Imp2",38,500,banca));
+        ladoEste.add(new Casilla("Solar22","Solar",39,1000,banca));
+
+
         posiciones.add(ladoEste);
-        
+
         grupos.put("RED",new Grupo(getCasilla(31), getCasilla(32),getCasilla(34),"RED"));
         grupos.put("PURPLE",new Grupo(getCasilla(37), getCasilla(39),"PURPLE"));
     }
@@ -149,14 +149,60 @@ public class Tablero {
         return(cadena);
     }
 
+    /**Método que devuelve el nombre de una casilla coloreado si así le corresponde
+     * @param casilla Casilla cuyo nombre hay que colorear (se presupone que es un Solar)
+     */
+    public String colorearNombre(Casilla casilla) {
+        String nombreColoreado = new String();
+
+        //Escogemos el color en función del grupo al que pertenece la casilla
+        if(casilla.getGrupo()!=null) {
+            switch (casilla.getGrupo().getColorGrupo()) {
+                case "BLACK":
+                    nombreColoreado = Valor.BLACK;
+                    break;
+                case "RED":
+                    nombreColoreado = Valor.RED;
+                    break;
+                case "GREEN":
+                    nombreColoreado = Valor.GREEN;
+                    break;
+                case "YELLOW":
+                    nombreColoreado = Valor.YELLOW;
+                    break;
+                case "BLUE":
+                    nombreColoreado = Valor.BLUE;
+                    break;
+                case "PURPLE":
+                    nombreColoreado = Valor.PURPLE;
+                    break;
+                case "CYAN":
+                    nombreColoreado = Valor.CYAN;
+                    break;
+                case "WHITE":
+                    nombreColoreado = Valor.WHITE;
+                    break;
+                default:
+                    System.out.println(casilla.getNombre() + " no es una casilla de tipo Solar.\n");
+                    nombreColoreado = "";
+                    break;
+            }
+        }
+        else {
+            System.out.println("Que ostia pasa con la casilla " + casilla.getNombre() + ".\n");
+        }
+        nombreColoreado += casilla.getNombre() + Valor.RESET;
+
+        return nombreColoreado;
+    }
+
     /**Método que devuelve las fichas de una casilla.
      * Una ficha en una casilla se identifica con "&@" donde @ es su caracter identificador (mayúscula entre A y Z).
      * Si hubiese varios jugadores en la misma casilla devuelve "&@@@..." donde cada @ es un identificador (máximo 6).
-     * @param nombre_casilla Nombre de la casilla
+     * @param casilla Nombre de la casilla
      */
-    public String fichas(String nombre_casilla) {//PASAMOS EL NOMBRE DE LA CASILLA
+    public String fichas(Casilla casilla) {//PASAMOS EL NOMBRE DE LA CASILLA
         //Variables que vamos a necesitar
-        Casilla casilla = encontrar_casilla(nombre_casilla);    //Encontramos la casilla a partir del nombre
         int nj=casilla.getAvatares().size();    //Vemos cuántos jugadores hay en la casilla con .size()
         String fichas = "";
 
@@ -167,7 +213,7 @@ public class Tablero {
             fichas += "&";
             int i;
             for(i=0;i<nj;i++) {
-                fichas += casilla.getAvatares().get(i);   //Vamos imprimiendo cada identificador después del &
+                fichas += casilla.getAvatares().get(i).getId();   //Vamos imprimiendo cada identificador después del &
             }
             fichas += conEspacios(Valor.NCHARS_CASILLA-i-1);   //Rellenamos el resto con espacios
         }
@@ -179,18 +225,16 @@ public class Tablero {
      * Formato: Nombre casilla + Espacios + Barra.
      * El número de espacios varía para que la cadena entera mida 8 caracteres (=Valor.NCHARS_CASILLA).
      * Si Nombre casilla ya mide 8 caracteres no se añaden espacios.
-     * @param nombre_casilla Nombre de la casilla
+     * @param casilla Nombre de la casilla
      */
-    public String formatoNombre(String nombre_casilla) {
+    public String formatoNombre(Casilla casilla) {
         String nombreConFormato = new String();
 
-        //Cuidado: los strings de casillas coloreadas miden más que el nombre por las cadenas para colorear
-        int i=nombre_casilla.length();
-        if(i<9) /*Casilla con nombre sin color*/ {
-            nombreConFormato = nombre_casilla + conEspacios(Valor.NCHARS_CASILLA-nombre_casilla.length()) + Valor.BARRA;
+        if(casilla.getTipo().equals("Solar")) {
+            nombreConFormato = colorearNombre(casilla) + conEspacios(Valor.NCHARS_CASILLA-casilla.getNombre().length()) + Valor.BARRA;
         }
-        else /*Casilla con nombre coloreado: 9 = longitud de "\u001B[30m" + "\u001B[0m" */ {
-            nombreConFormato = nombre_casilla + conEspacios(Valor.NCHARS_CASILLA-nombre_casilla.length()+9) + Valor.BARRA;
+        else {
+            nombreConFormato = casilla.getNombre() + conEspacios(Valor.NCHARS_CASILLA-casilla.getNombre().length()) + Valor.BARRA;
         }
 
         return nombreConFormato;
@@ -200,11 +244,11 @@ public class Tablero {
      * Formato: Nombre casilla + Espacios + Barra.
      * El número de espacios varía para que la cadena entera mida 9 caracteres (=Valor.NCHARS_CASILLA).
      * Si Nombre casilla + Barra ya mide 9 caracteres no se añaden espacios.
-     * @param nombre_casilla Nombre de la casilla
+     * @param casilla Nombre de la casilla
      */
-    public String formatoFichas(String nombre_casilla) {
+    public String formatoFichas(Casilla casilla) {
         String nombreConFormato = new String();
-        nombreConFormato = Valor.SUBRAYADO + fichas(nombre_casilla) + Valor.RESET + Valor.BARRA;
+        nombreConFormato = Valor.SUBRAYADO + fichas(casilla) + Valor.RESET + Valor.BARRA;
         return nombreConFormato;
     }
 
@@ -235,16 +279,16 @@ public class Tablero {
         tabla += Valor.BARRA;   //Borde izquierdo (no equivale a una casilla)
         //Lado norte entero
         for (i=20; i<30; i++) {
-            tabla += formatoNombre(getCasilla(i).getNombre());
+            tabla += formatoNombre(getCasilla(i));
         }
-        tabla += formatoNombre(getCasilla(30).getNombre()) + "\n";   //Primera casilla del lado este
+        tabla += formatoNombre(getCasilla(30)) + "\n";   //Primera casilla del lado este
 
         //Imprimimos la TERCERA LÍNEA: parte inferior de la primera fila de casillas
         tabla += Valor.BARRA;
         for (i=20; i<30; i++) {
-            tabla += formatoFichas(getCasilla(i).getNombre());   //Lado norte entero
+            tabla += formatoFichas(getCasilla(i));   //Lado norte entero
         }
-        tabla += formatoFichas(getCasilla(30).getNombre()) + "\n";   //Primera casilla del lado este
+        tabla += formatoFichas(getCasilla(30)) + "\n";   //Primera casilla del lado este
 
         //De la LÍNEA Nº4 hasta la LÍNEA Nº20 se van imprimiendo con el siguiente FOR
         //Sobre el índice correspondiente de la casilla que toca imprimir en cada lado:
@@ -255,57 +299,57 @@ public class Tablero {
             if (i%2!=0) /**LÍNEAS IMPARES: parte superior de la fila de casillas correspondientes*/ {
 
                 tabla += Valor.BARRA;
-                tabla += formatoNombre(posiciones.get(1).get(10-(i-1)/2).getNombre());  //Casilla de la izquierda
+                tabla += formatoNombre(posiciones.get(1).get(10-(i-1)/2));  //Casilla de la izquierda
 
                 //Añadimos los espacios del medio (se resta 1 porque hay un borde antes de la siguiente casilla)
                 int nesp = (Valor.NCASILLAS_POR_FILA-2)*(Valor.NCHARS_CASILLA+1)-1;   //Pa que se vea un poco mejor
                 tabla += conEspacios(nesp);
 
                 //Barra + Casilla de la derecha
-                tabla += Valor.BARRA + formatoNombre(posiciones.get(3).get((i-1)/2).getNombre()) + "\n";
+                tabla += Valor.BARRA + formatoNombre(posiciones.get(3).get((i-1)/2)) + "\n";
 
             }
             else /**LÍNEAS PARES: parte inferior de la fila de casillas correspondientes*/ {
 
                 tabla += Valor.BARRA;
-                tabla += formatoFichas(posiciones.get(1).get(11-i/2).getNombre());  //Casilla de la izquierda
+                tabla += formatoFichas(posiciones.get(1).get(11-i/2));  //Casilla de la izquierda
 
                 //Añadimos los espacios del medio (se resta 1 porque hay un borde antes de la siguiente casilla)
                 int nesp = (Valor.NCASILLAS_POR_FILA-2)*(Valor.NCHARS_CASILLA+1)-1;   //Pa que se vea un poco mejor
                 tabla += conEspacios(nesp);
 
                 //Barra + Casilla de la derecha
-                tabla += Valor.BARRA + formatoFichas(posiciones.get(3).get(i/2-1).getNombre()) + "\n";
+                tabla += Valor.BARRA + formatoFichas(posiciones.get(3).get(i/2-1)) + "\n";
 
             }
         }
 
         //Imprimimos la LÍNEA 21: parte inferior de la penúltima fila de casillas
         tabla += Valor.BARRA;
-        tabla += formatoFichas(getCasilla(11).getNombre());  //Casilla de la izquierda
+        tabla += formatoFichas(getCasilla(11));  //Casilla de la izquierda
         //Añadimos los espacios del medio: EN ESTE CASO LOS ESPACIO VAN SUBRAYADOS PARA HACER DE BORDE SUPERIOR
         for(i=0;i<Valor.NCASILLAS_POR_FILA-3;i++) {
             tabla += Valor.CASILLA_VACIA + " ";
         }
         tabla += Valor.CASILLA_VACIA + Valor.BARRA;   //El espacio más a la derecha va con barra
         //Barra + Casilla de la derecha
-        tabla += formatoFichas(getCasilla(39).getNombre()) + "\n";
+        tabla += formatoFichas(getCasilla(39)) + "\n";
 
         //Imprimimos la LÍNEA 22: parte superior de última fila de casillas
         tabla += Valor.BARRA;
-        tabla += formatoNombre(getCasilla(10).getNombre());   //Primera casilla del lado oeste
+        tabla += formatoNombre(getCasilla(10));   //Primera casilla del lado oeste
         //Lado Sur entero (nótese que está al revés)
         for (i=9; i>=0; i--) {
-            tabla += formatoNombre(getCasilla(i).getNombre());
+            tabla += formatoNombre(getCasilla(i));
         }
         tabla += "\n";
 
         //Imprimimos la LÍNEA 23: parte inferior de la última fila de casillas
         tabla += Valor.BARRA;
-        tabla += formatoFichas(getCasilla(10).getNombre());   //Primera casilla del lado oeste
+        tabla += formatoFichas(getCasilla(10));   //Primera casilla del lado oeste
         //Lado Sur entero (nótese que está al revés)
         for (i=9; i>=0; i--) {
-            tabla += formatoFichas(getCasilla(i).getNombre());
+            tabla += formatoFichas(getCasilla(i));
         }
         tabla += "\n";
 
