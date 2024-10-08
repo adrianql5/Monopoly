@@ -207,56 +207,115 @@ public class Menu {
 
     /**Método que ejecuta todas las acciones relacionadas con el comando 'lanzar dados'.*/
     private void lanzarDados() {
-        System.out.println("{");
+
         Jugador jugador = obtenerTurno();
         Avatar avatar = jugador.getAvatar();
-        int resultado1 = dado1.tirarDado();
-        int resultado2 = dado2.tirarDado();
-        Casilla salida = avatar.getLugar();
-        if(resultado2 ==resultado1){
-            if (jugador.isEnCarcel()){
-                System.out.println("Sales de la carcel");
-                jugador.setEnCarcel(false);
+        if (!this.tirado) {
+            System.out.println("{");
+            this.tirado = true;
+            int salida_posicion = jugador.getAvatar().getLugar().getPosicion();
+
+
+            int resultado1 = dado1.tirarDado();
+            int resultado2 = dado2.tirarDado();
+            System.out.println("Dado 1 =" + resultado1 + "  Dado 2 =" + resultado2);
+            Casilla salida = avatar.getLugar();
+            if (resultado2 == resultado1) {
+                System.out.println("DOBLES");
+                if (jugador.isEnCarcel()) {
+                    System.out.println("Sales de la carcel");
+                    jugador.setEnCarcel(false);
+                    this.tirado = false; // Permitir que vuelva a tirar si sale de la cárcel
+                    return; // Detener la ejecución aquí
+                }
+                this.tirado = false;
+            } else if (jugador.isEnCarcel()) {
+
+                System.out.println("Continúas en la carcel.");
+                jugador.sumarTiradaCarcel();
+                System.out.println("}");
+                return;
             }
-        }
-        else if (jugador.isEnCarcel()) {
+            int suma_ambas = resultado1 + resultado2;
 
-            System.out.println("Continúas en la carcel.");
-            jugador.sumarTiradaCarcel();
+
+            avatar.moverAvatar(tablero.getPosiciones(), suma_ambas);
+
+            Casilla destino = avatar.getLugar();
+
+            System.out.println("El avatar " + avatar.getId() + " avanza " + (suma_ambas) + " casillas desde " + salida.getNombre() + " hasta " + destino.getNombre());
+
+            if (avatares.get(turno).getLugar().getNombre().equals("IrCarcel")) {
+                jugadores.get(turno).encarcelar(tablero.getPosiciones());
+
+
+                int destino_posicion = jugador.getAvatar().getLugar().getPosicion();
+
+                if (salida_posicion - destino_posicion > 0) {
+                    System.out.println("¡Al pasar por la salida Ganaste " + Valor.SUMA_VUELTA + "!");
+                    jugador.sumarFortuna(Valor.SUMA_VUELTA);
+                    jugador.sumarVuelta();
+                }
+
+            }
+            if (!this.tirado) {
+                System.out.println("Puedes volver a tirar");
+
+            }
             System.out.println("}");
-            return;}
-        int suma_ambas = resultado1 + resultado2;
 
-
-        avatar.moverAvatar(tablero.getPosiciones(),  suma_ambas);
-
-        Casilla destino = avatar.getLugar();
-
-        System.out.println("El avatar " + avatar.getId() + " avanza " + (suma_ambas) + " casillas desde " + salida.getNombre() + " hasta " + destino.getNombre());
-
-        if (destino.getNombre().equals("IrCarcel")){
-            Casilla carcel = tablero.encontrar_casilla("Carcel"); // Asumiendo que existe la función en Tablero
-
-            jugador.getAvatar().setLugar(carcel);
-            jugador.setEnCarcel(true);
         }
+        else {
+            System.out.println("{");
+            System.out.println("Ya has tirador");
+            System.out.println("}");
 
-        System.out.println("}");
+        }
     }
-
     /**Método que ejecuta todas las acciones relacionadas con el comando 'salir carcel'. */
     private void salirCarcel() {//saca al avatar de la carcel
         /*
          * Maria paga 500000€ y sale de la cárcel. Puede lanzar los dados.
          */
+        if (this.jugadores.get(turno).isEnCarcel()) {
+            if (!this.tirado) {
+                this.tirado = false;
+                this.jugadores.get(turno).setEnCarcel(false);
+                this.jugadores.get(turno).sumarFortuna(-Valor.DINERO_SALIR_CARCEL);
+                // Imprimir el valor de DINERO_SALIR_CARCEL
+                System.out.printf("Pago salir de la cárcel: %,.0f%n", Valor.DINERO_SALIR_CARCEL);
 
+                // Imprimir el nombre del jugador y su fortuna actual
+                System.out.printf("El jugador %s tiene %,.0f de fortuna actual.%n",
+                        this.jugadores.get(turno).getNombre(),
+                        this.jugadores.get(turno).getFortuna());
+            } else {
+                System.out.println("Ya has lanzado los dados.");
+            }
+
+        } else System.out.println("El jugador " + this.jugadores.get(turno).getNombre() + " no está en la cárcel.");
     }
 
+
     /**Método que realiza las acciones asociadas al comando 'acabar turno'.*/
-    private void acabarTurno() {//estoy cambia del avatar actual al siguiente y devuelve esto
-        /*
-         * El jugador actual es Maria. donde maría es el siguiente jugador
-         */
+    private void acabarTurno() {
+        // Comprobar si el jugador actual ya lanzó los dados en su turno
+        if (this.tirado) {
+            this.tirado = false; // Reiniciar el estado de "tirado"
+            this.lanzamientos = 0; // Reiniciar los lanzamientos
+
+            // Incrementar el turno y asegurar que no exceda el tamaño del array
+            this.turno += 1;
+            if (this.turno >= this.jugadores.size()) {
+                this.turno = 0; // Reiniciar el turno si llegamos al final de la lista
+            }
+
+            // Imprimir el nombre del nuevo jugador actual
+            System.out.println("El jugador actual es: " + this.jugadores.get(turno).getNombre());
+        } else {
+            // Si no ha tirado los dados aún, informar al jugador
+            System.out.println("No has lanzado los dados este turno");
+        }
     }
 
     /**Método que realiza las acciones asociadas al comando 'ver tablero'*/
@@ -313,27 +372,34 @@ public class Menu {
      */
     private void avanzar(int n) {
         System.out.println("{");
-        Jugador jugador = obtenerTurno();
-        Avatar avatar = jugador.getAvatar();
+        if(!tirado){
+            Jugador jugador = obtenerTurno();
+            Avatar avatar = jugador.getAvatar();
+            tirado = true;
 
-        Casilla salida = avatar.getLugar();
+            Casilla salida = avatar.getLugar();
 
 
-        jugador.sumarTiradaCarcel();
+            jugador.sumarTiradaCarcel();
 
-        avatar.moverAvatar(tablero.getPosiciones(),  n);
+            avatar.moverAvatar(tablero.getPosiciones(),  n);
 
-        Casilla destino = avatar.getLugar();
+            Casilla destino = avatar.getLugar();
 
-        System.out.println("El avatar " + avatar.getId() + " avanza " + (n) + " casillas desde " + salida.getNombre() + " hasta " + destino.getNombre());
+            System.out.println("El avatar " + avatar.getId() + " avanza " + (n) + " casillas desde " + salida.getNombre() + " hasta " + destino.getNombre());
 
-        if (destino.getNombre().equals("IrCarcel")){
-            Casilla carcel = tablero.encontrar_casilla("Carcel"); // Asumiendo que existe la función en Tablero
+            if (avatares.get(turno).getLugar().getNombre().equals("IrCarcel")) {
+                jugadores.get(turno).encarcelar(tablero.getPosiciones());
+            }
+        }
+        else {
 
-            jugador.getAvatar().setLugar(carcel);
-            jugador.setEnCarcel(true);
+            System.out.println("Ya has tirador");
+            System.out.println("}");
+
         }
     }
+
 
     /**Método que ejecuta todas las acciones realizadas con el comando 'comprar nombre_casilla'.
      * @param nombre Cadena de caracteres con el nombre de la casilla.

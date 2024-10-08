@@ -83,17 +83,10 @@ public class Jugador {
     /*Método para establecer al jugador en la cárcel.
      * Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).*/
     public void encarcelar(ArrayList<ArrayList<Casilla>> pos) {
-        for (ArrayList<Casilla> fila : pos) {
-            for (Casilla casilla : fila) {
-                if (casilla.getNombre().equals("Carcel")) {  // Buscar la casilla de cárcel por nombre
-                    this.enCarcel = true;                    // Marcar al jugador como en cárcel
-                    this.avatar.setLugar(casilla);           // Establecer directamente la casilla de cárcel como su nueva ubicación
-                    this.tiradasCarcel = 0;                  // Reiniciar contador de tiradas en cárcel
-                    System.out.println(this.nombre + " ha sido encarcelado.");
-                    return;
-                }
-            }
-        }
+        this.avatar.getLugar().eliminarAvatar(this.avatar);
+        this.avatar.setLugar(pos.get(1).get(0));
+        this.enCarcel = true;
+        this.avatar.getLugar().anhadirAvatar(this.avatar);
     }
     public void sumarVuelta(){
         vueltas++;
