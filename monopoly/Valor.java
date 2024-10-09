@@ -2,14 +2,10 @@ package monopoly;
 
 
 public class Valor {
+    //Estos 3 venían dados
     public static final float FORTUNA_BANCA = 372642563;
     public static final float FORTUNA_INICIAL = 9543076.28f;
     public static final float SUMA_VUELTA = 1301328.584f; //Se aproxima a la media de los precios de los solares del tablero.
-    public static final float SOLAR_BASE = 1200000;
-    public static final double INCREMENTO = 1.3;
-    public static final float DINERO_INICIAL =  9543076;
-    public static final float DINERO_VUELTA =  1301328;
-    public static final float DINERO_SALIR_CARCEL =  325332;
 
     //Colores del texto:
     //Curiosidad: \u001B equivale a 1 caracter (ESC)
@@ -22,12 +18,27 @@ public class Valor {
     public static final String PURPLE = "\u001B[35m";
     public static final String CYAN = "\u001B[36m";
     public static final String WHITE = "\u001B[37m";
+
+    //A PARTIR DE AQUÍ TODO LO AÑADIMOS NOSOTROS
     public static final String BOLD_STRING = "\u001B[1m";
     public static final String SUBRAYADO = "\u001B[4m";
- 
+
+    //Valores iniciales de los solares
+    //Información importante: aunque sea una fórmula sólo se calcula una vez, no cada vez que se accede
+    public static final float INCREMENTO = 1.3f;
+    public static final float GRUPO1 = 1200000f;
+    public static final float GRUPO2 = Valor.GRUPO1 * Valor.INCREMENTO;
+    public static final float GRUPO3 = Valor.GRUPO2 * Valor.INCREMENTO;
+    public static final float GRUPO4 = Valor.GRUPO3 * Valor.INCREMENTO;;
+    public static final float GRUPO5 = Valor.GRUPO4 * Valor.INCREMENTO;;
+    public static final float GRUPO6 = Valor.GRUPO5 * Valor.INCREMENTO;;
+    public static final float GRUPO7 = Valor.GRUPO6 * Valor.INCREMENTO;;
+    public static final float GRUPO8 = Valor.GRUPO7 * Valor.INCREMENTO;;
+
+    public static final float DINERO_SALIR_CARCEL =  325332f;
+
 
     //Constantes auxiliares para imprimir la tabla:
-
     /**Número de casillas por fila (incluyendo ambas esquinas).*/
     public static final int NCASILLAS_POR_FILA = 11;
     /**Número de caracteres de una casilla (SIN CONTAR EL BORDE DERECHO).
