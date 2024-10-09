@@ -12,7 +12,7 @@ public class Menu {
     //Atributos
     private ArrayList<Jugador> jugadores; //Jugadores de la partida.
     private ArrayList<Avatar> avatares; //Avatares en la partida.
-    private int turno = -1; //Índice correspondiente a la posición en el arrayList del jugador (y el avatar) que tienen el turno
+    private int turno; //Índice correspondiente a la posición en el arrayList del jugador (y el avatar) que tienen el turno
     private int lanzamientos; //Variable para contar el número de lanzamientos de un jugador en un turno.
     private Tablero tablero; //Tablero en el que se juega.
     private Dado dado1; //Dos dados para lanzar y avanzar casillas.
@@ -23,21 +23,23 @@ public class Menu {
 
     private boolean partidaTerminada =false;
 
+    //Hay que asignar un valor por defecto para cada atributo
     public Menu(){
-        iniciarPartida();
+        this.jugadores = new ArrayList<Jugador>();
+        this.avatares = new ArrayList<Avatar>();
+        this.turno = -1; //Aún no ha empezado la partida
+        this.lanzamientos = 0;
+        this.banca = new Jugador();
+        this.tablero=new Tablero(this.banca);
+        this.dado1= new Dado();
+        this.dado2= new Dado();
+        this.tirado=false;
+        this.solvente=true;
     }
 
 
     // Método para inciar una partida: crea los jugadores y avatares.
-    private void iniciarPartida() {
-        //Reservamos memoria para objetos que hacen falta
-        this.dado1= new Dado();
-        this.dado2= new Dado();
-        Jugador banca = new Jugador();
-        this.jugadores = new ArrayList<Jugador>();
-        this.avatares = new ArrayList<Avatar>();
-        this.tablero=new Tablero(banca);
-
+    public void iniciarPartida() {
         //Creamos un escaneador para introducir comandos
         Scanner scan= new Scanner(System.in);
 

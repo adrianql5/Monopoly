@@ -22,13 +22,6 @@ public class Tablero {
     public Tablero(Jugador banca) {
         this.banca=banca;
         this.grupos = new HashMap<String,Grupo>();
-        generarCasillas(); 
-    }
-
-
-
-    /**Método para crear todas las casillas del tablero. Formado a su vez por cuatro métodos (1/lado).*/
-    private void generarCasillas() {
         this.posiciones = new ArrayList<ArrayList<Casilla>>();
         this.insertarLadoSur();
         this.insertarLadoOeste();
@@ -155,6 +148,13 @@ public class Tablero {
         return valor_solar;
     }
 
+    /**Método para subrayar texto.
+     * @param texto Texto que hay que subrayar
+     */
+    public String subrayar(String texto) {
+        String textoSubrayado =Valor.SUBRAYADO + texto + Valor.RESET;
+        return textoSubrayado;
+    }
 
     /**Método para crear cadenas de espacios
      * @param n Número de espacios en blanco que se quieren
@@ -269,7 +269,7 @@ public class Tablero {
      */
     public String formatoFichas(Casilla casilla) {
         String nombreConFormato = new String();
-        nombreConFormato = Valor.SUBRAYADO + fichas(casilla) + Valor.RESET + Valor.BARRA;
+        nombreConFormato = subrayar(fichas(casilla)) + Valor.BARRA;
         return nombreConFormato;
     }
 
@@ -292,7 +292,7 @@ public class Tablero {
         //Imprimimos la PRIMERA LÍNEA: el borde superior
         tabla += " ";
         for(i=0;i<Valor.NCASILLAS_POR_FILA;i++) {
-            tabla += Valor.CASILLA_VACIA + " ";
+            tabla += subrayar(Valor.CASILLA_VACIA) + " ";
         }
         tabla += "\n";
 
@@ -376,9 +376,9 @@ public class Tablero {
         tabla += formatoFichas(getCasilla(11));  //Casilla de la izquierda
         //Añadimos los espacios del medio: EN ESTE CASO LOS ESPACIO VAN SUBRAYADOS PARA HACER DE BORDE SUPERIOR
         for(i=0;i<Valor.NCASILLAS_POR_FILA-3;i++) {
-            tabla += Valor.CASILLA_VACIA + " ";
+            tabla += subrayar(Valor.CASILLA_VACIA) + " ";
         }
-        tabla += Valor.CASILLA_VACIA + Valor.BARRA;   //El espacio más a la derecha va con barra
+        tabla += subrayar(Valor.CASILLA_VACIA) + Valor.BARRA;   //El espacio más a la derecha va con barra
         //Barra + Casilla de la derecha
         tabla += formatoFichas(getCasilla(39)) + "\n";
 

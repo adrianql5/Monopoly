@@ -35,7 +35,7 @@ public class Valor {
      */
     public static final int NCHARS_CASILLA = 8;
     public static final String BARRA = "|";     //No es necesario pero por si queremos cambiarlo en algún momento
-    public static final String CASILLA_VACIA = "\u001B[4m        \u001B[0m";
+    public static final String CASILLA_VACIA = "        ";
 
     //Algunas cadenas que pueden ser útiles
     public static final String TEXTO_BIENVENIDA =
