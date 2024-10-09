@@ -413,7 +413,7 @@ public class Menu {
     private void comprar(String nombre) { //REVISAR
         Casilla c=tablero.encontrar_casilla(nombre);
         if(this.tirado || lanzamientos>0){
-            c.comprarCasilla(this.jugadores.get(turno), this.jugadores.get(0));//le paso el jugador que tiene el turno y eljugador 0 (la banca)
+            c.comprarCasilla(this.jugadores.get(turno), this.banca);//le paso el jugador que tiene el turno y eljugador 0 (la banca)
         }
     }
 

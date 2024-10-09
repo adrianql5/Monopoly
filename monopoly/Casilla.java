@@ -1,7 +1,6 @@
 package monopoly;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import partida.*;
 
@@ -389,8 +388,7 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
     public boolean esPosibleComprar(Jugador j) {
         if(this.duenho.esBanca() && 
         (this.tipo.equals("Solar")|| this.tipo.equals("Transporte")||
-        this.tipo.equals("Servicio")) && j.getAvatar().getLugar().equals(this)
-         && this.duenho!=j){
+        this.tipo.equals("Servicio")) && j.getAvatar().getLugar().equals(this) && this.duenho!=j){
             return true;
         }
         return false;
