@@ -15,10 +15,6 @@ class Grupo {
 
     //Sección Construir Grupos
 
-    //Constructor vacío.
-    public Grupo() {
-    }
-
     /**Constructor para cuando el grupo está formado por DOS CASILLAS.
      * @param cas1 Casilla miembro 1
      * @param cas2 Casilla miembro 2

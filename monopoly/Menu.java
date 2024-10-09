@@ -12,7 +12,7 @@ public class Menu {
     //Atributos
     private ArrayList<Jugador> jugadores; //Jugadores de la partida.
     private ArrayList<Avatar> avatares; //Avatares en la partida.
-    private int turno = 0; //Índice correspondiente a la posición en el arrayList del jugador (y el avatar) que tienen el turno
+    private int turno = -1; //Índice correspondiente a la posición en el arrayList del jugador (y el avatar) que tienen el turno
     private int lanzamientos; //Variable para contar el número de lanzamientos de un jugador en un turno.
     private Tablero tablero; //Tablero en el que se juega.
     private Dado dado1; //Dos dados para lanzar y avanzar casillas.
@@ -22,7 +22,6 @@ public class Menu {
     private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente, es decir, si ha pagado sus deudas.
 
     private boolean partidaTerminada =false;
-    private boolean partidaEmpezada = false;
 
     public Menu(){
         iniciarPartida();
@@ -31,32 +30,70 @@ public class Menu {
 
     // Método para inciar una partida: crea los jugadores y avatares.
     private void iniciarPartida() {
+        //Reservamos memoria para objetos que hacen falta
         this.dado1= new Dado();
         this.dado2= new Dado();
         Jugador banca = new Jugador();
-
         this.jugadores = new ArrayList<Jugador>();
         this.avatares = new ArrayList<Avatar>();
-        
-        //lathis.jugadores.add(banca);
-       // this.avatares.add(null);
-
         this.tablero=new Tablero(banca);
-        
-        this.turno=0;
+
+        //Creamos un escaneador para introducir comandos
         Scanner scan= new Scanner(System.in);
-        
-        System.out.println("La partida ha iniciado, esperamos que disfruteis la experiencia.");
 
+        //Antes de empezar la partida hay que crear los jugadores
+        //System.out.println(Valor.TEXTO_BIENVENIDA);
+        setTextoTablero(Valor.TEXTO_BIENVENIDA);
+        verTablero();
 
-        while (!partidaTerminada){
-            System.out.println("\n ");
-            analizarComando(scan.nextLine());
+        //Bucle para crear los jugadores (máximo 6)
+        //Dentro del propio bucle se empieza la partida
+        int i=0;
+        while(!partidaTerminada) {
+
+            String comando_entero = scan.nextLine();
+            String[] comando = comando_entero.split(" ");
+
+            //IMPORTANTE comprobar la longitud para no acceder a un índice que no existe
+            if (comando.length==4 && "crearjugador".equals(comando[0] + comando[1])) {
+                if(i<6) {
+                    crearJugador(comando[2], comando[3]);
+                    i++;
+                }
+                else {
+                    System.out.println("¡No se pueden crear más de 6 jugadores! Empieza la partida con el comando " +
+                            Valor.BOLD_STRING + "empezar partida" + Valor.RESET + ".");
+                }
+            }
+            else if ("empezar partida".equals(comando_entero)) {
+
+                if(i!=0) {
+                    this.turno = 0; //El primer jugador creado tiene el turno
+                    System.out.println("¡Que comienze la partida!\nEs el turno de " + obtenerTurno().getNombre() +
+                            ". Puedes tirar los dados con el comando " + Valor.BOLD_STRING + "lanzar dados" +
+                            Valor.RESET + ".");
+
+                    //Empezamos la partida ahora que ya tenemos los jugadores
+                    setTextoTablero(Valor.LISTA_COMANDOS);
+
+                    while (!partidaTerminada) {
+                        System.out.println();
+                        analizarComando(scan.nextLine());
+                    }
+                }
+                else {
+                    System.out.println("Amig@ habrá que crear algún jugador antes de empezar no crees?");
+                }
+
+            } else {
+                System.out.println("Usa " + Valor.BOLD_STRING + "crear jugador <tuNombre> <tipoJugador>" + Valor.RESET +
+                        " o introduce " + Valor.BOLD_STRING + "empezar partida" + Valor.RESET + " si ya no quieres crear más.");
+            }
 
         }
+        //Acabouse, liberar memoria estaría duro
         scan.close();
         terminarPartida();
-
     }
 
     private void terminarPartida(){
@@ -73,13 +110,10 @@ public class Menu {
         switch(comando_entero){
             //Primer bloque de comandos: no dependen de una instancia
 
-            case "terminar":
+            //Acabar la partida
+            case "terminar partida":
+            case "acabar partida":
                 partidaTerminada= true;
-                break;
-
-
-            case "iniciar":
-                iniciarPartida();
                 break;
 
             //Indicar jugador que tiene el turno
@@ -127,8 +161,9 @@ public class Menu {
             default:
                 //Dividimos el comando en partes
                 String[] comando=comando_entero.split(" ");
-                //REVISAR COMO SE COMPRUEBAN LOS ERRORES
 
+                //IMPORTANTE hacer las comprobaciones en función del número de palabras del comando
+                //Si no podría darse el caso de querer acceder a un índice que no existe
                 if(comando.length==2) {
 
                     //Podría ser uno de los siguientes:
@@ -155,9 +190,14 @@ public class Menu {
                             break;
 
                         default:
-                            System.out.println(comando_entero + " no es un comando válido.\n");
+                            System.out.println(comando_entero + " no es un comando válido.");
                             break;
                     }
+                }
+                //Mucho ojo que puede usarse con varios nombres a la vez (comando.length() varía hasta 8 máximo)
+                //Al llegar aquí ya se sabe que comando.length es como mínimo 3
+                else if("describirjugador".equals(comando[0]+comando[1]) && comando.length<9) {
+                    descJugador(comando); //El método pide que se pasen las partes del comando ojo!
                 }
                 else if(comando.length==3) {
 
@@ -165,26 +205,12 @@ public class Menu {
                     if("describiravatar".equals(comando[0]+comando[1])) {
                         descAvatar(comando[2]);
                     }
-                    else if("describirjugador".equals(comando[0]+comando[1])) {
-                        descJugador(comando); //El método pide que se pasen todas las partes aunque sólo haga falta un String
-                    }
                     else {
-                        System.out.println(comando_entero + " no es un comando válido.\n");
-                    }
-                }
-                else if(comando.length==4) {
-
-                    //De momento solo hay un comando de cuatro palabras:
-                    if("crearjugador".equals(comando[0]+comando[1])) {
-                        crearJugador(comando[2],comando[3]);
-                        break;
-                    }
-                    else {
-                        System.out.println(comando_entero + " no es un comando válido.\n");
+                        System.out.println(comando_entero + " no es un comando válido.");
                     }
                 }
                 else {
-                    System.out.println(comando_entero + " no es un comando válido.\n");
+                    System.out.println(comando_entero + " no es un comando válido.");
                 }
 
         }
@@ -200,8 +226,8 @@ public class Menu {
 
         // Imprimir el nombre y el avatar en el formato requerido
         System.out.println("{");
-        System.out.println("    nombre: " + jugador.getNombre() + ",");
-        System.out.println("    avatar: " + jugador.getAvatar().getId());
+        System.out.println("\tnombre: " + jugador.getNombre() + ",");
+        System.out.println("\tavatar: " + jugador.getAvatar().getId());
         System.out.println("}");
     }
 
@@ -211,17 +237,17 @@ public class Menu {
         Jugador jugador = obtenerTurno();
         Avatar avatar = jugador.getAvatar();
         if (!this.tirado) {
-            System.out.println("{");
             this.tirado = true;
             int salida_posicion = jugador.getAvatar().getLugar().getPosicion();
 
-
+            //Lanzamos 2 dados e imprimimos sus resultados
             int resultado1 = dado1.tirarDado();
             int resultado2 = dado2.tirarDado();
-            System.out.println("Dado 1 =" + resultado1 + "  Dado 2 =" + resultado2);
+            System.out.println("[" + resultado1 + "] [" + resultado2 + "]");
+
             Casilla salida = avatar.getLugar();
             if (resultado2 == resultado1) {
-                System.out.println("DOBLES");
+                System.out.println("DOBLES!!");
                 if (jugador.isEnCarcel()) {
                     System.out.println("Sales de la carcel");
                     jugador.setEnCarcel(false);
@@ -233,7 +259,6 @@ public class Menu {
 
                 System.out.println("Continúas en la carcel.");
                 jugador.sumarTiradaCarcel();
-                System.out.println("}");
                 return;
             }
             int suma_ambas = resultado1 + resultado2;
@@ -243,11 +268,11 @@ public class Menu {
 
             Casilla destino = avatar.getLugar();
 
-            System.out.println("El avatar " + avatar.getId() + " avanza " + (suma_ambas) + " casillas desde " + salida.getNombre() + " hasta " + destino.getNombre());
+            System.out.println("El avatar " + avatar.getId() + " avanza " + (suma_ambas) +
+                    " casillas desde " +salida.getNombre() + " hasta " + destino.getNombre());
 
             if (avatares.get(turno).getLugar().getNombre().equals("IrCarcel")) {
                 jugadores.get(turno).encarcelar(tablero.getPosiciones());
-
 
                 int destino_posicion = jugador.getAvatar().getLugar().getPosicion();
 
@@ -260,16 +285,11 @@ public class Menu {
             }
             if (!this.tirado) {
                 System.out.println("Puedes volver a tirar");
-
             }
-            System.out.println("}");
 
         }
         else {
-            System.out.println("{");
-            System.out.println("Ya has tirador");
-            System.out.println("}");
-
+            System.out.println("Ya has tirado!");
         }
     }
     /**Método que ejecuta todas las acciones relacionadas con el comando 'salir carcel'. */
@@ -314,7 +334,7 @@ public class Menu {
             System.out.println("El jugador actual es: " + this.jugadores.get(turno).getNombre());
         } else {
             // Si no ha tirado los dados aún, informar al jugador
-            System.out.println("No has lanzado los dados este turno");
+            System.out.println("Aún no has lanzado los dados este turno!");
         }
     }
 
@@ -323,44 +343,32 @@ public class Menu {
         System.out.println(tablero.toString());
     }
 
-    //"Sobrecarga" del método asociado al comando 'listar'
-
     /**Método que realiza las acciones asociadas al comando 'listar jugadores'.*/
     private void listarJugadores() {
-        System.out.println("{");
         for(Jugador j: jugadores){
-            if(j!=banca){
-                j.infoJugador();
-                System.out.println("\n");
-            }
+            j.infoJugador();
         }
-        System.out.println("}");
-
     }
 
     /**Método que realiza las acciones asociadas al comando 'listar avatares'.*/
     private void listarAvatares() {
-        System.out.println("{");
         for (Avatar a : avatares) {
             if (a != null) {
                 a.infoAvatar(); // Llama a la función infoAvatar para imprimir los detalles del avatar
             }
         }
-        System.out.println("}");
     }
 
     /**Método que realiza las acciones asociadas al comando 'listar enventa'.*/
     private void listarVenta() {
-        System.out.println("{");
         int i;
         for(i=0; i<40; i++){
             if((this.tablero.getCasilla(i).getDuenho()==banca) &&
-                    (this.tablero.getCasilla(i).getTipo()=="Solar" || this.tablero.getCasilla(i).getTipo()=="Transporte"
-                            || this.tablero.getCasilla(i).getTipo()=="Servicios" )){
+                    (this.tablero.getCasilla(i).getTipo().equals("Solar") || this.tablero.getCasilla(i).getTipo().equals("Transporte")
+                            || this.tablero.getCasilla(i).getTipo().equals("Servicios"))){
                 this.tablero.getCasilla(i).infoCasilla();
             }
         }
-        System.out.println("}");
     }
 
 
@@ -371,7 +379,6 @@ public class Menu {
      * @param n Número de casillas que se debe avanzar
      */
     private void avanzar(int n) {
-        System.out.println("{");
         if(!tirado){
             Jugador jugador = obtenerTurno();
             Avatar avatar = jugador.getAvatar();
@@ -379,24 +386,21 @@ public class Menu {
 
             Casilla salida = avatar.getLugar();
 
-
-            jugador.sumarTiradaCarcel();
+            jugador.sumarTiradaCarcel();    //???
 
             avatar.moverAvatar(tablero.getPosiciones(),  n);
 
             Casilla destino = avatar.getLugar();
 
-            System.out.println("El avatar " + avatar.getId() + " avanza " + (n) + " casillas desde " + salida.getNombre() + " hasta " + destino.getNombre());
+            System.out.println("El avatar " + avatar.getId() + " avanza " + (n) +
+                    " casillas desde " + salida.getNombre() + " hasta " + destino.getNombre());
 
             if (avatares.get(turno).getLugar().getNombre().equals("IrCarcel")) {
                 jugadores.get(turno).encarcelar(tablero.getPosiciones());
             }
         }
         else {
-
-            System.out.println("Ya has tirador");
-            System.out.println("}");
-
+            System.out.println("Ya has tirado!");
         }
     }
 
@@ -407,11 +411,12 @@ public class Menu {
     private void comprar(String nombre) { //REVISAR
         Casilla c=tablero.encontrar_casilla(nombre);
         if(this.tirado || lanzamientos>0){
-        c.comprarCasilla(this.jugadores.get(turno), this.jugadores.get(0));//le paso el jugador que tiene el turno y eljugador 0 (la banca)
+            c.comprarCasilla(this.jugadores.get(turno), this.jugadores.get(0));//le paso el jugador que tiene el turno y eljugador 0 (la banca)
         }
     }
 
     /**Método que realiza las acciones asociadas al comando 'crear jugador'.
+     * Solo se usa antes de empezar la partida, una vez empezada no se pueden crear más jugadores.
      * @param nombre Nombre del jugador
      * @param avatar Tipo de avatar
      */
@@ -432,37 +437,38 @@ public class Menu {
         // Añadir el jugador a la lista de jugadores
         this.jugadores.add(nuevoJugador);
 
+        // Hacemos que sea el turno del jugador recién creado
+        // Nótese que por defecto this.turno = -1
+        this.turno += 1;
 
         // Imprimir detalles del jugador recién creado
-
         jugadorTurno();
-
         casillaInicio.anhadirAvatar(nuevoJugador.getAvatar());
 
 
         verTablero();
     }
 
-    //"Sobrecarga" del método asociado al comando 'describir'
-    //DUDA: aquí hay que hacer un método describir que llame a cada uno de estos 3 en función del dato introducido?
-    //(o en función de lo que va después de 'describir' vamos)
-    //Y en caso de que sí, ¿por qué pasar un String de partes SOLO en descJugador?
-
     /** Método que realiza las acciones asociadas al comando 'describir nombre_casilla'.
      * @param nombre Nombre de la casilla a describir
      */
     private void descCasilla(String nombre) {
-        System.out.println("{");
         switch (nombre) {
             case "Salida":
                 // Imprimir el valor de vuelta con separador de miles
-                System.out.printf("Pago por vuelta: %,.0f%n", Valor.DINERO_VUELTA);
+                // %, -> añade el separador de miles
+                // .0f -> imprime el valor como un float con 0 decimales
+                System.out.printf("{\n\tPago por vuelta: %,.0f\n}", Valor.DINERO_VUELTA);
                 break;
 
             case "Carcel":
                 // Imprimir el valor para salir de la cárcel con separador de miles
-                System.out.printf("Pago salir: %,.0f%n", Valor.DINERO_SALIR_CARCEL);
-                Casilla casilla_a_buscar = tablero.encontrar_casilla(nombre);
+                // %, -> añade el separador de miles
+                // .0f -> imprime el valor como un float con 0 decimales
+                System.out.printf("{\n\tPago salir: %,.0f\n}", Valor.DINERO_SALIR_CARCEL);
+                Casilla casilla_a_buscar = tablero.encontrar_casilla(nombre);   //???
+                //HAY QUE IMPRIMIR LOS JUGADORES QUE ESTÁN EN ELLA Y LOS TURNOS QUE LLEVAN TAMBIÉN. EJEMPLO:
+                //jugadores: [Pedro,2] [Maria,1]
                 break;
 
             case "Parking":
@@ -474,12 +480,14 @@ public class Menu {
                 break;
 
             case "Serv1": case "Serv2": case "Trans1": case "Trans2": case "Trans3": case "Trans4":
+                System.out.println("{");
                 Casilla casillaEncontrada1 = tablero.encontrar_casilla(nombre);
-                System.out.println("Tipo: " + casillaEncontrada1.getTipo());
-                System.out.println("Duenho: " + casillaEncontrada1.getDuenho());
+                System.out.println("\tTipo: " + casillaEncontrada1.getTipo());
+                System.out.println("\tDuenho: " + casillaEncontrada1.getDuenho().getNombre());
                 // Imprimir el valor de la casilla y el valor de hipoteca con separador de miles
-                System.out.printf("Precio: %,.0f%n", casillaEncontrada1.getValor());
-                System.out.printf("Hipoteca: %,.0f%n", casillaEncontrada1.getHipoteca());
+                System.out.printf("\tPrecio: %,.0f\n", casillaEncontrada1.getValor());
+                System.out.printf("\tHipoteca: %,.0f\n", casillaEncontrada1.getHipoteca());
+                System.out.println("}");
                 break;
 
             case "Solar1": case "Solar2": case "Solar3": case "Solar4":
@@ -491,16 +499,17 @@ public class Menu {
                 break;
 
             case "Imp1": case "Imp2":
+                System.out.println("{");
                 Casilla casillaEncontrada2 = tablero.encontrar_casilla(nombre);
-                System.out.println("Tipo: " + casillaEncontrada2.getTipo());
+                System.out.println("\tTipo: " + casillaEncontrada2.getTipo());
                 // Imprimir el impuesto con separador de miles
-                System.out.printf("apagar: %,.0f%n", casillaEncontrada2.getImpuesto());
+                System.out.printf("\tapagar: %,.0f\n", casillaEncontrada2.getImpuesto());
+                System.out.println("}");
                 break;
 
             default:
-                System.out.println(nombre + " no es un nombre de casilla válido.\n");
+                System.out.println(nombre + " no es un nombre de casilla válido.");
         }
-        System.out.println("}");
     }
 
 
@@ -509,27 +518,29 @@ public class Menu {
      */
     private void descJugador(String[] partes) {
         boolean encontrado = false;
-        System.out.println("{");
+
         // en partes esta el nombre comprueba que el nombre del jugador existe y saca su info si existe
+        // miguel meu que tiene que poder sacar la info de varios jugadores
         for (Jugador jugador : jugadores) {
-            if (jugador.getNombre().equals(partes[2])) {
-                encontrado = true;
-                // Llamar a la función infoJugador del jugador encontrado
-                jugador.infoJugador();
-                break;
+            for(int i=2; i<partes.length; i++) {
+                if (jugador.getNombre().equals(partes[i])) {
+                    encontrado = true;
+                    // Llamar a la función infoJugador del jugador encontrado
+                    jugador.infoJugador();
+                    break;
+                }
             }
         }
         if(!encontrado){
-            System.out.println("No se ha encontrado el jugador buscado");
+            System.out.println("No se ha encontrado el jugador buscado.");
         }
-        System.out.println("}");
+
     }
 
     /**Método que realiza las acciones asociadas al comando 'describir avatar'.
      * @param ID id del avatar a describir
      */
     private void descAvatar(String ID) {
-        System.out.println("{");
         // lista llamada avatares se recorre
         for (Avatar avatar : avatares) { // Busca el avatar en la lista
             if (avatar.getId().equals(ID)) {
@@ -539,11 +550,22 @@ public class Menu {
         }
         // Si no encuentra el avatar, muestra un mensaje de error
         System.out.println("Avatar con ID " + ID + " no encontrado.");
-        System.out.println("}");
     }
 
     public Jugador obtenerTurno() {
         return jugadores.get(turno);
+    }
+
+    //Petadinha (longitud máxima de líneas de nuevo_texto=17)
+    public void setTextoTablero(String nuevo_texto) {
+        //Dividimos el String en partes en función de los saltos de línea
+        String[] nuevo_texto_tablero = nuevo_texto.split("\n");
+
+        //Se empieza en el índice 1 porque la primera línea del centro del tablero se deja vacía
+        //Nótese que para asignar bien el texto el índice de texto_tablero es i-1
+        for(int i = 1; i< nuevo_texto_tablero.length+1; i++) {
+            Valor.TEXTO_TABLERO[i] = nuevo_texto_tablero[i-1];
+        }
     }
 }
 
