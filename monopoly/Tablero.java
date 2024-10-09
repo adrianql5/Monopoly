@@ -313,18 +313,30 @@ public class Tablero {
 
         //De la LÍNEA Nº4 hasta la LÍNEA Nº20 se van imprimiendo con el siguiente FOR
         //Sobre el índice correspondiente de la casilla que toca imprimir en cada lado:
-        //En la izquierda (ladoOeste) para la línea 3 sería el índice 9, la 5 el 8, etc.
-        //En la derecha (ladoEste) para la línea 3 sería el índice 1, la 5 el 2, etc.
-        //Se podría cambiar el (i-1)/2 por (int)(i/2)
+        //En la izquierda (ladoOeste) para la línea 3 sería el índice 19, la 5 el 18, etc.
+        //En la derecha (ladoEste) para la línea 3 sería el índice 31, la 5 el 32, etc.
         for(i=3;i<20;i++) {
             if (i%2!=0) /**LÍNEAS IMPARES: parte superior de la fila de casillas correspondientes*/ {
 
                 tabla += Valor.BARRA;
                 tabla += formatoNombre(getCasilla(20-(i-1)/2));  //Casilla de la izquierda
 
-                //Añadimos los espacios del medio (se resta 1 porque hay un borde antes de la siguiente casilla)
-                int nesp = (Valor.NCASILLAS_POR_FILA-2)*(Valor.NCHARS_CASILLA+1)-1;   //Pa que se vea un poco mejor
-                tabla += conEspacios(nesp);
+                //PETADA HISTORICA
+                //Si hubiese que imprimir algo de texto en el centro del tablero se imprime
+                if(Valor.TEXTO_TABLERO[i-3]!=null) {
+
+                    //Añadimos el texto (dejando una casilla de sangría)
+                    tabla += conEspacios(Valor.NCHARS_CASILLA + 1) + Valor.TEXTO_TABLERO[i-3];
+                    //Rellenamos el resto con espacios
+                    int nesp = (Valor.NCASILLAS_POR_FILA - 3) * (Valor.NCHARS_CASILLA + 1) - 1 - Valor.TEXTO_TABLERO[i-3].length();
+                    tabla += conEspacios(nesp);
+                }
+                //En este caso no hay nada que imprimir en la línea
+                //Añadimos los espacios/texto del medio (se resta 1 porque hay un borde antes de la siguiente casilla)
+                else {
+                    int nesp = (Valor.NCASILLAS_POR_FILA - 2) * (Valor.NCHARS_CASILLA + 1) - 1;
+                    tabla += conEspacios(nesp);
+                }
 
                 //Barra + Casilla de la derecha
                 tabla += Valor.BARRA + formatoNombre(getCasilla(30+(i-1)/2)) + "\n";
@@ -335,9 +347,22 @@ public class Tablero {
                 tabla += Valor.BARRA;
                 tabla += formatoFichas(getCasilla(21-i/2));  //Casilla de la izquierda
 
-                //Añadimos los espacios del medio (se resta 1 porque hay un borde antes de la siguiente casilla)
-                int nesp = (Valor.NCASILLAS_POR_FILA-2)*(Valor.NCHARS_CASILLA+1)-1;   //Pa que se vea un poco mejor
-                tabla += conEspacios(nesp);
+                //PETADA HISTORICA
+                //Si hubiese que imprimir algo de texto en el centro del tablero se imprime
+                if(Valor.TEXTO_TABLERO[i-3]!=null) {
+
+                    //Añadimos el texto (dejando una casilla de sangría)
+                    tabla += conEspacios(Valor.NCHARS_CASILLA + 1) + Valor.TEXTO_TABLERO[i-3];
+                    //Rellenamos el resto con espacios
+                    int nesp = (Valor.NCASILLAS_POR_FILA - 3) * (Valor.NCHARS_CASILLA + 1) - 1 - Valor.TEXTO_TABLERO[i-3].length();
+                    tabla += conEspacios(nesp);
+                }
+                //En este caso no hay nada que imprimir en la línea
+                //Añadimos los espacios/texto del medio (se resta 1 porque hay un borde antes de la siguiente casilla)
+                else {
+                    int nesp = (Valor.NCASILLAS_POR_FILA - 2) * (Valor.NCHARS_CASILLA + 1) - 1;
+                    tabla += conEspacios(nesp);
+                }
 
                 //Barra + Casilla de la derecha
                 tabla += Valor.BARRA + formatoFichas(getCasilla(29+i/2)) + "\n";

@@ -258,14 +258,13 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
      * Devuelve una cadena con información específica de cada tipo de casilla.
      */
     public String infoCasilla() {
-        String info= new String();
-        info= "Nombre casilla:"+this.nombre+"\n"
-                + "Tipo Casilla: " +this.tipo + "\n"
-                + "Posicion: "+this.posicion+"\n"
-                + "Valor: "+this.valor+"\n"
-                + "Dueño: "+(this.duenho != null ? this.duenho.getNombre() : "Casilla sin Dueño" )+"\n"
-                + "Color del grupo"+this.grupo.getColorGrupo()
-                + "Valor hipoteca:"+this.hipoteca+"\n";
+        String info= "{\n\tNombre casilla:"+this.nombre+"\n"
+                + "\tTipo Casilla: " +this.tipo + "\n"
+                + "\tPosicion: "+this.posicion+"\n"
+                + "\tValor: "+this.valor+"\n"
+                + "\tDueño: "+(this.duenho != null ? this.duenho.getNombre() : "Casilla sin Dueño" )+"\n"
+                + "\tColor del grupo"+this.grupo.getColorGrupo()
+                + "\tValor hipoteca:"+this.hipoteca+"\n}\n";
 
         return info;
     }

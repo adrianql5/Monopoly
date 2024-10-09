@@ -168,13 +168,14 @@ public class Jugador {
 
 
     public void infoJugador() {
+        System.out.println("{");
         // Imprimir nombre, avatar y fortuna con separador de miles para la fortuna
-        System.out.println("nombre: " + this.getNombre() + ",");
-        System.out.println("avatar: " + this.getAvatar().getId() + ",");
-        System.out.printf("fortuna: %,.0f,%n", this.getFortuna()); // Usar formato con separador de miles y sin decimales
+        System.out.println("\tnombre: " + this.getNombre() + ",");
+        System.out.println("\tavatar: " + this.getAvatar().getId() + ",");
+        System.out.printf("\tfortuna: %,.0f,%n", this.getFortuna()); // Usar formato con separador de miles y sin decimales
 
         // Imprimir propiedades
-        System.out.print("propiedades: ");
+        System.out.print("\tpropiedades: ");
         if (this.getPropiedades().isEmpty()) {
             System.out.println("Ninguna");
         } else {
@@ -188,6 +189,7 @@ public class Jugador {
             }
             System.out.println("]");
         }
+        System.out.println("}");
     }
     public void sumarTiradaCarcel() {tiradasCarcel++;}
 }
