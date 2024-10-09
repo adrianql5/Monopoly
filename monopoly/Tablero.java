@@ -323,6 +323,7 @@ public class Tablero {
 
                 //PETADA HISTORICA
                 //Si hubiese que imprimir algo de texto en el centro del tablero se imprime
+                //Como partimos del índice 3 ajustamos para empezar en TEXTO_TABLERO[0]
                 if(Valor.TEXTO_TABLERO[i-3]!=null) {
 
                     //Añadimos el texto (dejando una casilla de sangría)

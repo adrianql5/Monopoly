@@ -195,6 +195,7 @@ public class Menu {
                     }
                 }
                 //Mucho ojo que puede usarse con varios nombres a la vez (comando.length() varía hasta 8 máximo)
+                //Al llegar aquí ya se sabe que comando.length es como mínimo 3
                 else if("describirjugador".equals(comando[0]+comando[1]) && comando.length<9) {
                     descJugador(comando); //El método pide que se pasen las partes del comando ojo!
                 }
@@ -457,17 +458,22 @@ public class Menu {
      * @param nombre Nombre de la casilla a describir
      */
     private void descCasilla(String nombre) {
-        System.out.println("{");
         switch (nombre) {
             case "Salida":
                 // Imprimir el valor de vuelta con separador de miles
-                System.out.printf("Pago por vuelta: %,.0f%n", Valor.DINERO_VUELTA);
+                // %, -> añade el separador de miles
+                // .0f -> imprime el valor como un float con 0 decimales
+                System.out.printf("{\n\tPago por vuelta: %,.0f\n}", Valor.DINERO_VUELTA);
                 break;
 
             case "Carcel":
                 // Imprimir el valor para salir de la cárcel con separador de miles
-                System.out.printf("Pago salir: %,.0f%n", Valor.DINERO_SALIR_CARCEL);
-                Casilla casilla_a_buscar = tablero.encontrar_casilla(nombre);
+                // %, -> añade el separador de miles
+                // .0f -> imprime el valor como un float con 0 decimales
+                System.out.printf("{\n\tPago salir: %,.0f\n}", Valor.DINERO_SALIR_CARCEL);
+                Casilla casilla_a_buscar = tablero.encontrar_casilla(nombre);   //???
+                //HAY QUE IMPRIMIR LOS JUGADORES QUE ESTÁN EN ELLA Y LOS TURNOS QUE LLEVAN TAMBIÉN. EJEMPLO:
+                //jugadores: [Pedro,2] [Maria,1]
                 break;
 
             case "Parking":
@@ -479,12 +485,14 @@ public class Menu {
                 break;
 
             case "Serv1": case "Serv2": case "Trans1": case "Trans2": case "Trans3": case "Trans4":
+                System.out.println("{");
                 Casilla casillaEncontrada1 = tablero.encontrar_casilla(nombre);
-                System.out.println("Tipo: " + casillaEncontrada1.getTipo());
-                System.out.println("Duenho: " + casillaEncontrada1.getDuenho());
+                System.out.println("\tTipo: " + casillaEncontrada1.getTipo());
+                System.out.println("\tDuenho: " + casillaEncontrada1.getDuenho().getNombre());
                 // Imprimir el valor de la casilla y el valor de hipoteca con separador de miles
-                System.out.printf("Precio: %,.0f%n", casillaEncontrada1.getValor());
-                System.out.printf("Hipoteca: %,.0f%n", casillaEncontrada1.getHipoteca());
+                System.out.printf("\tPrecio: %,.0f\n", casillaEncontrada1.getValor());
+                System.out.printf("\tHipoteca: %,.0f\n", casillaEncontrada1.getHipoteca());
+                System.out.println("}");
                 break;
 
             case "Solar1": case "Solar2": case "Solar3": case "Solar4":
@@ -496,16 +504,17 @@ public class Menu {
                 break;
 
             case "Imp1": case "Imp2":
+                System.out.println("{");
                 Casilla casillaEncontrada2 = tablero.encontrar_casilla(nombre);
-                System.out.println("Tipo: " + casillaEncontrada2.getTipo());
+                System.out.println("\tTipo: " + casillaEncontrada2.getTipo());
                 // Imprimir el impuesto con separador de miles
-                System.out.printf("apagar: %,.0f%n", casillaEncontrada2.getImpuesto());
+                System.out.printf("\tapagar: %,.0f\n", casillaEncontrada2.getImpuesto());
+                System.out.println("}");
                 break;
 
             default:
                 System.out.println(nombre + " no es un nombre de casilla válido.");
         }
-        System.out.println("}");
     }
 
 

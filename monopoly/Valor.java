@@ -61,6 +61,6 @@ public class Valor {
             ">ver tablero\n";
 
     //Petadinha: texto dentro del tablero
-    //No sé si es buena práctica pero estos valores se pueden modificar desde otra clase
+    //No sé si es buena práctica pero los valores se pueden modificar desde otra clase
     public static final String[] TEXTO_TABLERO = new String[17];
 }
