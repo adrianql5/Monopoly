@@ -117,7 +117,7 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
         case "Especial":
             if (this.nombre.equals("Carcel")) {
                 System.out.println("Has caído en la Carcel. Tienes 3 opciones para salir: Pagar, Usar Carta de Suerte o Sacar Dados Dobles.\n");
-                return false;
+                return true;
             } 
             
             else if (this.nombre.equals("Parking")) {
@@ -125,18 +125,18 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
                 actual.sumarFortuna(banca.getGastos());
                 banca.sumarGastos(banca.getGastos());
                 banca.restarFortuna(banca.getGastos());
-                banca.setGastos(0);;
-                return false;
+                banca.setGastos(0);
+                return true;
             } 
             
             else if (this.nombre.equals("IrCarcel")) {
                 System.out.println("Mala suerte, te vas a la cárcel.\n");
-                return false;
+                return true;
             } 
             
             else if (this.nombre.equals("Salida")) {
                 System.out.println("Has pasado por la salida. Has cobrado " + Valor.SUMA_VUELTA);
-                return false;
+                return true;
             }
             System.out.println("Error en evaluar casilla\n.");
             break;
@@ -389,7 +389,8 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
     public boolean esPosibleComprar(Jugador j) {
         if(this.duenho.esBanca() && 
         (this.tipo.equals("Solar")|| this.tipo.equals("Transporte")||
-        this.tipo.equals("Servicio")) && j.getAvatar().getLugar().equals(this)){
+        this.tipo.equals("Servicio")) && j.getAvatar().getLugar().equals(this)
+         && this.duenho!=j){
             return true;
         }
         return false;
