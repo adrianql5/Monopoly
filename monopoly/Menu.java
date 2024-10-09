@@ -363,16 +363,16 @@ public class Menu {
 
     /**Método que realiza las acciones asociadas al comando 'listar enventa'.*/
     private void listarVenta() {
-        int i;
-        for(i=0; i<40; i++){
-            if((this.tablero.getCasilla(i).getDuenho()==banca) &&
-                    (this.tablero.getCasilla(i).getTipo().equals("Solar") || this.tablero.getCasilla(i).getTipo().equals("Transporte")
-                            || this.tablero.getCasilla(i).getTipo().equals("Servicios"))){
-                this.tablero.getCasilla(i).infoCasilla();
+        System.out.println("Propiedades en venta:");
+        Casilla casilla_aux;
+        for (int i = 0; i < 40; i++) {
+            casilla_aux = tablero.getCasilla(i);
+            if ((casilla_aux.getTipo().equals("Solar") || casilla_aux.getTipo().equals("Transporte")
+                    || casilla_aux.getTipo().equals("Servicio")) && casilla_aux.getDuenho() == banca) {
+                System.out.println(casilla_aux.getNombre() + " - Precio: " + casilla_aux.getValor());
             }
         }
     }
-
 
     //Métodos de comandos que dependen de una instancia
 
