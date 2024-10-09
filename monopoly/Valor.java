@@ -23,20 +23,22 @@ public class Valor {
     public static final String BOLD_STRING = "\u001B[1m";
     public static final String SUBRAYADO = "\u001B[4m";
 
-    //Valores iniciales de los solares
+    //VALORES CONSTANTES DURANTE TODA LA PARTIDA
+    public static final float SALIR_CARCEL = 0.25f * Valor.SUMA_VUELTA;
+    public static final float TRANSPORTE = Valor.SUMA_VUELTA;   //Podría quitarse pero sería menos intuitivo
+    public static final float SERVICIO = 0.75f * Valor.SUMA_VUELTA;
+
+    //VALORES INICIALES DE LOS SOLARES
     //Información importante: aunque sea una fórmula sólo se calcula una vez, no cada vez que se accede
     public static final float INCREMENTO = 1.3f;
     public static final float GRUPO1 = 1200000f;
     public static final float GRUPO2 = Valor.GRUPO1 * Valor.INCREMENTO;
     public static final float GRUPO3 = Valor.GRUPO2 * Valor.INCREMENTO;
-    public static final float GRUPO4 = Valor.GRUPO3 * Valor.INCREMENTO;;
-    public static final float GRUPO5 = Valor.GRUPO4 * Valor.INCREMENTO;;
-    public static final float GRUPO6 = Valor.GRUPO5 * Valor.INCREMENTO;;
-    public static final float GRUPO7 = Valor.GRUPO6 * Valor.INCREMENTO;;
-    public static final float GRUPO8 = Valor.GRUPO7 * Valor.INCREMENTO;;
-
-    public static final float DINERO_SALIR_CARCEL =  325332f;
-
+    public static final float GRUPO4 = Valor.GRUPO3 * Valor.INCREMENTO;
+    public static final float GRUPO5 = Valor.GRUPO4 * Valor.INCREMENTO;
+    public static final float GRUPO6 = Valor.GRUPO5 * Valor.INCREMENTO;
+    public static final float GRUPO7 = Valor.GRUPO6 * Valor.INCREMENTO;
+    public static final float GRUPO8 = Valor.GRUPO7 * Valor.INCREMENTO;
 
     //Constantes auxiliares para imprimir la tabla:
     /**Número de casillas por fila (incluyendo ambas esquinas).*/

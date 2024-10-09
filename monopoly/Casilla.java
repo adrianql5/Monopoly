@@ -233,7 +233,7 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
                 + "\tPosicion: "+this.posicion+"\n"
                 + "\tValor: "+this.valor+"\n"
                 + "\tDueño: "+(this.duenho != null ? this.duenho.getNombre() : "Casilla sin Dueño" )+"\n"
-                + "\tColor del grupo"+this.grupo.getColorGrupo()
+                + "\tColor del grupo"+(this.grupo != null ? this.grupo.getColorGrupo() : "Casilla sin Dueño" )
                 + "\tValor hipoteca:"+this.hipoteca+"\n}\n";
 
         return info;

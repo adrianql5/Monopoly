@@ -42,7 +42,7 @@ public class Tablero {
         ladoSur.add(new Casilla("Solar1","Solar",1,Valor.GRUPO1/2,banca));
         ladoSur.add(new Casilla("Caja","Caja de comunidad",2,banca));
         ladoSur.add(new Casilla("Solar2","Solar",3,Valor.GRUPO1/2,banca));
-        ladoSur.add(new Casilla("Imp1",4,500,banca));
+        ladoSur.add(new Casilla("Imp1",4,Valor.SUMA_VUELTA/2,banca));
         ladoSur.add(new Casilla("Trans1","Transporte",5,2000,banca));
         ladoSur.add(new Casilla("Solar3","Solar",6,Valor.GRUPO2/3,banca));
         ladoSur.add(new Casilla("Suerte","Suerte",7,banca));
@@ -145,7 +145,7 @@ public class Tablero {
         ladoEste.add(new Casilla("Trans4","Transporte",35,2000,banca));
         ladoEste.add(new Casilla("Suerte","Suerte",36,banca));
         ladoEste.add(new Casilla("Solar21","Solar",37,Valor.GRUPO8/2,banca));
-        ladoEste.add(new Casilla("Imp2",38,500,banca));
+        ladoEste.add(new Casilla("Imp2",38,Valor.SUMA_VUELTA,banca));
         ladoEste.add(new Casilla("Solar22","Solar",39,Valor.GRUPO8/2,banca));
 
         // Asignar la banca como propietaria de las casillas solares, transporte y servicios.

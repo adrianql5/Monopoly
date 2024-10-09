@@ -303,9 +303,9 @@ public class Menu {
             if (!this.tirado) {
                 this.tirado = false;
                 this.jugadores.get(turno).setEnCarcel(false);
-                this.jugadores.get(turno).sumarFortuna(-Valor.DINERO_SALIR_CARCEL);
-                // Imprimir el valor de DINERO_SALIR_CARCEL
-                System.out.printf("Pago salir de la cárcel: %,.0f%n", Valor.DINERO_SALIR_CARCEL);
+                this.jugadores.get(turno).sumarFortuna(-Valor.SALIR_CARCEL);
+                // Imprimir el valor de SALIR_CARCEL
+                System.out.printf("Pago salir de la cárcel: %,.0f%n", Valor.SALIR_CARCEL);
 
                 // Imprimir el nombre del jugador y su fortuna actual
                 System.out.printf("El jugador %s tiene %,.0f de fortuna actual.%n",
@@ -491,7 +491,7 @@ public class Menu {
                 // Imprimir el valor para salir de la cárcel con separador de miles
                 // %, -> añade el separador de miles
                 // .0f -> imprime el valor como un float con 0 decimales
-                System.out.printf("{\n\tPago salir: %,.0f\n}", Valor.DINERO_SALIR_CARCEL);
+                System.out.printf("{\n\tPago salir: %,.0f\n}", Valor.SALIR_CARCEL);
                 Casilla casilla_a_buscar = tablero.encontrar_casilla(nombre);   //???
                 //HAY QUE IMPRIMIR LOS JUGADORES QUE ESTÁN EN ELLA Y LOS TURNOS QUE LLEVAN TAMBIÉN. EJEMPLO:
                 //jugadores: [Pedro,2] [Maria,1]
