@@ -418,9 +418,23 @@ public class Menu {
         if (this.tirado || lanzamientos > 0) {
             Jugador jugadorActual = this.jugadores.get(turno);
 
-            // Llamar a la función comprarCasilla en la casilla
-            c.comprarCasilla(jugadorActual, banca); // pasamos la banca como el primer jugador
+            // Verificamos si la casilla pertenece a la banca (en venta)
+            if (c.esPosibleComprar(jugadorActual)) {
+                // Verificamos si el jugador tiene suficiente fortuna
+                if (jugadorActual.getFortuna() >= c.getValor()) {
+                    jugadorActual.sumarFortuna(-c.getValor());
+                    c.setDuenho(jugadorActual);
+                    jugadorActual.anhadirPropiedad(c);
 
+                    System.out.println(jugadorActual.getNombre() + " ha comprado " + c.getNombre() + " por " + c.getValor());
+                } else {
+                    // Si el jugador no tiene suficiente fortuna
+                    System.out.println("No tienes suficiente fortuna para comprar esta propiedad.");
+                }
+            } else {
+                // Si la casilla ya tiene dueño o no está disponible
+                System.out.println("Esta propiedad ya ha sido comprada o no está en venta.");
+            }
         } else {
             // Si el jugador no ha lanzado los dados o no puede comprar aún
             System.out.println("No puedes comprar si no has lanzado los dados.");
