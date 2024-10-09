@@ -21,7 +21,7 @@ public class Jugador {
 
     //Constructor vacío para la banca
     public Jugador() {
-        this.nombre="Banca";
+        this.nombre="banca";
         this.avatar=null;
         this.fortuna=Valor.FORTUNA_BANCA;
         this.gastos=0;

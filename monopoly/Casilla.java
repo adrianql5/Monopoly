@@ -116,26 +116,26 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
         case "Especial":
             if (this.nombre.equals("Carcel")) {
                 System.out.println("Has caído en la Carcel. Tienes 3 opciones para salir: Pagar, Usar Carta de Suerte o Sacar Dados Dobles.\n");
-                return true;
-            } 
-            
+                return false;
+            }
+
             else if (this.nombre.equals("Parking")) {
                 System.out.println("Enhorabuena, has ganado el bote almacenado por impuestos, tasas y multas.\n");
                 actual.sumarFortuna(banca.getGastos());
                 banca.sumarGastos(banca.getGastos());
                 banca.restarFortuna(banca.getGastos());
-                banca.setGastos(0);
-                return true;
-            } 
-            
+                banca.setGastos(0);;
+                return false;
+            }
+
             else if (this.nombre.equals("IrCarcel")) {
                 System.out.println("Mala suerte, te vas a la cárcel.\n");
-                return true;
-            } 
-            
+                return false;
+            }
+
             else if (this.nombre.equals("Salida")) {
                 System.out.println("Has pasado por la salida. Has cobrado " + Valor.SUMA_VUELTA);
-                return true;
+                return false;
             }
             System.out.println("Error en evaluar casilla\n.");
             break;
@@ -143,13 +143,13 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
         case "Transporte":
             int multiplicador = this.duenho.numeroCasillasTipo("Transporte"); // Inicialización de multiplicador
 
-            if (!esPosibleComprar(actual)){ 
+            if (!esPosibleComprar(actual)){
                 System.out.println(actual.getNombre() + " debe pagarle el servicio de transporte a " + this.duenho.getNombre());
                 float total = multiplicador*0.25f*this.impuesto;//pongo f porque si no pone un double, cositas de Java
                 actual.sumarGastos(total);
                 actual.restarFortuna(total);
                 if(actual.estaEnBancarrota()) return false;
-                
+
                 this.duenho.sumarFortuna(total);
                 return true;
             }
@@ -160,7 +160,7 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
 
 
         case "Impuestos":
-            System.out.println("Vaya! Debes pagar tus impuestos a la banca."+"Debes pagar: "+this.impuesto);    
+            System.out.println("Vaya! Debes pagar tus impuestos a la banca."+"Debes pagar: "+this.impuesto);
             actual.sumarGastos(this.impuesto);
             actual.restarFortuna(this.impuesto);
             if(actual.estaEnBancarrota()) return false;
@@ -184,7 +184,7 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
                 return true;
             }
 
-        case "Caja de Comunidad": case "Suerte": 
+        case "Caja de Comunidad": case "Suerte":
             //sin implementar
             break;
 
@@ -210,17 +210,17 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
             this.duenho=solicitante;
 
             System.out.println(solicitante.getNombre()+" ha comprado la propiedad "+this.getNombre()+" por el precio de "+this.valor);
-        
+
         }
         else if(this.duenho!=banca){
             System.out.println("Esta casilla no está en venta");
-    
+
         }
 
         else{
             System.out.println("No tienes dinero para comprar esta casilla");
         }
- 
+
     }
 
     /**Método para mostrar información sobre una casilla.
@@ -232,7 +232,7 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
                 + "\tPosicion: "+this.posicion+"\n"
                 + "\tValor: "+this.valor+"\n"
                 + "\tDueño: "+(this.duenho != null ? this.duenho.getNombre() : "Casilla sin Dueño" )+"\n"
-                + "\tColor del grupo"+this.grupo.getColorGrupo()
+                + "\tColor del grupo"+(this.grupo != null ? this.grupo.getColorGrupo() : "Casilla sin Dueño" )
                 + "\tValor hipoteca:"+this.hipoteca+"\n}\n";
 
         return info;
@@ -386,9 +386,10 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
     }
 
     public boolean esPosibleComprar(Jugador j) {
-        if(this.duenho.esBanca() && 
+        if(this.duenho.esBanca() &&
         (this.tipo.equals("Solar")|| this.tipo.equals("Transporte")||
-        this.tipo.equals("Servicio")) && j.getAvatar().getLugar().equals(this) && this.duenho!=j){
+        this.tipo.equals("Servicio")) && j.getAvatar().getLugar().equals(this)
+         && this.duenho!=j){
             return true;
         }
         return false;
