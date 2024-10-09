@@ -460,7 +460,7 @@ public class Menu {
                 // Imprimir el valor de vuelta con separador de miles
                 // %, -> añade el separador de miles
                 // .0f -> imprime el valor como un float con 0 decimales
-                System.out.printf("{\n\tPago por vuelta: %,.0f\n}", Valor.DINERO_VUELTA);
+                System.out.printf("{\n\tPago por vuelta: %,.0f\n}", Valor.SUMA_VUELTA);
                 break;
 
             case "Carcel":
@@ -559,6 +559,7 @@ public class Menu {
     }
 
     //Petadinha (longitud máxima de líneas de nuevo_texto=17)
+    //Se puede hacer desde aquí porque no existe encapsulación al ser un String[]
     public void setTextoTablero(String nuevo_texto) {
         //Dividimos el String en partes en función de los saltos de línea
         String[] nuevo_texto_tablero = nuevo_texto.split("\n");

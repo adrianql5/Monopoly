@@ -18,10 +18,16 @@ public class Tablero {
 
     //SECCION DE COSNTRUIR EL TABLERO Y HACER LOS GRUPOS
 
-    //CONSTRUCTOR: únicamente le pasamos el jugador banca (que se creará desde el menú).
+    //Constructor: únicamente le pasamos el jugador banca (que se creará desde el menú).
     public Tablero(Jugador banca) {
         this.banca=banca;
         this.grupos = new HashMap<String,Grupo>();
+        generarCasillas();
+    }
+
+
+    /**Método para crear todas las casillas del tablero. Formado a su vez por cuatro métodos (1/lado).*/
+    private void generarCasillas() {
         this.posiciones = new ArrayList<ArrayList<Casilla>>();
         this.insertarLadoSur();
         this.insertarLadoOeste();
@@ -33,15 +39,15 @@ public class Tablero {
     private void insertarLadoSur() {
         ArrayList<Casilla> ladoSur = new ArrayList<Casilla>();
         ladoSur.add(new Casilla("Salida","Especial",0,banca));
-        ladoSur.add(new Casilla("Solar1","Solar",1,1000,banca));
+        ladoSur.add(new Casilla("Solar1","Solar",1,Valor.GRUPO1/2,banca));
         ladoSur.add(new Casilla("Caja","Caja de comunidad",2,banca));
-        ladoSur.add(new Casilla("Solar2","Solar",3,1000,banca));
+        ladoSur.add(new Casilla("Solar2","Solar",3,Valor.GRUPO1/2,banca));
         ladoSur.add(new Casilla("Imp1",4,500,banca));
         ladoSur.add(new Casilla("Trans1","Transporte",5,2000,banca));
-        ladoSur.add(new Casilla("Solar3","Solar",6,1000,banca));
+        ladoSur.add(new Casilla("Solar3","Solar",6,Valor.GRUPO2/3,banca));
         ladoSur.add(new Casilla("Suerte","Suerte",7,banca));
-        ladoSur.add(new Casilla("Solar4","Solar",8,1000,banca));
-        ladoSur.add(new Casilla("Solar5","Solar",9,1000,banca));
+        ladoSur.add(new Casilla("Solar4","Solar",8,Valor.GRUPO2/3,banca));
+        ladoSur.add(new Casilla("Solar5","Solar",9,Valor.GRUPO2/3,banca));
 
         posiciones.add(ladoSur);
 
@@ -59,15 +65,15 @@ public class Tablero {
     private void insertarLadoOeste() {
         ArrayList<Casilla> ladoOeste = new ArrayList<Casilla>();
         ladoOeste.add(new Casilla("Carcel","Especial",10,banca));
-        ladoOeste.add(new Casilla("Solar6","Solar",11,1000,banca));
+        ladoOeste.add(new Casilla("Solar6","Solar",11,Valor.GRUPO3/3,banca));
         ladoOeste.add(new Casilla("Serv1","Servicios",12,2500,banca));
-        ladoOeste.add(new Casilla("Solar7","Solar",13,1000,banca));
-        ladoOeste.add(new Casilla("Solar8","Solar",14,1000,banca));
+        ladoOeste.add(new Casilla("Solar7","Solar",13,Valor.GRUPO3/3,banca));
+        ladoOeste.add(new Casilla("Solar8","Solar",14,Valor.GRUPO3/3,banca));
         ladoOeste.add(new Casilla("Trans2","Transporte",15,2000,banca));
-        ladoOeste.add(new Casilla("Solar9","Solar",16,1000,banca));
+        ladoOeste.add(new Casilla("Solar9","Solar",16,Valor.GRUPO4/3,banca));
         ladoOeste.add(new Casilla("Caja","Caja de comunidad",17,banca));
-        ladoOeste.add(new Casilla("Solar10","Solar",18,1000,banca));
-        ladoOeste.add(new Casilla("Solar11","Solar",19,banca));
+        ladoOeste.add(new Casilla("Solar10","Solar",18,Valor.GRUPO4/3,banca));
+        ladoOeste.add(new Casilla("Solar11","Solar",19,Valor.GRUPO4/3,banca));
 
         posiciones.add(ladoOeste);
 
@@ -86,15 +92,15 @@ public class Tablero {
     private void insertarLadoNorte() {
         ArrayList<Casilla> ladoNorte = new ArrayList<Casilla>();
         ladoNorte.add(new Casilla("Parking","Especial",20,banca));
-        ladoNorte.add(new Casilla("Solar12","Solar",21,1000,banca));
+        ladoNorte.add(new Casilla("Solar12","Solar",21,Valor.GRUPO5/3,banca));
         ladoNorte.add(new Casilla("Suerte","Suerte",22,banca));
-        ladoNorte.add(new Casilla("Solar13","Solar",23,1000,banca));
-        ladoNorte.add(new Casilla("Solar14","Solar",24,1000,banca));
+        ladoNorte.add(new Casilla("Solar13","Solar",23,Valor.GRUPO5/3,banca));
+        ladoNorte.add(new Casilla("Solar14","Solar",24,Valor.GRUPO5/3,banca));
         ladoNorte.add(new Casilla("Trans3","Transporte",25,2000,banca));
-        ladoNorte.add(new Casilla("Solar15","Solar",26,1000,banca));
-        ladoNorte.add(new Casilla("Solar16","Solar",27,1000,banca));
+        ladoNorte.add(new Casilla("Solar15","Solar",26,Valor.GRUPO6/3,banca));
+        ladoNorte.add(new Casilla("Solar16","Solar",27,Valor.GRUPO6/3,banca));
         ladoNorte.add(new Casilla("Serv2","Servicios",28,2500,banca));
-        ladoNorte.add(new Casilla("Solar17","Solar",29,1000,banca));
+        ladoNorte.add(new Casilla("Solar17","Solar",29,Valor.GRUPO6/3,banca));
 
         posiciones.add(ladoNorte);
 
@@ -113,15 +119,15 @@ public class Tablero {
     private void insertarLadoEste() {
         ArrayList<Casilla> ladoEste = new ArrayList<Casilla>();
         ladoEste.add(new Casilla("IrCarcel","Especial",30,banca));
-        ladoEste.add(new Casilla("Solar18","Solar",31,1000,banca));
-        ladoEste.add(new Casilla("Serv19","Servicios",32,2500,banca));
+        ladoEste.add(new Casilla("Solar18","Solar",31,Valor.GRUPO7/3,banca));
+        ladoEste.add(new Casilla("Solar19","Solar",32,Valor.GRUPO7/3,banca));
         ladoEste.add(new Casilla("Caja","Caja de comunidad",33,banca));
-        ladoEste.add(new Casilla("Solar20","Solar",34,1000,banca));
+        ladoEste.add(new Casilla("Solar20","Solar",34,Valor.GRUPO7/3,banca));
         ladoEste.add(new Casilla("Trans4","Transporte",35,2000,banca));
         ladoEste.add(new Casilla("Suerte","Suerte",36,banca));
-        ladoEste.add(new Casilla("Solar21","Solar",37,1000,banca));
+        ladoEste.add(new Casilla("Solar21","Solar",37,Valor.GRUPO8/2,banca));
         ladoEste.add(new Casilla("Imp2",38,500,banca));
-        ladoEste.add(new Casilla("Solar22","Solar",39,1000,banca));
+        ladoEste.add(new Casilla("Solar22","Solar",39,Valor.GRUPO8/2,banca));
 
         posiciones.add(ladoEste);
 
@@ -144,7 +150,7 @@ public class Tablero {
      * @param ngrupo Índice del grupo (se usa para la multiplicidad del incremento)
      */
     public float valorSolar(int nsolares_grupo, int ngrupo){
-        float valor_solar = (float) (Valor.SOLAR_BASE/nsolares_grupo * pow(Valor.INCREMENTO, ngrupo));
+        float valor_solar = (float) (Valor.GRUPO1 /nsolares_grupo * pow(Valor.INCREMENTO, ngrupo));
         return valor_solar;
     }
 
