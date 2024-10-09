@@ -405,17 +405,10 @@ public class Menu {
      * @param nombre Cadena de caracteres con el nombre de la casilla.
      */
     private void comprar(String nombre) { //REVISAR
-        System.out.println("{");
-        Jugador jugador = obtenerTurno();
-        Casilla casilla = obtenerTurno().getAvatar().getLugar();
-
-
-        if(casilla.posiblecompra(jugador, banca)) {
-            System.out.println(jugador.getNombre() + " compra la propiedad " + nombre + " por " + casilla.getValor() + ".");
-            casilla.comprarCasilla(jugador, banca);
-        } else {
-            System.out.println("No  es posible comprar " + nombre);
-    }
+        Casilla c=tablero.encontrar_casilla(nombre);
+        if(this.tirado || lanzamientos>0){
+        c.comprarCasilla(this.jugadores.get(turno), this.jugadores.get(0));//le paso el jugador que tiene el turno y eljugador 0 (la banca)
+        }
     }
 
     /**Método que realiza las acciones asociadas al comando 'crear jugador'.

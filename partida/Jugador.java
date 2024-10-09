@@ -17,6 +17,8 @@ public class Jugador {
     private int vueltas; //Cuenta las vueltas dadas al tablero.
     private ArrayList<Casilla> propiedades; //Propiedades que posee el jugador.
 
+    
+
     //Constructor vacío para la banca
     public Jugador() {
         this.nombre="Banca";
@@ -74,6 +76,10 @@ public class Jugador {
         this.fortuna += valor;
     }
 
+    public void restarFortuna(float valor){
+        this.fortuna -=valor;
+    }
+
     //Método para sumar gastos a un jugador.
     //Parámetro: valor a añadir a los gastos del jugador (será el precio de un solar, impuestos pagados...).
     public void sumarGastos(float valor) {
@@ -97,9 +103,13 @@ public class Jugador {
         return false;
     }
 
+    public boolean esBanca(){
+        if(this.avatar==null) return true;
+        return false;
+    }
+
 
     public boolean estaEnBancarrota() {
-
         if (this.getFortuna() <= 0) {
             // Comprobar si tiene propiedades hipotecables
             for (Casilla propiedad : this.getPropiedades()) {
@@ -189,5 +199,19 @@ public class Jugador {
             System.out.println("]");
         }
     }
-    public void sumarTiradaCarcel() {tiradasCarcel++;}
+    
+    public void sumarTiradaCarcel(){
+        tiradasCarcel++;
+    }
+
+    public int numeroCasillasTipo(String tipo){
+        int contador=0;
+        for(Casilla c: propiedades){
+            if(c.getTipo().equals(tipo)){
+                contador++;
+            }
+        }
+        return contador;
+    }
 }
+

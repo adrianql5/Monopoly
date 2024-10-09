@@ -3,8 +3,8 @@ package monopoly;
 
 public class Valor {
     public static final float FORTUNA_BANCA = 372642563;
-    public static final float FORTUNA_INICIAL = 14000000;
-    public static final float SUMA_VUELTA = 1800000; //Se aproxima a la media de los precios de los solares del tablero.
+    public static final float FORTUNA_INICIAL = 9543076.28f;
+    public static final float SUMA_VUELTA = 1301328.584f; //Se aproxima a la media de los precios de los solares del tablero.
     public static final float SOLAR_BASE = 1200000;
     public static final double INCREMENTO = 1.3;
     public static final float DINERO_INICIAL =  9543076;
