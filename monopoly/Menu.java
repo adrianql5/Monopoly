@@ -410,10 +410,20 @@ public class Menu {
     /**Método que ejecuta todas las acciones realizadas con el comando 'comprar nombre_casilla'.
      * @param nombre Cadena de caracteres con el nombre de la casilla.
      */
-    private void comprar(String nombre) { //REVISAR
-        Casilla c=tablero.encontrar_casilla(nombre);
-        if(this.tirado || lanzamientos>0){
-            c.comprarCasilla(this.jugadores.get(turno), this.jugadores.get(0));//le paso el jugador que tiene el turno y eljugador 0 (la banca)
+    private void comprar(String nombre) {
+        // Encontramos la casilla por su nombre
+        Casilla c = tablero.encontrar_casilla(nombre);
+
+        // Verificamos si el jugador ya lanzó los dados o tiene más de un lanzamiento
+        if (this.tirado || lanzamientos > 0) {
+            Jugador jugadorActual = this.jugadores.get(turno);
+
+            // Llamar a la función comprarCasilla en la casilla
+            c.comprarCasilla(jugadorActual, banca); // pasamos la banca como el primer jugador
+
+        } else {
+            // Si el jugador no ha lanzado los dados o no puede comprar aún
+            System.out.println("No puedes comprar si no has lanzado los dados.");
         }
     }
 
