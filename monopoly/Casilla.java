@@ -254,8 +254,8 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
     /** Método para mostrar información de una casilla en venta.
      * Valor devuelto: texto con esa información.
      */
-    public String casaEnVenta() {
-        if(this.duenho==null || this.duenho.getNombre()=="Banca"){
+    public String casEnVenta() {
+        if(this.duenho==null || this.duenho.getNombre().equals("Banca")){
             return "La casilla" + this.nombre + "está en venta por un precio de " + this.valor +"\n";
         }
         return "Esta casilla no está en venta";

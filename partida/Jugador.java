@@ -80,20 +80,23 @@ public class Jugador {
         this.fortuna -=valor;
     }
 
-    //Método para sumar gastos a un jugador.
-    //Parámetro: valor a añadir a los gastos del jugador (será el precio de un solar, impuestos pagados...).
+    /**Método para sumar gastos a un jugador.
+     * @param valor Cantidad que sumar a los gastos del jugador (será el precio de un solar, impuestos pagados...).
+     */
     public void sumarGastos(float valor) {
         this.gastos += valor;
     }
 
-    /*Método para establecer al jugador en la cárcel.
-     * Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).*/
+    /**Método para establecer al jugador en la cárcel.
+     * @param pos Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).
+     */
     public void encarcelar(ArrayList<ArrayList<Casilla>> pos) {
         this.avatar.getLugar().eliminarAvatar(this.avatar);
         this.avatar.setLugar(pos.get(1).get(0));
         this.enCarcel = true;
         this.avatar.getLugar().anhadirAvatar(this.avatar);
     }
+
     public void sumarVuelta(){
         vueltas++;
     }
@@ -161,6 +164,10 @@ public class Jugador {
         this.tiradasCarcel = tiradasCarcel;
     }
 
+    public int getTiradasCarcel(){
+        return tiradasCarcel;
+    }
+
     public int getVueltas() {
         return vueltas;
     }
@@ -174,15 +181,12 @@ public class Jugador {
     }
 
 
-
-
-
     public void infoJugador() {
         System.out.println("{");
         // Imprimir nombre, avatar y fortuna con separador de miles para la fortuna
         System.out.println("\tnombre: " + this.getNombre() + ",");
         System.out.println("\tavatar: " + this.getAvatar().getId() + ",");
-        System.out.printf("\tfortuna: %,.0f,%n", this.getFortuna()); // Usar formato con separador de miles y sin decimales
+        System.out.printf("\tfortuna: %,.0f,\n", this.getFortuna()); // Usar formato con separador de miles y sin decimales
 
         // Imprimir propiedades
         System.out.print("\tpropiedades: ");
@@ -200,10 +204,6 @@ public class Jugador {
             System.out.println("]");
         }
         System.out.println("}");
-    }
-    
-    public void sumarTiradaCarcel(){
-        tiradasCarcel++;
     }
 
     public int numeroCasillasTipo(String tipo){

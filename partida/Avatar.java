@@ -123,7 +123,6 @@ public class Avatar {
     /**
      * Método que permite mover a un avatar a una casilla concreta.
      * EN ESTA VERSIÓN SUPONEMOS QUE valorTirada SIEMPRE ES POSITIVO.
-     *
      * @param casillas    Array con las casillas del tablero. Se trata de un arrayList de arrayList de casillas (uno por lado)
      * @param valorTirada Entero que indica el numero de casillas a moverse (será el valor sacado en la tirada de los dados).
      */
