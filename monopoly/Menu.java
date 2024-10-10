@@ -501,7 +501,7 @@ public class Menu {
     private void descCasilla(String nombre) {
         switch (nombre) {
             case "Salida":
-                // Imprimir el valor de vuelta con separador de miles
+                /
                 System.out.printf("{\n\tPago por vuelta: %,.0f", Valor.SUMA_VUELTA);
 
                 // Encontrar la casilla de "Salida"
@@ -524,7 +524,7 @@ public class Menu {
                 break;
 
             case "Carcel":
-                // Imprimir el valor para salir de la cárcel con separador de miles
+                // Imprimir el valor para salir de la cárcel
                 System.out.printf("{\n\tPago salir: %,.0f \n", Valor.SALIR_CARCEL);
 
                 // Encontrar la casilla de la cárcel
@@ -534,8 +534,6 @@ public class Menu {
                 if (avataresEnCarcel.isEmpty()) {
                     System.out.println("No hay Jugadores");
                 } else {
-
-
                     // Recorremos la lista de avatares y mostramos todos los jugadores en la misma línea
                     for (int i = 0; i < avataresEnCarcel.size(); i++) {
                         Avatar avatar = avataresEnCarcel.get(i);
@@ -546,13 +544,9 @@ public class Menu {
                             System.out.print("[" + jugador.getNombre() + "," + jugador.getTiradasCarcel() + "]");
                         } else {
                             // Imprimimos el jugador que está de visita
-                            System.out.print("[" + jugador.getNombre() + " (visita)]");
+                            System.out.print("[" + jugador.getNombre() + " (visita)]  ");
                         }
 
-                        // Agregar una coma y un espacio después de cada jugador, excepto el último
-                        if (i < avataresEnCarcel.size() - 1) {
-                            System.out.print(" ");
-                        }
                     }
                 }
 
@@ -561,7 +555,7 @@ public class Menu {
 
 
             case "Parking":
-                // Imprimir el bote con separador de miles
+                // Imprimir el bote
                 System.out.printf("{\n\tBote acumulado: %,.0f\n", banca.getFortuna());
 
                 // Encontrar la casilla de "Parking"
@@ -596,7 +590,7 @@ public class Menu {
                 Casilla casillaEncontrada1 = tablero.encontrar_casilla(nombre);
                 System.out.println("\tTipo: " + casillaEncontrada1.getTipo());
                 System.out.println("\tDuenho: " + casillaEncontrada1.getDuenho().getNombre());
-                // Imprimir el valor de la casilla y el valor de hipoteca con separador de miles
+                // Imprimir el valor de la casilla y el valor de hipoteca
                 System.out.printf("\tPrecio: %,.0f\n", casillaEncontrada1.getValor());
                 System.out.printf("\tHipoteca: %,.0f\n", casillaEncontrada1.getHipoteca());
                 System.out.println("}");
@@ -614,7 +608,7 @@ public class Menu {
                 System.out.println("{");
                 Casilla casillaEncontrada2 = tablero.encontrar_casilla(nombre);
                 System.out.println("\tTipo: " + casillaEncontrada2.getTipo());
-                // Imprimir el impuesto con separador de miles
+                // Imprimir el impuesto
                 System.out.printf("\tapagar: %,.0f\n", casillaEncontrada2.getImpuesto());
                 System.out.println("}");
                 break;

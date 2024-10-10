@@ -117,7 +117,7 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
             if (this.nombre.equals("Carcel")) {
                 System.out.println("Has caído en la Carcel. Disfruta de la visita.\n");
                 //System.out.println("Has caído en la Carcel. Tienes 3 opciones para salir: Pagar, Usar Carta de Suerte o Sacar Dados Dobles.\n");
-                return false;
+                return true;
             }
 
             else if (this.nombre.equals("Parking")) {
@@ -126,17 +126,17 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
                 banca.sumarGastos(banca.getGastos());
                 banca.restarFortuna(banca.getGastos());
                 banca.setGastos(0);;
-                return false;
+                return true;
             }
 
             else if (this.nombre.equals("IrCarcel")) {
                 System.out.println("Mala suerte, te vas a la cárcel.\n");
-                return false;
+                return true;
             }
 
             else if (this.nombre.equals("Salida")) {
                 System.out.println("Has pasado por la salida. Has cobrado " + Valor.SUMA_VUELTA);
-                return false;
+                return true;
             }
             System.out.println("Error en evaluar casilla\n.");
             break;
