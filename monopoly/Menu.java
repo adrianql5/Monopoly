@@ -69,7 +69,7 @@ public class Menu {
             }
             else if ("empezar partida".equals(comando_entero)) {
 
-                if(i!=0) {
+                if(i!=0 && i!=1) {
                     this.turno = 0; //El primer jugador creado tiene el turno
                     System.out.println("¡Que comienze la partida!\nEs el turno de " + obtenerTurno().getNombre() +
                             ". Puedes tirar los dados con el comando " + Valor.BOLD_STRING + "lanzar dados" +
@@ -78,13 +78,17 @@ public class Menu {
                     //Empezamos la partida ahora que ya tenemos los jugadores
                     setTextoTablero(Valor.LISTA_COMANDOS);
 
+                    //Este es el bucle de la partida básicamente
                     while (!partidaTerminada) {
                         System.out.println();
                         analizarComando(scan.nextLine());
                     }
                 }
-                else {
+                else if(i==0) {
                     System.out.println("Amig@ habrá que crear algún jugador antes de empezar no crees?");
+                }
+                else {
+                    System.out.println("Creo que jugar una persona sola no tiene mucho sentido...");
                 }
 
             } else {
@@ -166,7 +170,10 @@ public class Menu {
 
                 //IMPORTANTE hacer las comprobaciones en función del número de palabras del comando
                 //Si no podría darse el caso de querer acceder a un índice que no existe
-                if(comando.length==2) {
+                if(comando.length==1) {
+                    System.out.println(comando_entero + " no es un comando válido.");
+                }
+                else if(comando.length==2) {
 
                     //Podría ser uno de los siguientes:
                     switch(comando[0]){
@@ -271,27 +278,32 @@ public class Menu {
             Casilla destino = avatar.getLugar();
 
             System.out.println("El avatar " + avatar.getId() + " avanza " + (suma_ambas) +
-                    " casillas desde " +salida.getNombre() + " hasta " + destino.getNombre());
+                    " casillas desde " + salida.getNombre() + " hasta " + destino.getNombre());
 
             if (avatares.get(turno).getLugar().getNombre().equals("IrCarcel")) {
                 jugadores.get(turno).encarcelar(tablero.getPosiciones());
+                System.out.println(avatar.getId() + "va a la cárcel directamente sin pasar por la casilla de salida.");
+                System.out.println("Debes pasar 3 turnos en la cárcel a no ser que saques dobles al tirar los dados.");
+                System.out.println("También puedes pagar la fianza con el comando " +
+                        Valor.BOLD_STRING + "salir carcel" + Valor.RESET);
 
                 int destino_posicion = jugador.getAvatar().getLugar().getPosicion();
 
                 if (salida_posicion - destino_posicion > 0) {
-                    System.out.println("¡Al pasar por la salida Ganaste " + Valor.SUMA_VUELTA + "!");
+                    System.out.println("¡Al pasar por la salida ganaste " + Valor.SUMA_VUELTA + "!");
                     jugador.sumarFortuna(Valor.SUMA_VUELTA);
                     jugador.sumarVuelta();
                 }
 
             }
             if (!this.tirado) {
-                System.out.println("Puedes volver a tirar");
+                System.out.println("Vuelves a tirar");
             }
 
         }
         else {
-            System.out.println("Ya has tirado!");
+            System.out.println("¡Ya has tirado! Si no tienes nada más que hacer usa el comando " +
+                    Valor.BOLD_STRING + "acabar turno" + Valor.RESET);
         }
     }
     /**Método que ejecuta todas las acciones relacionadas con el comando 'salir carcel'. */
@@ -412,8 +424,13 @@ public class Menu {
      */
     private void comprar(String nombre) { //REVISAR
         Casilla c=tablero.encontrar_casilla(nombre);
-        if(this.tirado || lanzamientos>0){
-            c.comprarCasilla(this.jugadores.get(turno), this.banca);//le paso el jugador que tiene el turno y eljugador 0 (la banca)
+        if(c != null) {
+            if (this.tirado || lanzamientos > 0) {
+                c.comprarCasilla(this.jugadores.get(turno), this.banca);//le paso el jugador que tiene el turno y eljugador 0 (la banca)
+            }
+        }
+        else {
+            System.out.println("No hay ninguna casilla que se llame" + nombre);
         }
     }
 

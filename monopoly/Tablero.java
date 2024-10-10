@@ -56,7 +56,7 @@ public class Tablero {
         ladoSur.add(new Casilla("Caja","Caja de comunidad",2,banca));
         ladoSur.add(new Casilla("Solar2","Solar",3,Valor.GRUPO1/2,banca));
         ladoSur.add(new Casilla("Imp1",4,Valor.SUMA_VUELTA/2,banca));
-        ladoSur.add(new Casilla("Trans1","Transporte",5,2000,banca));
+        ladoSur.add(new Casilla("Trans1","Transporte",5,Valor.TRANSPORTE,banca));
         ladoSur.add(new Casilla("Solar3","Solar",6,Valor.GRUPO2/3,banca));
         ladoSur.add(new Casilla("Suerte","Suerte",7,banca));
         ladoSur.add(new Casilla("Solar4","Solar",8,Valor.GRUPO2/3,banca));
@@ -79,10 +79,10 @@ public class Tablero {
         ArrayList<Casilla> ladoOeste = new ArrayList<Casilla>();
         ladoOeste.add(new Casilla("Carcel","Especial",10,banca));
         ladoOeste.add(new Casilla("Solar6","Solar",11,Valor.GRUPO3/3,banca));
-        ladoOeste.add(new Casilla("Serv1","Servicios",12,2500,banca));
+        ladoOeste.add(new Casilla("Serv1","Servicios",12,Valor.SERVICIO,banca));
         ladoOeste.add(new Casilla("Solar7","Solar",13,Valor.GRUPO3/3,banca));
         ladoOeste.add(new Casilla("Solar8","Solar",14,Valor.GRUPO3/3,banca));
-        ladoOeste.add(new Casilla("Trans2","Transporte",15,2000,banca));
+        ladoOeste.add(new Casilla("Trans2","Transporte",15,Valor.TRANSPORTE,banca));
         ladoOeste.add(new Casilla("Solar9","Solar",16,Valor.GRUPO4/3,banca));
         ladoOeste.add(new Casilla("Caja","Caja de comunidad",17,banca));
         ladoOeste.add(new Casilla("Solar10","Solar",18,Valor.GRUPO4/3,banca));
@@ -109,10 +109,10 @@ public class Tablero {
         ladoNorte.add(new Casilla("Suerte","Suerte",22,banca));
         ladoNorte.add(new Casilla("Solar13","Solar",23,Valor.GRUPO5/3,banca));
         ladoNorte.add(new Casilla("Solar14","Solar",24,Valor.GRUPO5/3,banca));
-        ladoNorte.add(new Casilla("Trans3","Transporte",25,2000,banca));
+        ladoNorte.add(new Casilla("Trans3","Transporte",25,Valor.TRANSPORTE,banca));
         ladoNorte.add(new Casilla("Solar15","Solar",26,Valor.GRUPO6/3,banca));
         ladoNorte.add(new Casilla("Solar16","Solar",27,Valor.GRUPO6/3,banca));
-        ladoNorte.add(new Casilla("Serv2","Servicios",28,2500,banca));
+        ladoNorte.add(new Casilla("Serv2","Servicios",28,Valor.SERVICIO,banca));
         ladoNorte.add(new Casilla("Solar17","Solar",29,Valor.GRUPO6/3,banca));
 
         posiciones.add(ladoNorte);
@@ -136,7 +136,7 @@ public class Tablero {
         ladoEste.add(new Casilla("Solar19","Solar",32,Valor.GRUPO7/3,banca));
         ladoEste.add(new Casilla("Caja","Caja de comunidad",33,banca));
         ladoEste.add(new Casilla("Solar20","Solar",34,Valor.GRUPO7/3,banca));
-        ladoEste.add(new Casilla("Trans4","Transporte",35,2000,banca));
+        ladoEste.add(new Casilla("Trans4","Transporte",35,Valor.TRANSPORTE,banca));
         ladoEste.add(new Casilla("Suerte","Suerte",36,banca));
         ladoEste.add(new Casilla("Solar21","Solar",37,Valor.GRUPO8/2,banca));
         ladoEste.add(new Casilla("Imp2",38,Valor.SUMA_VUELTA,banca));

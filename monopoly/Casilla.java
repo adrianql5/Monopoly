@@ -202,25 +202,38 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
      * @param banca La banca es el dueño de las casillas no compradas aún
      */
     public void comprarCasilla(Jugador solicitante, Jugador banca) {
-        if(solicitante.getFortuna()>=this.valor && esPosibleComprar(solicitante) ){
-            solicitante.restarFortuna(this.valor);
-            solicitante.sumarGastos(this.valor);
-            banca.eliminarPropiedad(this);
-            solicitante.anhadirPropiedad(this);
-            this.duenho=solicitante;
+        // ¿La casilla es de un tipo que se pueda comprar?
+        if(this.tipo.equals("Solar") || this.tipo.equals("Transporte") || this.tipo.equals("Servicio")) {
+            // ¿El jugador que la quiere comprar está encima de la casilla?
+            if(solicitante.getAvatar().getLugar()==this) {
+                // ¿La casilla pertenece a la banca?
+                if(this.duenho==banca) {
+                    // ¿El jugador tiene suficiente dinero para poder pagarla?
+                    if (solicitante.getFortuna()>=this.valor) {
+                        solicitante.restarFortuna(this.valor);
+                        solicitante.sumarGastos(this.valor);
+                        banca.eliminarPropiedad(this);
+                        solicitante.anhadirPropiedad(this);
+                        this.duenho=solicitante;
 
-            System.out.println(solicitante.getNombre()+" ha comprado la propiedad "+this.getNombre()+" por el precio de "+this.valor);
-
+                        System.out.println(solicitante.getNombre() + " ha comprado la propiedad " + this.getNombre() +
+                                " por el precio de " + this.valor);
+                    }
+                    else {
+                        System.out.println("No tienes dinero para comprar esta casilla");
+                    }
+                }
+                else {
+                    System.out.println("Esta casilla no está en venta.");
+                }
+            }
+            else {
+                System.out.println("¡Tienes que caer en la casilla para poder comprarla!");
+            }
         }
-        else if(this.duenho!=banca){
-            System.out.println("Esta casilla no está en venta");
-
+        else {
+            System.out.println("¡¡Esta casilla no se puede comprar!! \uD83D\uDE21");
         }
-
-        else{
-            System.out.println("No tienes dinero para comprar esta casilla");
-        }
-
     }
 
     /**Método para mostrar información sobre una casilla.

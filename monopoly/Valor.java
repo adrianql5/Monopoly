@@ -24,12 +24,14 @@ public class Valor {
     public static final String SUBRAYADO = "\u001B[4m";
 
     //VALORES CONSTANTES DURANTE TODA LA PARTIDA
+    //Información importante: aunque sea una fórmula sólo se calcula una vez, no cada vez que se accede
     public static final float SALIR_CARCEL = 0.25f * Valor.SUMA_VUELTA;
+
+    //PRECIO DE COMPRA DE LAS CASILLAS DE TIPO TRANSPORTE Y SERVICIO
     public static final float TRANSPORTE = Valor.SUMA_VUELTA;   //Podría quitarse pero sería menos intuitivo
     public static final float SERVICIO = 0.75f * Valor.SUMA_VUELTA;
 
-    //VALORES INICIALES DE LOS SOLARES
-    //Información importante: aunque sea una fórmula sólo se calcula una vez, no cada vez que se accede
+    //VALORES INICIALES DE LOS GRUPOS DE LOS SOLARES
     public static final float INCREMENTO = 1.3f;
     public static final float GRUPO1 = 1200000f;
     public static final float GRUPO2 = Valor.GRUPO1 * Valor.INCREMENTO;
