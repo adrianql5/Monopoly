@@ -115,7 +115,8 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
 
         case "Especial":
             if (this.nombre.equals("Carcel")) {
-                System.out.println("Has caído en la Carcel. Tienes 3 opciones para salir: Pagar, Usar Carta de Suerte o Sacar Dados Dobles.\n");
+                System.out.println("Has caído en la Carcel. Disfruta de la visita.\n");
+                //System.out.println("Has caído en la Carcel. Tienes 3 opciones para salir: Pagar, Usar Carta de Suerte o Sacar Dados Dobles.\n");
                 return false;
             }
 
@@ -245,8 +246,8 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
                 + "\tPosicion: "+this.posicion+"\n"
                 + "\tValor: "+this.valor+"\n"
                 + "\tDueño: "+(this.duenho != null ? this.duenho.getNombre() : "Casilla sin Dueño" )+"\n"
-                + "\tColor del grupo"+(this.grupo != null ? this.grupo.getColorGrupo() : "Casilla sin Dueño" )
-                + "\tValor hipoteca:"+this.hipoteca+"\n}\n";
+                + "\tColor del grupo "+(this.grupo != null ? this.grupo.getColorGrupo() : "Casilla sin Dueño" + "\n" )
+                + "\tValor hipoteca: "+this.hipoteca+"\n}\n";
 
         return info;
     }

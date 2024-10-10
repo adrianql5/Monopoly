@@ -20,7 +20,7 @@ public class Menu {
     private Jugador banca; //El jugador banca.
     private boolean tirado; //Booleano para comprobar si el jugador que tiene el turno ha tirado o no.
     private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente, es decir, si ha pagado sus deudas.
-
+    private float bote;
     private boolean partidaTerminada =false;
 
     //Hay que asignar un valor por defecto para cada atributo
@@ -35,6 +35,7 @@ public class Menu {
         this.dado2= new Dado();
         this.tirado=false;
         this.solvente=true;
+        this.bote= 0;
     }
 
 
@@ -432,6 +433,8 @@ public class Menu {
         // Establecemos la casilla de desitno (solo para imprimirla después)
         Casilla destino = avatar.getLugar();
 
+        avatar.getLugar().evaluarCasilla(jugador,this.banca,n);
+
         // Imprimimos el mensaje de que movimos al avatar
         System.out.println("El avatar " + avatar.getId() + " avanza " + (n) +
                 " casillas desde " + salida.getNombre() + " hasta " + destino.getNombre());
@@ -499,26 +502,92 @@ public class Menu {
         switch (nombre) {
             case "Salida":
                 // Imprimir el valor de vuelta con separador de miles
-                // %, -> añade el separador de miles
-                // .0f -> imprime el valor como un float con 0 decimales
-                System.out.printf("{\n\tPago por vuelta: %,.0f\n}", Valor.SUMA_VUELTA);
+                System.out.printf("{\n\tPago por vuelta: %,.0f", Valor.SUMA_VUELTA);
+
+                // Encontrar la casilla de "Salida"
+                Casilla casillaSalida = tablero.encontrar_casilla("Salida");
+
+                ArrayList<Avatar> avataresEnSalida = casillaSalida.getAvatares();
+                if (avataresEnSalida.isEmpty()) {
+                    System.out.println("Nadie en Salida");
+                } else {
+                    // Recorremos la lista de avatares y mostramos todos los jugadores en la misma línea
+                    for (int i = 0; i < avataresEnSalida.size(); i++) {
+                        Avatar avatar = avataresEnSalida.get(i);
+                        Jugador jugador = avatar.getJugador();
+
+                        // Imprimimos el jugador en la casilla de salida
+                        System.out.print("[" + jugador.getNombre() + "]  ");
+                    }
+                }
+                System.out.println("\n}");
                 break;
 
             case "Carcel":
                 // Imprimir el valor para salir de la cárcel con separador de miles
-                // %, -> añade el separador de miles
-                // .0f -> imprime el valor como un float con 0 decimales
-                System.out.printf("{\n\tPago salir: %,.0f\n}", Valor.SALIR_CARCEL);
-                Casilla casilla_a_buscar = tablero.encontrar_casilla(nombre);   //???
-                //HAY QUE IMPRIMIR LOS JUGADORES QUE ESTÁN EN ELLA Y LOS TURNOS QUE LLEVAN TAMBIÉN. EJEMPLO:
-                //jugadores: [Pedro,2] [Maria,1]
+                System.out.printf("{\n\tPago salir: %,.0f \n", Valor.SALIR_CARCEL);
+
+                // Encontrar la casilla de la cárcel
+                Casilla casillaCarcel = tablero.encontrar_casilla("Carcel");  // Asumo que la casilla se llama "Carcel"
+
+                ArrayList<Avatar> avataresEnCarcel = casillaCarcel.getAvatares();
+                if (avataresEnCarcel.isEmpty()) {
+                    System.out.println("No hay Jugadores");
+                } else {
+
+
+                    // Recorremos la lista de avatares y mostramos todos los jugadores en la misma línea
+                    for (int i = 0; i < avataresEnCarcel.size(); i++) {
+                        Avatar avatar = avataresEnCarcel.get(i);
+                        Jugador jugador = avatar.getJugador();
+
+                        if (jugador.isEnCarcel()) {
+                            // Imprimimos el jugador que está encarcelado con el número de tiradas en la cárcel
+                            System.out.print("[" + jugador.getNombre() + "," + jugador.getTiradasCarcel() + "]");
+                        } else {
+                            // Imprimimos el jugador que está de visita
+                            System.out.print("[" + jugador.getNombre() + " (visita)]");
+                        }
+
+                        // Agregar una coma y un espacio después de cada jugador, excepto el último
+                        if (i < avataresEnCarcel.size() - 1) {
+                            System.out.print(" ");
+                        }
+                    }
+                }
+
+                System.out.println("\n}");
                 break;
 
+
             case "Parking":
-                // Añadir lógica para imprimir el bote si se añade más tarde
+                // Imprimir el bote con separador de miles
+                System.out.printf("{\n\tBote acumulado: %,.0f\n", banca.getFortuna());
+
+                // Encontrar la casilla de "Parking"
+                Casilla casillaParking = tablero.encontrar_casilla("Parking");
+
+                ArrayList<Avatar> avataresEnParking = casillaParking.getAvatares();
+                if (avataresEnParking.isEmpty()) {
+                    System.out.println("\tNadie en Parking");
+                } else {
+                    System.out.print("\n\tAvatares en Parking: ");
+
+                    // Recorremos la lista de avatares y mostramos todos los jugadores en la misma línea
+                    for (int i = 0; i < avataresEnParking.size(); i++) {
+                        Avatar avatar = avataresEnParking.get(i);
+                        Jugador jugador = avatar.getJugador();
+
+                        // Imprimimos el jugador en la casilla de parking
+                        System.out.print("[" + jugador.getNombre() + "]  ");
+                    }
+                }
+                System.out.println("\n}");
                 break;
 
             case "IrCarcel": case "Caja": case "Suerte":
+                System.out.println("El comando no esta pensado para esta casilla");
+                System.out.println("}");
                 // No es necesario imprimir nada aquí
                 break;
 
@@ -538,7 +607,7 @@ public class Menu {
             case "Solar11": case "Solar12": case "Solar13": case "Solar14": case "Solar15":
             case "Solar16": case "Solar17": case "Solar18": case "Solar19": case "Solar20": case "Solar21": case "Solar22":
                 Casilla casillaEncontrada3 = tablero.encontrar_casilla(nombre);
-                casillaEncontrada3.infoCasilla();
+                System.out.println(casillaEncontrada3.infoCasilla());
                 break;
 
             case "Imp1": case "Imp2":

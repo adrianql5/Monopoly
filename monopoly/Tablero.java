@@ -280,6 +280,7 @@ public class Tablero {
         return nombreConFormato;
     }
 
+
     /**Método que devuelve la mitad de abajo de las casillas (con fichas si las hubiese)
      * Formato: Nombre casilla + Espacios + Barra.
      * El número de espacios varía para que la cadena entera mida 9 caracteres (=Valor.NCHARS_CASILLA).

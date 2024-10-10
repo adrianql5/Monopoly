@@ -23,7 +23,7 @@ public class Jugador {
     public Jugador() {
         this.nombre="banca";
         this.avatar=null;
-        this.fortuna=Valor.FORTUNA_BANCA;
+        this.fortuna=0;
         this.gastos=0;
         this.enCarcel=false;
         this.tiradasCarcel=0;
@@ -167,6 +167,9 @@ public class Jugador {
     public int getTiradasCarcel(){
         return tiradasCarcel;
     }
+
+
+
 
     public int getVueltas() {
         return vueltas;
