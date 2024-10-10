@@ -28,7 +28,7 @@ public class Jugador {
         this.enCarcel=false;
         this.tiradasCarcel=0;
         this.vueltas=0;
-        this.propiedades=null;
+        this.propiedades=new ArrayList<Casilla>();
     }
 
     /*Constructor principal. Requiere parámetros:

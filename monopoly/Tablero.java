@@ -23,6 +23,7 @@ public class Tablero {
         this.banca=banca;
         this.grupos = new HashMap<String,Grupo>();
         generarCasillas();
+        //asignarCasillasBanca();
     }
 
 
@@ -34,6 +35,18 @@ public class Tablero {
         this.insertarLadoNorte();
         this.insertarLadoEste();
     }
+
+    public void asignarCasillasBanca(){
+        int i;
+        for(i=0; i<40; i++){
+            if(getCasilla(i).getTipo().equals("Solar") ||
+            getCasilla(i).getTipo().equals("Servicio") ||
+            getCasilla(i).getTipo().equals("Transporte") ){
+                this.banca.anhadirPropiedad(getCasilla(i));
+            }
+        }
+    }
+
 
     //Método para insertar las casillas del lado sur.
     private void insertarLadoSur() {
@@ -50,12 +63,6 @@ public class Tablero {
         ladoSur.add(new Casilla("Solar5","Solar",9,Valor.GRUPO2/3,banca));
 
 
-        // Asignar la banca como propietaria de las casillas solares, transporte y servicios.
-        for (Casilla casilla : ladoSur) {
-            if (casilla.getTipo().equals("Solar") || casilla.getTipo().equals("Transporte") || casilla.getTipo().equals("Servicio")) {
-                casilla.setDuenho(banca); // Asigna la banca como dueño.
-            }
-        }
         posiciones.add(ladoSur);
 
         this.grupos.put("WHITE",new Grupo(getCasilla(1), getCasilla(3),"WHITE"));
@@ -82,12 +89,6 @@ public class Tablero {
         ladoOeste.add(new Casilla("Solar10","Solar",18,Valor.GRUPO4/3,banca));
         ladoOeste.add(new Casilla("Solar11","Solar",19,Valor.GRUPO4/3,banca));
 
-        // Asignar la banca como propietaria de las casillas solares, transporte y servicios.
-        for (Casilla casilla : ladoOeste) {
-            if (casilla.getTipo().equals("Solar") || casilla.getTipo().equals("Transporte") || casilla.getTipo().equals("Servicio")) {
-                casilla.setDuenho(banca); // Asigna la banca como dueño.
-            }
-        }
         posiciones.add(ladoOeste);
 
         this.grupos.put("BLUE",new Grupo(getCasilla(11), getCasilla(13),getCasilla(14),"BLUE"));
@@ -115,12 +116,7 @@ public class Tablero {
         ladoNorte.add(new Casilla("Serv2","Servicios",28,2500,banca));
         ladoNorte.add(new Casilla("Solar17","Solar",29,Valor.GRUPO6/3,banca));
 
-        // Asignar la banca como propietaria de las casillas solares, transporte y servicios.
-        for (Casilla casilla : ladoNorte) {
-            if (casilla.getTipo().equals("Solar") || casilla.getTipo().equals("Transporte") || casilla.getTipo().equals("Servicio")) {
-                casilla.setDuenho(banca); // Asigna la banca como dueño.
-            }
-        }
+
         posiciones.add(ladoNorte);
 
         this.grupos.put("BLACK",new Grupo(getCasilla(21), getCasilla(23),getCasilla(24),"BLACK"));
@@ -148,12 +144,7 @@ public class Tablero {
         ladoEste.add(new Casilla("Imp2",38,Valor.SUMA_VUELTA,banca));
         ladoEste.add(new Casilla("Solar22","Solar",39,Valor.GRUPO8/2,banca));
 
-        // Asignar la banca como propietaria de las casillas solares, transporte y servicios.
-        for (Casilla casilla : ladoEste) {
-            if (casilla.getTipo().equals("Solar") || casilla.getTipo().equals("Transporte") || casilla.getTipo().equals("Servicio")) {
-                casilla.setDuenho(banca); // Asigna la banca como dueño.
-            }
-        }
+
         posiciones.add(ladoEste);
 
         this.grupos.put("RED",new Grupo(getCasilla(31), getCasilla(32),getCasilla(34),"RED"));
