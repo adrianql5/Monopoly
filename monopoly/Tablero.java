@@ -23,7 +23,7 @@ public class Tablero {
         this.banca=banca;
         this.grupos = new HashMap<String,Grupo>();
         generarCasillas();
-        //asignarCasillasBanca();
+        asignarCasillasBanca();
     }
 
 
@@ -61,7 +61,6 @@ public class Tablero {
         ladoSur.add(new Casilla("Suerte","Suerte",7,banca));
         ladoSur.add(new Casilla("Solar4","Solar",8,Valor.GRUPO2/3,banca));
         ladoSur.add(new Casilla("Solar5","Solar",9,Valor.GRUPO2/3,banca));
-
 
         posiciones.add(ladoSur);
 
@@ -116,7 +115,6 @@ public class Tablero {
         ladoNorte.add(new Casilla("Serv2","Servicios",28,2500,banca));
         ladoNorte.add(new Casilla("Solar17","Solar",29,Valor.GRUPO6/3,banca));
 
-
         posiciones.add(ladoNorte);
 
         this.grupos.put("BLACK",new Grupo(getCasilla(21), getCasilla(23),getCasilla(24),"BLACK"));
@@ -143,7 +141,6 @@ public class Tablero {
         ladoEste.add(new Casilla("Solar21","Solar",37,Valor.GRUPO8/2,banca));
         ladoEste.add(new Casilla("Imp2",38,Valor.SUMA_VUELTA,banca));
         ladoEste.add(new Casilla("Solar22","Solar",39,Valor.GRUPO8/2,banca));
-
 
         posiciones.add(ladoEste);
 

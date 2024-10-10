@@ -42,7 +42,7 @@ public class Jugador {
         this.avatar = new Avatar(tipoAvatar, this, inicio, avCreados);
         this.avatar.setTipo(tipoAvatar);
         this.avatar.setLugar(inicio);
-        this.fortuna = Valor.FORTUNA_INICIAL;  // Initial fortune from Valor
+        this.fortuna = Valor.FORTUNA_INICIAL;
         this.gastos = 0;
         this.enCarcel = false;
         this.tiradasCarcel = 0;
