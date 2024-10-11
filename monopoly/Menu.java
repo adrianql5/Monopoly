@@ -35,7 +35,6 @@ public class Menu {
         this.dado2= new Dado();
         this.tirado=false;
         this.solvente=true;
-        this.bote= 0;
     }
 
 
@@ -316,6 +315,7 @@ public class Menu {
                         System.out.println("¡Al pasar por la salida ganaste " + Valor.SUMA_VUELTA + "€!");
                         jugador.sumarFortuna(Valor.SUMA_VUELTA);
                         jugador.sumarVuelta();
+                        cuatroVueltas();
                     }
 
                 }
@@ -433,8 +433,6 @@ public class Menu {
         // Establecemos la casilla de desitno (solo para imprimirla después)
         Casilla destino = avatar.getLugar();
 
-        avatar.getLugar().evaluarCasilla(jugador,this.banca,n);
-
         // Imprimimos el mensaje de que movimos al avatar
         System.out.println("El avatar " + avatar.getId() + " avanza " + (n) +
                 " casillas desde " + salida.getNombre() + " hasta " + destino.getNombre());
@@ -454,6 +452,8 @@ public class Menu {
         if(c != null) {
             if (this.tirado || lanzamientos > 0) {
                 c.comprarCasilla(this.jugadores.get(turno), this.banca);//le paso el jugador que tiene el turno y eljugador 0 (la banca)
+                Jugador jugador = obtenerTurno();
+                jugador.setVueltas(0);
             }
         }
         else {
@@ -467,18 +467,18 @@ public class Menu {
      * @param avatar Tipo de avatar
      */
     private void crearJugador(String nombre, String avatar) {
-       /* if(!Avatar.esTipoAvatar(nombre)){
-            System.out.println("Tipo Incorrecto");
-            return;
-        }
-        */
 
+        String tipo = avatar.trim().toLowerCase();  // Eliminar espacios y convertir a minúsculas
 
         // Definir la casilla de inicio. Por ejemplo, la primera casilla del tablero
         Casilla casillaInicio = tablero.getCasilla(0);  // Asumiendo que tienes un método para obtener la casilla inicial
-
+        if(!esTipoAvatar(tipo)){
+            System.out.println("Tipo Incorrecto");
+            return;
+        }
         // Crear nuevo jugador tipo coche porque si
-        Jugador nuevoJugador = new Jugador(nombre, "Coche", casillaInicio, avatares);
+        Jugador nuevoJugador = new Jugador(nombre, tipo, casillaInicio, avatares);
+
 
         // Añadir el jugador a la lista de jugadores
         this.jugadores.add(nuevoJugador);
@@ -501,7 +501,7 @@ public class Menu {
     private void descCasilla(String nombre) {
         switch (nombre) {
             case "Salida":
-                /
+                // Imprimir el valor de vuelta con separador de miles
                 System.out.printf("{\n\tPago por vuelta: %,.0f", Valor.SUMA_VUELTA);
 
                 // Encontrar la casilla de "Salida"
@@ -524,7 +524,7 @@ public class Menu {
                 break;
 
             case "Carcel":
-                // Imprimir el valor para salir de la cárcel
+                // Imprimir el valor para salir de la cárcel con separador de miles
                 System.out.printf("{\n\tPago salir: %,.0f \n", Valor.SALIR_CARCEL);
 
                 // Encontrar la casilla de la cárcel
@@ -534,6 +534,8 @@ public class Menu {
                 if (avataresEnCarcel.isEmpty()) {
                     System.out.println("No hay Jugadores");
                 } else {
+
+
                     // Recorremos la lista de avatares y mostramos todos los jugadores en la misma línea
                     for (int i = 0; i < avataresEnCarcel.size(); i++) {
                         Avatar avatar = avataresEnCarcel.get(i);
@@ -544,9 +546,13 @@ public class Menu {
                             System.out.print("[" + jugador.getNombre() + "," + jugador.getTiradasCarcel() + "]");
                         } else {
                             // Imprimimos el jugador que está de visita
-                            System.out.print("[" + jugador.getNombre() + " (visita)]  ");
+                            System.out.print("[" + jugador.getNombre() + " (visita)]");
                         }
 
+                        // Agregar una coma y un espacio después de cada jugador, excepto el último
+                        if (i < avataresEnCarcel.size() - 1) {
+                            System.out.print(" ");
+                        }
                     }
                 }
 
@@ -555,15 +561,15 @@ public class Menu {
 
 
             case "Parking":
-                // Imprimir el bote
-                System.out.printf("{\n\tBote acumulado: %,.0f\n", banca.getFortuna());
+                // Imprimir el bote con separador de miles
+                System.out.printf("{\n\tBote acumulado: %,.0f", bote);
 
                 // Encontrar la casilla de "Parking"
                 Casilla casillaParking = tablero.encontrar_casilla("Parking");
 
                 ArrayList<Avatar> avataresEnParking = casillaParking.getAvatares();
                 if (avataresEnParking.isEmpty()) {
-                    System.out.println("\tNadie en Parking");
+                    System.out.println(" Nadie en Parking");
                 } else {
                     System.out.print("\n\tAvatares en Parking: ");
 
@@ -590,9 +596,9 @@ public class Menu {
                 Casilla casillaEncontrada1 = tablero.encontrar_casilla(nombre);
                 System.out.println("\tTipo: " + casillaEncontrada1.getTipo());
                 System.out.println("\tDuenho: " + casillaEncontrada1.getDuenho().getNombre());
-                // Imprimir el valor de la casilla y el valor de hipoteca
+                // Imprimir el valor de la casilla y el valor de hipoteca con separador de miles
                 System.out.printf("\tPrecio: %,.0f\n", casillaEncontrada1.getValor());
-                System.out.printf("\tHipoteca: %,.0f\n", casillaEncontrada1.getHipoteca());
+                System.out.printf("\tHipoteca: %,.0f\n", casillaEncontrada1.getValor()/2f);
                 System.out.println("}");
                 break;
 
@@ -608,7 +614,7 @@ public class Menu {
                 System.out.println("{");
                 Casilla casillaEncontrada2 = tablero.encontrar_casilla(nombre);
                 System.out.println("\tTipo: " + casillaEncontrada2.getTipo());
-                // Imprimir el impuesto
+                // Imprimir el impuesto con separador de miles
                 System.out.printf("\tapagar: %,.0f\n", casillaEncontrada2.getImpuesto());
                 System.out.println("}");
                 break;
@@ -674,8 +680,29 @@ public class Menu {
             Valor.TEXTO_TABLERO[i] = nuevo_texto_tablero[i-1];
         }
     }
+    private void cuatroVueltas() {
+        boolean todosCumplen = true;
+        for (Jugador j : jugadores) {
+            if (j.getVueltas() < 4) { // Si algún jugador no cumple la condición
+                todosCumplen = false; // Cambiamos la variable a false
+                break; // detenenemos el bucle ya que no es necesario seguir
+            }
+        }
+        if (todosCumplen) {
+            this.tablero.aumentarCoste(banca);
+            System.out.println(("Todos los jugadores han dado 4 vueltas! El precio de las propiedades aumenta."));;
+        }
+    }
 
+
+    private boolean esTipoAvatar(String tipo) {
+        return "coche".equals(tipo) ||
+                "esfinge".equals(tipo) ||
+                "sombrero".equals(tipo) ||
+                "pelota".equals(tipo);
+    }
 }
+
 
 
 

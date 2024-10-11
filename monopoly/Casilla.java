@@ -102,11 +102,16 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
         case "Solar":
             if (!esPosibleComprar(actual)) {//si pertenece a otro jugador le debe pagar el alquiler
                 //Teoricamente si no tiene dinero para pagar se queda en negativo y se acaba la partida
-                System.out.println("El jugador " + actual.getNombre() + " le debe pagar "+ this.impuesto+" por el alquiler a" + this.duenho.getNombre());
-                actual.sumarGastos(this.impuesto);
-                actual.restarFortuna(this.impuesto);
+                Casilla solar = actual.getAvatar().getLugar();
+                Jugador propietario = solar.getDuenho();
+                float alquiler = solar.getValor()*0.10f;
+                System.out.println("El jugador " + actual.getNombre() + " le debe pagar "+ alquiler+" por el alquiler a " + propietario.getNombre());
+                actual.sumarGastos(alquiler);
+                actual.restarFortuna(alquiler);
+
+                propietario.sumarFortuna(alquiler);
                 if(actual.estaEnBancarrota()) return false;
-                this.duenho.sumarFortuna(this.impuesto);
+
                 return true;
             } else {
                 System.out.println("La casilla "+this.getNombre()+" está a la venta.\n");
@@ -142,11 +147,12 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
             break;
 
         case "Transporte":
+
             int multiplicador = this.duenho.numeroCasillasTipo("Transporte"); // Inicialización de multiplicador
 
             if (!esPosibleComprar(actual)){
                 System.out.println(actual.getNombre() + " debe pagarle el servicio de transporte a " + this.duenho.getNombre());
-                float total = multiplicador*0.25f*this.impuesto;//pongo f porque si no pone un double, cositas de Java
+                float total = multiplicador*0.25f*Valor.SUMA_VUELTA;//pongo f porque si no pone un double, cositas de Java
                 actual.sumarGastos(total);
                 actual.restarFortuna(total);
                 if(actual.estaEnBancarrota()) return false;
@@ -173,10 +179,12 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
         case "Servicios":
             if(!esPosibleComprar(actual)) {
                 System.out.println(actual.getNombre() + " debe pagarle el servicio a " + this.duenho.getNombre());
-                actual.sumarGastos(4 * tirada * this.impuesto);
+                float pagar = tirada*Valor.SUMA_VUELTA/200f;//pongo f porque si no pone un double, cositas de Java
+                actual.sumarGastos(pagar);
+                actual.restarFortuna(pagar);
                 if(actual.estaEnBancarrota()) return false;
 
-                this.duenho.sumarFortuna(4 * tirada * this.impuesto);
+                this.duenho.sumarFortuna(pagar);
                 return true;
             }
 
@@ -246,8 +254,8 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
                 + "\tPosicion: "+this.posicion+"\n"
                 + "\tValor: "+this.valor+"\n"
                 + "\tDueño: "+(this.duenho != null ? this.duenho.getNombre() : "Casilla sin Dueño" )+"\n"
-                + "\tColor del grupo "+(this.grupo != null ? this.grupo.getColorGrupo() : "Casilla sin Dueño" + "\n" )
-                + "\tValor hipoteca: "+this.hipoteca+"\n}\n";
+                + "\tColor del grupo "+(this.grupo != null ? this.grupo.getColorGrupo() : "Casilla sin Dueño" + " \n" )
+                + "\tValor hipoteca: "+this.valor/2f+"\n}\n";
 
         return info;
     }
@@ -305,24 +313,6 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
         return avatares;
     }
 
-    //No hace falta setter de avatares
-    public void setNombre(String nombre_casilla) {
-        switch(nombre_casilla) {
-            case "Salida": case "Carcel": case "Parking": case "IrCarcel":
-            case "Imp 1": case "Imp 2": case "Serv 1": case "Serv 2":
-            case "Trans 1": case "Trans 2": case "Trans 3": case "Trans 4":
-            case "Caja": case "Suerte": case "Solar 1": case "Solar 2":
-            case "Solar 3": case "Solar 4": case "Solar 5": case "Solar 6":
-            case "Solar 7": case "Solar 8": case "Solar 9": case "Solar 10":
-            case "Solar 11": case "Solar 12": case "Solar 13": case "Solar 14":
-            case "Solar 15": case "Solar 16": case "Solar 17": case "Solar 18":
-            case "Solar 19": case "Solar 20": case "Solar 21": case "Solar 22":
-                this.nombre=nombre_casilla;
-                break;
-            default:
-                System.out.println(nombre_casilla + " no es un nombre de casilla válido.\n");
-        }
-    }
 
     public void setTipo(String tipo_casilla) {
         switch(tipo_casilla) {

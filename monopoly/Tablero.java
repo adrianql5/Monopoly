@@ -16,6 +16,7 @@ public class Tablero {
     private Jugador banca; //Un jugador que será la banca.
 
 
+
     //SECCION DE COSNTRUIR EL TABLERO Y HACER LOS GRUPOS
 
     //Constructor: únicamente le pasamos el jugador banca (que se creará desde el menú).
@@ -449,4 +450,21 @@ public class Tablero {
     public ArrayList<ArrayList<Casilla>> getPosiciones() {
         return posiciones;
     }
+
+    public void aumentarCoste(Jugador banca) {
+        // Itera sobre todas las posiciones del tablero
+        for (int i = 0; i < getPosiciones().size(); i++) {
+            Casilla casilla = getCasilla(i);
+
+            // Verifica si la casilla no tiene dueño (es decir, si su dueño es la banca)
+            if (casilla.getDuenho() == banca && casilla.getTipo()=="Solar") {
+
+
+                // Aplica el porcentaje de incremento al valor de la casilla
+                float incremento = casilla.getValor() * 0.05f;
+                casilla.sumarValor(incremento);
+            }
+        }
+    }
+
 }
