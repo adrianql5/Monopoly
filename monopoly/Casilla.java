@@ -116,13 +116,13 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
 
         case "Especial":
             if (this.nombre.equals("Carcel")) {
-                System.out.println("Has caído en la Carcel. Disfruta de la visita.\n");
+                System.out.println("Has caído en la Carcel. Disfruta de la visita.");
                 //System.out.println("Has caído en la Carcel. Tienes 3 opciones para salir: Pagar, Usar Carta de Suerte o Sacar Dados Dobles.\n");
                 return true;
             }
 
             else if (this.nombre.equals("Parking")) {
-                System.out.println("Enhorabuena, has ganado el bote almacenado por impuestos, tasas y multas.\n");
+                System.out.println("Enhorabuena, has ganado el bote almacenado por impuestos, tasas y multas.");
                 actual.sumarFortuna(banca.getGastos());
                 banca.sumarGastos(banca.getGastos());
                 banca.restarFortuna(banca.getGastos());
@@ -131,7 +131,7 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
             }
 
             else if (this.nombre.equals("IrCarcel")) {
-                System.out.println("Mala suerte, te vas a la cárcel.\n");
+                System.out.println("Mala suerte, te vas a la cárcel.");
                 return true;
             }
 
