@@ -134,7 +134,9 @@ public class Jugador {
         return this.fortuna;
     }
 
-
+    public void sumarVuelta(){
+        vueltas++;
+    }
 
     public Avatar getAvatar() {
         return avatar;
