@@ -330,7 +330,9 @@ public class Menu {
                     if (origen.getPosicion() > destino.getPosicion()) {
                         System.out.printf("¡Al pasar por la salida ganaste %,.0f€!", Valor.SUMA_VUELTA);
                         jugador.sumarFortuna(Valor.SUMA_VUELTA);
-                        jugador.setVueltas(1+jugador.getVueltas());
+                        jugador.sumarVuelta();
+                        cuatroVueltas();
+                        
                     }
 
                     //EVALUAMOS QUÉ HAY QUE HACER EN FUNCIÓN DE LA CASILLA
@@ -483,6 +485,8 @@ public class Menu {
             if (this.tirado || lanzamientos > 0) {
                 //le paso el jugador que tiene el turno y eljugador 0 (la banca)
                 c.comprarCasilla(this.jugadores.get(turno), this.banca);
+                Jugador jugador = obtenerTurno();
+                jugador.setVueltas(0);
             }
             else {
                 System.out.println("¡Primero tienes que tirar!");
@@ -816,7 +820,19 @@ public class Menu {
         }
 
     }
-
+     private void CuatroVueltasJ() {
+        boolean todosCumplen = true;
+        for (Jugador j : jugadores) {
+            if (j.getVueltas() < 4) { // Si algún jugador no cumple la condición
+                todosCumplen = false; // Cambiamos la variable a false
+                break; // detenenemos el bucle ya que no es necesario seguir
+            }
+        }
+        if (todosCumplen) {
+            this.tablero.aumentarCoste(banca);
+            System.out.println(("Todos los jugadores han dado 4 vueltas sin comprar! El precio de las propiedades aumenta."));;
+        }
+    }
 }
 
 
