@@ -102,7 +102,8 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
         case "Solar":
             if (!esPosibleComprar(actual)) {//si pertenece a otro jugador le debe pagar el alquiler
                 //Teoricamente si no tiene dinero para pagar se queda en negativo y se acaba la partida
-                System.out.println("El jugador " + actual.getNombre() + " le debe pagar "+ this.impuesto+" por el alquiler a" + this.duenho.getNombre());
+                System.out.printf("El jugador %s le debe pagar %,.0f€ por el alquiler a %s\n",
+                        actual.getNombre(), this.impuesto, this.duenho.getNombre());
                 actual.sumarGastos(this.impuesto);
                 actual.restarFortuna(this.impuesto);
                 if(actual.estaEnBancarrota()) return false;
@@ -185,7 +186,7 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
                 return true;
             }
 
-        case "Caja de Comunidad": case "Suerte":
+        case "Caja": case "Suerte":
             //sin implementar
             break;
 
@@ -217,11 +218,11 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
                         solicitante.anhadirPropiedad(this);
                         this.duenho=solicitante;
 
-                        System.out.println(solicitante.getNombre() + " ha comprado la propiedad " + this.getNombre() +
-                                " por el precio de " + this.valor);
+                        System.out.printf("%s ha comprado la propiedad %s por el precio de %,.0f€\n",
+                                solicitante.getNombre(), this.getNombre(), this.valor);
                     }
                     else {
-                        System.out.println("No tienes dinero para comprar esta casilla");
+                        System.out.println("No tienes dinero para comprar esta casilla.");
                     }
                 }
                 else {

@@ -97,10 +97,6 @@ public class Jugador {
         this.avatar.getLugar().anhadirAvatar(this.avatar);
     }
 
-    public void sumarVuelta(){
-        vueltas++;
-    }
-
     //esto aun no esta pero hace falta
     public boolean estaHipotecado() {
         return false;
