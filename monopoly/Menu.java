@@ -820,7 +820,7 @@ public class Menu {
         }
 
     }
-     private void CuatroVueltasJ() {
+     private void cuatroVueltasJ() {
         boolean todosCumplen = true;
         for (Jugador j : jugadores) {
             if (j.getVueltas() < 4) { // Si algún jugador no cumple la condición
