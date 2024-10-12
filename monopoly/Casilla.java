@@ -126,7 +126,7 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
                 actual.sumarFortuna(banca.getGastos());
                 banca.sumarGastos(banca.getGastos());
                 banca.restarFortuna(banca.getGastos());
-                banca.setGastos(0);;
+                banca.setGastos(0);
                 return true;
             }
 
@@ -186,7 +186,7 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
                 return true;
             }
 
-        case "Caja": case "Suerte":
+        case "Caja de comunidad": case "Suerte":
             //sin implementar
             break;
 
@@ -219,7 +219,7 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
                         this.duenho=solicitante;
 
                         System.out.printf("%s ha comprado la propiedad %s por el precio de %,.0f€\n",
-                                solicitante.getNombre(), this.getNombre(), this.valor);
+                                solicitante.getNombre(), this.nombre, this.valor);
                     }
                     else {
                         System.out.println("No tienes dinero para comprar esta casilla.");
