@@ -170,11 +170,6 @@ public class Menu {
                 dineroInfinito();
                 break;
 
-            //CHEAT PARA COMPRAR TODAS LAS PROPIEDADES DE LA BANCA
-            case "comprar todo":
-                comprarTodo();
-                break;
-
             //Segundo bloque de comandos: dependen de una instancia
             default:
                 //Dividimos el comando en partes
@@ -231,6 +226,7 @@ public class Menu {
                         int dado1 = Integer.parseInt(comando[1]);
                         int dado2 = Integer.parseInt(comando[2]);
                         dadosTrampa(dado1,dado2);
+                        verTablero();
                     }
                     else {
                         System.out.println(comando_entero + " no es un comando válido.");
@@ -292,17 +288,15 @@ public class Menu {
                     // Si sacas dobles sales!
                     if(resultado1==resultado2) {
                         System.out.println("DOBLES!!\nSales de la cárcel.");
-                        jugador.setEnCarcel(false);
-                        jugador.setTiradasCarcel(0);
+                        desencarcelar(jugador);
                     }
                     else {
                         // No sales a menos que sea la tercera vez que tiras, caso en el que estás obligado
                         // a pagar la fianza. Si no puedes te declaras en bancarrota
-                        if(jugador.getTiradasCarcel()==3) {
+                        if(jugador.getTiradasCarcel()==2) {
                             System.out.println("No ha habido suerte con los dados, toca pagar la fianza...");
-                            //Por cómo está implementado salirCarcel(), básicamente pa poder tirar cuando salgas
+                            //Por cómo está implementado salirCarcel(), el comando no se puede usar si ya tiraste
                             this.tirado=false;
-                            this.lanzamientos=0;
                             //Pagas la fianza y sales de la cárcel
                             salirCarcel();
                         }
@@ -375,6 +369,17 @@ public class Menu {
 
     }
 
+    /**Método que resetea los atributos del jugador que se desencarcela.
+     * Lo usa salirCarcel pero tb se llama cuando sales por sacar dobles
+     * @param jugador Jugador que vamos a desencarcelar
+     */
+    private void desencarcelar(Jugador jugador) {
+        jugador.setEnCarcel(false);
+        jugador.setTiradasCarcel(0);
+        this.tirado=false;
+        this.lanzamientos=0;
+    }
+
     /**Método que ejecuta todas las acciones relacionadas con el comando 'salir carcel'. */
     private void salirCarcel() {//saca al avatar de la carcel
         //Establecemos el jugador actual
@@ -382,8 +387,7 @@ public class Menu {
         if (jugador.isEnCarcel()) {
             if (!this.tirado) {
                 if(!jugador.estaEnBancarrota()) {
-                    jugador.setEnCarcel(false);
-                    jugador.setTiradasCarcel(0);
+                    desencarcelar(jugador);
                     jugador.sumarFortuna(-Valor.SALIR_CARCEL);
                     System.out.printf("%s paga la fianza de %,.0f € y sale de la cárcel. Puedes tirar los dados.\n",
                             jugador.getNombre(), Valor.SALIR_CARCEL);
@@ -454,7 +458,7 @@ public class Menu {
             casilla_aux = tablero.getCasilla(i);
             if ((casilla_aux.getTipo().equals("Solar") || casilla_aux.getTipo().equals("Transporte")
                     || casilla_aux.getTipo().equals("Servicio")) && casilla_aux.getDuenho() == banca) {
-                System.out.println(casilla_aux.getNombre() + " - Precio: " + casilla_aux.getValor());
+                System.out.printf("%s - Precio: %,.0f€\n", casilla_aux.getNombre(), casilla_aux.getValor());
             }
         }
     }
@@ -501,8 +505,8 @@ public class Menu {
         if(c != null) {
             if (this.tirado || lanzamientos > 0) {
                 //le paso el jugador que tiene el turno y eljugador 0 (la banca)
-                c.comprarCasilla(this.jugadores.get(turno), this.banca);
                 Jugador jugador = obtenerTurno();
+                c.comprarCasilla(jugador, this.banca);
                 jugador.setVueltas(0);
             }
             else {
@@ -746,43 +750,11 @@ public class Menu {
     }
 
     //CHEATS
-    /**Método para conseguir mucho dinero
-     *
+    /**Método para conseguir mucho dinero.
      */
     private void dineroInfinito() {
         Jugador jugador = obtenerTurno();
         jugador.sumarFortuna(1000000000); //mil millones
-    }
-
-    /**Método para comprar todas las casillas posibles.
-     * Hay que hacer "dinero infinitio" primero
-     */
-    private void comprarTodo() {
-        Jugador solicitante = obtenerTurno();
-        for(ArrayList<Casilla> lado : tablero.getPosiciones()) {
-            for(Casilla c : lado) {
-                // ¿La casilla es de un tipo que se pueda comprar?
-                if(c.getTipo().equals("Solar") || c.getTipo().equals("Transporte") || c.getTipo().equals("Servicio")) {
-                    // ¿La casilla pertenece a la banca?
-                    if(c.getDuenho()==banca) {
-                        // ¿El jugador tiene suficiente dinero para poder pagarla?
-                        if (solicitante.getFortuna()>=c.getValor()) {
-                            solicitante.restarFortuna(c.getValor());
-                            solicitante.sumarGastos(c.getValor());
-                            banca.eliminarPropiedad(c);
-                            solicitante.anhadirPropiedad(c);
-                            c.setDuenho(solicitante);
-
-                            System.out.printf("%s ha comprado la propiedad %s por el precio de %,.0f€\n",
-                                    solicitante.getNombre(), c.getNombre(), c.getValor());
-                        }
-                        else {
-                            System.out.println("No tienes dinero para comprar esta casilla.");
-                        }
-                    }
-                }
-            }
-        }
     }
 
     /**Método igual a 'lanzar dados' pero que siempre saca 1 y 1.
@@ -820,17 +792,15 @@ public class Menu {
                     // Si sacas dobles sales!
                     if(resultado1==resultado2) {
                         System.out.println("DOBLES!!\nSales de la cárcel.");
-                        jugador.setEnCarcel(false);
-                        jugador.setTiradasCarcel(0);
+                        desencarcelar(jugador);
                     }
                     else {
                         // No sales a menos que sea la tercera vez que tiras, caso en el que estás obligado
                         // a pagar la fianza. Si no puedes te declaras en bancarrota
-                        if(jugador.getTiradasCarcel()==3) {
+                        if(jugador.getTiradasCarcel()==2) {
                             System.out.println("No ha habido suerte con los dados, toca pagar la fianza...");
-                            //Por cómo está implementado salirCarcel(), básicamente pa poder tirar cuando salgas
+                            //Por cómo está implementado salirCarcel(), el comando no se puede usar si ya tiraste
                             this.tirado=false;
-                            this.lanzamientos=0;
                             //Pagas la fianza y sales de la cárcel
                             salirCarcel();
                         }
@@ -876,7 +846,7 @@ public class Menu {
 
                     // Si pasamos por la salida hay que cobrar!
                     if (origen.getPosicion() > destino.getPosicion()) {
-                        System.out.printf("¡Al pasar por la salida ganaste %,.0f€!", Valor.SUMA_VUELTA);
+                        System.out.printf("¡Al pasar por la salida ganaste %,.0f€!\n", Valor.SUMA_VUELTA);
                         jugador.sumarFortuna(Valor.SUMA_VUELTA);
                         jugador.sumarVuelta();
                         cuatroVueltasJ();

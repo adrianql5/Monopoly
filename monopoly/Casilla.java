@@ -49,7 +49,7 @@ public class Casilla {
     public Casilla(String nombre, int posicion, float impuesto, Jugador duenho) {
         this.nombre=nombre;
         this.posicion= posicion;
-        this.tipo="Impuesto";
+        this.tipo="Impuestos";
         this.impuesto=impuesto;
         this.duenho= duenho;
         this.avatares=new ArrayList<Avatar>();
@@ -122,7 +122,7 @@ public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
             }
 
             else if (this.nombre.equals("Parking")) {
-                System.out.println("Enhorabuena, has ganado el bote almacenado por impuestos, tasas y multas.");
+                System.out.printf("Enhorabuena, has ganado el bote almacenado por impuestos, tasas y multas: %,.0f€\n", banca.getGastos());
                 actual.sumarFortuna(banca.getGastos());
                 banca.sumarGastos(banca.getGastos());
                 banca.restarFortuna(banca.getGastos());
