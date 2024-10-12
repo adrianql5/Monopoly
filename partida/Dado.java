@@ -16,4 +16,13 @@ public class Dado {
     public int getValor(){
         return this.valor;
     }
+
+    public void setValor(int valor){
+        if(0 < valor && valor < 7) {
+            this.valor=valor;
+        }
+        else {
+            System.out.println("Intentas asignarle a un dado un valor que no es posible!");
+        }
+    }
 }

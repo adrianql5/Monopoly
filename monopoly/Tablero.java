@@ -16,7 +16,6 @@ public class Tablero {
     private Jugador banca; //Un jugador que será la banca.
 
 
-
     //SECCION DE COSNTRUIR EL TABLERO Y HACER LOS GRUPOS
 
     //Constructor: únicamente le pasamos el jugador banca (que se creará desde el menú).
@@ -41,8 +40,8 @@ public class Tablero {
         int i;
         for(i=0; i<40; i++){
             if(getCasilla(i).getTipo().equals("Solar") ||
-            getCasilla(i).getTipo().equals("Servicio") ||
-            getCasilla(i).getTipo().equals("Transporte") ){
+                    getCasilla(i).getTipo().equals("Servicio") ||
+                    getCasilla(i).getTipo().equals("Transporte") ){
                 this.banca.anhadirPropiedad(getCasilla(i));
             }
         }
@@ -153,7 +152,7 @@ public class Tablero {
         this.grupos.put("PURPLE",new Grupo(getCasilla(37), getCasilla(39),"PURPLE"));
         getCasilla(37).setGrupo(grupos.get("PURPLE"));
         getCasilla(39).setGrupo(grupos.get("PURPLE"));
-        
+
     }
 
 
@@ -200,7 +199,7 @@ public class Tablero {
         String nombreColoreado = new String();
 
         //Escogemos el color en función del grupo al que pertenece la casilla
-        
+
         switch (casilla.getGrupo().getColorGrupo()) {
             case "BLACK":
                 nombreColoreado = Valor.BLACK;
@@ -451,6 +450,7 @@ public class Tablero {
         return posiciones;
     }
 
+
     public void aumentarCoste(Jugador banca) {
         // Itera sobre todas las posiciones del tablero
         for (int i = 0; i < getPosiciones().size(); i++) {
@@ -466,5 +466,4 @@ public class Tablero {
             }
         }
     }
-
 }

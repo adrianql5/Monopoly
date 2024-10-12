@@ -16,8 +16,8 @@ public class Jugador {
     private int tiradasCarcel; //Cuando está en la carcel, contará las tiradas sin éxito que ha hecho allí para intentar salir (se usa para limitar el numero de intentos).
     private int vueltas; //Cuenta las vueltas dadas al tablero.
     private ArrayList<Casilla> propiedades; //Propiedades que posee el jugador.
+    private int vueltas_sin_comprar;
 
-    
 
     //Constructor vacío para la banca
     public Jugador() {
@@ -37,7 +37,7 @@ public class Jugador {
      * que dos avatares tengan mismo ID). Desde este constructor también se crea el avatar.
      */
     public Jugador(String nombre, String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados) {
-        
+
         this.nombre = nombre;
         this.avatar = new Avatar(tipoAvatar, this, inicio, avCreados);
         this.avatar.setTipo(tipoAvatar);
@@ -97,10 +97,6 @@ public class Jugador {
         this.avatar.getLugar().anhadirAvatar(this.avatar);
     }
 
-    public void sumarVuelta(){
-        vueltas++;
-    }
-
     //esto aun no esta pero hace falta
     public boolean estaHipotecado() {
         return false;
@@ -115,12 +111,12 @@ public class Jugador {
     public boolean estaEnBancarrota() {
         if (this.getFortuna() <= 0) {
             // Comprobar si tiene propiedades hipotecables
-            for (Casilla propiedad : this.getPropiedades()) {
-                if (!propiedad.estaHipotecada()) {
-                    // Si el jugador tiene al menos una propiedad sin hipotecar, no está en bancarrota
-                    return false;
-                }
-            }
+            //for (Casilla propiedad : this.getPropiedades()) {
+            //    if (!propiedad.estaHipotecada()) {
+            //        // Si el jugador tiene al menos una propiedad sin hipotecar, no está en bancarrota
+            //        return false;
+            //    }
+            //}
             // Si llega aquí, significa que no tiene dinero ni propiedades útiles
             return true;
         }
@@ -138,7 +134,9 @@ public class Jugador {
         return this.fortuna;
     }
 
-
+    public void sumarVuelta(){
+        vueltas++;
+    }
 
     public Avatar getAvatar() {
         return avatar;
@@ -168,6 +166,14 @@ public class Jugador {
         return tiradasCarcel;
     }
 
+    public int getVueltas_sin_comprar(){
+        return vueltas_sin_comprar;
+    }
+
+    public void sumarVueltas_sin_comprar(){
+        vueltas++;
+    }
+    public void setVueltas_sin_comprar(int vueltas_sin_comprar){this.vueltas_sin_comprar = vueltas_sin_comprar;}
 
 
 

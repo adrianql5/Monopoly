@@ -20,7 +20,7 @@ class Grupo {
      * @param cas2 Casilla miembro 2
      * @param colorGrupo Color del grupo
      */
-    public Grupo(Casilla cas1, Casilla cas2, String colorGrupo) { 
+    public Grupo(Casilla cas1, Casilla cas2, String colorGrupo) {
         this.miembros= new ArrayList<Casilla>();
         this.colorGrupo=colorGrupo;
         miembros.add(cas1);
@@ -94,7 +94,7 @@ class Grupo {
         this.numCasillas=numCasillas;
     }
 
-    
+
 
 
 }

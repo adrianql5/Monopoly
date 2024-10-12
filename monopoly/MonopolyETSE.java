@@ -6,5 +6,5 @@ public class MonopolyETSE {
         Menu menu = new Menu();
         menu.iniciarPartida();
     }
-    
+
 }
