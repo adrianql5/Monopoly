@@ -23,6 +23,8 @@ public class Menu {
     private float bote;
     private boolean partidaTerminada =false;
 
+
+    //SECCIÓN DE CONSTUIR EL MENÚ
     //Hay que asignar un valor por defecto para cada atributo
     public Menu(){
         this.jugadores = new ArrayList<Jugador>();
@@ -38,6 +40,8 @@ public class Menu {
         this.bote= 0;
     }
 
+
+    //SECCIÓN DE CONTROL DEL FLUJO DE LA PARTIDA
 
     // Método para inciar una partida: crea los jugadores y avatares.
     public void iniciarPartida() {
@@ -109,6 +113,9 @@ public class Menu {
         System.exit(0);
     }
 
+
+
+    //SECCIÓN DE COMANDOS DEL MENÚ
 
     /**Método que interpreta el comando introducido y toma la accion correspondiente.
      * @param comando_entero Línea de comando que introduce el jugador
@@ -240,8 +247,7 @@ public class Menu {
     }
 
 
-    //IMPLEMENTACIÓN DE LOS MÉTODOS
-    //Métodos de comandos que no dependen de una instancia
+    //SECCIÓN DE COMANDOS QUE NO DEPENDEN DE NINGUNA INSTANCIA
 
     /**Método que ejecuta todas las acciones relacionadas con el comando 'jugador'.*/
     private void jugadorTurno() {
@@ -373,17 +379,7 @@ public class Menu {
 
     }
 
-    /**Método que resetea los atributos del jugador que se desencarcela.
-     * Lo usa salirCarcel pero tb se llama cuando sales por sacar dobles
-     * @param jugador Jugador que vamos a desencarcelar
-     */
-    private void desencarcelar(Jugador jugador) {
-        jugador.setEnCarcel(false);
-        jugador.setTiradasCarcel(0);
-        this.tirado=false;
-        this.lanzamientos=0;
-    }
-
+    
     /**Método que ejecuta todas las acciones relacionadas con el comando 'salir carcel'. */
     private void salirCarcel() {//saca al avatar de la carcel
         //Establecemos el jugador actual
@@ -467,7 +463,18 @@ public class Menu {
         }
     }
 
-    //Métodos de comandos que dependen de una instancia
+    //SECCIÓN DE COMANDOS QUE DEPENDEN DE UNA INSTANCIA
+    
+    /**Método que resetea los atributos del jugador que se desencarcela.
+     * Lo usa salirCarcel pero tb se llama cuando sales por sacar dobles
+     * @param jugador Jugador que vamos a desencarcelar
+     */
+    private void desencarcelar(Jugador jugador) {
+        jugador.setEnCarcel(false);
+        jugador.setTiradasCarcel(0);
+        this.tirado=false;
+        this.lanzamientos=0;
+    }
 
     /**Método para avanzar casillas de manera manual.
      * IMPORTANTE: NO CUENTA COMO LANZAR LOS DADOS!!
@@ -525,40 +532,9 @@ public class Menu {
         }
     }
 
-    /**Método que realiza las acciones asociadas al comando 'crear jugador'.
-     * Solo se usa antes de empezar la partida, una vez empezada no se pueden crear más jugadores.
-     * @param nombre Nombre del jugador
-     * @param avatar Tipo de avatar
-     */
-    private void crearJugador(String nombre, String avatar) {
-
-        String tipo = avatar.trim().toLowerCase();  // Eliminar espacios y convertir a minúsculas
-
-        // Definir la casilla de inicio. Por ejemplo, la primera casilla del tablero
-        Casilla casillaInicio = tablero.getCasilla(0);  // Asumiendo que tienes un método para obtener la casilla inicial
-        if(!esTipoAvatar(tipo)){
-            System.out.println("Tipo Incorrecto");
-            return;
-        }
-        // Crear nuevo jugador tipo coche porque si
-        Jugador nuevoJugador = new Jugador(nombre, tipo, casillaInicio, avatares);
 
 
-        // Añadir el jugador a la lista de jugadores
-        this.jugadores.add(nuevoJugador);
-
-        // Hacemos que sea el turno del jugador recién creado
-        // Nótese que por defecto this.turno = -1
-        this.turno += 1;
-
-        // Imprimir detalles del jugador recién creado
-        jugadorTurno();
-        casillaInicio.anhadirAvatar(nuevoJugador.getAvatar());
-
-
-        verTablero();
-    }
-
+    
     /**Método auxiliar para imprimir la lista de jugadores en una casilla.
      * Si no hay ningún jugador en la casilla no hace nada
      * @param casilla Nombre de la casilla
@@ -668,13 +644,13 @@ public class Menu {
 
                 // Imprimir el impuesto
                 System.out.printf("\tA pagar: %,.0f€\n", tablero.encontrar_casilla(nombre_casilla).getImpuesto());
-
+                
                 // Imprimimos los jugadores de la casilla si los hubiera
                 jugadoresEnCasilla(tablero.encontrar_casilla(nombre_casilla));
 
                 System.out.println("}");
                 break;
-
+                
             default:
                 System.out.println(nombre_casilla + " no es un nombre de casilla válido.");
         }
@@ -702,9 +678,9 @@ public class Menu {
         if(!encontrado){
             System.out.println("No se ha encontrado el jugador buscado.");
         }
-
+        
     }
-
+    
     /**Método que realiza las acciones asociadas al comando 'describir avatar'.
      * @param ID id del avatar a describir
      */
@@ -724,12 +700,51 @@ public class Menu {
         return jugadores.get(turno);
     }
 
+    //SECCIÓN DE COMANDOS QUE DEPENDEN DE DOS INSTANCIAS
+
+    /**Método que realiza las acciones asociadas al comando 'crear jugador'.
+     * Solo se usa antes de empezar la partida, una vez empezada no se pueden crear más jugadores.
+     * @param nombre Nombre del jugador
+     * @param avatar Tipo de avatar
+     */
+    private void crearJugador(String nombre, String avatar) {
+
+        String tipo = avatar.trim().toLowerCase();  // Eliminar espacios y convertir a minúsculas
+
+        // Definir la casilla de inicio. Por ejemplo, la primera casilla del tablero
+        Casilla casillaInicio = tablero.getCasilla(0);  // Asumiendo que tienes un método para obtener la casilla inicial
+        if(!esTipoAvatar(tipo)){
+            System.out.println("Tipo Incorrecto");
+            return;
+        }
+        // Crear nuevo jugador tipo coche porque si
+        Jugador nuevoJugador = new Jugador(nombre, tipo, casillaInicio, avatares);
+
+
+        // Añadir el jugador a la lista de jugadores
+        this.jugadores.add(nuevoJugador);
+
+        // Hacemos que sea el turno del jugador recién creado
+        // Nótese que por defecto this.turno = -1
+        this.turno += 1;
+
+        // Imprimir detalles del jugador recién creado
+        jugadorTurno();
+        casillaInicio.anhadirAvatar(nuevoJugador.getAvatar());
+
+
+        verTablero();
+    }
+
+
+    //SEECIÓN DE MÉTODOS ÚTILES DE MENÚ
+
     //Petadinha (longitud máxima de líneas de nuevo_texto=17)
     //Se puede hacer desde aquí porque no existe encapsulación al ser un String[]
     public void setTextoTablero(String nuevo_texto) {
         //Dividimos el String en partes en función de los saltos de línea
         String[] nuevo_texto_tablero = nuevo_texto.split("\n");
-
+        
         //Se empieza en el índice 1 porque la primera línea del centro del tablero se deja vacía
         //Nótese que para asignar bien el texto el índice de texto_tablero es i-1
         for(int i = 1; i< nuevo_texto_tablero.length+1; i++) {
@@ -757,12 +772,13 @@ public class Menu {
         }
     }
 
-    //GETTERS
+    //SECCIÓN DE GETTERS Y SETTERS DE MENÚ
     public Tablero getTablero() {
         return this.tablero;
     }
 
-    //CHEATS
+    //SECCIÓN DE CHEATS DE MENÚ
+
     /**Método para conseguir mucho dinero.
      */
     private void dineroInfinito() {

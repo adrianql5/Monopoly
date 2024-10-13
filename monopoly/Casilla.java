@@ -19,8 +19,7 @@ public class Casilla {
     private float hipoteca; //Valor otorgado por hipotecar una casilla
     private ArrayList<Avatar> avatares; //Avatares que están situados en la casilla.
 
-    //SECCION DE CONSTRUCTORES
-
+    //SECCIÓN DE CONSTRUCTORES DE CASILLA
     public Casilla() {
     }//Parámetros vacíos
 
@@ -71,7 +70,8 @@ public class Casilla {
     }
 
 
-    //SECCIÓN DE MÉTODOS ÚTILES
+    //SECCIÓN DE MÉTODOS ÚTILES DE CASILLA
+
     /**Método utilizado para añadir un avatar al array de avatares en casilla.*/
     public void anhadirAvatar(Avatar av) {
         this.avatares.add(av);
@@ -101,7 +101,7 @@ public class Casilla {
         if(actual != this.duenho) {
             switch (this.tipo) {
                 case "Solar":
-                    if (!esPosibleComprar(actual)) {//si pertenece a otro jugador le debe pagar el alquiler
+                    if (this.duenho!=banca) {//si pertenece a otro jugador le debe pagar el alquiler
                         //Teoricamente si no tiene dinero para pagar se queda en negativo y se acaba la partida
                         Casilla solar = actual.getAvatar().getLugar();
                         Jugador propietario = solar.getDuenho();
@@ -146,7 +146,7 @@ public class Casilla {
 
                     int multiplicador = this.duenho.numeroCasillasTipo("Transporte"); // Inicialización de multiplicador
 
-                    if (!esPosibleComprar(actual)) {
+                    if (this.duenho!=banca) {
                         System.out.println(actual.getNombre() + " debe pagarle el servicio de transporte a " + this.duenho.getNombre());
                         float total = multiplicador * 0.25f * Valor.SUMA_VUELTA;//pongo f porque si no pone un double, cositas de Java
                         actual.sumarGastos(total);
@@ -172,7 +172,7 @@ public class Casilla {
 
 
                 case "Servicios":
-                    if (!esPosibleComprar(actual)) {
+                    if (this.duenho!=banca) {
                         System.out.println(actual.getNombre() + " debe pagarle el servicio a " + this.duenho.getNombre());
                         float pagar = tirada * Valor.SUMA_VUELTA / 200f;//pongo f porque si no pone un double, cositas de Java
                         actual.sumarGastos(pagar);
@@ -220,7 +220,6 @@ public class Casilla {
                         solicitante.anhadirPropiedad(this);
                         this.duenho=solicitante;
 
-
                         System.out.printf("%s ha comprado la propiedad %s por el precio de %,.0f€\n",
                                 solicitante.getNombre(), this.nombre, this.valor);
                     }
@@ -240,6 +239,37 @@ public class Casilla {
             System.out.println("¡¡Esta casilla no se puede comprar!! \uD83D\uDE21");
         }
     }
+    
+    /** Método para mostrar información de una casilla en venta.
+     * Valor devuelto: texto con esa información.
+     */
+    public String casEnVenta() {
+        if(this.duenho==null || this.duenho.getNombre().equals("Banca")){
+            return "La casilla" + this.nombre + "está en venta por un precio de " + this.valor +"\n";
+        }
+        return "Esta casilla no está en venta";
+    }
+
+    public boolean esDuenhoCasilla(Jugador jugador, Casilla casilla){
+        if (casilla.duenho==jugador) return true;
+        else return false;
+    }
+    
+    public boolean estaHipotecada() {
+        return true;
+    }
+
+    public boolean esPosibleComprar(Jugador j) {
+        if(this.duenho.esBanca() &&
+                (this.tipo.equals("Solar")|| this.tipo.equals("Transporte")||
+                        this.tipo.equals("Servicio")) && j.getAvatar().getLugar().equals(this)
+                && this.duenho!=j){
+            return true;
+        }
+        return false;
+    }
+    
+    //SECCIÓN QUE DEVUELVE INFORMACIÓN DE CASILLA
 
     /**Método para mostrar información sobre una casilla.
      * Devuelve una cadena con información específica de cada tipo de casilla.
@@ -256,22 +286,8 @@ public class Casilla {
         return info;
     }
 
-    /** Método para mostrar información de una casilla en venta.
-     * Valor devuelto: texto con esa información.
-     */
-    public String casEnVenta() {
-        if(this.duenho==null || this.duenho.getNombre().equals("Banca")){
-            return "La casilla" + this.nombre + "está en venta por un precio de " + this.valor +"\n";
-        }
-        return "Esta casilla no está en venta";
-    }
 
-    public boolean esDuenhoCasilla(Jugador jugador, Casilla casilla){
-        if (casilla.duenho==jugador) return true;
-        else return false;
-    }
-
-    //SECCIÓN DE GETTERS Y SETTERS
+    //SECCIÓN DE GETTERS Y SETTERS DE CASILLA
 
     public String getNombre(){
         return nombre;
@@ -280,37 +296,7 @@ public class Casilla {
     public String getTipo() {
         return tipo;
     }
-
-    public float getValor() {
-        return valor;
-    }
-
-    public int getPosicion(){
-        return posicion;
-    }
-
-    public Jugador getDuenho(){
-        return duenho;
-    }
-
-    public Grupo getGrupo(){
-        return grupo;
-    }
-
-    public float getImpuesto(){
-        return impuesto;
-    }
-
-    public float getHipoteca(){
-        return hipoteca;
-    }
-
-    public ArrayList<Avatar> getAvatares(){
-        return avatares;
-    }
-
-
-
+  
     public void setTipo(String tipo_casilla) {
         switch(tipo_casilla) {
             case "Especial": case "Impuesto": case "Servicios": case "Transporte":
@@ -321,7 +307,11 @@ public class Casilla {
                 System.out.println(tipo_casilla + " no es un tipo de casilla válido.\n");
         }
     }
-
+    
+    public float getValor() {
+        return valor;
+    }
+    
     public void setValor(float valor_casilla) {
         if (valor_casilla > 0) {
             this.valor = valor_casilla;
@@ -331,6 +321,10 @@ public class Casilla {
         }
     }
 
+    public int getPosicion(){
+        return posicion;
+    }
+    
     public void setPosicion(int posicion_casilla) {
         if(posicion_casilla<40 && posicion_casilla>-1) {
             this.posicion = posicion_casilla;
@@ -339,7 +333,11 @@ public class Casilla {
             System.out.println(posicion + " no es una casilla válida.\n");
         }
     }
-
+    
+    public Jugador getDuenho(){
+        return duenho;
+    }
+   
     public void setDuenho(Jugador duenho_casilla) {
         if (duenho_casilla != null) {
             for (Avatar avatar : this.avatares) {
@@ -356,6 +354,10 @@ public class Casilla {
         }
     }
 
+    public Grupo getGrupo(){
+        return grupo;
+    }
+    
     public void setGrupo(Grupo grupo_casilla) {
         if (grupo_casilla != null) {
             this.grupo = grupo_casilla;
@@ -363,6 +365,11 @@ public class Casilla {
         else {
             System.out.println("El grupo no puede ser nulo.\n");
         }
+    }
+
+
+    public float getImpuesto(){
+        return impuesto;
     }
 
     public void setImpuesto(float impuesto_casilla) {
@@ -374,6 +381,10 @@ public class Casilla {
         }
     }
 
+    public float getHipoteca(){
+        return hipoteca;
+    }
+    
     public void setHipoteca(float hipoteca_casilla) {
         if (hipoteca_casilla > 0) {
             this.hipoteca = hipoteca_casilla;
@@ -382,19 +393,8 @@ public class Casilla {
             System.out.println("La hipoteca debe ser un valor positivo.\n");
         }
     }
-    public boolean estaHipotecada() {
-        return true;
+    
+    public ArrayList<Avatar> getAvatares(){
+        return avatares;
     }
-
-    public boolean esPosibleComprar(Jugador j) {
-        if(this.duenho.esBanca() &&
-                (this.tipo.equals("Solar")|| this.tipo.equals("Transporte")||
-                        this.tipo.equals("Servicio")) && j.getAvatar().getLugar().equals(this)
-                && this.duenho!=j){
-            return true;
-        }
-        return false;
-    }
-
-
 }

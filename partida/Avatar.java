@@ -7,7 +7,7 @@ import monopoly.Casilla;
 
 
 public class Avatar {
-
+    
     //ATRIBUTOS
     private String id; //Identificador: una letra generada aleatoriamente.
     private String tipo; //Sombrero, Esfinge, Pelota, Coche
@@ -15,12 +15,12 @@ public class Avatar {
     private Casilla lugar; //Los avatares se sitúan en casillas del tablero.
     private ArrayList<Avatar> avCreados;
 
-    //Seccion Para Crear Avatares
-
+    //SECCIÓN DE CONSTRUCTORES DE AVATAR
+    
     //Constructor vacío
     public Avatar() {
     }
-
+    
     /**
      * Constructor principal.
      *
@@ -37,50 +37,10 @@ public class Avatar {
         generarId(avCreados);
         this.avCreados.add(this);
     }
-
-    //GETTERS
-    public String getId() {
-        return id;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public Jugador getJugador() {
-        return jugador;
-    }
-
-    public Casilla getLugar() {
-        return lugar;
-    }
-
-    //SETTERS
-    //El id no necesita setter porque se le asigna un valor al crear el Avatar y no hay que modificarlo nunca
-    public void setTipo(String tipo_avatar) {
-        switch (tipo_avatar) {
-            case "Sombrero":
-            case "Esfinge":
-            case "Pelota":
-            case "Coche":
-                this.tipo = tipo_avatar;
-                break;
-            default:
-                System.out.println(tipo_avatar + " no es un tipo de avatar válido.\n");
-        }
-    }
-
-    public void setJugador(Jugador jugador_avatar) {
-        this.jugador = jugador_avatar;
-    }
-
-    public void setLugar(Casilla casilla_avatar) {
-        this.lugar = casilla_avatar;
-    }
-
-
-    //OTROS MÉTODOS
-
+   
+    
+    //SECCIÓN DE MÉTODOS ÚTILES DE AVATAR
+    
     /**
      * Método que permite generar un ID para un avatar. Sólo lo usamos en esta clase (por ello es privado).
      * El ID generado será una letra mayúscula entre A y Z.
@@ -91,11 +51,11 @@ public class Avatar {
         Random num = new Random();
         String ID;
         boolean repetido = true;
-
+        
         while (repetido) {
             repetido = false;
             ID = String.valueOf((char) (num.nextInt(26) + 'A'));
-
+            
             for (Avatar a : avCreados) {
                 if (a != null && a.getId().equals(ID)) {
                     repetido = true;
@@ -107,19 +67,7 @@ public class Avatar {
             }
         }
     }
-
-
-    public void infoAvatar() {
-        String str = "{\n\tID: " + this.id + "\n" +
-                "\tTipo: " + this.tipo + "\n" +
-                "\tJugador: " + this.jugador.getNombre() + "\n" +
-                "\tCasilla: " + this.lugar.getNombre() + "\n}";
-
-        // Imprimir directamente el string
-        System.out.println(str);
-    }
-
-
+    
     /**
      * Método que permite mover a un avatar a una casilla concreta.
      * EN ESTA VERSIÓN SUPONEMOS QUE valorTirada SIEMPRE ES POSITIVO.
@@ -149,15 +97,62 @@ public class Avatar {
         // Añadir el avatar a la nueva casilla
         this.lugar.anhadirAvatar(this);
     }
-}
-        
-/*
-    public static boolean esTipoAvatar(String str){
-        if(str.equals("Coche") || str.equals("Esfinge") || str.equals("Sombrero") || str.equals("Pelota")){
-            return true;
-        }
-        return false;
+
+
+    //SECCIÓN DE GETTERS Y SETTERS DE AVATAR
+    public String getId() {
+        return id;
+    }
+    //El id no necesita setter porque se le asigna un valor al crear el Avatar y no hay que modificarlo nunca
+
+    public String getTipo() {
+        return tipo;
     }
 
-*/
+    public void setTipo(String tipo_avatar) {
+        switch (tipo_avatar) {
+            case "Sombrero":
+            case "Esfinge":
+            case "Pelota":
+            case "Coche":
+                this.tipo = tipo_avatar;
+                break;
+            default:
+                System.out.println(tipo_avatar + " no es un tipo de avatar válido.\n");
+        }
+    }
+
+
+    public Jugador getJugador() {
+        return jugador;
+    }
+    
+    public void setJugador(Jugador jugador_avatar) {
+        this.jugador = jugador_avatar;
+    }
+
+
+    public Casilla getLugar() {
+        return lugar;
+    }
+
+    public void setLugar(Casilla casilla_avatar) {
+        this.lugar = casilla_avatar;
+    }
+
+
+    //SECCIÓN QUE DEVUELVE INFORMACIÓN DE AVATAR
+    public void infoAvatar() {
+        String str = "{\n\tID: " + this.id + "\n" +
+                "\tTipo: " + this.tipo + "\n" +
+                "\tJugador: " + this.jugador.getNombre() + "\n" +
+                "\tCasilla: " + this.lugar.getNombre() + "\n}";
+
+        // Imprimir directamente el string
+        System.out.println(str);
+    }
+
+}
+        
+
 

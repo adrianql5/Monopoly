@@ -13,7 +13,7 @@ class Grupo {
     private int numCasillas; //Número de casillas del grupo.
 
 
-    //Sección Construir Grupos
+    //SECCIÓN DE CONSTRUCTORES DE GRUPOS
 
     /**Constructor para cuando el grupo está formado por DOS CASILLAS.
      * @param cas1 Casilla miembro 1
@@ -44,7 +44,7 @@ class Grupo {
     }
 
 
-    //Sección Funciones Útiles de lso Grupos
+    //SECCIÓN DE MÉTODOS ÚTILES DE CRUPOS
 
     /** Método que añade una casilla al array de casillas miembro de un grupo.
      * @param miembro Casilla que se quiere añadir
@@ -68,8 +68,8 @@ class Grupo {
         return true;
     }
 
-    // Sección Getters y Setters de la Clase Grupo
-
+    // SECCIÓN DE GETETRS Y SETTERS DE GRUPOS
+    
     public ArrayList<Casilla> getMiembrosGrupo(){
         return this.miembros;
     }
@@ -93,8 +93,4 @@ class Grupo {
     public void setNumCasillasGrupo(int numCasillas){
         this.numCasillas=numCasillas;
     }
-
-
-
-
 }

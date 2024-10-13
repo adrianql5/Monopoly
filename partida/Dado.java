@@ -13,6 +13,8 @@ public class Dado {
         return valor;
     }
 
+
+    //SECCIÓN DE GETTERS Y SETTERS DE DADO
     public int getValor(){
         return this.valor;
     }

@@ -19,6 +19,8 @@ public class Jugador {
     private int vueltas_sin_comprar;
 
 
+    //SECCIÓN DE CONSTRUCTORES DE JUGADOR
+    
     //Constructor vacío para la banca
     public Jugador() {
         this.nombre="banca";
@@ -54,28 +56,51 @@ public class Jugador {
 
 
 
-    //Otros métodos:
+    //SECCIÓN DE MÉTODOS ÚTILES DE JUGADOR
+
     //Método para añadir una propiedad al jugador. Como parámetro, la casilla a añadir.
 
     public void anhadirPropiedad(Casilla casilla) {
         if (!propiedades.contains(casilla))
-            this.propiedades.add(casilla);
+        this.propiedades.add(casilla);
     }
-
-
+    
+    
     //Método para eliminar una propiedad del arraylist de propiedades de jugador.
     public void eliminarPropiedad(Casilla casilla) {
         if (propiedades.contains(casilla))
-            this.propiedades.remove(casilla);
-
+        this.propiedades.remove(casilla);
+        
     }
+    
+    /**Método para establecer al jugador en la cárcel.
+     * @param pos Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).
+     */
+    public void encarcelar(ArrayList<ArrayList<Casilla>> pos) {
+        this.avatar.getLugar().eliminarAvatar(this.avatar);
+        this.avatar.setLugar(pos.get(1).get(0));
+        this.enCarcel = true;
+        this.avatar.getLugar().anhadirAvatar(this.avatar);
+    }
+
+    
+    public int numeroCasillasTipo(String tipo){
+        int contador=0;
+        for(Casilla c: propiedades){
+            if(c.getTipo().equals(tipo)){
+                contador++;
+            }
+        }
+        return contador;
+    }
+    
+    //SECCIÓN DE MÉTODOS QUE GESTIONAN LA FORTUNA DEL JUGADOR
 
     //Método para añadir fortuna a un jugador
     //Como parámetro se pide el valor a añadir. Si hay que restar fortuna, se pasaría un valor negativo.
     public void sumarFortuna(float valor) {
         this.fortuna += valor;
     }
-
     public void restarFortuna(float valor){
         this.fortuna -=valor;
     }
@@ -87,17 +112,12 @@ public class Jugador {
         this.gastos += valor;
     }
 
-    /**Método para establecer al jugador en la cárcel.
-     * @param pos Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).
-     */
-    public void encarcelar(ArrayList<ArrayList<Casilla>> pos) {
-        this.avatar.getLugar().eliminarAvatar(this.avatar);
-        this.avatar.setLugar(pos.get(1).get(0));
-        this.enCarcel = true;
-        this.avatar.getLugar().anhadirAvatar(this.avatar);
-    }
 
-    //esto aun no esta pero hace falta
+    //SECCÓN DE MÉTODOS BOOLEANOS DE JUGADOR
+    public boolean isEnCarcel() {
+        return enCarcel;
+    }
+    
     public boolean estaHipotecado() {
         return false;
     }
@@ -124,15 +144,16 @@ public class Jugador {
         return false;
     }
 
-    //GETTERS Y SETTERS
+
+    //SeECCIÓN DE GETTERS Y SETTERS DE JUGADOR
     public String getNombre(){
         return this.nombre;
     }
 
-
     public float getFortuna(){
         return this.fortuna;
     }
+
 
     public void sumarVuelta(){
         vueltas++;
@@ -150,9 +171,6 @@ public class Jugador {
         this.gastos = gastos;
     }
 
-    public boolean isEnCarcel() {
-        return enCarcel;
-    }
 
     public void setEnCarcel(boolean enCarcel) {
         this.enCarcel = enCarcel;
@@ -173,9 +191,9 @@ public class Jugador {
     public void sumarVueltas_sin_comprar(){
         vueltas++;
     }
-    public void setVueltas_sin_comprar(int vueltas_sin_comprar){this.vueltas_sin_comprar = vueltas_sin_comprar;}
-
-
+    public void setVueltas_sin_comprar(int vueltas_sin_comprar){
+        this.vueltas_sin_comprar = vueltas_sin_comprar;
+    }
 
     public int getVueltas() {
         return vueltas;
@@ -190,6 +208,7 @@ public class Jugador {
     }
 
 
+    //SECCIÓN QUE DEVUELVE INFORMACIÓN DE JUGADOR
     public void infoJugador() {
         System.out.println("{");
         // Imprimir nombre, avatar y fortuna con separador de miles para la fortuna
@@ -215,14 +234,6 @@ public class Jugador {
         System.out.println("}");
     }
 
-    public int numeroCasillasTipo(String tipo){
-        int contador=0;
-        for(Casilla c: propiedades){
-            if(c.getTipo().equals(tipo)){
-                contador++;
-            }
-        }
-        return contador;
-    }
+    
 }
 

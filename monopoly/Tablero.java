@@ -16,7 +16,7 @@ public class Tablero {
     private Jugador banca; //Un jugador que será la banca.
 
 
-    //SECCION DE COSNTRUIR EL TABLERO Y HACER LOS GRUPOS
+    //Sección de Construir el Tablero y Sus Grupos
 
     //Constructor: únicamente le pasamos el jugador banca (que se creará desde el menú).
     public Tablero(Jugador banca) {
@@ -36,6 +36,7 @@ public class Tablero {
         this.insertarLadoEste();
     }
 
+    //Método que asigna a la banca la propiedades que son comprables al inicio de la partida
     public void asignarCasillasBanca(){
         int i;
         for(i=0; i<40; i++){
@@ -121,6 +122,7 @@ public class Tablero {
         getCasilla(21).setGrupo(grupos.get("BLACK"));
         getCasilla(23).setGrupo(grupos.get("BLACK"));
         getCasilla(24).setGrupo(grupos.get("BLACK"));
+        
         this.grupos.put("GREEN",new Grupo(getCasilla(26), getCasilla(27),getCasilla(29),"GREEN"));
         getCasilla(26).setGrupo(grupos.get("GREEN"));
         getCasilla(27).setGrupo(grupos.get("GREEN"));
@@ -155,9 +157,54 @@ public class Tablero {
 
     }
 
+    
+    //METODOS ÚTILES DEL TABLERO
 
+    /**Método usado para buscar la casilla con el nombre pasado como argumento.
+     * @param nombre Nombre de la casilla
+     */
+    public Casilla encontrar_casilla(String nombre){
+        int i;
+        for(i=0; i<40; i++){
+            if(getCasilla(i).getNombre().equals(nombre)){
+                return getCasilla(i);
+            }
+
+        }
+        return null;
+    }
+
+    public Casilla getCasilla(int posicion){
+        if(posicion<40 && posicion>-1){
+            return this.posiciones.get(posicion/10).get(posicion%10);
+        }
+        else return null;
+    }
+
+    public ArrayList<ArrayList<Casilla>> getPosiciones() {
+        return posiciones;
+    }
+
+
+    public void aumentarCoste(Jugador banca) {
+        // Itera sobre todas las posiciones del tablero
+        for (int i = 0; i < getPosiciones().size(); i++) {
+            Casilla casilla = getCasilla(i);
+
+            // Verifica si la casilla no tiene dueño (es decir, si su dueño es la banca)
+            if (casilla.getDuenho() == banca && casilla.getTipo()=="Solar") {
+
+
+                // Aplica el porcentaje de incremento al valor de la casilla
+                float incremento = casilla.getValor() * 0.05f;
+                casilla.sumarValor(incremento);
+            }
+        }
+    }
+    
+    
     //SECCION DE IMPRIMIR EL TABLERO Y LOS AVATARES
-
+    
     /**Método auxiliar para calcular el precio de un Solar.
      * @param nsolares_grupo Número de solares que tiene el grupo (2 o 3)
      * @param ngrupo Índice del grupo (se usa para la multiplicidad del incremento)
@@ -423,47 +470,4 @@ public class Tablero {
         return tabla;
     }
 
-    //METODOS ÚTILES DEL TABLERO
-
-    /**Método usado para buscar la casilla con el nombre pasado como argumento.
-     * @param nombre Nombre de la casilla
-     */
-    public Casilla encontrar_casilla(String nombre){
-        int i;
-        for(i=0; i<40; i++){
-            if(getCasilla(i).getNombre().equals(nombre)){
-                return getCasilla(i);
-            }
-
-        }
-        return null;
-    }
-
-    public Casilla getCasilla(int posicion){
-        if(posicion<40 && posicion>-1){
-            return this.posiciones.get(posicion/10).get(posicion%10);
-        }
-        else return null;
-    }
-
-    public ArrayList<ArrayList<Casilla>> getPosiciones() {
-        return posiciones;
-    }
-
-
-    public void aumentarCoste(Jugador banca) {
-        // Itera sobre todas las posiciones del tablero
-        for (int i = 0; i < getPosiciones().size(); i++) {
-            Casilla casilla = getCasilla(i);
-
-            // Verifica si la casilla no tiene dueño (es decir, si su dueño es la banca)
-            if (casilla.getDuenho() == banca && casilla.getTipo()=="Solar") {
-
-
-                // Aplica el porcentaje de incremento al valor de la casilla
-                float incremento = casilla.getValor() * 0.05f;
-                casilla.sumarValor(incremento);
-            }
-        }
-    }
 }
