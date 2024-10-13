@@ -21,7 +21,7 @@ public class Menu {
     private boolean tirado; //Booleano para comprobar si el jugador que tiene el turno ha tirado o no.
     private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente, es decir, si ha pagado sus deudas.
     private float bote;
-    private boolean partidaTerminada =false;
+    private boolean partidaTerminada;
 
 
     //SECCIÓN DE CONSTUIR EL MENÚ
@@ -38,6 +38,7 @@ public class Menu {
         this.tirado=false;
         this.solvente=true;
         this.bote= 0;
+        this.partidaTerminada=false;
     }
 
 
@@ -192,16 +193,6 @@ public class Menu {
                     //Podría ser uno de los siguientes:
                     switch(comando[0]){
 
-                        //Para avanzar cualquier número de casillas de forma manual
-                        case "avanzar":
-                            //Importante en este caso convertir comando[1] a un int primero
-                            //También es cierto que esto se podría convertir en el propio método
-                            int ncasillas = Integer.parseInt(comando[1]);
-                            //Ahora sí podemos usar el método avanzar
-                            avanzar(ncasillas);
-                            verTablero();
-                            break;
-
                         //Para comprar una casilla
                         case "comprar":
                             comprar(comando[1]);
@@ -350,6 +341,7 @@ public class Menu {
                     if (origen.getPosicion() > destino.getPosicion()) {
                         System.out.printf("¡Al pasar por la salida ganaste %,.0f€!", Valor.SUMA_VUELTA);
                         jugador.sumarFortuna(Valor.SUMA_VUELTA);
+                        jugador.sumarVuelta();
                         jugador.sumarVueltas_sin_comprar();
                         cuatroVueltasJ();
 
@@ -362,7 +354,6 @@ public class Menu {
                     if(destino.getNombre().equals("IrCarcel")) {
                         jugador.encarcelar(this.tablero.getPosiciones());
                     }
-
 
                 }
 
@@ -476,37 +467,6 @@ public class Menu {
         this.lanzamientos=0;
     }
 
-    /**Método para avanzar casillas de manera manual.
-     * IMPORTANTE: NO CUENTA COMO LANZAR LOS DADOS!!
-     * Usado durante el desarrollo, en la versión final no se podrá usar
-     * @param n Número de casillas que se debe avanzar
-     */
-    private void avanzar(int n) {
-        // Establecemos el avatar que tiene el turno
-        Jugador jugador = obtenerTurno();
-        Avatar avatar = jugador.getAvatar();
-
-        // Establecemos la casilla de salida (solo para imprimirla después)
-        Casilla salida = avatar.getLugar();
-
-        //Movemos al avatar
-        avatar.moverAvatar(this.tablero.getPosiciones(), n);
-
-        // Establecemos la casilla de desitno (solo para imprimirla después)
-        Casilla destino = avatar.getLugar();
-
-        avatar.getLugar().evaluarCasilla(jugador,this.banca,n);
-
-        // Imprimimos el mensaje de que movimos al avatar
-        System.out.println("El avatar " + avatar.getId() + " avanza " + (n) +
-                " casillas desde " + salida.getNombre() + " hasta " + destino.getNombre());
-
-        // Caso especial: IrCarcel nos encarcela
-        if (this.avatares.get(this.turno).getLugar().getNombre().equals("IrCarcel")) {
-            this.jugadores.get(this.turno).encarcelar(this.tablero.getPosiciones());
-        }
-    }
-
 
     /**Método que ejecuta todas las acciones realizadas con el comando 'comprar nombre_casilla'.
      * @param nombre Cadena de caracteres con el nombre de la casilla.
@@ -517,7 +477,8 @@ public class Menu {
             if (this.tirado || lanzamientos > 0) {
                 //le paso el jugador que tiene el turno y eljugador 0 (la banca)
                 Jugador jugador = obtenerTurno();
-                if(c.getDuenho() == banca && (c.getValor() < jugador.getFortuna())) {
+                if(c.getDuenho() == banca && jugador.getAvatar().getLugar()==c && (c.getValor() <= jugador.getFortuna()) &&
+                        (c.getTipo().equals("Solar") || c.getTipo().equals("Transporte") || c.getTipo().equals("Servicio"))) {
                     VueltasCero();
                 }
                 c.comprarCasilla(jugador, this.banca);
@@ -626,7 +587,7 @@ public class Menu {
                 System.out.println("\tDuenho: " + casilla.getDuenho().getNombre());
                 // Imprimir el valor de la casilla y el valor de hipoteca
                 System.out.printf("\tPrecio: %,.0f€\n", casilla.getValor());
-                System.out.printf("\tHipoteca: %,.0f\n", casilla.getValor()/2f);
+                System.out.printf("\tHipoteca: %,.0f€\n", casilla.getValor()/2f);
                 // Imprimimos los jugadores de la casilla si los hubiera
                 jugadoresEnCasilla(casilla);
                 System.out.println("}");
@@ -762,7 +723,7 @@ public class Menu {
         }
         if (todosCumplen) {
             this.tablero.aumentarCoste(banca);
-            System.out.println(("Todos los jugadores han dado 4 vueltas sin comprar! El precio de las propiedades aumenta."));;
+            System.out.println("Todos los jugadores han dado 4 vueltas sin comprar! El precio de las propiedades aumenta.");
             VueltasCero();
         }
     }
@@ -773,8 +734,8 @@ public class Menu {
     }
 
     //SECCIÓN DE GETTERS Y SETTERS DE MENÚ
-    public Tablero getTablero() {
-        return this.tablero;
+    public float getBote() {
+        return this.bote;
     }
 
     //SECCIÓN DE CHEATS DE MENÚ
@@ -878,6 +839,7 @@ public class Menu {
                         System.out.printf("¡Al pasar por la salida ganaste %,.0f€!\n", Valor.SUMA_VUELTA);
                         jugador.sumarFortuna(Valor.SUMA_VUELTA);
                         jugador.sumarVuelta();
+                        jugador.sumarVueltas_sin_comprar();
                         cuatroVueltasJ();
 
                     }

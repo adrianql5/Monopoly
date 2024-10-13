@@ -80,7 +80,7 @@ public class Tablero {
         ArrayList<Casilla> ladoOeste = new ArrayList<Casilla>();
         ladoOeste.add(new Casilla("Carcel","Especial",10,banca));
         ladoOeste.add(new Casilla("Solar6","Solar",11,Valor.GRUPO3/3,banca));
-        ladoOeste.add(new Casilla("Serv1","Servicios",12,Valor.SERVICIO,banca));
+        ladoOeste.add(new Casilla("Serv1","Servicio",12,Valor.SERVICIO,banca));
         ladoOeste.add(new Casilla("Solar7","Solar",13,Valor.GRUPO3/3,banca));
         ladoOeste.add(new Casilla("Solar8","Solar",14,Valor.GRUPO3/3,banca));
         ladoOeste.add(new Casilla("Trans2","Transporte",15,Valor.TRANSPORTE,banca));
@@ -113,7 +113,7 @@ public class Tablero {
         ladoNorte.add(new Casilla("Trans3","Transporte",25,Valor.TRANSPORTE,banca));
         ladoNorte.add(new Casilla("Solar15","Solar",26,Valor.GRUPO6/3,banca));
         ladoNorte.add(new Casilla("Solar16","Solar",27,Valor.GRUPO6/3,banca));
-        ladoNorte.add(new Casilla("Serv2","Servicios",28,Valor.SERVICIO,banca));
+        ladoNorte.add(new Casilla("Serv2","Servicio",28,Valor.SERVICIO,banca));
         ladoNorte.add(new Casilla("Solar17","Solar",29,Valor.GRUPO6/3,banca));
 
         posiciones.add(ladoNorte);
@@ -192,7 +192,7 @@ public class Tablero {
             Casilla casilla = getCasilla(i);
 
             // Verifica si la casilla no tiene dueño (es decir, si su dueño es la banca)
-            if (casilla.getDuenho() == banca && casilla.getTipo()=="Solar") {
+            if (casilla.getDuenho() == banca && casilla.getTipo().equals("Solar")) {
 
 
                 // Aplica el porcentaje de incremento al valor de la casilla

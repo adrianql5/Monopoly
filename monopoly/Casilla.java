@@ -10,12 +10,12 @@ public class Casilla {
 
     //ATRIBUTOS
     private String nombre;//Nombre de la casilla
-    private String tipo; //Tipo de casilla (Solar, Especial, Transporte, Servicios, Comunidad).
+    private String tipo; //Tipo de casilla (Solar, Especial, Transporte, Servicio, Comunidad).
     private float valor; //Valor de esa casilla (en la mayoría será valor de compra, en la casilla parking se usará como el bote).
     private int posicion; //Posición que ocupa la casilla en el tablero (entero entre 1 y 40).
     private Jugador duenho; //Dueño de la casilla (por defecto sería la banca).
     private Grupo grupo; //Grupo al que pertenece la casilla (si es solar).
-    private float impuesto; //Cantidad a pagar por caer en la casilla: el alquiler en solares/servicios/transportes o impuestos.
+    private float impuesto; //Cantidad a pagar por caer en la casilla: el alquiler en solares/servicio/transportes o impuestos.
     private float hipoteca; //Valor otorgado por hipotecar una casilla
     private ArrayList<Avatar> avatares; //Avatares que están situados en la casilla.
 
@@ -23,7 +23,7 @@ public class Casilla {
     public Casilla() {
     }//Parámetros vacíos
 
-    /**Constructor para casillas tipo Solar, Servicios y Transporte.
+    /**Constructor para casillas tipo Solar, Servicio y Transporte.
      * @param nombre Nombre de la casilla
      * @param tipo Debe ser Solar, Servicio o Transporte
      * @param posicion Posición en el tablero
@@ -94,7 +94,7 @@ public class Casilla {
     /** Método para evaluar qué hacer en una casilla concreta.
      * @param actual Jugador cuyo avatar está en la casilla
      * @param banca Se usa para ciertas comprobaciones
-     * @param tirada Valor de la tirada (para determinar impuesto a pagar en casillas de servicios)
+     * @param tirada Valor de la tirada (para determinar impuesto a pagar en casillas de servicio)
      * @return TRUE en caso de ser solvente (es decir, de cumplir las deudas), y FALSE en caso de no serlo
      */
     public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
@@ -106,7 +106,8 @@ public class Casilla {
                         Casilla solar = actual.getAvatar().getLugar();
                         Jugador propietario = solar.getDuenho();
                         float alquiler = solar.getValor() * 0.10f;
-                        System.out.println("El jugador " + actual.getNombre() + " le debe pagar " + alquiler + " por el alquiler a " + propietario.getNombre());
+                        System.out.printf("El jugador %s le debe pagar %,.0f€ por el alquiler a %s.\n",
+                                actual.getNombre(), alquiler, propietario.getNombre());
                         actual.sumarGastos(alquiler);
                         actual.restarFortuna(alquiler);
 
@@ -121,25 +122,25 @@ public class Casilla {
 
                 case "Especial":
                     if (this.nombre.equals("Carcel")) {
-                        System.out.println("Has caído en la Carcel. Disfruta de la visita.\n");
+                        System.out.println("Has caído en la Carcel. Disfruta de la visita.");
                         //System.out.println("Has caído en la Carcel. Tienes 3 opciones para salir: Pagar, Usar Carta de Suerte o Sacar Dados Dobles.\n");
                         return true;
                     } else if (this.nombre.equals("Parking")) {
-                        System.out.println("Enhorabuena, has ganado el bote almacenado por impuestos, tasas y multas.\n");
-                        actual.sumarFortuna(banca.getGastos());
-                        banca.sumarGastos(banca.getGastos());
-                        banca.restarFortuna(banca.getGastos());
-                        banca.setGastos(0);
-                        ;
+                        // Nota: el valor del bote se imprime desde la función que llama a esta (lanzar dados)
+                        // porque es un atributo del menú y habría que pasarlo como argumento
+                        System.out.printf("Enhorabuena, has ganado el bote almacenado por impuestos, tasas y multas: %,.0f€\n", banca.getFortuna());
+                        actual.sumarFortuna(banca.getFortuna());
+                        banca.setFortuna(0f);
                         return true;
                     } else if (this.nombre.equals("IrCarcel")) {
-                        System.out.println("Mala suerte, te vas a la cárcel.\n");
+                        System.out.println("Mala suerte, te vas a la cárcel.");
                         return true;
                     } else if (this.nombre.equals("Salida")) {
-                        System.out.println("Has pasado por la salida. Has cobrado " + Valor.SUMA_VUELTA);
+                        // Todo lo que hay que hacer en este caso ya lo hace lanzarDados()
+                        // ya que va a haber que cobrar cuando se pase NO SOLO cuando se caiga
                         return true;
                     }
-                    System.out.println("Error en evaluar casilla\n.");
+                    System.out.println("Error en evaluar casilla.");
                     break;
 
                 case "Transporte":
@@ -147,8 +148,9 @@ public class Casilla {
                     int multiplicador = this.duenho.numeroCasillasTipo("Transporte"); // Inicialización de multiplicador
 
                     if (this.duenho!=banca) {
-                        System.out.println(actual.getNombre() + " debe pagarle el servicio de transporte a " + this.duenho.getNombre());
                         float total = multiplicador * 0.25f * Valor.SUMA_VUELTA;//pongo f porque si no pone un double, cositas de Java
+                        System.out.printf("%s debe pagarle el servicio de transporte a %s: %,.0f€\n",
+                                actual.getNombre(), this.duenho.getNombre(), total);
                         actual.sumarGastos(total);
                         actual.restarFortuna(total);
                         if (actual.estaEnBancarrota()) return false;
@@ -156,13 +158,13 @@ public class Casilla {
                         this.duenho.sumarFortuna(total);
                         return true;
                     } else {
-                        System.out.println("La casilla " + this.getNombre() + " está a la venta.\n");
+                        System.out.println("La casilla " + this.getNombre() + " está a la venta.");
                         return true;
                     }
 
 
                 case "Impuestos":
-                    System.out.println("Vaya! Debes pagar tus impuestos a la banca." + "Debes pagar: " + this.impuesto);
+                    System.out.printf("Vaya! Debes pagar tus impuestos a la banca: %,.0f€\n", this.impuesto);
                     actual.sumarGastos(this.impuesto);
                     actual.restarFortuna(this.impuesto);
                     if (actual.estaEnBancarrota()) return false;
@@ -171,10 +173,11 @@ public class Casilla {
                     return true;
 
 
-                case "Servicios":
+                case "Servicio":
                     if (this.duenho!=banca) {
-                        System.out.println(actual.getNombre() + " debe pagarle el servicio a " + this.duenho.getNombre());
                         float pagar = tirada * Valor.SUMA_VUELTA / 200f;//pongo f porque si no pone un double, cositas de Java
+                        System.out.printf("%s debe pagarle el servicio a %s: %,.0f€\n",
+                                actual.getNombre(), this.duenho.getNombre(), pagar);
                         actual.sumarGastos(pagar);
                         actual.restarFortuna(pagar);
                         if (actual.estaEnBancarrota()) return false;
@@ -182,21 +185,21 @@ public class Casilla {
                         this.duenho.sumarFortuna(pagar);
                         return true;
                     } else {
-                        System.out.println("La casilla " + this.getNombre() + " está a la venta.\n");
+                        System.out.println("La casilla " + this.getNombre() + " está a la venta.");
                         return true;
                     }
 
-                case "Caja de Comunidad":
+                case "Caja de comunidad":
                 case "Suerte":
                     //sin implementar
                     break;
 
                 default:
-                    System.out.println("Error en evaluarCasilla, tipo invalido.\n");
+                    System.out.println("Error en evaluarCasilla, tipo invalido.");
                     return false;
             }
         }else {
-            System.out.println("Esta casilla te pertenece.\n");
+            System.out.println("Esta casilla te pertenece.");
         }
         return false;
     }
@@ -265,13 +268,13 @@ public class Casilla {
      * Devuelve una cadena con información específica de cada tipo de casilla.
      */
     public String infoCasilla() {
-        String info= "{\n\tNombre casilla:"+this.nombre+"\n"
-                + "\tTipo Casilla: " +this.tipo + "\n"
-                + "\tPosicion: "+this.posicion+"\n"
-                + "\tValor: "+this.valor+"\n"
-                + "\tDueño: "+(this.duenho != null ? this.duenho.getNombre() : "Casilla sin Dueño" )+"\n"
-                + "\tColor del grupo "+(this.grupo != null ? this.grupo.getColorGrupo() : "Casilla sin Dueño" + "\n" )
-                + "\tValor hipoteca: "+this.valor/2f+"\n}\n";
+        String info= "{\n\tNombre casilla: " + this.nombre + "\n"
+                + "\tTipo Casilla: " + this.tipo + "\n"
+                + "\tPosicion: " + this.posicion + "\n"
+                + "\tValor: " + String.format("%,.0f", this.valor) + "\n"
+                + "\tDueño: " + (this.duenho != null ? this.duenho.getNombre() : "?") +"\n"
+                + "\tColor del grupo: " + (this.grupo != null ? this.grupo.getColorGrupo() : "?") + "\n"
+                + "\tValor hipoteca: " + String.format("%,.0f", this.valor/2f)+"€\n}\n";
 
         return info;
     }
@@ -289,7 +292,7 @@ public class Casilla {
   
     public void setTipo(String tipo_casilla) {
         switch(tipo_casilla) {
-            case "Especial": case "Impuesto": case "Servicios": case "Transporte":
+            case "Especial": case "Impuesto": case "Servicio": case "Transporte":
             case "Caja de comunidad": case "Suerte": case "Solar":
                 this.tipo=tipo_casilla;
                 break;

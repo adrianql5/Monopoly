@@ -31,6 +31,7 @@ public class Jugador {
         this.tiradasCarcel=0;
         this.vueltas=0;
         this.propiedades=new ArrayList<Casilla>();
+        this.vueltas_sin_comprar=0;
     }
 
     /*Constructor principal. Requiere parámetros:
@@ -51,6 +52,7 @@ public class Jugador {
         this.vueltas = 0;
         this.avatar.setJugador(this);
         this.propiedades = new ArrayList<>();
+        this.vueltas_sin_comprar=0;
 
     }
 
@@ -61,16 +63,17 @@ public class Jugador {
     //Método para añadir una propiedad al jugador. Como parámetro, la casilla a añadir.
 
     public void anhadirPropiedad(Casilla casilla) {
-        if (!propiedades.contains(casilla))
-        this.propiedades.add(casilla);
+        if (!propiedades.contains(casilla)) {
+            this.propiedades.add(casilla);
+        }
     }
     
     
     //Método para eliminar una propiedad del arraylist de propiedades de jugador.
     public void eliminarPropiedad(Casilla casilla) {
-        if (propiedades.contains(casilla))
-        this.propiedades.remove(casilla);
-        
+        if (propiedades.contains(casilla)) {
+            this.propiedades.remove(casilla);
+        }
     }
     
     /**Método para establecer al jugador en la cárcel.
@@ -154,6 +157,10 @@ public class Jugador {
         return this.fortuna;
     }
 
+    public void setFortuna(float nuevaFortuna) {
+        this.fortuna = nuevaFortuna;
+    }
+
 
     public void sumarVuelta(){
         vueltas++;
@@ -189,7 +196,7 @@ public class Jugador {
     }
 
     public void sumarVueltas_sin_comprar(){
-        vueltas++;
+        vueltas_sin_comprar++;
     }
     public void setVueltas_sin_comprar(int vueltas_sin_comprar){
         this.vueltas_sin_comprar = vueltas_sin_comprar;
