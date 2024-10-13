@@ -111,10 +111,10 @@ public class Avatar {
 
     public void setTipo(String tipo_avatar) {
         switch (tipo_avatar) {
-            case "Sombrero":
-            case "Esfinge":
-            case "Pelota":
-            case "Coche":
+            case "sombrero":
+            case "esfinge":
+            case "pelota":
+            case "coche":
                 this.tipo = tipo_avatar;
                 break;
             default:
