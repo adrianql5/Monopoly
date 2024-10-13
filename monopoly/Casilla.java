@@ -258,16 +258,6 @@ public class Casilla {
     public boolean estaHipotecada() {
         return true;
     }
-
-    public boolean esPosibleComprar(Jugador j) {
-        if(this.duenho.esBanca() &&
-                (this.tipo.equals("Solar")|| this.tipo.equals("Transporte")||
-                        this.tipo.equals("Servicio")) && j.getAvatar().getLugar().equals(this)
-                && this.duenho!=j){
-            return true;
-        }
-        return false;
-    }
     
     //SECCIÓN QUE DEVUELVE INFORMACIÓN DE CASILLA
 

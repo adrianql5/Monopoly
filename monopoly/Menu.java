@@ -107,7 +107,7 @@ public class Menu {
         scan.close();
         terminarPartida();
     }
-
+    // se le llama para acabar de jugar o cuando alguien pierde
     private void terminarPartida(){
         System.out.println("La partida ha finalizado, esperamos que disfrutáseis la experiencia.");
         System.exit(0);
@@ -517,7 +517,7 @@ public class Menu {
             if (this.tirado || lanzamientos > 0) {
                 //le paso el jugador que tiene el turno y eljugador 0 (la banca)
                 Jugador jugador = obtenerTurno();
-                if(c.getDuenho() == jugador && c.esPosibleComprar(jugador)) {
+                if(c.getDuenho() == banca && (c.getValor() < jugador.getFortuna())) {
                     VueltasCero();
                 }
                 c.comprarCasilla(jugador, this.banca);
