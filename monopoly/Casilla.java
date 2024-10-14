@@ -35,6 +35,7 @@ public class Casilla {
         this.tipo= tipo;
         this.posicion= posicion;
         this.valor= valor;
+        this.hipoteca= valor/2f;
         this.duenho= duenho;
         this.avatares= new ArrayList<Avatar>();
     }
@@ -145,10 +146,11 @@ public class Casilla {
 
                 case "Transporte":
 
-                    int multiplicador = this.duenho.numeroCasillasTipo("Transporte"); // Inicialización de multiplicador
+                    //esto no sé donde lo viste adri pero en el pdf pone q hay q pagar SUMA_VUELTA aka TRANSPORTE
+                    //int multiplicador = this.duenho.numeroCasillasTipo("Transporte"); // Inicialización de multiplicador
 
                     if (this.duenho!=banca) {
-                        float total = multiplicador * 0.25f * Valor.SUMA_VUELTA;//pongo f porque si no pone un double, cositas de Java
+                        float total = Valor.TRANSPORTE;//pongo f porque si no pone un double, cositas de Java
                         System.out.printf("%s debe pagarle el servicio de transporte a %s: %,.0f€\n",
                                 actual.getNombre(), this.duenho.getNombre(), total);
                         actual.sumarGastos(total);
@@ -219,6 +221,7 @@ public class Casilla {
                     if (solicitante.getFortuna()>=this.valor) {
                         solicitante.restarFortuna(this.valor);
                         solicitante.sumarGastos(this.valor);
+                        banca.sumarFortuna(this.valor);  //Ojo que la banca acumula el precio de las compras en el bote
                         banca.eliminarPropiedad(this);
                         solicitante.anhadirPropiedad(this);
                         this.duenho=solicitante;

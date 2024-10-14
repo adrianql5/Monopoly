@@ -56,7 +56,6 @@ public class Menu {
 
         //Bucle para crear los jugadores (máximo 6)
         //Dentro del propio bucle se empieza la partida
-        int i=0;
         while(!partidaTerminada) {
 
             String comando_entero = scan.nextLine();
@@ -64,9 +63,8 @@ public class Menu {
 
             //IMPORTANTE comprobar la longitud para no acceder a un índice que no existe
             if (comando.length==4 && "crearjugador".equals(comando[0] + comando[1])) {
-                if(i<6) {
+                if(this.avatares.size()<7) {
                     crearJugador(comando[2], comando[3]);
-                    i++;
                 }
                 else {
                     System.out.println("¡No se pueden crear más de 6 jugadores! Empieza la partida con el comando " +
@@ -75,7 +73,11 @@ public class Menu {
             }
             else if ("empezar partida".equals(comando_entero)) {
 
-                if(i!=0 && i!=1) {
+                //Si hay al menos 2 jugadores empezamos
+                if(this.avatares.isEmpty()) {
+                    System.out.println("Amig@ habrá que crear algún jugador antes de empezar no crees?");
+                }
+                else if(this.avatares.size()!=1) {
                     this.turno = 0; //El primer jugador creado tiene el turno
                     System.out.println("¡Que comienze la partida!\nEs el turno de " + obtenerTurno().getNombre() +
                             ". Puedes tirar los dados con el comando " + Valor.BOLD_STRING + "lanzar dados" +
@@ -89,9 +91,6 @@ public class Menu {
                         System.out.println();
                         analizarComando(scan.nextLine());
                     }
-                }
-                else if(i==0) {
-                    System.out.println("Amig@ habrá que crear algún jugador antes de empezar no crees?");
                 }
                 else {
                     System.out.println("Creo que jugar una persona sola no tiene mucho sentido...");
