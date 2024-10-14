@@ -106,9 +106,12 @@ public class Casilla {
                         //Teoricamente si no tiene dinero para pagar se queda en negativo y se acaba la partida
                         Casilla solar = actual.getAvatar().getLugar();
                         Jugador propietario = solar.getDuenho();
-                        float alquiler = solar.getValor() * 0.10f;
-                        System.out.printf("El jugador %s le debe pagar %,.0f€ por el alquiler a %s.\n",
-                                actual.getNombre(), alquiler, propietario.getNombre());
+                        float alquiler;
+                        if(this.getGrupo().esDuenhoGrupo(propietario)) {
+                            alquiler = solar.getValor() * 0.10f *2f;
+                        }else{
+                            alquiler = solar.getValor() * 0.10f;
+                        }
                         actual.sumarGastos(alquiler);
                         actual.restarFortuna(alquiler);
 
