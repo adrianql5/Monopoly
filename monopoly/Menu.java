@@ -220,7 +220,7 @@ public class Menu {
                         descAvatar(comando[2]);
                     }
                     //CHEAT PARA SACAR LO QUE QUIERAS CON LOS DADOS
-                    if("dados".equals(comando[0])) {
+                    else if("dados".equals(comando[0])) {
                         int dado1 = Integer.parseInt(comando[1]);
                         int dado2 = Integer.parseInt(comando[2]);
                         dadosTrampa(dado1,dado2);
