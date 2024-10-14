@@ -24,6 +24,7 @@ public class Tablero {
         this.grupos = new HashMap<String,Grupo>();
         generarCasillas();
         asignarCasillasBanca();
+        corregirImpuestos();
     }
 
 
@@ -151,6 +152,19 @@ public class Tablero {
         getCasilla(37).setGrupo(grupos.get("PURPLE"));
         getCasilla(39).setGrupo(grupos.get("PURPLE"));
 
+    }
+
+    /**Método muy específico para poner bien el valor del alquiler (=impuesto) de las casillas Transporte y Servicio.
+     * Ya que el constructor trata de la misma manera a estas casillas de si fueran del tipo Solar.
+     * Pero en el constructor está inicializando el valor del alquiler para las casillas de tipo Solar y es diferente.
+     */
+    private void corregirImpuestos() {
+        getCasilla(5).setImpuesto(Valor.TRANSPORTE);  //Trans1
+        getCasilla(12).setImpuesto(Valor.SUMA_VUELTA / 200f);  //Serv1
+        getCasilla(15).setImpuesto(Valor.TRANSPORTE);  //Trans2
+        getCasilla(25).setImpuesto(Valor.TRANSPORTE);  //Trans3
+        getCasilla(28).setImpuesto(Valor.SUMA_VUELTA / 200f);  //Serv2
+        getCasilla(35).setImpuesto(Valor.TRANSPORTE);  //Trans4
     }
 
     

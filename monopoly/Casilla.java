@@ -161,7 +161,7 @@ public class Casilla {
                     int multiplicador = this.duenho.numeroCasillasTipo("Transporte");
 
                     if (this.duenho!=banca) {
-                        float total = multiplicador * 0.25f * Valor.TRANSPORTE;//pongo f porque si no pone un double, cositas de Java
+                        float total = multiplicador * 0.25f * this.impuesto;
                         System.out.printf("%s debe pagarle el servicio de transporte a %s: %,.0f€\n",
                                 actual.getNombre(), this.duenho.getNombre(), total);
                         actual.sumarGastos(total);
@@ -188,7 +188,15 @@ public class Casilla {
 
                 case "Servicio":
                     if (this.duenho!=banca) {
-                        float pagar = tirada * Valor.SUMA_VUELTA / 200f;//pongo f porque si no pone un double, cositas de Java
+                        // Se paga el valor de los dados*impuesto*factor_servicio
+                        // El factor de servicio es 4 si el dueño posee 1 casilla de servicio, 10 si posee las 2.
+                        float pagar;
+                        if(this.duenho.numeroCasillasTipo("Servicio")==1) {
+                            pagar = tirada * 4 * this.impuesto;
+                        } else {
+                            pagar = tirada * 10 * this.impuesto;
+                        }
+
                         System.out.printf("%s debe pagarle el servicio a %s: %,.0f€\n",
                                 actual.getNombre(), this.duenho.getNombre(), pagar);
                         actual.sumarGastos(pagar);
@@ -313,15 +321,26 @@ public class Casilla {
                 info += String.format("\tAlquiler pista de deporte: %,.0f€\n", this.impuesto * 25f);
                 break;
 
-            //Transportes y Servicios son tipos equivalentes a la hora de mostrar la información
             case "Transporte":
+                info += "\tTipo: " + this.tipo + "\n";
+                info += "\tDueño: " + this.duenho.getNombre() + "\n";
+                info += String.format("\tPrecio: %,.0f€\n", this.valor);
+                info += String.format("\tPago por caer: %,.0f€\n",
+                        this.impuesto * 0.25f * this.duenho.numeroCasillasTipo("Transporte"));
+                info += String.format("\t\t(cada casilla de este tipo que tengas suma 1/4 de %,.0f€ al alquiler)\n",
+                        this.impuesto);
+                info += String.format("\tHipoteca: %,.0f€\n", this.hipoteca);
+                break;
+
             case "Servicio":
                 info += "\tTipo: " + this.tipo + "\n";
                 info += "\tDueño: " + this.duenho.getNombre() + "\n";
                 info += String.format("\tPrecio: %,.0f€\n", this.valor);
-                info += String.format("\tPago por caer: %,.0f€\n", this.impuesto);
+                info += String.format("\tPago por caer: dados * x * %,.0f€\n", this.impuesto);
+                info += "\t\t(x=4 si se posee una casilla de este tipo, x=10 si se poseen 2)\n";
                 info += String.format("\tHipoteca: %,.0f€\n", this.hipoteca);
                 break;
+
             case "Impuestos":
                 info += "\tTipo: Impuestos\n";
                 info += String.format("\tA pagar: %,.0f€\n", this.impuesto);
@@ -336,14 +355,14 @@ public class Casilla {
 
         // Añadimos los jugadores en la casilla si los hay y cerramos
         info += jugadoresEnCasilla();
-        info += "\n}\n";
+        info += "}\n";
 
         return info;
     }
 
     /**Método auxiliar que devuelve la lista de jugadores en una casilla.
      * Si no hay ningún jugador en la casilla devuelve una cadena vacía.
-     * Nota: NO incluye el salto de línea al final.
+     * Nota: incluye el salto de línea al final.
      */
     public String jugadoresEnCasilla() {
         // Obtenemos la lista de avatares que hay en la casilla
@@ -360,6 +379,7 @@ public class Casilla {
             for (Avatar avatar : avataresEnCasilla) {
                 jugadores += "[" + avatar.getJugador().getNombre() + "]  ";
             }
+            jugadores += "\n";
         }
 
         return jugadores;

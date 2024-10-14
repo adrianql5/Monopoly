@@ -239,7 +239,9 @@ public class Menu {
 
     //SECCIÓN DE COMANDOS QUE NO DEPENDEN DE NINGUNA INSTANCIA
 
-    /**Método que ejecuta todas las acciones relacionadas con el comando 'jugador'.*/
+    /**Método que ejecuta todas las acciones relacionadas con el comando 'jugador'.
+     * Imprime la información del jugador que tiene el turno.
+     */
     private void jugadorTurno() {
         Jugador jugador = obtenerTurno(); // Obtener el jugador actual
 
@@ -618,7 +620,7 @@ public class Menu {
     }
 
     public Jugador obtenerTurno() {
-        return jugadores.get(turno);
+        return this.jugadores.get(this.turno);
     }
 
     //SECCIÓN DE COMANDOS QUE DEPENDEN DE DOS INSTANCIAS
