@@ -37,17 +37,7 @@ public class Tablero {
         this.insertarLadoEste();
     }
 
-    /**Método que asigna a la banca la propiedades que son comprables al inicio de la partida*/
-    public void asignarCasillasBanca(){
-        int i;
-        for(i=0; i<40; i++){
-            if(getCasilla(i).esTipoComprable()){
-                this.banca.anhadirPropiedad(getCasilla(i));
-            }
-        }
-    }
-
-    /**Método para insertar las casillas del lado sur.*/
+    /**Método auxiliar de generarCasillas() para insertar las casillas del lado sur.*/
     private void insertarLadoSur() {
         ArrayList<Casilla> ladoSur = new ArrayList<Casilla>();
         ladoSur.add(new Casilla("Salida","Especial",0,banca));
@@ -73,7 +63,7 @@ public class Tablero {
         getCasilla(9).setGrupo(grupos.get("CYAN"));
     }
 
-    /**Método para insertar las casillas del lado oeste.*/
+    /**Método auxiliar de generarCasillas() para insertar las casillas del lado oeste.*/
     private void insertarLadoOeste() {
         ArrayList<Casilla> ladoOeste = new ArrayList<Casilla>();
         ladoOeste.add(new Casilla("Carcel","Especial",10,banca));
@@ -100,7 +90,7 @@ public class Tablero {
         getCasilla(19).setGrupo(grupos.get("YELLOW"));
     }
 
-    /**Método para insertar las casillas del lado norte.*/
+    /**Método auxiliar de generarCasillas() para insertar las casillas del lado norte.*/
     private void insertarLadoNorte() {
         ArrayList<Casilla> ladoNorte = new ArrayList<Casilla>();
         ladoNorte.add(new Casilla("Parking","Especial",20,banca));
@@ -127,7 +117,7 @@ public class Tablero {
         getCasilla(29).setGrupo(grupos.get("GREEN"));
     }
 
-    /**Método para insertar las casillas del lado este.*/
+    /**Método auxiliar de generarCasillas() para insertar las casillas del lado este.*/
     private void insertarLadoEste() {
         ArrayList<Casilla> ladoEste = new ArrayList<Casilla>();
         ladoEste.add(new Casilla("IrCarcel","Especial",30,banca));
@@ -152,6 +142,16 @@ public class Tablero {
         getCasilla(37).setGrupo(grupos.get("PURPLE"));
         getCasilla(39).setGrupo(grupos.get("PURPLE"));
 
+    }
+
+    /**Método que asigna a la banca la propiedades que son comprables al inicio de la partida*/
+    public void asignarCasillasBanca(){
+        int i;
+        for(i=0; i<40; i++){
+            if(getCasilla(i).esTipoComprable()){
+                this.banca.anhadirPropiedad(getCasilla(i));
+            }
+        }
     }
 
     /**Método muy específico para poner bien el valor del alquiler (=impuesto) de las casillas Transporte y Servicio.

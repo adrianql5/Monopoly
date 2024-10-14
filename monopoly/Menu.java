@@ -132,7 +132,7 @@ public class Menu {
 
             //Indicar jugador que tiene el turno
             case "jugador":
-                jugadorTurno();
+                infoJugadorTurno();
                 break;
 
             //Lanzar los dados
@@ -241,7 +241,7 @@ public class Menu {
     /**Método que ejecuta todas las acciones relacionadas con el comando 'jugador'.
      * Imprime la información del jugador que tiene el turno.
      */
-    private void jugadorTurno() {
+    private void infoJugadorTurno() {
         Jugador jugador = obtenerTurno(); // Obtener el jugador actual
 
         // Imprimir el nombre y el avatar en el formato requerido
@@ -249,6 +249,32 @@ public class Menu {
         System.out.println("\tnombre: " + jugador.getNombre() + ",");
         System.out.println("\tavatar: " + jugador.getAvatar().getId());
         System.out.println("}");
+    }
+
+    /**Método para comprobar si los jugadores llevan cuatro vueltas al tablero sin comprar.
+     * Si es cierto aumenta el precio de los solares un 5% y reinicia las vueltas sin comprar a 0.
+     * Una vuelta == pasar por la casilla de salida.
+     */
+    private void cuatroVueltasSinCompras() {
+        boolean todosCumplen = true;
+        for (Jugador j : jugadores) {
+            if (j.getVueltas_sin_comprar() < 4) { // Si algún jugador no cumple la condición
+                todosCumplen = false; // Cambiamos la variable a false
+                break; // detenenemos el bucle ya que no es necesario seguir
+            }
+        }
+        if (todosCumplen) {
+            this.tablero.aumentarCoste(banca);
+            System.out.println("Todos los jugadores han dado 4 vueltas sin comprar! El precio de las propiedades aumenta.");
+            reiniciarVueltasSinCompras();
+        }
+    }
+
+    /**Método que reinicia las vueltas sin comprar a 0.*/
+    private void reiniciarVueltasSinCompras() {
+        for (Jugador j : jugadores) {
+            j.setVueltas_sin_comprar(0);
+        }
     }
 
     /**Método que ejecuta todas las acciones relacionadas con el comando 'lanzar dados'.
@@ -343,7 +369,7 @@ public class Menu {
                         jugador.sumarFortuna(Valor.SUMA_VUELTA);
                         jugador.sumarVuelta();
                         jugador.sumarVueltas_sin_comprar();
-                        cuatroVueltasJ();
+                        cuatroVueltasSinCompras();
 
                     }
 
@@ -370,6 +396,18 @@ public class Menu {
 
     }
 
+    /**Método que resetea los atributos relacionados con la cárcel del jugador que se desencarcela.
+     * También resetea el boolean de la tirada y el número de lanzamientos del turno.
+     * Nótese que por ese motivo al salir de la cárcel puedes tirar los dados como un turno normal.
+     * Lo usa salirCarcel pero tb se llama cuando sales por sacar dobles.
+     * @param jugador Jugador que vamos a desencarcelar
+     */
+    private void desencarcelar(Jugador jugador) {
+        jugador.setEnCarcel(false);
+        jugador.setTiradasCarcel(0);
+        this.tirado=false;
+        this.lanzamientos=0;
+    }
     
     /**Método que ejecuta todas las acciones relacionadas con el comando 'salir carcel'.
      * Si el jugador está encarcelado y aún no tiró en su turno, paga la fianza y sale de la cárcel.
@@ -383,14 +421,14 @@ public class Menu {
         if (jugador.isEnCarcel()) {
             // Si ya ha tirado este turno no puede pagar la fianza!
             if (!this.tirado) {
-                if(!jugador.estaEnBancarrota()) {
+                if(jugador.getFortuna() < Valor.SALIR_CARCEL) {
                     desencarcelar(jugador);
                     jugador.sumarFortuna(-Valor.SALIR_CARCEL);
                     System.out.printf("%s paga la fianza de %,.0f € y sale de la cárcel. Puedes tirar los dados.\n",
                             jugador.getNombre(), Valor.SALIR_CARCEL);
                 }
                 else {
-                    System.out.println("¡No puedes pagar la fianza porque estás en bancarrota!");
+                    System.out.println("¡No tienes dinero suficiente para pagar la fianza!");
                 }
             } else {
                 System.out.println("Ya has lanzado los dados.");
@@ -459,19 +497,8 @@ public class Menu {
         }
     }
 
+
     //SECCIÓN DE COMANDOS QUE DEPENDEN DE UNA INSTANCIA
-    
-    /**Método que resetea los atributos del jugador que se desencarcela.
-     * Lo usa salirCarcel pero tb se llama cuando sales por sacar dobles.
-     * Nótese que al salir de la cárcel puedes tirar los dados como un turno normal.
-     * @param jugador Jugador que vamos a desencarcelar
-     */
-    private void desencarcelar(Jugador jugador) {
-        jugador.setEnCarcel(false);
-        jugador.setTiradasCarcel(0);
-        this.tirado=false;
-        this.lanzamientos=0;
-    }
 
     //NOTA PARA LA SEGUNDA ENTREGA: añadiría las comprobaciones que hace comprarCasilla aquí
     //para que la función comprarCasilla se llame solo cuando ya se sabe que se puede comprar
@@ -489,7 +516,7 @@ public class Menu {
                 Jugador jugador = obtenerTurno();
                 if(c.getDuenho() == banca && jugador.getAvatar().getLugar()==c &&
                         (c.getValor() <= jugador.getFortuna()) && c.esTipoComprable()) {
-                    VueltasCero();
+                    reiniciarVueltasSinCompras();
                 }
                 c.comprarCasilla(jugador, this.banca);
 
@@ -504,6 +531,8 @@ public class Menu {
     }
 
     /** Método que realiza las acciones asociadas al comando 'describir nombre_casilla'.
+     * Imprime la información sobre la casilla correspondiente si es descriptible
+     *
      * @param nombre_casilla Nombre de la casilla a describir
      */
     private void descCasilla(String nombre_casilla) {
@@ -654,7 +683,7 @@ public class Menu {
         this.turno += 1;
 
         // Imprimir detalles del jugador recién creado y el tablero
-        jugadorTurno();
+        infoJugadorTurno();
         verTablero();
     }
 
@@ -677,32 +706,6 @@ public class Menu {
         }
         else {
             System.out.println("Se ha intentado meter más líneas de las que caben en el medio del tablero.");
-        }
-    }
-
-    /**Método para comprobar si los jugadores llevan cuatro vueltas al tablero sin comprar.
-     * Si es cierto aumenta el precio de los solares un 5% y reinicia las vueltas sin comprar a 0.
-     * Una vuelta == pasar por la casilla de salida.
-     */
-    private void cuatroVueltasJ() {
-        boolean todosCumplen = true;
-        for (Jugador j : jugadores) {
-            if (j.getVueltas_sin_comprar() < 4) { // Si algún jugador no cumple la condición
-                todosCumplen = false; // Cambiamos la variable a false
-                break; // detenenemos el bucle ya que no es necesario seguir
-            }
-        }
-        if (todosCumplen) {
-            this.tablero.aumentarCoste(banca);
-            System.out.println("Todos los jugadores han dado 4 vueltas sin comprar! El precio de las propiedades aumenta.");
-            VueltasCero();
-        }
-    }
-
-    /**Método que reinicia las vueltas sin comprar a 0.*/
-    private void VueltasCero() {
-        for (Jugador j : jugadores) {
-            j.setVueltas_sin_comprar(0);
         }
     }
 
@@ -808,7 +811,7 @@ public class Menu {
                         jugador.sumarFortuna(Valor.SUMA_VUELTA);
                         jugador.sumarVuelta();
                         jugador.sumarVueltas_sin_comprar();
-                        cuatroVueltasJ();
+                        cuatroVueltasSinCompras();
 
                     }
 
