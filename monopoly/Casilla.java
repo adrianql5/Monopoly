@@ -35,6 +35,7 @@ public class Casilla {
         this.tipo= tipo;
         this.posicion= posicion;
         this.valor= valor;
+        this.impuesto= valor * 0.10f;
         this.hipoteca= valor/2f;
         this.duenho= duenho;
         this.avatares= new ArrayList<Avatar>();
@@ -92,6 +93,8 @@ public class Casilla {
         this.valor +=suma;
     }
 
+    /**Método para ver si un jugador tiene todos los solares de un grupo*/
+
     /** Método para evaluar qué hacer en una casilla concreta.
      * @param actual Jugador cuyo avatar está en la casilla
      * @param banca Se usa para ciertas comprobaciones
@@ -108,10 +111,12 @@ public class Casilla {
                         Jugador propietario = solar.getDuenho();
                         float alquiler;
                         if(this.getGrupo().esDuenhoGrupo(propietario)) {
-                            alquiler = solar.getValor() * 0.10f *2f;
+                            alquiler = solar.getImpuesto() * 2f;
                         }else{
-                            alquiler = solar.getValor() * 0.10f;
+                            alquiler = solar.getImpuesto();
                         }
+                        System.out.printf("%s debe pagarle el alquiler de %s a %s: %,.0f€\n",
+                                actual.getNombre(), solar.getNombre(), propietario.getNombre(), alquiler);
                         actual.sumarGastos(alquiler);
                         actual.restarFortuna(alquiler);
 
@@ -272,19 +277,89 @@ public class Casilla {
     
     //SECCIÓN QUE DEVUELVE INFORMACIÓN DE CASILLA
 
-    /**Método para mostrar información sobre una casilla.
-     * Devuelve una cadena con información específica de cada tipo de casilla.
+    /**Método que devuelve una cadena con información específica de cada tipo de casilla.
+     * La usa descCasilla excepto cuando es una casilla que no se puede describir o para Parking y Carcel.
+     * Se da por hecho que es una casilla que se puede describir (excepto Parking y Carcel).
+     * Nota: los imprime con salto de línea al final.
+     * Nota 2: por cómo está implementado descCasilla, el tipo Especial devuelve info para Salida.
      */
     public String infoCasilla() {
-        String info= "{\n\tNombre casilla: " + this.nombre + "\n"
-                + "\tTipo Casilla: " + this.tipo + "\n"
-                + "\tPosicion: " + this.posicion + "\n"
-                + "\tValor: " + String.format("%,.0f", this.valor) + "€\n"
-                + "\tDueño: " + (this.duenho != null ? this.duenho.getNombre() : "-") +"\n"
-                + "\tColor del grupo: " + (this.grupo != null ? this.grupo.getColorGrupo() : "-") + "\n"
-                + "\tValor hipoteca: " + String.format("%,.0f", this.valor/2f)+"€\n}\n";
+
+        // Cadena con la información que queremos devolver
+        String info = "{\n";
+
+        // La completamos con la información correspondiente en función del tipo de casilla
+        switch(this.tipo) {
+            case "Solar":
+                info += "\tTipo: " + this.tipo + "\n";
+                info += "\tColor del grupo: " + this.grupo.getColorGrupo() + "\n";
+                info += "\tDueño: " + this.duenho.getNombre() + "\n";
+                info += String.format("\tPrecio: %,.0f€\n", this.valor);
+                info += String.format("\tAlquiler: %,.0f€\n", this.impuesto);
+                info += String.format("\tHipoteca: %,.0f€\n", this.hipoteca);
+                info += String.format("\tPrecio casa: %,.0f€\n", this.valor * 0.60f);
+                info += String.format("\tPrecio hotel: %,.0f€\n", this.valor * 0.60f);
+                info += String.format("\tPrecio piscina: %,.0f€\n", this.valor * 0.40f);
+                info += String.format("\tPrecio pista de deporte: %,.0f€\n", this.valor * 1.25f);
+                info += String.format("\tAlquiler de 1 casa: %,.0f€\n", this.impuesto * 5f);
+                info += String.format("\tAlquiler de 2 casas: %,.0f€\n", this.impuesto * 15f);
+                info += String.format("\tAlquiler de 3 casas: %,.0f€\n", this.impuesto * 35f);
+                info += String.format("\tAlquiler de 4 casas: %,.0f€\n", this.impuesto * 50f);
+                info += String.format("\tAlquiler hotel: %,.0f€\n", this.impuesto * 70f);
+                info += String.format("\tAlquiler piscina: %,.0f€\n", this.impuesto * 25f);
+                info += String.format("\tAlquiler pista de deporte: %,.0f€\n", this.impuesto * 25f);
+                break;
+
+            //Transportes y Servicios son tipos equivalentes a la hora de mostrar la información
+            case "Transporte":
+            case "Servicio":
+                info += "\tTipo: " + this.tipo + "\n";
+                info += "\tDueño: " + this.duenho.getNombre() + "\n";
+                info += String.format("\tPrecio: %,.0f€\n", this.valor);
+                info += String.format("\tPago por caer: %,.0f€\n", this.impuesto);
+                info += String.format("\tHipoteca: %,.0f€\n", this.hipoteca);
+                break;
+            case "Impuestos":
+                info += "\tTipo: Impuestos\n";
+                info += String.format("\tA pagar: %,.0f€\n", this.impuesto);
+                break;
+            case "Especial":
+                // La única posibilidad de llegar aquí es que sea la casilla Salida (ver descCasilla en Menú)
+                info += String.format("\tPago por vuelta: %,.0f€\n", Valor.SUMA_VUELTA);
+                break;
+            default:
+                System.out.println("Error en la función infoCasilla.");
+        }
+
+        // Añadimos los jugadores en la casilla si los hay y cerramos
+        info += jugadoresEnCasilla();
+        info += "\n}\n";
 
         return info;
+    }
+
+    /**Método auxiliar que devuelve la lista de jugadores en una casilla.
+     * Si no hay ningún jugador en la casilla devuelve una cadena vacía.
+     * Nota: NO incluye el salto de línea al final.
+     */
+    public String jugadoresEnCasilla() {
+        // Obtenemos la lista de avatares que hay en la casilla
+        ArrayList<Avatar> avataresEnCasilla = this.getAvatares();
+
+        // Creamos la cadena que se inicializa a vacía por si no hay avatares en la casilla
+        String jugadores = "";
+
+        // Si hubiera avatares se añaden al String
+        if(!avataresEnCasilla.isEmpty()) {
+
+            // Recorremos la lista de avatares y mostramos todos los jugadores en la misma línea
+            jugadores += "\tJugadores: ";
+            for (Avatar avatar : avataresEnCasilla) {
+                jugadores += "[" + avatar.getJugador().getNombre() + "]  ";
+            }
+        }
+
+        return jugadores;
     }
 
 
