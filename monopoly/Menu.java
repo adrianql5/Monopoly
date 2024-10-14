@@ -49,7 +49,6 @@ public class Menu {
         Scanner scan= new Scanner(System.in);
 
         //Antes de empezar la partida hay que crear los jugadores
-        //System.out.println(Valor.TEXTO_BIENVENIDA);
         setTextoTablero(Valor.TEXTO_BIENVENIDA);
         verTablero();
 
