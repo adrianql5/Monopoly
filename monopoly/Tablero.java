@@ -36,20 +36,17 @@ public class Tablero {
         this.insertarLadoEste();
     }
 
-    //Método que asigna a la banca la propiedades que son comprables al inicio de la partida
+    /**Método que asigna a la banca la propiedades que son comprables al inicio de la partida*/
     public void asignarCasillasBanca(){
         int i;
         for(i=0; i<40; i++){
-            if(getCasilla(i).getTipo().equals("Solar") ||
-                    getCasilla(i).getTipo().equals("Servicio") ||
-                    getCasilla(i).getTipo().equals("Transporte") ){
+            if(getCasilla(i).esTipoComprable()){
                 this.banca.anhadirPropiedad(getCasilla(i));
             }
         }
     }
 
-
-    //Método para insertar las casillas del lado sur.
+    /**Método para insertar las casillas del lado sur.*/
     private void insertarLadoSur() {
         ArrayList<Casilla> ladoSur = new ArrayList<Casilla>();
         ladoSur.add(new Casilla("Salida","Especial",0,banca));
@@ -75,7 +72,7 @@ public class Tablero {
         getCasilla(9).setGrupo(grupos.get("CYAN"));
     }
 
-    //Método que inserta casillas del lado oeste.
+    /**Método para insertar las casillas del lado oeste.*/
     private void insertarLadoOeste() {
         ArrayList<Casilla> ladoOeste = new ArrayList<Casilla>();
         ladoOeste.add(new Casilla("Carcel","Especial",10,banca));
@@ -102,7 +99,7 @@ public class Tablero {
         getCasilla(19).setGrupo(grupos.get("YELLOW"));
     }
 
-    //Método para insertar las casillas del lado norte.
+    /**Método para insertar las casillas del lado norte.*/
     private void insertarLadoNorte() {
         ArrayList<Casilla> ladoNorte = new ArrayList<Casilla>();
         ladoNorte.add(new Casilla("Parking","Especial",20,banca));
@@ -129,8 +126,7 @@ public class Tablero {
         getCasilla(29).setGrupo(grupos.get("GREEN"));
     }
 
-
-    //Método que inserta las casillas del lado este.
+    /**Método para insertar las casillas del lado este.*/
     private void insertarLadoEste() {
         ArrayList<Casilla> ladoEste = new ArrayList<Casilla>();
         ladoEste.add(new Casilla("IrCarcel","Especial",30,banca));
@@ -185,7 +181,7 @@ public class Tablero {
         return posiciones;
     }
 
-
+    /**Método para aumentar el coste de los solares que pertenecen a la banca cuando todos dan 4 vueltas sin comprar.*/
     public void aumentarCoste(Jugador banca) {
         // Itera sobre todas las posiciones del tablero
         for (int i = 0; i < getPosiciones().size(); i++) {
@@ -193,7 +189,6 @@ public class Tablero {
 
             // Verifica si la casilla no tiene dueño (es decir, si su dueño es la banca)
             if (casilla.getDuenho() == banca && casilla.getTipo().equals("Solar")) {
-
 
                 // Aplica el porcentaje de incremento al valor de la casilla
                 float incremento = casilla.getValor() * 0.05f;
@@ -204,25 +199,24 @@ public class Tablero {
     
     
     //SECCION DE IMPRIMIR EL TABLERO Y LOS AVATARES
-    
+
+    //ESTE MÉTODO TENDRA SENTIDO EN LA SEGUNDA ENTREGA CUANDO EL ALQUILER DEPENDE DE LAS CASAS Y DEMÁS
     /**Método auxiliar para calcular el precio de un Solar.
      * @param nsolares_grupo Número de solares que tiene el grupo (2 o 3)
      * @param ngrupo Índice del grupo (se usa para la multiplicidad del incremento)
      */
     public float valorSolar(int nsolares_grupo, int ngrupo){
-        float valor_solar = (float) (Valor.GRUPO1 /nsolares_grupo * pow(Valor.INCREMENTO, ngrupo));
-        return valor_solar;
+        return (float) (Valor.GRUPO1/nsolares_grupo * pow(Valor.INCREMENTO, ngrupo));
     }
 
     /**Método para subrayar texto.
      * @param texto Texto que hay que subrayar
      */
     public String subrayar(String texto) {
-        String textoSubrayado =Valor.SUBRAYADO + texto + Valor.RESET;
-        return textoSubrayado;
+        return Valor.SUBRAYADO + texto + Valor.RESET;
     }
 
-    /**Método para crear cadenas de espacios
+    /**Método para crear cadenas de espacios.
      * @param n Número de espacios en blanco que se quieren
      */
     public String conEspacios(int n) {
@@ -239,14 +233,13 @@ public class Tablero {
         return(cadena);
     }
 
-    /**Método que devuelve el nombre de una casilla coloreado si así le corresponde
+    /**Método que devuelve el nombre de una casilla coloreado si así le corresponde.
      * @param casilla Casilla cuyo nombre hay que colorear (se presupone que es un Solar)
      */
     public String colorearNombre(Casilla casilla) {
-        String nombreColoreado = new String();
+        String nombreColoreado;
 
         //Escogemos el color en función del grupo al que pertenece la casilla
-
         switch (casilla.getGrupo().getColorGrupo()) {
             case "BLACK":
                 nombreColoreado = Valor.BLACK;
@@ -273,7 +266,7 @@ public class Tablero {
                 nombreColoreado = Valor.WHITE;
                 break;
             default:
-                System.out.println(casilla.getNombre() + " no es una casilla de tipo Solar.\n");
+                System.out.println(casilla.getNombre() + " tiene un color de grupo inválido.\n");
                 nombreColoreado = "";
                 break;
         }
@@ -288,7 +281,7 @@ public class Tablero {
      * Si hubiese varios jugadores en la misma casilla devuelve "&@@@..." donde cada @ es un identificador (máximo 6).
      * @param casilla Nombre de la casilla
      */
-    public String fichas(Casilla casilla) {//PASAMOS EL NOMBRE DE LA CASILLA
+    public String fichas(Casilla casilla) {
         //Variables que vamos a necesitar
         int nj=casilla.getAvatares().size();    //Vemos cuántos jugadores hay en la casilla con .size()
         String fichas = "";
@@ -315,7 +308,7 @@ public class Tablero {
      * @param casilla Nombre de la casilla
      */
     public String formatoNombre(Casilla casilla) {
-        String nombreConFormato = new String();
+        String nombreConFormato;
 
         if(casilla.getTipo().equals("Solar")) {
             nombreConFormato = colorearNombre(casilla) + conEspacios(Valor.NCHARS_CASILLA-casilla.getNombre().length()) + Valor.BARRA;
@@ -329,13 +322,12 @@ public class Tablero {
 
 
     /**Método que devuelve la mitad de abajo de las casillas (con fichas si las hubiese)
-     * Formato: Nombre casilla + Espacios + Barra.
-     * El número de espacios varía para que la cadena entera mida 9 caracteres (=Valor.NCHARS_CASILLA).
-     * Si Nombre casilla + Barra ya mide 9 caracteres no se añaden espacios.
+     * Formato: Fichas si las hubiera + Espacios + Barra.
+     * El número de espacios varía para que la cadena entera mida 8 caracteres (=Valor.NCHARS_CASILLA).
      * @param casilla Nombre de la casilla
      */
     public String formatoFichas(Casilla casilla) {
-        String nombreConFormato = new String();
+        String nombreConFormato;
         nombreConFormato = subrayar(fichas(casilla)) + Valor.BARRA;
         return nombreConFormato;
     }
@@ -344,7 +336,7 @@ public class Tablero {
      * Versión 3: como hay que imprimir todas las fichas que hay en una casilla
      * vamos a hacer que cada casilla tenga dos líneas: una para el nombre y otra
      * para imprimir las fichas si las hubiese (ahora en vez de una fila de líneas
-     * para delimitar casillas va la segunda línea de la casilla subrayada
+     * para delimitar casillas va la segunda línea de la casilla subrayada).
      */
     @Override
     public String toString() {

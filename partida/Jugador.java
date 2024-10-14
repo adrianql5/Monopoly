@@ -34,10 +34,12 @@ public class Jugador {
         this.vueltas_sin_comprar=0;
     }
 
-    /*Constructor principal. Requiere parámetros:
-     * Nombre del jugador, tipo del avatar que tendrá, casilla en la que empezará y ArrayList de
-     * avatares creados (usado para dos propósitos: evitar que dos jugadores tengan el mismo nombre y
-     * que dos avatares tengan mismo ID). Desde este constructor también se crea el avatar.
+    /**Constructor principal. Desde este constructor también se crea el avatar.
+     * @param nombre Nombre del jugador
+     * @param tipoAvatar Tipo del avatar que tendrá
+     * @param inicio Casilla en la que empezará
+     * @param avCreados ArrayList de avatares creados (usado para dos propósitos:
+     *                  evitar que dos jugadores tengan el mismo nombre y que dos avatares tengan mismo ID).
      */
     public Jugador(String nombre, String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados) {
 
@@ -60,8 +62,9 @@ public class Jugador {
 
     //SECCIÓN DE MÉTODOS ÚTILES DE JUGADOR
 
-    //Método para añadir una propiedad al jugador. Como parámetro, la casilla a añadir.
-
+    /**Método para añadir una propiedad al jugador.
+     * @param casilla Casilla a añadir
+     */
     public void anhadirPropiedad(Casilla casilla) {
         if (!propiedades.contains(casilla)) {
             this.propiedades.add(casilla);
@@ -69,7 +72,9 @@ public class Jugador {
     }
     
     
-    //Método para eliminar una propiedad del arraylist de propiedades de jugador.
+    /**Método para eliminar una propiedad del arraylist de propiedades de jugador.
+     * @param casilla Casilla a añadir
+     */
     public void eliminarPropiedad(Casilla casilla) {
         if (propiedades.contains(casilla)) {
             this.propiedades.remove(casilla);
@@ -86,7 +91,10 @@ public class Jugador {
         this.avatar.getLugar().anhadirAvatar(this.avatar);
     }
 
-    
+    /**Método para contar cuántas casillas posee un jugador de un tipo determinado
+     * Solo se usa para las propiedades de tipo Transportes de momento
+     * @param tipo Tipo de propiedad
+     */
     public int numeroCasillasTipo(String tipo){
         int contador=0;
         for(Casilla c: propiedades){
@@ -99,11 +107,19 @@ public class Jugador {
     
     //SECCIÓN DE MÉTODOS QUE GESTIONAN LA FORTUNA DEL JUGADOR
 
-    //Método para añadir fortuna a un jugador
-    //Como parámetro se pide el valor a añadir. Si hay que restar fortuna, se pasaría un valor negativo.
+    /**
+     * Método para añadir fortuna a un jugador.
+     * Si hay que restar fortuna, se pasaría un valor negativo (o también puedes usar restarFortuna si eres Adrián).
+     * @param valor Valor a añadir
+     */
     public void sumarFortuna(float valor) {
         this.fortuna += valor;
     }
+
+    /**
+     * Método para restar fortuna a un jugador.
+     * @param valor Valor a añadir
+     */
     public void restarFortuna(float valor){
         this.fortuna -=valor;
     }
@@ -120,17 +136,8 @@ public class Jugador {
     public boolean isEnCarcel() {
         return enCarcel;
     }
-    
-    public boolean estaHipotecado() {
-        return false;
-    }
 
-    public boolean esBanca(){
-        if(this.avatar==null) return true;
-        return false;
-    }
-
-
+    //work in progress pa la segunda entrega
     public boolean estaEnBancarrota() {
         if (this.getFortuna() <= 0) {
             // Comprobar si tiene propiedades hipotecables
@@ -148,7 +155,7 @@ public class Jugador {
     }
 
 
-    //SeECCIÓN DE GETTERS Y SETTERS DE JUGADOR
+    //SECCIÓN DE GETTERS Y SETTERS DE JUGADOR
     public String getNombre(){
         return this.nombre;
     }
@@ -161,23 +168,9 @@ public class Jugador {
         this.fortuna = nuevaFortuna;
     }
 
-
-    public void sumarVuelta(){
-        vueltas++;
-    }
-
     public Avatar getAvatar() {
         return avatar;
     }
-
-    public float getGastos() {
-        return gastos;
-    }
-
-    public void setGastos(float gastos) {
-        this.gastos = gastos;
-    }
-
 
     public void setEnCarcel(boolean enCarcel) {
         this.enCarcel = enCarcel;
@@ -191,6 +184,16 @@ public class Jugador {
         return tiradasCarcel;
     }
 
+    public ArrayList<Casilla> getPropiedades() {
+        return propiedades;
+    }
+
+
+    //SECCIÓN DE MÉTODOS QUE TIENE QUE VER CON VUELTAS EN EL TABLERO
+    public void sumarVuelta(){
+        vueltas++;
+    }
+
     public int getVueltas_sin_comprar(){
         return vueltas_sin_comprar;
     }
@@ -198,24 +201,14 @@ public class Jugador {
     public void sumarVueltas_sin_comprar(){
         vueltas_sin_comprar++;
     }
+
     public void setVueltas_sin_comprar(int vueltas_sin_comprar){
         this.vueltas_sin_comprar = vueltas_sin_comprar;
     }
 
-    public int getVueltas() {
-        return vueltas;
-    }
-
-    public void setVueltas(int vueltas) {
-        this.vueltas = vueltas;
-    }
-
-    public ArrayList<Casilla> getPropiedades() {
-        return propiedades;
-    }
-
 
     //SECCIÓN QUE DEVUELVE INFORMACIÓN DE JUGADOR
+    /**Método que devuelve la información de un jugador*/
     public void infoJugador() {
         System.out.println("{");
         // Imprimir nombre, avatar y fortuna con separador de miles para la fortuna

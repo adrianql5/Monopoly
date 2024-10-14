@@ -25,6 +25,7 @@ public class Dado {
         }
         else {
             System.out.println("Intentas asignarle a un dado un valor que no es posible!");
+            this.valor= numeroRandom.nextInt(1,7);
         }
     }
 }

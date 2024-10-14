@@ -210,7 +210,7 @@ public class Casilla {
      */
     public void comprarCasilla(Jugador solicitante, Jugador banca) {
         // ¿La casilla es de un tipo que se pueda comprar?
-        if(this.tipo.equals("Solar") || this.tipo.equals("Transporte") || this.tipo.equals("Servicio")) {
+        if(this.esTipoComprable()) {
             // ¿El jugador que la quiere comprar está encima de la casilla?
             if(solicitante.getAvatar().getLugar()==this) {
                 // ¿La casilla pertenece a la banca?
@@ -242,7 +242,13 @@ public class Casilla {
             System.out.println("¡¡Esta casilla no se puede comprar!! \uD83D\uDE21");
         }
     }
-    
+
+    /**Método para verificar si el tipo de una casilla la hace comprable*/
+    public boolean esTipoComprable() {
+        return (this.tipo.equals("Solar") || this.tipo.equals("Transporte") || this.tipo.equals("Servicio"));
+    }
+
+    // Nota: creo q esta no es la implementación que pedían pero de todos modos no lo usamos
     /** Método para mostrar información de una casilla en venta.
      * Valor devuelto: texto con esa información.
      */
@@ -253,14 +259,10 @@ public class Casilla {
         return "Esta casilla no está en venta";
     }
 
-    public boolean esDuenhoCasilla(Jugador jugador, Casilla casilla){
-        if (casilla.duenho==jugador) return true;
-        else return false;
+    public boolean esDuenho(Jugador jugador){
+        return this.duenho == jugador;
     }
-    
-    public boolean estaHipotecada() {
-        return true;
-    }
+
     
     //SECCIÓN QUE DEVUELVE INFORMACIÓN DE CASILLA
 
@@ -272,8 +274,8 @@ public class Casilla {
                 + "\tTipo Casilla: " + this.tipo + "\n"
                 + "\tPosicion: " + this.posicion + "\n"
                 + "\tValor: " + String.format("%,.0f", this.valor) + "\n"
-                + "\tDueño: " + (this.duenho != null ? this.duenho.getNombre() : "?") +"\n"
-                + "\tColor del grupo: " + (this.grupo != null ? this.grupo.getColorGrupo() : "?") + "\n"
+                + "\tDueño: " + (this.duenho != null ? this.duenho.getNombre() : "-") +"\n"
+                + "\tColor del grupo: " + (this.grupo != null ? this.grupo.getColorGrupo() : "-") + "\n"
                 + "\tValor hipoteca: " + String.format("%,.0f", this.valor/2f)+"€\n}\n";
 
         return info;
@@ -334,7 +336,8 @@ public class Casilla {
     public void setDuenho(Jugador duenho_casilla) {
         if (duenho_casilla != null) {
             for (Avatar avatar : this.avatares) {
-                if (avatar.getJugador().getNombre().equals(duenho_casilla.getNombre()))  { // Si el jugador es el dueño de algún avatar en la casilla
+                // Si el jugador es el dueño de algún avatar en la casilla
+                if (avatar.getJugador()==duenho_casilla)  {
                     break;
                 }
                 else{
@@ -359,7 +362,6 @@ public class Casilla {
             System.out.println("El grupo no puede ser nulo.\n");
         }
     }
-
 
     public float getImpuesto(){
         return impuesto;

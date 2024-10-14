@@ -24,12 +24,12 @@ public class Menu {
     private boolean partidaTerminada;
 
 
-    //SECCIÓN DE CONSTUIR EL MENÚ
+    //SECCIÓN DE CONSTRUIR EL MENÚ
     //Hay que asignar un valor por defecto para cada atributo
     public Menu(){
         this.jugadores = new ArrayList<Jugador>();
         this.avatares = new ArrayList<Avatar>();
-        this.turno = -1; //Aún no ha empezado la partida
+        this.turno = -1; //Aún no ha empezado la partida, cuando se crear el primer jugador ya se pone a 0
         this.lanzamientos = 0;
         this.banca = new Jugador();
         this.tablero=new Tablero(this.banca);
@@ -108,7 +108,8 @@ public class Menu {
         scan.close();
         terminarPartida();
     }
-    // se le llama para acabar de jugar o cuando alguien pierde
+
+    /**Método para acabar la partida cuando se termina de jugar o cuando alguien pierde*/
     private void terminarPartida(){
         System.out.println("La partida ha finalizado, esperamos que disfrutáseis la experiencia.");
         System.exit(0);
@@ -270,13 +271,13 @@ public class Menu {
         }
         else {
             // Comprobamos si aún no se ha tirado en el turno o vienes de haber sacado dobles
-            // MUY IMPORTANTE EL ORDEN DEL IF: el valor de los dados antes de la primera tirada de la partida es null
+            // IMPORTANTE EL ORDEN DEL IF: el valor de los dados antes de la primera tirada de la partida es null
             if(!this.tirado || this.dado1.getValor()==this.dado2.getValor()) {
-                //Lanzamos 2 dados e imprimimos sus resultados
+                // Lanzamos 2 dados e imprimimos sus resultados
                 int resultado1 = this.dado1.tirarDado();
                 int resultado2 = this.dado2.tirarDado();
                 System.out.println("[" + resultado1 + "] [" + resultado2 + "]");
-                //Se vuelve a asignar true en segundas/terceras tiradas a no ser que hagamos un caso a parte
+                // Se vuelve a asignar true en segundas/terceras tiradas a no ser que hagamos un caso a parte
                 this.tirado = true;
                 this.lanzamientos += 1;
 
@@ -371,11 +372,17 @@ public class Menu {
     }
 
     
-    /**Método que ejecuta todas las acciones relacionadas con el comando 'salir carcel'. */
-    private void salirCarcel() {//saca al avatar de la carcel
+    /**Método que ejecuta todas las acciones relacionadas con el comando 'salir carcel'.
+     * Si el jugador está encarcelado y aún no tiró en su turno, paga la fianza y sale de la cárcel.
+     * NOTA: cuando sales de la cárcel puedes tirar como en un turno normal.
+     * CASO ESPECIAL: si es el tercer turno que tiras los dados para salir de la cárcel y no sacas dobles estás obligado
+     *  a pagar la fianza. En ese caso el método lanzarDados() llama a este método haciendo primero this.tirado=false.
+     */
+    private void salirCarcel() {
         //Establecemos el jugador actual
         Jugador jugador = this.jugadores.get(this.turno);
         if (jugador.isEnCarcel()) {
+            // Si ya ha tirado este turno no puede pagar la fianza!
             if (!this.tirado) {
                 if(!jugador.estaEnBancarrota()) {
                     desencarcelar(jugador);
@@ -447,8 +454,7 @@ public class Menu {
         Casilla casilla_aux;
         for (int i = 0; i < 40; i++) {
             casilla_aux = tablero.getCasilla(i);
-            if ((casilla_aux.getTipo().equals("Solar") || casilla_aux.getTipo().equals("Transporte")
-                    || casilla_aux.getTipo().equals("Servicio")) && casilla_aux.getDuenho() == banca) {
+            if (casilla_aux.esTipoComprable() && casilla_aux.getDuenho() == banca) {
                 System.out.printf("%s - Precio: %,.0f€\n", casilla_aux.getNombre(), casilla_aux.getValor());
             }
         }
@@ -457,7 +463,8 @@ public class Menu {
     //SECCIÓN DE COMANDOS QUE DEPENDEN DE UNA INSTANCIA
     
     /**Método que resetea los atributos del jugador que se desencarcela.
-     * Lo usa salirCarcel pero tb se llama cuando sales por sacar dobles
+     * Lo usa salirCarcel pero tb se llama cuando sales por sacar dobles.
+     * Nótese que al salir de la cárcel puedes tirar los dados como un turno normal.
      * @param jugador Jugador que vamos a desencarcelar
      */
     private void desencarcelar(Jugador jugador) {
@@ -467,18 +474,22 @@ public class Menu {
         this.lanzamientos=0;
     }
 
-
+    //NOTA PARA LA SEGUNDA ENTREGA: añadiría las comprobaciones que hace comprarCasilla aquí
+    //para que la función comprarCasilla se llame solo cuando ya se sabe que se puede comprar
+    //pero bueno en general es lioso que se necesiten 2 métodos para hacer 1 cosa de esta manera
     /**Método que ejecuta todas las acciones realizadas con el comando 'comprar nombre_casilla'.
      * @param nombre Cadena de caracteres con el nombre de la casilla.
      */
-    private void comprar(String nombre) { //REVISAR
+    private void comprar(String nombre) {
         Casilla c=tablero.encontrar_casilla(nombre);
+
+        // Comprobamos si la casilla existe y ya se ha tirado (se hacen otras comprobaciones dentro de comprarCasilla)
         if(c != null) {
             if (this.tirado || lanzamientos > 0) {
                 //le paso el jugador que tiene el turno y eljugador 0 (la banca)
                 Jugador jugador = obtenerTurno();
-                if(c.getDuenho() == banca && jugador.getAvatar().getLugar()==c && (c.getValor() <= jugador.getFortuna()) &&
-                        (c.getTipo().equals("Solar") || c.getTipo().equals("Transporte") || c.getTipo().equals("Servicio"))) {
+                if(c.getDuenho() == banca && jugador.getAvatar().getLugar()==c &&
+                        (c.getValor() <= jugador.getFortuna()) && c.esTipoComprable()) {
                     VueltasCero();
                 }
                 c.comprarCasilla(jugador, this.banca);
@@ -492,8 +503,6 @@ public class Menu {
             System.out.println("No hay ninguna casilla que se llame " + nombre);
         }
     }
-
-
 
     
     /**Método auxiliar para imprimir la lista de jugadores en una casilla.
@@ -539,7 +548,7 @@ public class Menu {
 
                 // CASO ESPECIAL EN EL QUE NO PODEMOS LLAMAR A jugadoresEnCasilla
                 // porque hay que imprimir también los turnos que llevan para salir o si están de visita
-                // podríamos hacer un Override del tipo jugadoresEnCasilla(String "Carcel")
+                // podríamos hacer sobrecarga de métodos del tipo jugadoresEnCasilla(String "Carcel") en el futuro
 
                 // Obtenemos la lista de avatares que hay en la casilla
                 ArrayList<Avatar> avataresEnCasilla = casillaCarcel.getAvatares();
@@ -624,8 +633,7 @@ public class Menu {
     private void descJugador(String[] partes) {
         boolean encontrado = false;
 
-        // en partes esta el nombre comprueba que el nombre del jugador existe y saca su info si existe
-        // miguel meu que tiene que poder sacar la info de varios jugadores
+        // en partes están los nombres de los jugadores, comprueba que el nombre existe y saca su info si existe
         for (Jugador jugador : jugadores) {
             for(int i=2; i<partes.length; i++) {
                 if (jugador.getNombre().equals(partes[i])) {
@@ -672,47 +680,57 @@ public class Menu {
 
         String tipo = avatar.trim().toLowerCase();  // Eliminar espacios y convertir a minúsculas
 
-        // Definir la casilla de inicio. Por ejemplo, la primera casilla del tablero
-        Casilla casillaInicio = tablero.getCasilla(0);  // Asumiendo que tienes un método para obtener la casilla inicial
+        // Definir la casilla de inicio.
+        Casilla casillaInicio = tablero.getCasilla(0);
+
+        //Comprobamos que el tipo introducido es válido
         if(!esTipoAvatar(tipo)){
-            System.out.println("Tipo Incorrecto");
+            System.out.println("Tipo de avatar incorrecto");
             return;
         }
-        // Crear nuevo jugador tipo coche porque si
+
+        // Creamos el nuevo jugador con el tipo indicado
         Jugador nuevoJugador = new Jugador(nombre, tipo, casillaInicio, avatares);
 
-
-        // Añadir el jugador a la lista de jugadores
+        // Añadir el jugador a la lista de jugadores y a la casilla de inicio
         this.jugadores.add(nuevoJugador);
-
-        // Hacemos que sea el turno del jugador recién creado
-        // Nótese que por defecto this.turno = -1
-        this.turno += 1;
-
-        // Imprimir detalles del jugador recién creado
-        jugadorTurno();
         casillaInicio.anhadirAvatar(nuevoJugador.getAvatar());
 
+        // Hacemos que sea el turno del jugador recién creado
+        // Nótese que por defecto this.turno = -1 así que cuando se crea el primer jugador el índice es 0.
+        this.turno += 1;
 
+        // Imprimir detalles del jugador recién creado y el tablero
+        jugadorTurno();
         verTablero();
     }
 
 
-    //SEECIÓN DE MÉTODOS ÚTILES DE MENÚ
+    //SECCIÓN DE MÉTODOS ÚTILES DE MENÚ
 
     //Petadinha (longitud máxima de líneas de nuevo_texto=17)
-    //Se puede hacer desde aquí porque no existe encapsulación al ser un String[]
+    //Se puede hacer desde aquí porque no existe encapsulación de sus elementos al ser un String[]
+    /**Método para cambiar el texto que se muestra en medio del tablero*/
     public void setTextoTablero(String nuevo_texto) {
         //Dividimos el String en partes en función de los saltos de línea
         String[] nuevo_texto_tablero = nuevo_texto.split("\n");
-        
-        //Se empieza en el índice 1 porque la primera línea del centro del tablero se deja vacía
-        //Nótese que para asignar bien el texto el índice de texto_tablero es i-1
-        for(int i = 1; i< nuevo_texto_tablero.length+1; i++) {
-            Valor.TEXTO_TABLERO[i] = nuevo_texto_tablero[i-1];
+
+        if(nuevo_texto_tablero.length<17) {
+            // Se empieza en el índice 1 porque la primera línea del centro del tablero se deja vacía
+            // Nótese que para asignar bien el texto el índice de nuevo_texto_tablero es i-1
+            for (int i = 1; i < nuevo_texto_tablero.length + 1; i++) {
+                Valor.TEXTO_TABLERO[i] = nuevo_texto_tablero[i - 1];
+            }
+        }
+        else {
+            System.out.println("Se ha intentado meter más líneas de las que caben en el medio del tablero.");
         }
     }
 
+    /**Método para comprobar si los jugadores llevan cuatro vueltas al tablero sin comprar.
+     * Si es cierto aumenta el precio de los solares un 5% y reinicia las vueltas sin comprar a 0.
+     * Una vuelta == pasar por la casilla de salida.
+     */
     private void cuatroVueltasJ() {
         boolean todosCumplen = true;
         for (Jugador j : jugadores) {
@@ -727,27 +745,24 @@ public class Menu {
             VueltasCero();
         }
     }
+
+    /**Método que reinicia las vueltas sin comprar a 0.*/
     private void VueltasCero() {
         for (Jugador j : jugadores) {
             j.setVueltas_sin_comprar(0);
         }
     }
 
-    //SECCIÓN DE GETTERS Y SETTERS DE MENÚ
-    public float getBote() {
-        return this.bote;
-    }
 
     //SECCIÓN DE CHEATS DE MENÚ
 
-    /**Método para conseguir mucho dinero.
-     */
+    /**Método para conseguir mucho dinero.*/
     private void dineroInfinito() {
         Jugador jugador = obtenerTurno();
         jugador.sumarFortuna(1000000000); //mil millones
     }
 
-    /**Método igual a 'lanzar dados' pero que siempre saca 1 y 1.
+    /**Método igual a 'lanzar dados' que saca lo que le indicas (sólo valores posibles de los dados!!).
      * Copypaste criminal
      */
     private void dadosTrampa(int d1, int d2) {
@@ -867,13 +882,13 @@ public class Menu {
         }
 
     }
+
     private boolean esTipoAvatar(String tipo) {
         return "coche".equals(tipo) ||
                 "esfinge".equals(tipo) ||
                 "sombrero".equals(tipo) ||
                 "pelota".equals(tipo);
     }
-
 
     private void acabarPartida() {
         partidaTerminada = true;

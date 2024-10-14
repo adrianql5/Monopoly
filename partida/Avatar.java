@@ -122,7 +122,6 @@ public class Avatar {
         }
     }
 
-
     public Jugador getJugador() {
         return jugador;
     }
@@ -130,7 +129,6 @@ public class Avatar {
     public void setJugador(Jugador jugador_avatar) {
         this.jugador = jugador_avatar;
     }
-
 
     public Casilla getLugar() {
         return lugar;
