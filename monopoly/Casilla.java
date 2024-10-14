@@ -276,7 +276,7 @@ public class Casilla {
         String info= "{\n\tNombre casilla: " + this.nombre + "\n"
                 + "\tTipo Casilla: " + this.tipo + "\n"
                 + "\tPosicion: " + this.posicion + "\n"
-                + "\tValor: " + String.format("%,.0f", this.valor) + "\n"
+                + "\tValor: " + String.format("%,.0f", this.valor) + "€\n"
                 + "\tDueño: " + (this.duenho != null ? this.duenho.getNombre() : "-") +"\n"
                 + "\tColor del grupo: " + (this.grupo != null ? this.grupo.getColorGrupo() : "-") + "\n"
                 + "\tValor hipoteca: " + String.format("%,.0f", this.valor/2f)+"€\n}\n";
