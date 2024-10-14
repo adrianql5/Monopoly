@@ -105,24 +105,27 @@ public class Casilla {
         if(actual != this.duenho) {
             switch (this.tipo) {
                 case "Solar":
-                    if (this.duenho!=banca) {//si pertenece a otro jugador le debe pagar el alquiler
+                    // Si pertenece a otro jugador le debe pagar el alquiler
+                    if (this.duenho!=banca) {
                         //Teoricamente si no tiene dinero para pagar se queda en negativo y se acaba la partida
-                        Casilla solar = actual.getAvatar().getLugar();
-                        Jugador propietario = solar.getDuenho();
+                        Jugador propietario = this.duenho;
                         float alquiler;
-                        if(this.getGrupo().esDuenhoGrupo(propietario)) {
-                            alquiler = solar.getImpuesto() * 2f;
+                        if(this.grupo.esDuenhoGrupo(propietario)) {
+                            alquiler = this.impuesto * 2f;
                         }else{
-                            alquiler = solar.getImpuesto();
+                            alquiler = this.impuesto;
                         }
                         System.out.printf("%s debe pagarle el alquiler de %s a %s: %,.0f€\n",
-                                actual.getNombre(), solar.getNombre(), propietario.getNombre(), alquiler);
+                                actual.getNombre(), this.nombre, propietario.getNombre(), alquiler);
                         actual.sumarGastos(alquiler);
                         actual.restarFortuna(alquiler);
 
-                        propietario.sumarFortuna(alquiler);
-                        if (actual.estaEnBancarrota()) return false;
+                        // Si está en bancarrota se acaba la partida (y no se le ingresa nada al propietario)
+                        if (actual.estaEnBancarrota()) {
+                            return false;
+                        }
 
+                        propietario.sumarFortuna(alquiler);
                         return true;
                     } else {
                         System.out.println("La casilla " + this.getNombre() + " está a la venta.\n");
@@ -154,11 +157,11 @@ public class Casilla {
 
                 case "Transporte":
 
-                    //esto no sé donde lo viste adri pero en el pdf pone q hay q pagar SUMA_VUELTA aka TRANSPORTE
-                    //int multiplicador = this.duenho.numeroCasillasTipo("Transporte"); // Inicialización de multiplicador
+                    // Se paga el 25% del valor total de la casilla Transporte por cada casilla que tengas de este tipo
+                    int multiplicador = this.duenho.numeroCasillasTipo("Transporte");
 
                     if (this.duenho!=banca) {
-                        float total = Valor.TRANSPORTE;//pongo f porque si no pone un double, cositas de Java
+                        float total = multiplicador * 0.25f * Valor.TRANSPORTE;//pongo f porque si no pone un double, cositas de Java
                         System.out.printf("%s debe pagarle el servicio de transporte a %s: %,.0f€\n",
                                 actual.getNombre(), this.duenho.getNombre(), total);
                         actual.sumarGastos(total);
