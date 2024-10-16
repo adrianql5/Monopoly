@@ -2,6 +2,7 @@ package monopoly;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Collections; // Lo usamos para barajar las cartas
 
 import partida.Avatar;
 import partida.Dado;
@@ -21,7 +22,11 @@ public class Menu {
     private boolean tirado; //Booleano para comprobar si el jugador que tiene el turno ha tirado o no.
     private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente, es decir, si ha pagado sus deudas.
 
-    private boolean partidaTerminada;
+    private float bote; //El bote del Parking se guarda en este atributo
+    private ArrayList<Carta> cartas_suerte;
+    private ArrayList<Carta> cartas_caja;
+    private Carta carta_del_reves;
+    private boolean partidaTerminada; //Booleano para acabar la partida
 
 
     //SECCIÓN DE CONSTRUIR EL MENÚ
@@ -32,14 +37,34 @@ public class Menu {
         this.turno = -1; //Aún no ha empezado la partida, cuando se crear el primer jugador ya se pone a 0
         this.lanzamientos = 0;
         this.banca = new Jugador();
-        this.tablero=new Tablero(this.banca);
-        this.dado1= new Dado();
-        this.dado2= new Dado();
-        this.tirado=false;
-        this.solvente=true;
-        this.partidaTerminada=false;
+        this.tablero = new Tablero(this.banca);
+        this.dado1 = new Dado();
+        this.dado2 = new Dado();
+        this.tirado = false;
+        this.solvente = true;
+        this.bote = 0;
+        anhadirBarajas();
+        this.partidaTerminada = false;
     }
 
+    /**Método para generar las cartas de tipo Suerte y de tipo Caja de comunidad (más la carta dada la vuelta).*/
+    private void anhadirBarajas() {
+        this.cartas_suerte = new ArrayList<Carta>();
+        cartas_suerte.add(new Carta(Texto.CARTA_SUERTE_1));
+        cartas_suerte.add(new Carta(Texto.CARTA_SUERTE_2));
+        cartas_suerte.add(new Carta(Texto.CARTA_SUERTE_3));
+        cartas_suerte.add(new Carta(Texto.CARTA_SUERTE_4));
+        cartas_suerte.add(new Carta(Texto.CARTA_SUERTE_5));
+        cartas_suerte.add(new Carta(Texto.CARTA_SUERTE_6));
+        this.cartas_caja = new ArrayList<Carta>();
+        cartas_caja.add(new Carta(Texto.CARTA_CAJA_1));
+        cartas_caja.add(new Carta(Texto.CARTA_CAJA_2));
+        cartas_caja.add(new Carta(Texto.CARTA_CAJA_3));
+        cartas_caja.add(new Carta(Texto.CARTA_CAJA_4));
+        cartas_caja.add(new Carta(Texto.CARTA_CAJA_5));
+        cartas_caja.add(new Carta(Texto.CARTA_CAJA_6));
+        this.carta_del_reves = new Carta();
+    }
 
     //SECCIÓN DE CONTROL DEL FLUJO DE LA PARTIDA
 
@@ -49,7 +74,7 @@ public class Menu {
         Scanner scan= new Scanner(System.in);
 
         //Antes de empezar la partida hay que crear los jugadores
-        setTextoTablero(Valor.TEXTO_BIENVENIDA);
+        setTextoTablero(Texto.BIENVENIDA);
         verTablero();
 
         //Bucle para crear los jugadores (máximo 6)
@@ -82,7 +107,7 @@ public class Menu {
                             Valor.RESET + ".");
 
                     //Empezamos la partida ahora que ya tenemos los jugadores
-                    setTextoTablero(Valor.LISTA_COMANDOS);
+                    setTextoTablero(Texto.LISTA_COMANDOS);
 
                     //Este es el bucle de la partida básicamente
                     while (!partidaTerminada) {
@@ -176,6 +201,17 @@ public class Menu {
                 dineroInfinito();
                 break;
 
+            //PROBANDO LA IMPRESIÓN DE CARTAS
+            case "probar cartas":
+                probarCartas();
+                break;
+            case "coger carta caja":
+                cogerCarta(this.cartas_caja);
+                break;
+            case "coger carta suerte":
+                cogerCarta(this.cartas_suerte);
+                break;
+
             //Segundo bloque de comandos: dependen de una instancia
             default:
                 //Dividimos el comando en partes
@@ -219,6 +255,7 @@ public class Menu {
                     }
                     //CHEAT PARA SACAR LO QUE QUIERAS CON LOS DADOS
                     else if("dados".equals(comando[0])) {
+                        // SE DA POR HECHO QUE SE INTRODUCE UN VALOR CONVERTIBLE A ENTERO!! HAY QUE CAMBIARLO
                         int dado1 = Integer.parseInt(comando[1]);
                         int dado2 = Integer.parseInt(comando[2]);
                         dadosTrampa(dado1,dado2);
@@ -365,7 +402,7 @@ public class Menu {
 
                     // Si pasamos por la salida hay que cobrar!
                     if (origen.getPosicion() > destino.getPosicion()) {
-                        System.out.printf("¡Al pasar por la salida ganaste %,.0f€!", Valor.SUMA_VUELTA);
+                        System.out.printf("¡Al pasar por la salida ganaste %,.0f€!\n", Valor.SUMA_VUELTA);
                         jugador.sumarFortuna(Valor.SUMA_VUELTA);
                         jugador.sumarVuelta();
                         jugador.sumarVueltas_sin_comprar();
@@ -701,13 +738,66 @@ public class Menu {
             // Se empieza en el índice 1 porque la primera línea del centro del tablero se deja vacía
             // Nótese que para asignar bien el texto el índice de nuevo_texto_tablero es i-1
             for (int i = 1; i < nuevo_texto_tablero.length + 1; i++) {
-                Valor.TEXTO_TABLERO[i] = nuevo_texto_tablero[i - 1];
+                Texto.TABLERO[i] = nuevo_texto_tablero[i - 1];
             }
         }
         else {
             System.out.println("Se ha intentado meter más líneas de las que caben en el medio del tablero.");
         }
     }
+
+    // SECCIÓN DE MÉTODOS RELACIONADOS CON LAS CARTAS TIPO SUERTE Y CAJA DE COMUNIDAD
+
+    /**Método para cuando se cae en una casilla de tipo Suerte o Caja de comunidad
+     *
+     *
+     */
+    public void cogerCarta(ArrayList<Carta> baraja) {
+        System.out.println("Barajando las cartas...");
+        Collections.shuffle(baraja); //Barajamos las cartas
+        cartasAlReves(); //Mostramos el reverso de las cartas
+        System.out.println("Escoge una carta con un número del 1 al 6.");
+        //Creamos un escaneador para introducir el número
+        Scanner scan= new Scanner(System.in);
+        String num_carta = scan.nextLine();
+        // SE DA POR HECHO QUE SE INTRODUCE UN VALOR CONVERTIBLE A ENTERO!! HAY QUE CAMBIARLO
+        int n = Integer.parseInt(num_carta);
+        mostrarCartaEscogida(baraja, n); //Volvemos a mostrar las cartas con la escogida dada la vuelta
+        //evaluarCarta(); work in progress.....
+    }
+
+    /**Método para imprimir 6 cartas al revés en fila*/
+    private void cartasAlReves() {
+        // Vamos imprimiendo línea por línea
+        for(int i=0; i<Valor.NLINEAS_CARTA; i++) {
+            // Función repeat() muy útil pa este caso
+            System.out.println(this.carta_del_reves.getTexto().get(i).repeat(6));
+        }
+    }
+
+    /**
+     * Método para imprimir 6 cartas, todas al revés menos la que indica el índice
+     * @param baraja Baraja de cartas de entre las cuales se escoge
+     * @param n Posición de la carta que se escoge en el ArrayList
+     */
+    private void mostrarCartaEscogida(ArrayList<Carta> baraja, int n) {
+        // Para cada línea...
+        for(int i=0; i<Valor.NLINEAS_CARTA; i++) {
+            // ...iteramos para cada carta (en total 6)...
+            for(int j=0; j<6; j++) {
+                // ...vemos si la carta es la que escogió el jugador o no
+                // Nótese que el jugador escoge del 1 al 6 pero los índices empiezan en 0
+                if(j==n-1) {
+                    System.out.print(baraja.get(n-1).getTexto().get(i));
+                }
+                else {
+                    System.out.print(this.carta_del_reves.getTexto().get(i));
+                }
+            }
+            System.out.println(); //Imprimimos un salto de línea al haber iterado las 6 cartas
+        }
+    }
+
 
 
     //SECCIÓN DE CHEATS DE MENÚ
@@ -716,6 +806,24 @@ public class Menu {
     private void dineroInfinito() {
         Jugador jugador = obtenerTurno();
         jugador.sumarFortuna(1000000000); //mil millones
+    }
+
+    /**PRUEBA DE CÓMO QUEDAN LAS CARTAS*/
+    private void probarCartas() {
+        // CARTAS SUERTE
+        for(int j=0; j<11; j++) {
+            for(int i=0; i<6; i++) {
+                System.out.print(this.cartas_suerte.get(i).getTexto().get(j));
+            }
+            System.out.println();
+        }
+        // CARTAS CAJA
+        for(int j=0; j<11; j++) {
+            for(int i=0; i<6; i++) {
+                System.out.print(this.cartas_caja.get(i).getTexto().get(j));
+            }
+            System.out.println();
+        }
     }
 
     /**Método igual a 'lanzar dados' que saca lo que le indicas (sólo valores posibles de los dados!!).

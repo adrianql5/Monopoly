@@ -396,13 +396,13 @@ public class Tablero {
 
                 //PETADA HISTORICA
                 //Si hubiese que imprimir algo de texto en el centro del tablero se imprime
-                //Como partimos del índice 3 ajustamos para empezar en TEXTO_TABLERO[0]
-                if(Valor.TEXTO_TABLERO[i-3]!=null) {
+                //Como partimos del índice 3 ajustamos para empezar en TABLERO[0]
+                if(Texto.TABLERO[i-3]!=null) {
 
                     //Añadimos el texto (dejando una casilla de sangría)
-                    tabla += conEspacios(Valor.NCHARS_CASILLA + 1) + Valor.TEXTO_TABLERO[i-3];
+                    tabla += conEspacios(Valor.NCHARS_CASILLA + 1) + Texto.TABLERO[i-3];
                     //Rellenamos el resto con espacios
-                    int nesp = (Valor.NCASILLAS_POR_FILA - 3) * (Valor.NCHARS_CASILLA + 1) - 1 - Valor.TEXTO_TABLERO[i-3].length();
+                    int nesp = (Valor.NCASILLAS_POR_FILA - 3) * (Valor.NCHARS_CASILLA + 1) - 1 - Texto.TABLERO[i-3].length();
                     tabla += conEspacios(nesp);
                 }
                 //En este caso no hay nada que imprimir en la línea
@@ -423,12 +423,12 @@ public class Tablero {
 
                 //PETADA HISTORICA
                 //Si hubiese que imprimir algo de texto en el centro del tablero se imprime
-                if(Valor.TEXTO_TABLERO[i-3]!=null) {
+                if(Texto.TABLERO[i-3]!=null) {
 
                     //Añadimos el texto (dejando una casilla de sangría)
-                    tabla += conEspacios(Valor.NCHARS_CASILLA + 1) + Valor.TEXTO_TABLERO[i-3];
+                    tabla += conEspacios(Valor.NCHARS_CASILLA + 1) + Texto.TABLERO[i-3];
                     //Rellenamos el resto con espacios
-                    int nesp = (Valor.NCASILLAS_POR_FILA - 3) * (Valor.NCHARS_CASILLA + 1) - 1 - Valor.TEXTO_TABLERO[i-3].length();
+                    int nesp = (Valor.NCASILLAS_POR_FILA - 3) * (Valor.NCHARS_CASILLA + 1) - 1 - Texto.TABLERO[i-3].length();
                     tabla += conEspacios(nesp);
                 }
                 //En este caso no hay nada que imprimir en la línea
