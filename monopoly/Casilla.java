@@ -87,14 +87,7 @@ public class Casilla {
         this.avatares.remove(av);
     }
 
-
-    public void anhadirEdificacion(Edificacion ed){
-        this.edificaciones.add(ed);
-    }
-
-    public void eliminarEdificacion(Edificacion ed){
-        this.edificaciones.remove(ed);
-    }
+ 
 
 
 
@@ -286,6 +279,7 @@ public class Casilla {
             System.out.println("¡¡Esta casilla no se puede comprar!! \uD83D\uDE21");
         }
     }
+
 
     /**Método para verificar si el tipo de una casilla la hace comprable*/
     public boolean esTipoComprable() {
