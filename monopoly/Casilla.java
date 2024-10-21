@@ -18,6 +18,8 @@ public class Casilla {
     private float impuesto; //Cantidad a pagar por caer en la casilla: el alquiler en solares/servicio/transportes o impuestos.
     private float hipoteca; //Valor otorgado por hipotecar una casilla
     private ArrayList<Avatar> avatares; //Avatares que están situados en la casilla.
+    private ArrayList<Edificacion> edificaciones;
+
 
     //SECCIÓN DE CONSTRUCTORES DE CASILLA
     public Casilla() {
@@ -39,6 +41,7 @@ public class Casilla {
         this.hipoteca= valor/2f;
         this.duenho= duenho;
         this.avatares= new ArrayList<Avatar>();
+        this.edificaciones= new ArrayList<Edificacion>();
     }
 
     /**Constructor para casillas de tipo Impuestos.
@@ -83,6 +86,17 @@ public class Casilla {
     public void eliminarAvatar(Avatar av) {
         this.avatares.remove(av);
     }
+
+
+    public void anhadirEdificacion(Edificacion ed){
+        this.edificaciones.add(ed);
+    }
+
+    public void eliminarEdificacion(Edificacion ed){
+        this.edificaciones.remove(ed);
+    }
+
+
 
     /**Método para añadir valor a una casilla. Utilidad:
      * (1) Sumar valor a la casilla de parking.

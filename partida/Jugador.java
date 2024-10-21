@@ -17,6 +17,7 @@ public class Jugador {
     private int vueltas; //Cuenta las vueltas dadas al tablero.
     private ArrayList<Casilla> propiedades; //Propiedades que posee el jugador.
     private int vueltas_sin_comprar;
+    private ArrayList<Edificacion> edificaciones;
 
 
     //SECCIÓN DE CONSTRUCTORES DE JUGADOR
@@ -53,8 +54,9 @@ public class Jugador {
         this.tiradasCarcel = 0;
         this.vueltas = 0;
         this.avatar.setJugador(this);
-        this.propiedades = new ArrayList<>();
+        this.propiedades = new ArrayList<Casilla>();
         this.vueltas_sin_comprar=0;
+        this.edificaciones=new ArrayList<Edificacion>();
 
     }
 
@@ -78,6 +80,19 @@ public class Jugador {
     public void eliminarPropiedad(Casilla casilla) {
         if (propiedades.contains(casilla)) {
             this.propiedades.remove(casilla);
+        }
+    }
+
+
+    public void anhadirEdificacion(Edificacion ed){
+        if(!this.edificaciones.contains(ed)){
+            this.edificaciones.add(ed);
+        }
+    }
+
+    public void eliminarPropiedad(Edificacion ed){
+        if(this.edificaciones.contains(ed)){
+            this.edificaciones.remove(ed);
         }
     }
     
