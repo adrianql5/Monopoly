@@ -107,7 +107,15 @@ public class Casilla {
         this.valor +=suma;
     }
 
-    /**Método para ver si un jugador tiene todos los solares de un grupo*/
+    /**Método escoger una carta si se cae en una casilla del tipo Suerte o Caja de comunidad
+     * [1] Baraja las cartas ---de momento no implementado
+     * [2] Se pregunta al jugador qué carta quiere coger de las 6 que hay
+     * [3] Se muestra la descripción de la carta que escogió el jugador
+     * [4] Se realizan las acciones pertinentes ---de momoento no implementado
+     */
+    private void coger() {
+
+    }
 
     /** Método para evaluar qué hacer en una casilla concreta.
      * @param actual Jugador cuyo avatar está en la casilla
