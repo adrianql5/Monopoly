@@ -17,7 +17,7 @@ public class Jugador {
     private int vueltas; //Cuenta las vueltas dadas al tablero.
     private ArrayList<Casilla> propiedades; //Propiedades que posee el jugador.
     private int vueltas_sin_comprar;
-    private ArrayList<Edificacion> edificaciones;
+    
 
 
     //SECCIÓN DE CONSTRUCTORES DE JUGADOR
@@ -34,7 +34,7 @@ public class Jugador {
         this.propiedades=new ArrayList<Casilla>();
         this.vueltas_sin_comprar=0;
     }
-
+    
     /**Constructor principal. Desde este constructor también se crea el avatar.
      * @param nombre Nombre del jugador
      * @param tipoAvatar Tipo del avatar que tendrá
@@ -56,11 +56,11 @@ public class Jugador {
         this.avatar.setJugador(this);
         this.propiedades = new ArrayList<Casilla>();
         this.vueltas_sin_comprar=0;
-        this.edificaciones=new ArrayList<Edificacion>();
+      
+        
 
     }
-
-
+    
 
     //SECCIÓN DE MÉTODOS ÚTILES DE JUGADOR
 
@@ -84,17 +84,7 @@ public class Jugador {
     }
 
 
-    public void anhadirEdificacion(Edificacion ed){
-        if(!this.edificaciones.contains(ed)){
-            this.edificaciones.add(ed);
-        }
-    }
-
-    public void eliminarPropiedad(Edificacion ed){
-        if(this.edificaciones.contains(ed)){
-            this.edificaciones.remove(ed);
-        }
-    }
+   
     
     /**Método para establecer al jugador en la cárcel.
      * @param pos Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).

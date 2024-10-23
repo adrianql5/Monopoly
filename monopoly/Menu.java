@@ -29,6 +29,8 @@ public class Menu {
     private boolean partidaTerminada; //Booleano para acabar la partida
 
 
+    private ArrayList<ArrayList> edificios;
+
     //SECCIÓN DE CONSTRUIR EL MENÚ
     //Hay que asignar un valor por defecto para cada atributo
     public Menu(){
@@ -65,6 +67,90 @@ public class Menu {
         cartas_caja.add(new Carta(Texto.CARTA_CAJA_6));
         this.carta_del_reves = new Carta();
     }
+
+
+    public void edificar(String tipo) {
+    Jugador jugador = obtenerTurno(); // Obtener el jugador cuyo turno es actualmente
+    Casilla casilla = jugador.getAvatar().getLugar(); // Obtener la casilla en la que se encuentra el jugador
+
+    switch (tipo) {
+        case "Casa":
+            if (casilla.esEdificable(tipo, casilla, jugador)) { // Verificar si es edificable
+                Edificio casa = new Edificio("Casa", casilla);
+                casilla.anhadirCasa(casa); // Añadir la casa a la casilla
+                jugador.sumarGastos(casa.getCoste()); // Restar el coste de la casa
+                jugador.sumarFortuna(-casa.getCoste()); // Reducir la fortuna del jugador
+                this.banca.sumarFortuna(casa.getCoste()); // Aumentar la fortuna de la banca
+            }
+            break;
+
+        case "Hotel":
+            if (casilla.esEdificable(tipo, casilla, jugador)) {
+                Edificio hotel = new Edificio("Hotel", casilla);
+                casilla.anhadirHotel(hotel); // Añadir el hotel a la casilla
+                jugador.sumarGastos(hotel.getCoste()); // Restar el coste del hotel
+                jugador.sumarFortuna(-hotel.getCoste()); // Reducir la fortuna del jugador
+                this.banca.sumarFortuna(hotel.getCoste()); // Aumentar la fortuna de la banca
+            }
+            break;
+
+        case "Piscina":
+            if (casilla.esEdificable(tipo, casilla, jugador)) {
+                Edificio piscina = new Edificio("Piscina", casilla);
+                casilla.anhadirPiscina(piscina); // Añadir la piscina a la casilla
+                jugador.sumarGastos(piscina.getCoste()); // Restar el coste de la piscina
+                jugador.sumarFortuna(-piscina.getCoste()); // Reducir la fortuna del jugador
+                this.banca.sumarFortuna(piscina.getCoste()); // Aumentar la fortuna de la banca
+            }
+            break;
+
+        case "Pista de tenis":
+            if (casilla.esEdificable(tipo, casilla, jugador)) {
+                Edificio pista = new Edificio("Pista de tenis", casilla);
+                casilla.anhadirPistaDeDeporte(pista); // Añadir la pista de tenis a la casilla
+                jugador.sumarGastos(pista.getCoste()); // Restar el coste de la pista de tenis
+                jugador.sumarFortuna(-pista.getCoste()); // Reducir la fortuna del jugador
+                this.banca.sumarFortuna(pista.getCoste()); // Aumentar la fortuna de la banca
+            }
+            break;
+
+        default:
+            System.out.println("El tipo de edificación introducido es inválido");
+            break;
+    }
+}
+ 
+
+    public void listarEdificios(String color) {
+        // Si no se proporciona un color, lista todos los edificios
+        if (color == null) {
+            for (Jugador j : jugadores) {
+                for (Casilla c : j.getPropiedades()) {
+                    // Lista las edificaciones de la casilla
+                    System.out.println(c.listarEdificaciones());
+                }
+            }
+        } else {
+            // Si se proporciona un color, lista solo los edificios del grupo de ese color
+            for (Jugador j : jugadores) {
+                for (Casilla c : j.getPropiedades()) {
+                    // Si el color del grupo coincide con el proporcionado, listar las edificaciones
+                    if (c.getGrupo().getColorGrupo().equalsIgnoreCase(color)) {
+                        System.out.println(c.listarEdificaciones());
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
 
     //SECCIÓN DE CONTROL DEL FLUJO DE LA PARTIDA
 
@@ -211,6 +297,7 @@ public class Menu {
             case "coger carta suerte":
                 cogerCarta(this.cartas_suerte);
                 break;
+            
 
             //Segundo bloque de comandos: dependen de una instancia
             default:
@@ -226,6 +313,12 @@ public class Menu {
 
                     //Podría ser uno de los siguientes:
                     switch(comando[0]){
+                        //probando funciones de comprar
+                        
+                        case "edificar":
+                            edificar(comando[1]);
+                            break;
+                    
 
                         //Para comprar una casilla
                         case "comprar":
@@ -253,6 +346,14 @@ public class Menu {
                     if("describiravatar".equals(comando[0]+comando[1])) {
                         descAvatar(comando[2]);
                     }
+
+                    //prueba para listar
+                    else if("listaredificios".equals(comando[0]+comando[1])){
+                        listarEdificios(comando[2]);
+                    }
+
+
+
                     //CHEAT PARA SACAR LO QUE QUIERAS CON LOS DADOS
                     else if("dados".equals(comando[0])) {
                         // SE DA POR HECHO QUE SE INTRODUCE UN VALOR CONVERTIBLE A ENTERO!! HAY QUE CAMBIARLO
