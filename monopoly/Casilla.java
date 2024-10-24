@@ -97,38 +97,117 @@ public class Casilla {
 
    // Métodos específicos para añadir casas, hoteles, piscinas y pistas de deporte
 
-    public void anhadirCasa(Edificio ed) {
-        if (ed.getTipo().equals("Casa")) {
-            this.edificios.get(0).add(ed);
-        } else {
-            System.out.println("Error: La edificación no es del tipo 'Casa'");
+
+    // Devuelve el índice correspondiente al tipo de edificación
+    public int getTipoIndex(String tipo) {
+        switch (tipo) {
+            case "casa":
+                return 0;
+            case "hotel":
+                return 1;
+            case "piscina":
+                return 2;
+            case "pista deportes":
+                return 3;
+            default:
+                System.out.println("Error: Tipo de edificación no válido");
+                return -1;
         }
     }
 
+    // Genera un ID basado en el tipo y el número de edificaciones en ese tipo
+    public String generarID(String tipo) {
+        int tipoIndex = getTipoIndex(tipo);
+        int contador = edificios.get(tipoIndex).size(); 
+        return tipo + "-" + (contador + 1);
+    }
+
+
+    public void anhadirCasa(Edificio ed) {
+        if (ed.getTipo().equals("casa")) {
+            this.edificios.get(0).add(ed);
+        } else {
+            System.out.println("Error: La edificación no es del tipo 'casa'");
+        }
+    }
+
+    
+
     public void anhadirHotel(Edificio ed) {
-        if (ed.getTipo().equals("Hotel")) {
+        if (ed.getTipo().equals("hotel")) {
             this.edificios.get(1).add(ed);
         } else {
-            System.out.println("Error: La edificación no es del tipo 'Hotel'");
+            System.out.println("Error: La edificación no es del tipo 'hotel'");
         }
     }
 
     public void anhadirPiscina(Edificio ed) {
-        if (ed.getTipo().equals("Piscina")) {
+        if (ed.getTipo().equals("piscina")) {
             this.edificios.get(2).add(ed);
         } else {
-            System.out.println("Error: La edificación no es del tipo 'Piscina'");
+            System.out.println("Error: La edificación no es del tipo 'piscina'");
         }
     }
 
     public void anhadirPistaDeDeporte(Edificio ed) {
-        if (ed.getTipo().equals("Pistas de Deporte")) {
+        if (ed.getTipo().equals("pista deporte")) {
             this.edificios.get(3).add(ed);
         } else {
             System.out.println("Error: La edificación no es del tipo 'Pistas de Deporte'");
         }
     }
  
+
+    public void eliminarCasa(Edificio ed) {
+        if (ed.getTipo().equals("casa")) {
+            if (this.edificios.get(0).remove(ed)) {
+                System.out.println("Casa eliminada correctamente.");
+            } else {
+                System.out.println("Error: La casa no se encuentra en la lista.");
+            }
+        } else {
+            System.out.println("Error: La edificación no es del tipo 'casa'");
+        }
+    }
+
+    public void eliminarHotel(Edificio ed) {
+        if (ed.getTipo().equals("hotel")) {
+            if (this.edificios.get(1).remove(ed)) {
+                System.out.println("Hotel eliminado correctamente.");
+            } else {
+                System.out.println("Error: El hotel no se encuentra en la lista.");
+            }
+        } else {
+            System.out.println("Error: La edificación no es del tipo 'hotel'");
+        }
+    }
+
+    public void eliminarPiscina(Edificio ed) {
+        if (ed.getTipo().equals("piscina")) {
+            if (this.edificios.get(2).remove(ed)) {
+                System.out.println("Piscina eliminada correctamente.");
+            } else {
+                System.out.println("Error: La piscina no se encuentra en la lista.");
+            }
+        } else {
+            System.out.println("Error: La edificación no es del tipo 'piscina'");
+        }
+    }
+
+    public void eliminarPistaDeDeporte(Edificio ed) {
+        if (ed.getTipo().equals("pista deporte")) {
+            if (this.edificios.get(3).remove(ed)) {
+                System.out.println("Pista de deporte eliminada correctamente.");
+            } else {
+                System.out.println("Error: La pista de deporte no se encuentra en la lista.");
+            }
+        } else {
+            System.out.println("Error: La edificación no es del tipo 'pista deporte'");
+        }
+    }
+
+
+
 
     public String listarEdificaciones() {
         String str = new String();
@@ -140,29 +219,27 @@ public class Casilla {
 
         if (!casas.isEmpty()) {
             for (Edificio casa : casas) {
-                str=casa.listarEdificaciones();
+                str+=casa.infoEdificio()+"\n";
             }
         }
 
         if (!hoteles.isEmpty()) {
             for (Edificio hotel : hoteles) {
-                str=hotel.listarEdificaciones();
+                str+=hotel.infoEdificio()+"\n";
             }
         }
 
         if (!piscinas.isEmpty()) {
             for (Edificio piscina : piscinas) {
-                str=piscina.listarEdificaciones();
+                str+=piscina.infoEdificio()+"\n";
             }
         }
 
         if (!pistasDeDeporte.isEmpty()) {
             for (Edificio pista : pistasDeDeporte) {
-                str=pista.listarEdificaciones();
+                str+=pista.infoEdificio()+"\n";
             }
         }
-
-        
 
         return str;
     }
@@ -185,19 +262,19 @@ public class Casilla {
     }
 
 
-    public int contarTipoPropiedadesCasilla(String tipo, Casilla c) {
+    public int contarTipoPropiedadesCasilla(String tipo) {
         switch (tipo) {
-            case "Casa":
-                return c.edificios.get(0).size(); // Contar casas en la casilla
+            case "casa":
+                return this.edificios.get(0).size(); // Contar casas en la casilla
 
-            case "Hotel":
-                return c.edificios.get(1).size(); // Contar hoteles en la casilla
+            case "hotel":
+                return this.edificios.get(1).size(); // Contar hoteles en la casilla
 
-            case "Piscina":
-                return c.edificios.get(2).size(); // Contar piscinas en la casilla
+            case "piscina":
+                return this.edificios.get(2).size(); // Contar piscinas en la casilla
 
-            case "Pista de Deportes":
-                return c.edificios.get(3).size(); // Contar pistas de tenis en la casilla
+            case "pista deportes":
+                return this.edificios.get(3).size(); // Contar pistas de tenis en la casilla
 
             default:
                 return 0; // Tipo inválido o no soportado
@@ -209,21 +286,21 @@ public class Casilla {
     public int contarTipoPropiedadesGrupos(String tipo, Grupo grupo) {
     int contador = 0;
     switch (tipo) {
-        case "Casa":
+        case "casa":
             // Contar todas las casas en cada casilla del grupo
             for (Casilla c : grupo.getMiembrosGrupo()) {
                 contador=c.edificios.get(0).size();
             }
             break;
 
-        case "Hotel":
+        case "hotel":
             // Contar todos los hoteles en cada casilla del grupo
             for (Casilla c : grupo.getMiembrosGrupo()) {
                 contador=c.edificios.get(1).size();
             }
             break;
 
-        case "Piscina":
+        case "piscina":
             // Contar todas las piscinas en cada casilla del grupo
             for (Casilla c : grupo.getMiembrosGrupo()) {
                 contador=c.edificios.get(2).size();
@@ -231,7 +308,7 @@ public class Casilla {
             
             break;
 
-        case "Pista de Deportes":
+        case "pista deportes":
             // Contar todas las pistas de tenis en cada casilla del grupo
             for (Casilla c : grupo.getMiembrosGrupo()) {
                 contador=c.edificios.get(3).size();
@@ -247,34 +324,36 @@ public class Casilla {
     }
 
 
-    public boolean noSuperaMaximoPropiedadesPorGrupo(Casilla c){
-        int max = c.getGrupo().getNumCasillasGrupo();
-        if(c.contarTipoPropiedadesGrupos("Casa", c.getGrupo())<max 
-            && c.contarTipoPropiedadesGrupos("Hotel", c.getGrupo())<max
-            && c.contarTipoPropiedadesGrupos("Piscina", c.getGrupo())<max
-            && c.contarTipoPropiedadesGrupos("Pista de Deportes", c.getGrupo())<max){
-                return false;
+    public boolean noSuperaMaximoPropiedadesPorGrupo(){
+        int max = this.getGrupo().getNumCasillasGrupo();
+        if(this.contarTipoPropiedadesGrupos("casa", this.getGrupo())<max 
+            && this.contarTipoPropiedadesGrupos("hotel", this.getGrupo())<max
+            && this.contarTipoPropiedadesGrupos("piscina", this.getGrupo())<max
+            && this.contarTipoPropiedadesGrupos("pista deportes", this.getGrupo())<max){
+                return true;
         }
-        return true;
+        return false;
         
     }
 
 
-    public boolean esEdificable(String tipo, Casilla c, Jugador solicitante){
-        if(c.getDuenho().equals(solicitante) && solicitante.getAvatar().getLugar().equals(c)){
-            if(noSuperaMaximoPropiedadesPorGrupo(c)){
+    public boolean haCaido2veces(){
+        return true;
+    }
+
+    public boolean esEdificable(String tipo, Jugador solicitante){
+        if(this.getDuenho().equals(solicitante) && solicitante.getAvatar().getLugar().equals(this)){         
+            if(noSuperaMaximoPropiedadesPorGrupo()){
                 switch(tipo){
                     case "Casa":
-                        if(c.contarTipoPropiedadesCasilla("Casa", c)<5){
-                            System.out.println("Puedes construir una Casa.");
+                        if(this.contarTipoPropiedadesCasilla("casa")<4){
                             return true;
                         }
                         System.out.println("No puedes contruir más casas, debes contruir un Hotel.");
                         return false; 
 
                     case "Hotel":
-                        if(c.contarTipoPropiedadesCasilla("Casa", c)>3){
-                            System.out.println("Puedes construir un Hotel.");
+                        if(this.contarTipoPropiedadesCasilla("casa")>3){
                             return true;
                         }
 
@@ -282,18 +361,16 @@ public class Casilla {
                         return false;
 
                     case "Piscina":
-                        if(c.contarTipoPropiedadesCasilla("Hotel", c)>0 && c.contarTipoPropiedadesCasilla("Casa", c)>1){
-                            System.out.println("Puedes construir una Piscina");
+                        if(this.contarTipoPropiedadesCasilla("hotel")>0 && this.contarTipoPropiedadesCasilla("casa")>1){;
                             return true;
                         }
                         
                         System.out.println("Necesitas al menos 1 Hotel y 2 Casas para constuir una Piscina");
                         return false;
 
-                    case "Pista de Deportes":
+                    case "pista deportes":
 
-                        if(c.contarTipoPropiedadesCasilla("Hotel", c)>1){
-                            System.out.println("Puedes construir una Pista de Deportes.");
+                        if(this.contarTipoPropiedadesCasilla("hotel")>1){
                             return true;
                         }
 
@@ -301,8 +378,9 @@ public class Casilla {
                         return false;
                 }
             }
-
         }
+
+    
         return false;
     }
 

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import partida.Jugador;
 
+
+
 public class Edificio {
     private String id;
     private String tipo;
@@ -11,24 +13,22 @@ public class Edificio {
     private Casilla casilla;
     private float coste;
     private Grupo grupo;
-    private ArrayList<ArrayList<Edificio>> edificios; // Lista de listas de edificaciones
+    
 
     public Edificio(String tipo, Casilla lugar) {
-        this.id = generarID(tipo); 
+        this.id = lugar.generarID(tipo); 
         this.tipo = tipo;
         this.casilla = lugar;
         this.duenho=casilla.getDuenho();
         this.grupo = casilla.getGrupo();
         
-        this.edificios = new ArrayList<>(); 
-        for (int i = 0; i < 4; i++) {
-            this.edificios.add(new ArrayList<>());
-        }
-
+     
 
         if(this.tipo.equals("Casa") || this.tipo.equals("Hotel"))
             this.coste = casilla.getValor() * 0.60f;
 
+
+        
         if(this.tipo.equals("Piscina"))
             this.coste = casilla.getValor() * 0.40f;
             
@@ -43,47 +43,24 @@ public class Edificio {
 
     
 
-    // Genera un ID basado en el tipo y el número de edificaciones en ese tipo
-    public String generarID(String tipo) {
-        int tipoIndex = getTipoIndex(tipo);
-        int contador = edificios.get(tipoIndex).size(); 
-        return tipo + "-" + (contador + 1);
-    }
-
     // Lista todas las edificaciones en su respectivo array
-    public String listarEdificaciones() {
+    public String infoEdificio() {
         String cadena = "";
 
-        for (ArrayList<Edificio> tipoEdificaciones : edificios) {
-            for (Edificio e : tipoEdificaciones) {
-                cadena += "{\n";
-                cadena += "\tid: " + e.id + ",\n";
-                cadena += "\tpropietario: " + e.duenho.getNombre() + ",\n";
-                cadena += "\tcasilla: " + e.casilla.getNombre() + ",\n";
-                cadena += "\tgrupo: " + e.grupo.getColorGrupo() + ",\n";
-                cadena += "\tcoste: " + e.coste + "\n";
-                cadena += "},\n";
-            }
-        }
+        
+        cadena += "{\n";
+        cadena += "\tid: " + this.id + ",\n";
+        cadena += "\tpropietario: " + this.duenho.getNombre() + ",\n";
+        cadena += "\tcasilla: " + this.casilla.getNombre() + ",\n";
+        cadena += "\tgrupo: " + this.grupo.getColorGrupo() + ",\n";
+        cadena += "\tcoste: " + this.coste + "\n";
+        cadena += "},\n";
+            
+        
         return cadena;
     }
 
-    // Devuelve el índice correspondiente al tipo de edificación
-    private int getTipoIndex(String tipo) {
-        switch (tipo) {
-            case "Casa":
-                return 0;
-            case "Hotel":
-                return 1;
-            case "Piscina":
-                return 2;
-            case "Pistas de Deportes":
-                return 3;
-            default:
-                System.out.println("Error: Tipo de edificación no válido");
-                return -1;
-        }
-    }
+
 
     // Getters y Setters
     public String getId() {
@@ -136,11 +113,4 @@ public class Edificio {
         }
     }
 
-    public ArrayList<ArrayList<Edificio>> getEdificaciones() {
-        return this.edificios;
-    }
-
-    public void setEdificaciones(ArrayList<ArrayList<Edificio>> edificaciones) {
-        this.edificios = edificaciones;
-    }
 }
