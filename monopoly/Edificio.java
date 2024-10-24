@@ -24,15 +24,13 @@ public class Edificio {
         
      
 
-        if(this.tipo.equals("Casa") || this.tipo.equals("Hotel"))
+        if(this.tipo.equals("casa") || this.tipo.equals("hotel"))
             this.coste = casilla.getValor() * 0.60f;
-
-
-        
-        if(this.tipo.equals("Piscina"))
+ 
+        if(this.tipo.equals("piscina"))
             this.coste = casilla.getValor() * 0.40f;
             
-        if(this.tipo.equals("Pista de Deportes"))
+        if(this.tipo.equals("pista deporte"))
             this.coste = casilla.getValor() * 1.25f;
 
     }

@@ -71,83 +71,36 @@ public class Menu {
         Jugador jugador = obtenerTurno(); // Obtener el jugador cuyo turno es actualmente
         Casilla casilla = jugador.getAvatar().getLugar(); // Obtener la casilla en la que se encuentra el jugador
 
-        switch (tipo) {
-            case "casa":
-                if (casilla.esEdificable(tipo,jugador)) { // Verificar si es edificable
-                    Edificio casa = new Edificio("casa", casilla);
-                    if(jugador.getFortuna()>= casa.getCoste()){
-                        casilla.anhadirCasa(casa); // Añadir la casa a la casilla
-                        jugador.sumarGastos(casa.getCoste()); // Restar el coste de la casa
-                        jugador.sumarFortuna(-casa.getCoste()); // Reducir la fortuna del jugador
-                        this.banca.sumarFortuna(casa.getCoste()); // Aumentar la fortuna de la banca
-                        System.out.println("El jugador "+ jugador.getNombre() +" ha comprado el edificio "+ casa.getId());
+        if (casilla.esEdificable(tipo, jugador)) {
+            Edificio edificio = new Edificio(tipo, casilla);
 
-                    }
-                    else{
-                        System.out.println("No tienes suficiente dinero.");
-                    }                    
+            if (jugador.getFortuna() >= edificio.getCoste()) {
+                casilla.anhadirEdificio(edificio); // Añadir el edificio a la casilla
+                jugador.sumarGastos(edificio.getCoste()); // Restar el coste del edificio
+                jugador.sumarFortuna(-edificio.getCoste()); // Reducir la fortuna del jugador
+                this.banca.sumarFortuna(edificio.getCoste()); // Aumentar la fortuna de la banca
+
+                System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " + edificio.getId() +" por "+edificio.getCoste());
+
+                // Si es un hotel, eliminar todas las casas de la casilla
+                if (tipo.equals("hotel")) {
+                    eliminarCasasDeCasilla(casilla);
                 }
-                break;
+            } else {
+                System.out.println("No tienes suficiente dinero.");
+            }
+        } 
+    }
 
-            case "hotel":
-                if (casilla.esEdificable(tipo, jugador)) {
-                    Edificio hotel = new Edificio("hotel", casilla);
-                    if (jugador.getFortuna() >= hotel.getCoste()) {
-                        casilla.anhadirHotel(hotel); // Añadir el hotel a la casilla
-                        jugador.sumarGastos(hotel.getCoste()); // Restar el coste del hotel
-                        jugador.sumarFortuna(-hotel.getCoste()); // Reducir la fortuna del jugador
-                        this.banca.sumarFortuna(hotel.getCoste()); // Aumentar la fortuna de la banca
 
-                        System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " + hotel.getId());
-                        // Eliminar todas las casas de la casilla
-                        for (Edificio e : casilla.getCasas()) {
-                            casilla.eliminarCasa(e);
-                        }
-                    } else {
-                        System.out.println("No tienes suficiente dinero.");
-                    }
-                }
-                break;
-
-            case "piscina":
-                if (casilla.esEdificable(tipo, jugador)) {
-                    Edificio piscina = new Edificio("piscina", casilla);
-                    if (jugador.getFortuna() >= piscina.getCoste()) {
-                        casilla.anhadirPiscina(piscina); // Añadir la piscina a la casilla
-                        jugador.sumarGastos(piscina.getCoste()); // Restar el coste de la piscina
-                        jugador.sumarFortuna(-piscina.getCoste()); // Reducir la fortuna del jugador
-                        this.banca.sumarFortuna(piscina.getCoste()); // Aumentar la fortuna de la banca
-
-                        System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " + piscina.getId());
-                    } else {
-                        System.out.println("No tienes suficiente dinero.");
-                    }
-                }
-                break;
-
-            case "pista deporte":
-                if (casilla.esEdificable(tipo, jugador)) {
-                    Edificio pista = new Edificio("pista deporte", casilla);
-                    if (jugador.getFortuna() >= pista.getCoste()) {
-                        casilla.anhadirPistaDeDeporte(pista); // Añadir la pista de deporte a la casilla
-                        jugador.sumarGastos(pista.getCoste()); // Restar el coste de la pista de deporte
-                        jugador.sumarFortuna(-pista.getCoste()); // Reducir la fortuna del jugador
-                        this.banca.sumarFortuna(pista.getCoste()); // Aumentar la fortuna de la banca
-
-                        System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " + pista.getId());
-                    } else {
-                        System.out.println("No tienes suficiente dinero.");
-                    }
-                }
-                break;
-
-            default:
-                System.out.println("El tipo de edificación introducido es inválido");
-                break;
+    // Método auxiliar para eliminar todas las casas de una casilla
+    private void eliminarCasasDeCasilla(Casilla casilla) {
+        ArrayList<Edificio> casas = casilla.getCasas();
+        for (Edificio casa : casas) {
+            casilla.eliminarEdificio(casa); // Usar eliminarEdificio para quitar cada casa
         }
     }
 
- 
 
     public void listarEdificios(String color) {
         // Si no se proporciona un color, lista todos los edificios
@@ -171,14 +124,9 @@ public class Menu {
         }
     }
 
+    public void venderEdificios(String tipo, String solar, int n){
 
-
-
-
-
-
-
-
+    }
 
     //SECCIÓN DE CONTROL DEL FLUJO DE LA PARTIDA
 
@@ -327,7 +275,7 @@ public class Menu {
                 break;
             
 
-            case "listar edificaciones":
+            case "listar edificios":
                 listarEdificios(null);//si no especifica grupo
                 break;
 
@@ -397,6 +345,14 @@ public class Menu {
                         System.out.println(comando_entero + " no es un comando válido.");
                     }
                 }
+
+                else if(comando.length==4){
+                    if(comando[0]=="vender"){
+                        venderEdificios(comando[1], comando[2], Integer.parseInt(comando[3]));
+                    }
+                }
+
+
                 else {
                     System.out.println(comando_entero + " no es un comando válido.");
                 }
