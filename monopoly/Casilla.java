@@ -254,12 +254,29 @@ public class Casilla {
     }
 
  
-    // Genera un ID basado en el tipo y el número de edificaciones en ese tipo
+    // Genera un ID único basado en el tipo y los IDs ya presentes en el subarray de ese tipo
     public String generarID(String tipo) {
         int tipoIndex = getTipoIndex(tipo);
-        int contador = edificios.get(tipoIndex).size(); 
-        return tipo + "-" + (contador + 1);
+        ArrayList<Edificio> listaEdificios = edificios.get(tipoIndex);
+
+        // Encontrar el número más alto de ID ya asignado
+        int maxId = 0;
+        for (Edificio edificio : listaEdificios) {
+            String id = edificio.getId(); // Obtener el ID del edificio
+            if (id.startsWith(tipo + "-")) {
+                // Extraer el número del ID y compararlo
+                String[] partes = id.split("-");
+                int numero = Integer.parseInt(partes[1]);
+                if (numero > maxId) {
+                    maxId = numero;
+                }
+            }
+        }
+
+        // Generar un nuevo ID incrementado
+        return tipo + "-" + (maxId + 1);
     }
+
 
 
     public ArrayList<Edificio> getCasas() {
