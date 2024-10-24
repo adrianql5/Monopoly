@@ -124,11 +124,15 @@ public class Casilla {
 
     }
 
-    // Eliminar una edificación del tipo especificado
-    public void eliminarEdificio(Edificio ed) {
-        int index = getTipoIndex(ed.getTipo());
-        if (index != -1) {
-            this.edificios.get(index).remove(ed);
+
+
+
+    // Método auxiliar para eliminar todas las casas de una casilla
+    public void eliminarCasasDeCasilla() {
+        ArrayList<Edificio> casas = this.getCasas();
+        int n=casas.size();
+        for(int i=n-1; i>=0; i--){ //java es una pedazo de mierda descomunal
+            casas.remove(i);
         }
     }
 
@@ -181,7 +185,8 @@ public class Casilla {
         int totalPistas = this.contarTipoPropiedadesGrupos("pista deportes", this.getGrupo());
 
         // Comprobar que no se excede el máximo para cada tipo de edificación
-        if ((totalCasas > max && totalHoteles >max && totalPiscinas > max && totalPistas > max)|| contarTodasPropiedadesGrupo(this.grupo)>2*max) {
+        if ((totalCasas > max && totalHoteles >max && totalPiscinas > max && totalPistas > max)||
+         contarTodasPropiedadesGrupo(this.grupo)>4*max) {
             return false; // No se supera el máximo permitido
         }
         return true; // Se ha superado el máximo permitido
@@ -247,8 +252,8 @@ public class Casilla {
             return false;
         }
     }
- 
 
+ 
     // Genera un ID basado en el tipo y el número de edificaciones en ese tipo
     public String generarID(String tipo) {
         int tipoIndex = getTipoIndex(tipo);
@@ -273,40 +278,32 @@ public class Casilla {
         return this.edificios.get(3); // Retorna la lista de pistas de deporte
     }
 
-    public String listarEdificaciones() {
-        String str = new String();
-        // Recorre cada tipo de edificación de la casilla y las lista
-        ArrayList<Edificio> casas = this.getCasas();
-        ArrayList<Edificio> hoteles = this.getHoteles();
-        ArrayList<Edificio> piscinas = this.getPiscinas();
-        ArrayList<Edificio> pistasDeDeporte = this.getPistasDeDeporte();
-
-        if (!casas.isEmpty()) {
-            for (Edificio casa : casas) {
-                str+=casa.infoEdificio()+"\n";
-            }
+    // Método para obtener la lista de edificios según su tipo
+    public ArrayList<Edificio> getEdificiosPorTipo(String tipo) {
+        int index = getTipoIndex(tipo); // Obtener el índice del tipo
+        if (index != -1) {
+            return this.edificios.get(index); // Retornar la lista correspondiente al tipo
         }
-
-        if (!hoteles.isEmpty()) {
-            for (Edificio hotel : hoteles) {
-                str+=hotel.infoEdificio()+"\n";
-            }
-        }
-
-        if (!piscinas.isEmpty()) {
-            for (Edificio piscina : piscinas) {
-                str+=piscina.infoEdificio()+"\n";
-            }
-        }
-
-        if (!pistasDeDeporte.isEmpty()) {
-            for (Edificio pista : pistasDeDeporte) {
-                str+=pista.infoEdificio()+"\n";
-            }
-        }
-
-        return str;
+        return new ArrayList<>(); // Retornar una lista vacía si el tipo no es válido
     }
+
+    public String listarEdificaciones() {
+        String str = ""; // Inicializar la cadena vacía
+
+        // Recorrer cada tipo de edificación y listarlas
+        String[] tipos = {"casa", "hotel", "piscina", "pista deportes"};
+        for (String tipo : tipos) {
+            ArrayList<Edificio> edificios = getEdificiosPorTipo(tipo);
+            if (!edificios.isEmpty()) {
+                for (Edificio edificio : edificios) {
+                    str += edificio.infoEdificio() + "\n"; // Agregar la información del edificio
+                }
+            }
+        }
+
+        return str; // Retornar la cadena resultante
+    }
+
 
 
  

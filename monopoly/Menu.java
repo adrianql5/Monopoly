@@ -84,7 +84,7 @@ public class Menu {
 
                 // Si es un hotel, eliminar todas las casas de la casilla
                 if (tipo.equals("hotel")) {
-                    eliminarCasasDeCasilla(casilla);
+                    casilla.eliminarCasasDeCasilla();
                 }
             } else {
                 System.out.println("No tienes suficiente dinero.");
@@ -93,13 +93,7 @@ public class Menu {
     }
 
 
-    // Método auxiliar para eliminar todas las casas de una casilla
-    private void eliminarCasasDeCasilla(Casilla casilla) {
-        ArrayList<Edificio> casas = casilla.getCasas();
-        for (Edificio casa : casas) {
-            casilla.eliminarEdificio(casa); // Usar eliminarEdificio para quitar cada casa
-        }
-    }
+    
 
 
     public void listarEdificios(String color) {
@@ -124,9 +118,43 @@ public class Menu {
         }
     }
 
-    public void venderEdificios(String tipo, String solar, int n){
+    public void venderEdificios(String tipo, String solar, int n) {
+        Jugador jugador = obtenerTurno(); // Obtener el jugador cuyo turno es
+        Casilla casilla = jugador.getAvatar().getLugar(); // Obtener la casilla donde se encuentra el jugador
 
+        // Verificar si la casilla es del tipo correcto (solar)
+        if (!casilla.getNombre().equals(solar)) {
+            System.out.println("No se pueden vender " + tipo + " en " + solar + ". Esta propiedad no pertenece a " + jugador.getNombre() + ".");
+            return; // Salir si la propiedad no pertenece al jugador
+        }
+
+        if(casilla.getDuenho().equals(jugador)){
+            ArrayList<Edificio> eds = casilla.getEdificiosPorTipo(tipo); // Obtener edificios del tipo especificado
+            if (eds.size() >= n) { // Comprobar si hay suficientes edificios para vender
+                float suma = 0;
+                for(int i=n-1; i>=0; i--){ //odio java
+                    eds.remove(i);
+                    suma+=eds.get(i).getCoste();
+                }   
+                this.banca.sumarFortuna(-suma); // Restar de la fortuna de la banca
+                jugador.sumarFortuna(suma); // Sumar a la fortuna del jugador
+
+                // Mensaje de éxito
+                System.out.println("El jugador " + jugador.getNombre() + " ha vendido " + n + " " + tipo + " en " + solar + ", recibiendo " + suma + "€. En la propiedad queda " + (eds.size() - n) + " " + tipo + ".");
+            } else {
+                // Si no hay suficientes edificios para vender, mostrar mensaje
+                if (eds.size() > 0) {
+                    System.out.println("Solamente se puede vender " + eds.size() + " " + tipo + ", recibiendo " + (eds.size() > 0 ? (eds.get(0).getCoste() / 2) * eds.size() : 0) + "€.");
+                } else {
+                    System.out.println("No hay " + tipo + " para vender en " + solar + ".");
+                }
+            }
+        }
+        else{
+            System.out.println("No puedes vender las propiedades porque no te pertencen.");
+        }
     }
+
 
     //SECCIÓN DE CONTROL DEL FLUJO DE LA PARTIDA
 
@@ -347,7 +375,7 @@ public class Menu {
                 }
 
                 else if(comando.length==4){
-                    if(comando[0]=="vender"){
+                    if(comando[0].equals("vender")){
                         venderEdificios(comando[1], comando[2], Integer.parseInt(comando[3]));
                     }
                 }
