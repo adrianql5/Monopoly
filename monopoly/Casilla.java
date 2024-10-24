@@ -569,6 +569,15 @@ public class Casilla {
                 info += String.format("\tAlquiler hotel: %,.0f€\n", this.impuesto * 70f);
                 info += String.format("\tAlquiler piscina: %,.0f€\n", this.impuesto * 25f);
                 info += String.format("\tAlquiler pista de deporte: %,.0f€\n", this.impuesto * 25f);
+                
+                info += "\tEdificios: [";
+                for(ArrayList<Edificio> tipo: edificios){
+                    for(Edificio ed: tipo){
+                        info+= String.format(ed.getId())+" ";
+                    }
+                }
+
+                info+="]\n";
                 break;
 
             case "Transporte":
