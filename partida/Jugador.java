@@ -230,11 +230,30 @@ public class Jugador {
             for (int i = 0; i < this.getPropiedades().size(); i++) {
                 System.out.print(this.getPropiedades().get(i).getNombre());
                 if (i < this.getPropiedades().size() - 1) {
-                    System.out.print(", ");
-                    // Añade coma a todo menos a la última por eso el menos 1
+                    System.out.print(", "); // Añade coma a todo menos a la última
                 }
             }
             System.out.println("]");
+
+            // Imprimir edificios
+            System.out.println("\tEdificios: {");
+
+            String[] tipos = {"casa", "hotel", "piscina", "pista deportes"};
+            for (String tipo : tipos) {
+                ArrayList<Edificio> edificios = this.getPropiedades().get(0).getEdificiosPorTipo(tipo); // Asumiendo que trabajas con la primera propiedad
+                if (!edificios.isEmpty()) {
+                    System.out.print("\t\t" + tipo + ": [");
+                    for (int j = 0; j < edificios.size(); j++) {
+                        System.out.print(edificios.get(j).getId());
+                        if (j < edificios.size() - 1) {
+                            System.out.print(", "); // Añade coma a todo menos a la última
+                        }
+                    }
+                    System.out.println("]");
+                }
+            }
+            
+            System.out.println("\t}");
         }
         System.out.println("}");
     }
