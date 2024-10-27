@@ -19,6 +19,7 @@ public class Casilla {
     private float hipoteca; //Valor otorgado por hipotecar una casilla
     private ArrayList<Avatar> avatares; //Avatares que están situados en la casilla.
     private ArrayList<ArrayList<Edificio>> edificios;
+    private boolean estaHipotecada;
 
 
     //SECCIÓN DE CONSTRUCTORES DE CASILLA
@@ -47,6 +48,7 @@ public class Casilla {
                 this.edificios.add(new ArrayList<Edificio>()); // Array de casas, hoteles, piscinas, pistas
             }
         } 
+        this.estaHipotecada=false;
     }
 
     /**Constructor para casillas de tipo Impuestos.
@@ -96,7 +98,43 @@ public class Casilla {
 
 
    // Métodos específicos para añadir casas, hoteles, piscinas y pistas de deporte
+    public void evaluarAlquiler() {
+        if (this.tipo.equals("Solar")) {
+            if (this.grupo.esDuenhoGrupo(this.duenho)) {
+                this.impuesto *= 2f; // Duplica el impuesto si es dueño del grupo
+                float baseAlquiler = this.impuesto; // Almacena el valor base del alquiler para cálculos
 
+                // Cálculo del alquiler de casas
+                int numCasas = this.edificios.get(0).size();
+                switch (numCasas) {
+                    case 1:
+                        this.impuesto = baseAlquiler * 5f;
+                        break;
+                    case 2:
+                        this.impuesto = baseAlquiler * 15f;
+                        break;
+                    case 3:
+                        this.impuesto = baseAlquiler * 35f;
+                        break;
+                    case 4:
+                        this.impuesto = baseAlquiler * 50f;
+                        break;
+                    default:
+                        this.impuesto = baseAlquiler;
+                        break;
+                }
+
+                // Cálculo del alquiler de hoteles, piscinas y pistas de deporte
+                this.impuesto += baseAlquiler * 70f * this.edificios.get(1).size(); // Hoteles
+                this.impuesto += baseAlquiler * 25f * this.edificios.get(2).size(); // Piscinas
+                this.impuesto += baseAlquiler * 25f * this.edificios.get(3).size(); // Pistas de deporte
+            }
+        } else if (this.tipo.equals("Transporte")) {
+            // Cálculo del alquiler para casillas de tipo Transporte
+            int multiplicador = this.duenho.numeroCasillasTipo("Transporte");
+            this.impuesto = multiplicador * 0.25f * this.impuesto;
+        }
+    }
 
    // Devuelve el índice correspondiente al tipo de edificación
     public int getTipoIndex(String tipo) {
@@ -124,7 +162,14 @@ public class Casilla {
 
     }
 
+    //Funciones de hipotecar
+    public void hipotecar(){
+        this.estaHipotecada=true;
+    }
 
+    public void deshipotecar(){
+        this.estaHipotecada=false;
+    }
 
 
     // Método auxiliar para eliminar todas las casas de una casilla
@@ -132,6 +177,7 @@ public class Casilla {
         ArrayList<Edificio> casas = this.getCasas();
         int n=casas.size();
         for(int i=n-1; i>=0; i--){ //java es una pedazo de mierda descomunal
+            
             casas.remove(i);
         }
     }
@@ -358,23 +404,18 @@ public class Casilla {
                     if (this.duenho!=banca) {
                         //Teoricamente si no tiene dinero para pagar se queda en negativo y se acaba la partida
                         Jugador propietario = this.duenho;
-                        float alquiler;
-                        if(this.grupo.esDuenhoGrupo(propietario)) {
-                            alquiler = this.impuesto * 2f;
-                        }else{
-                            alquiler = this.impuesto;
-                        }
+                        evaluarAlquiler();
                         System.out.printf("%s debe pagarle el alquiler de %s a %s: %,.0f€\n",
-                                actual.getNombre(), this.nombre, propietario.getNombre(), alquiler);
-                        actual.sumarGastos(alquiler);
-                        actual.restarFortuna(alquiler);
+                                actual.getNombre(), this.nombre, propietario.getNombre(), this.impuesto);
+                        actual.sumarGastos(this.impuesto);
+                        actual.restarFortuna(this.impuesto);
 
                         // Si está en bancarrota se acaba la partida (y no se le ingresa nada al propietario)
                         if (actual.estaEnBancarrota()) {
                             return false;
                         }
 
-                        propietario.sumarFortuna(alquiler);
+                        propietario.sumarFortuna(this.impuesto);
                         return true;
                     } else {
                         System.out.println("La casilla " + this.getNombre() + " está a la venta.\n");
@@ -407,17 +448,16 @@ public class Casilla {
                 case "Transporte":
 
                     // Se paga el 25% del valor total de la casilla Transporte por cada casilla que tengas de este tipo
-                    int multiplicador = this.duenho.numeroCasillasTipo("Transporte");
-
+        
                     if (this.duenho!=banca) {
-                        float total = multiplicador * 0.25f * this.impuesto;
+                        evaluarAlquiler();
                         System.out.printf("%s debe pagarle el servicio de transporte a %s: %,.0f€\n",
-                                actual.getNombre(), this.duenho.getNombre(), total);
-                        actual.sumarGastos(total);
-                        actual.restarFortuna(total);
+                                actual.getNombre(), this.duenho.getNombre(), this.impuesto);
+                        actual.sumarGastos(this.impuesto);
+                        actual.restarFortuna(this.impuesto);
                         if (actual.estaEnBancarrota()) return false;
 
-                        this.duenho.sumarFortuna(total);
+                        this.duenho.sumarFortuna(this.impuesto);
                         return true;
                     } else {
                         System.out.println("La casilla " + this.getNombre() + " está a la venta.");
@@ -725,6 +765,11 @@ public class Casilla {
             System.out.println("El grupo no puede ser nulo.\n");
         }
     }
+
+    public void sumarImpuesto(float impuesto){
+        this.impuesto+=impuesto;
+    }
+
 
     public float getImpuesto(){
         return impuesto;
