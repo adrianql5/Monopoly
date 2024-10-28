@@ -96,8 +96,46 @@ public class Casilla {
         this.avatares.remove(av);
     }
 
+    //SECCION DE HIPOTECAR
 
-   // Métodos específicos para añadir casas, hoteles, piscinas y pistas de deporte
+    public boolean estaHipotecada(){
+        return estaHipotecada;
+    }
+
+    public void hipotecar() {
+        if(!this.estaHipotecada){
+            boolean sinEdificios = true;
+            for (ArrayList<Edificio> tipoEdificio : this.edificios) {
+                if (!tipoEdificio.isEmpty()) {
+                    sinEdificios = false;
+                    break;
+                }
+            }
+            if (!sinEdificios) {
+                System.out.println("No puedes hipotecar la casilla " + this.getNombre() + " porque tienes que vender todas tus edificaciones.");
+            } else {
+                this.estaHipotecada = true;
+            }
+        }
+        else{
+            System.out.println("No puedes hipotecar esta propiedad porque ya está hipotecada.");
+        }
+    }
+
+    public void desHipotecar(){
+        if(this.estaHipotecada){
+            this.estaHipotecada=false;
+        }
+        else{
+            System.out.println("No puedes deshipotecar esta propiedad porque no está hipotecada.");
+        }
+    }
+
+
+
+
+
+    //SECCION DE BUILDEAR Y COMPRAR EDIFICIOS
     public void evaluarAlquiler() {
         if (this.tipo.equals("Solar")) {
             if (this.grupo.esDuenhoGrupo(this.duenho)) {
@@ -162,14 +200,6 @@ public class Casilla {
 
     }
 
-    //Funciones de hipotecar
-    public void hipotecar(){
-        this.estaHipotecada=true;
-    }
-
-    public void deshipotecar(){
-        this.estaHipotecada=false;
-    }
 
 
     // Método auxiliar para eliminar todas las casas de una casilla
@@ -242,54 +272,60 @@ public class Casilla {
     // Verifica si es posible edificar una propiedad del tipo dado
     public boolean esEdificable(String tipo, Jugador solicitante) {
         if (this.getDuenho().equals(solicitante) && solicitante.getAvatar().getLugar().equals(this)) {
-            if (noSuperaMaximoPropiedadesPorGrupo()) {
-                switch (tipo) {
-                    case "casa":
-                        if (this.contarTipoPropiedadesCasilla("casa") < 4) {
-                            return true;
-                        }
-                        else{
-                            System.out.println("No puedes construir más casas, debes construir un hotel.");
+            if(!this.getGrupo().estaHipotecadoGrupo()){
+                if (noSuperaMaximoPropiedadesPorGrupo()) {
+                    switch (tipo) {
+                        case "casa":
+                            if (this.contarTipoPropiedadesCasilla("casa") < 4) {
+                                return true;
+                            }
+                            else{
+                                System.out.println("No puedes construir más casas, debes construir un hotel.");
+                                return false;
+
+                            }
+
+                        case "hotel":
+                            if (this.contarTipoPropiedadesCasilla("casa") > 3) {
+                                return true;
+                            }
+                            else{
+
+                                System.out.println("No puedes construir un hotel, necesitas al menos 4 casas.");
+                                return false;
+                            }
+
+                        case "piscina":
+                            if (this.contarTipoPropiedadesCasilla("hotel") > 0 && this.contarTipoPropiedadesCasilla("casa") > 1) {
+                                return true;
+                            }
+                            else{
+                                System.out.println("Necesitas al menos 1 hotel y 2 casas para construir una piscina.");
+                                return false;
+                            }
+
+                        case "pista deportes":
+                            if (this.contarTipoPropiedadesCasilla("hotel") > 1) {
+                                return true;
+                            }
+                            else{
+
+                                System.out.println("No puedes construir una pista de deportes, necesitas al menos 2 hoteles.");
+                                return false;
+                            }
+
+                        default:
+                            System.out.println("Tipo de edificación inválido.");
                             return false;
-
-                        }
-
-                    case "hotel":
-                        if (this.contarTipoPropiedadesCasilla("casa") > 3) {
-                            return true;
-                        }
-                        else{
-
-                            System.out.println("No puedes construir un hotel, necesitas al menos 4 casas.");
-                            return false;
-                        }
-
-                    case "piscina":
-                        if (this.contarTipoPropiedadesCasilla("hotel") > 0 && this.contarTipoPropiedadesCasilla("casa") > 1) {
-                            return true;
-                        }
-                        else{
-                            System.out.println("Necesitas al menos 1 hotel y 2 casas para construir una piscina.");
-                            return false;
-                        }
-
-                    case "pista deportes":
-                        if (this.contarTipoPropiedadesCasilla("hotel") > 1) {
-                            return true;
-                        }
-                        else{
-
-                            System.out.println("No puedes construir una pista de deportes, necesitas al menos 2 hoteles.");
-                            return false;
-                        }
-
-                    default:
-                        System.out.println("Tipo de edificación inválido.");
-                        return false;
+                    }
+                }
+                else{
+                    System.out.println("ñlñlkñljasñljñljañ");
+                    return false;
                 }
             }
             else{
-                System.out.println("ñlñlkñljasñljñljañ");
+                System.out.println("No puedes edificar porque la casilla (o alguna casilla de su grupo) está hipotecada");
                 return false;
             }
         }
@@ -397,122 +433,119 @@ public class Casilla {
      * @return TRUE en caso de ser solvente (es decir, de cumplir las deudas), y FALSE en caso de no serlo
      */
     public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
-        if(actual != this.duenho) {
+        if (actual != this.duenho) {
             switch (this.tipo) {
                 case "Solar":
-                    // Si pertenece a otro jugador le debe pagar el alquiler
-                    if (this.duenho!=banca) {
-                        //Teoricamente si no tiene dinero para pagar se queda en negativo y se acaba la partida
-                        Jugador propietario = this.duenho;
-                        evaluarAlquiler();
-                        System.out.printf("%s debe pagarle el alquiler de %s a %s: %,.0f€\n",
-                                actual.getNombre(), this.nombre, propietario.getNombre(), this.impuesto);
-                        actual.sumarGastos(this.impuesto);
-                        actual.restarFortuna(this.impuesto);
+                    if (!this.getGrupo().estaHipotecadoGrupo()) {
+                        if (this.duenho != banca) {
+                            Jugador propietario = this.duenho;
+                            evaluarAlquiler();
+                            System.out.printf("%s debe pagarle el alquiler de %s a %s: %,.0f€\n",
+                                    actual.getNombre(), this.nombre, propietario.getNombre(), this.impuesto);
+                            actual.sumarGastos(this.impuesto);
+                            actual.restarFortuna(this.impuesto);
 
-                        // Si está en bancarrota se acaba la partida (y no se le ingresa nada al propietario)
-                        if (actual.estaEnBancarrota()) {
-                            return false;
+                            if (actual.estaEnBancarrota()) return false;
+
+                            propietario.sumarFortuna(this.impuesto);
+                            return true;
+                        } else {
+                            System.out.println("La casilla " + this.getNombre() + " está a la venta.\n");
                         }
-
-                        propietario.sumarFortuna(this.impuesto);
-                        return true;
                     } else {
-                        System.out.println("La casilla " + this.getNombre() + " está a la venta.\n");
-                        return true;
+                        System.out.println("La casilla (o alguna de su grupo) " + this.getNombre() + " está hipotecada. No es necesario pagar el alquiler.");
                     }
-
-                case "Especial":
-                    if (this.nombre.equals("Carcel")) {
-                        System.out.println("Has caído en la Carcel. Disfruta de la visita.");
-                        //System.out.println("Has caído en la Carcel. Tienes 3 opciones para salir: Pagar, Usar Carta de Suerte o Sacar Dados Dobles.\n");
-                        return true;
-                    } else if (this.nombre.equals("Parking")) {
-                        // Nota: el valor del bote se imprime desde la función que llama a esta (lanzar dados)
-                        // porque es un atributo del menú y habría que pasarlo como argumento
-                        System.out.printf("Enhorabuena, has ganado el bote almacenado por impuestos, tasas y multas: %,.0f€\n", banca.getFortuna());
-                        actual.sumarFortuna(banca.getFortuna());
-                        banca.setFortuna(0f);
-                        return true;
-                    } else if (this.nombre.equals("IrCarcel")) {
-                        System.out.println("Mala suerte, te vas a la cárcel.");
-                        return true;
-                    } else if (this.nombre.equals("Salida")) {
-                        // Todo lo que hay que hacer en este caso ya lo hace lanzarDados()
-                        // ya que va a haber que cobrar cuando se pase NO SOLO cuando se caiga
-                        return true;
-                    }
-                    System.out.println("Error en evaluar casilla.");
                     break;
 
-                case "Transporte":
-
-                    // Se paga el 25% del valor total de la casilla Transporte por cada casilla que tengas de este tipo
-        
-                    if (this.duenho!=banca) {
-                        evaluarAlquiler();
-                        System.out.printf("%s debe pagarle el servicio de transporte a %s: %,.0f€\n",
-                                actual.getNombre(), this.duenho.getNombre(), this.impuesto);
-                        actual.sumarGastos(this.impuesto);
-                        actual.restarFortuna(this.impuesto);
-                        if (actual.estaEnBancarrota()) return false;
-
-                        this.duenho.sumarFortuna(this.impuesto);
-                        return true;
-                    } else {
-                        System.out.println("La casilla " + this.getNombre() + " está a la venta.");
-                        return true;
+                case "Especial":
+                    switch (this.nombre) {
+                        case "Carcel":
+                            System.out.println("Has caído en la Cárcel. Disfruta de la visita.");
+                            break;
+                        case "Parking":
+                            System.out.printf("Has ganado el bote de la banca: %,.0f€\n", banca.getFortuna());
+                            actual.sumarFortuna(banca.getFortuna());
+                            banca.setFortuna(0f);
+                            break;
+                        case "IrCarcel":
+                            System.out.println("Mala suerte, te vas a la cárcel.");
+                            break;
+                        case "Salida":
+                            System.out.println("Has llegado a la casilla de Salida.");
+                            break;
+                        default:
+                            System.out.println("Error en evaluar casilla.");
+                            return false;
                     }
+                    return true;
 
+                case "Transporte":
+                    if (!this.getGrupo().estaHipotecadoGrupo()) {
+                        if (this.duenho != banca) {
+                            evaluarAlquiler();
+                            System.out.printf("%s debe pagar el servicio de transporte a %s: %,.0f€\n",
+                                    actual.getNombre(), this.duenho.getNombre(), this.impuesto);
+                            actual.sumarGastos(this.impuesto);
+                            actual.restarFortuna(this.impuesto);
+
+                            if (actual.estaEnBancarrota()) return false;
+
+                            this.duenho.sumarFortuna(this.impuesto);
+                            return true;
+                        } else {
+                            System.out.println("La casilla " + this.getNombre() + " está a la venta.");
+                        }
+                    } else {
+                        System.out.println("La casilla (o alguna de su grupo) " + this.getNombre() + " está hipotecada. No es necesario pagar el alquiler.");
+                    }
+                    break;
 
                 case "Impuestos":
-                    System.out.printf("Vaya! Debes pagar tus impuestos a la banca: %,.0f€\n", this.impuesto);
+                    System.out.printf("Debes pagar tus impuestos a la banca: %,.0f€\n", this.impuesto);
                     actual.sumarGastos(this.impuesto);
                     actual.restarFortuna(this.impuesto);
+
                     if (actual.estaEnBancarrota()) return false;
 
                     banca.sumarFortuna(this.impuesto);
                     return true;
 
-
                 case "Servicio":
-                    if (this.duenho!=banca) {
-                        // Se paga el valor de los dados*impuesto*factor_servicio
-                        // El factor de servicio es 4 si el dueño posee 1 casilla de servicio, 10 si posee las 2.
-                        float pagar;
-                        if(this.duenho.numeroCasillasTipo("Servicio")==1) {
-                            pagar = tirada * 4 * this.impuesto;
+                    if (!this.getGrupo().estaHipotecadoGrupo()) {
+                        if (this.duenho != banca) {
+                            float pagar = tirada * (this.duenho.numeroCasillasTipo("Servicio") == 1 ? 4 : 10) * this.impuesto;
+                            System.out.printf("%s debe pagar el servicio a %s: %,.0f€\n",
+                                    actual.getNombre(), this.duenho.getNombre(), pagar);
+                            actual.sumarGastos(pagar);
+                            actual.restarFortuna(pagar);
+
+                            if (actual.estaEnBancarrota()) return false;
+
+                            this.duenho.sumarFortuna(pagar);
+                            return true;
                         } else {
-                            pagar = tirada * 10 * this.impuesto;
+                            System.out.println("La casilla " + this.getNombre() + " está a la venta.");
                         }
-
-                        System.out.printf("%s debe pagarle el servicio a %s: %,.0f€\n",
-                                actual.getNombre(), this.duenho.getNombre(), pagar);
-                        actual.sumarGastos(pagar);
-                        actual.restarFortuna(pagar);
-                        if (actual.estaEnBancarrota()) return false;
-
-                        this.duenho.sumarFortuna(pagar);
-                        return true;
                     } else {
-                        System.out.println("La casilla " + this.getNombre() + " está a la venta.");
-                        return true;
+                        System.out.println("La casilla (o alguna de su grupo)" + this.getNombre() + " está hipotecada. No es necesario pagar el alquiler.");
                     }
+                    break;
 
                 case "Caja de comunidad":
                 case "Suerte":
-                    //sin implementar
+                    // Implementación futura
                     break;
 
                 default:
-                    System.out.println("Error en evaluarCasilla, tipo invalido.");
+                    System.out.println("Error en evaluarCasilla: tipo de casilla inválido.");
                     return false;
             }
-        }else {
+        } else {
             System.out.println("Esta casilla te pertenece.");
         }
-        return false;
+        return true;
     }
+
 
     /** Método usado para comprar una casilla determinada.
      * @param solicitante Jugador que solicita la compra de la casilla

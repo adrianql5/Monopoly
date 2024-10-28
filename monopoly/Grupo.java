@@ -46,6 +46,17 @@ class Grupo {
 
     //SECCIÓN DE MÉTODOS ÚTILES DE CRUPOS
 
+
+    public boolean estaHipotecadoGrupo(){
+        for(Casilla cas: this.miembros){
+            if(cas.estaHipotecada()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     /** Método que añade una casilla al array de casillas miembro de un grupo.
      * @param miembro Casilla que se quiere añadir
      */

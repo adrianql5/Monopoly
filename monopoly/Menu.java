@@ -67,6 +67,47 @@ public class Menu {
     }
 
 
+    public void hipotecar(String nombre){
+        Casilla casilla= tablero.encontrar_casilla(nombre);
+        Jugador jugador= obtenerTurno();
+        if(jugador.estaEnBancarrota() && casilla.getDuenho().equals(jugador)){
+            casilla.hipotecar();
+            System.out.println("El jugador "+ jugador.getNombre()+" recibe "+ casilla.getHipoteca()+
+            " por la hipoteca de " + casilla.getNombre()+
+            ". No puede recibir alquileres ni edificar en el grupo "+ casilla.getGrupo().getColorGrupo());
+            jugador.sumarFortuna(casilla.getHipoteca());
+            banca.sumarFortuna(-casilla.getHipoteca());
+        }
+        else{
+            System.out.println("El jugador "+jugador.getNombre() +" no puede hipotecar "
+            + casilla.getNombre()+". No es una propiedad que le pertenezca.");
+        }
+    }
+
+    public void deshipotecar(String nombre){
+        Casilla casilla = tablero.encontrar_casilla(nombre);
+        Jugador jugador =obtenerTurno();
+        if(casilla.getDuenho().equals(jugador)){
+            if(casilla.getHipoteca()<=jugador.getFortuna()){
+                casilla.desHipotecar();
+                System.out.println("El jugador "+ jugador.getNombre()+" recibe "+ casilla.getHipoteca()+
+                " por la hipoteca de " + casilla.getNombre()+
+                ". No puede recibir alquileres ni edificar en el grupo "+ casilla.getGrupo().getColorGrupo());
+                jugador.sumarFortuna(-(casilla.getHipoteca()+casilla.getHipoteca()*0.10f));
+                banca.sumarFortuna((casilla.getHipoteca()+casilla.getHipoteca()*0.10f));
+            }
+            else{
+                System.err.println("No tienes suficiente dinero como para deshipotecar la casilla.");
+            }
+        }
+        else{
+            System.out.println("El jugador "+jugador.getNombre() +" no puede deshipotecar "
+            + casilla.getNombre()+". No es una propiedad que le pertenezca.");
+        }
+
+    }
+
+
     public void edificar(String tipo) {
         Jugador jugador = obtenerTurno(); // Obtener el jugador cuyo turno es actualmente
         Casilla casilla = jugador.getAvatar().getLugar(); // Obtener la casilla en la que se encuentra el jugador
@@ -326,6 +367,13 @@ public class Menu {
                         case "edificar":
                             edificar(comando[1]);
                             break;
+
+                        case "hipotecar":
+                            hipotecar(comando[1]);
+                            break;
+
+                        case "deshipotecar":
+                            deshipotecar(comando[1]);
                     
                         //Para comprar una casilla
                         case "comprar":
@@ -355,7 +403,7 @@ public class Menu {
                     }
 
                     //prueba para listar
-                    else if("listaredificios".equals(comando[0]+comando[1])){
+                    else if("listaredificios".equals(comando[0]+comando[1])){//pistas de deportes hay q hacer gitanada
                         listarEdificios(comando[2]);
                     }
 
