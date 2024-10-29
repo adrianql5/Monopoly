@@ -70,7 +70,7 @@ public class Menu {
     public void hipotecar(String nombre){
         Casilla casilla= tablero.encontrar_casilla(nombre);
         Jugador jugador= obtenerTurno();
-        if(jugador.estaEnBancarrota() && casilla.getDuenho().equals(jugador)){
+        if(casilla.getDuenho().equals(jugador)){
             casilla.hipotecar();
             System.out.println("El jugador "+ jugador.getNombre()+" recibe "+ casilla.getHipoteca()+
             " por la hipoteca de " + casilla.getNombre()+
