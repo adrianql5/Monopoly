@@ -72,11 +72,13 @@ public class Menu {
         Jugador jugador= obtenerTurno();
         if(casilla.getDuenho().equals(jugador)){
             casilla.hipotecar();
-            System.out.println("El jugador "+ jugador.getNombre()+" recibe "+ casilla.getHipoteca()+
-            " por la hipoteca de " + casilla.getNombre()+
-            ". No puede recibir alquileres ni edificar en el grupo "+ casilla.getGrupo().getColorGrupo());
-            jugador.sumarFortuna(casilla.getHipoteca());
-            banca.sumarFortuna(-casilla.getHipoteca());
+            if(!casilla.estaHipotecada()){
+                System.out.println("El jugador "+ jugador.getNombre()+" recibe "+ casilla.getHipoteca()+
+                " por la hipoteca de " + casilla.getNombre()+
+                ". No puede recibir alquileres ni edificar en el grupo "+ casilla.getGrupo().getColorGrupo());
+                jugador.sumarFortuna(casilla.getHipoteca());
+                banca.sumarFortuna(-casilla.getHipoteca());
+            }
         }
         else{
             System.out.println("El jugador "+jugador.getNombre() +" no puede hipotecar "
@@ -90,11 +92,13 @@ public class Menu {
         if(casilla.getDuenho().equals(jugador)){
             if(casilla.getHipoteca()<=jugador.getFortuna()){
                 casilla.desHipotecar();
-                System.out.println("El jugador "+ jugador.getNombre()+" recibe "+ casilla.getHipoteca()+
-                " por la hipoteca de " + casilla.getNombre()+
-                ". No puede recibir alquileres ni edificar en el grupo "+ casilla.getGrupo().getColorGrupo());
-                jugador.sumarFortuna(-(casilla.getHipoteca()+casilla.getHipoteca()*0.10f));
-                banca.sumarFortuna((casilla.getHipoteca()+casilla.getHipoteca()*0.10f));
+                if(casilla.estaHipotecada()){
+                    System.out.println("El jugador "+ jugador.getNombre()+" recibe "+ casilla.getHipoteca()+
+                    " por la hipoteca de " + casilla.getNombre()+
+                    ". No puede recibir alquileres ni edificar en el grupo "+ casilla.getGrupo().getColorGrupo());
+                    jugador.sumarFortuna(-(casilla.getHipoteca()+casilla.getHipoteca()*0.10f));
+                    banca.sumarFortuna((casilla.getHipoteca()+casilla.getHipoteca()*0.10f));
+                }
             }
             else{
                 System.err.println("No tienes suficiente dinero como para deshipotecar la casilla.");
