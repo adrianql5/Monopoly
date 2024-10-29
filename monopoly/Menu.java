@@ -33,7 +33,7 @@ public class Menu {
     public Menu(){
         this.jugadores = new ArrayList<Jugador>();
         this.avatares = new ArrayList<Avatar>();
-        this.turno = -1; //Aún no ha empezado la partida, cuando se crear el primer jugador ya se pone a 0
+        this.turno = -1; //Aún no ha empezado la partida, cuando se crea el primer jugador ya se pone a 0
         this.lanzamientos = 0;
         this.banca = new Jugador();
         this.tablero = new Tablero(this.banca);
@@ -337,10 +337,22 @@ public class Menu {
                 listarAvatares();
                 break;
 
-            //CHEAT PARA DINERO INFINITO (+mil millones)
+            //
+            case "listar edificios":
+                listarEdificios(null);//si no especifica grupo
+                break;
+
+            //CHEATS
+            //DINERO INFINITO (+mil millones)
             case "dinero infinito":
                 dineroInfinito();
                 break;
+
+            //AVANZAR 40 CASILLAS HASTA LA MISMA CASILLA
+            case "dar vuelta":
+                obtenerTurno().sumarVuelta();
+                break;
+
 
             //PROBANDO LA IMPRESIÓN DE CARTAS
             case "probar cartas":
@@ -352,10 +364,11 @@ public class Menu {
             case "coger carta suerte":
                 cogerCarta(this.cartas_suerte);
                 break;
-            
 
-            case "listar edificios":
-                listarEdificios(null);//si no especifica grupo
+
+            // Algunos mensajes concretos a comandos inválidos
+            case "empezar partida":
+                System.out.println("¡La partida ya está empezada! \uD83D\uDE21");
                 break;
 
             //Segundo bloque de comandos: dependen de una instancia
@@ -372,16 +385,14 @@ public class Menu {
 
                     //Podría ser uno de los siguientes:
                     switch(comando[0]){
-                        //probando funciones de comprar
-                        
+
+                        // Comandos de edificar, hipotecar, deshipotecar (para pista de deporte en length==4)
                         case "edificar":
                             edificar(comando[1]);
                             break;
-
                         case "hipotecar":
                             hipotecar(comando[1]);
                             break;
-
                         case "deshipotecar":
                             deshipotecar(comando[1]);
                             break;
@@ -414,19 +425,22 @@ public class Menu {
                     }
 
                     //prueba para listar
-                    else if("listaredificios".equals(comando[0]+comando[1])){//pistas de deportes hay q hacer gitanada
+                    else if("listaredificios".equals(comando[0]+comando[1])){
                         listarEdificios(comando[2]);
                     }
 
 
 
-                    //CHEAT PARA SACAR LO QUE QUIERAS CON LOS DADOS
+                    // CHEAT PARA SACAR LO QUE QUIERAS CON LOS DADOS
+                    // Si alguno de los valores de dados introducidos no es válido
+                    // se imprime un mensaje de error (lo hace dadoValido) y no hace nada
                     else if("dados".equals(comando[0])) {
-                        // SE DA POR HECHO QUE SE INTRODUCE UN VALOR CONVERTIBLE A ENTERO!! HAY QUE CAMBIARLO
-                        int dado1 = Integer.parseInt(comando[1]);
-                        int dado2 = Integer.parseInt(comando[2]);
-                        dadosTrampa(dado1,dado2);
-                        verTablero();
+                        int dado1 = dadoValido(comando[1]);
+                        int dado2 = dadoValido(comando[2]);
+                        if (dado1!=0 && dado2!=0) {
+                            dadosTrampa(dado1, dado2);
+                            verTablero();
+                        }
                     }
                     else {
                         System.out.println(comando_entero + " no es un comando válido.");
@@ -436,6 +450,24 @@ public class Menu {
                 else if(comando.length==4){
                     if(comando[0].equals("vender")){
                         venderEdificios(comando[1], comando[2], Integer.parseInt(comando[3]));
+                    }
+                    else if("pistadedeporte".equals(comando[1]+comando[2]+comando[3])) {
+                        // Comandos de edificar, hipotecar, deshipotecar PARA PISTA DE DEPORTE
+                        if("edificar".equals(comando[0])) {
+                            edificar("pistadedeporte");
+                        }
+                        if("hipotecar".equals(comando[0])) {
+                            hipotecar("pistadedeporte");
+                        }
+                        if("deshipotecar".equals(comando[0])) {
+                            deshipotecar("pistadedeporte");
+                        }
+                        else {
+                            System.out.println(comando_entero + " no es un comando válido.");
+                        }
+                    }
+                    else if("crearjugador".equals(comando[0] + comando[1])){
+                        System.out.println("No se pueden crear más jugadores con la partida empezada.");
                     }
                 }
 
@@ -924,19 +956,15 @@ public class Menu {
     // SECCIÓN DE MÉTODOS RELACIONADOS CON LAS CARTAS TIPO SUERTE Y CAJA DE COMUNIDAD
 
     /**Método para cuando se cae en una casilla de tipo Suerte o Caja de comunidad
-     *
-     *
+     * [1] Reordena de manera aleatoria el ArrayList de cartas correspondiente
+     * [2] Le pide al usuario el número de la carta que quiere escoger (del 1 al 6)
      */
     public void cogerCarta(ArrayList<Carta> baraja) {
         System.out.println("Barajando las cartas...");
         Collections.shuffle(baraja); //Barajamos las cartas
         cartasAlReves(); //Mostramos el reverso de las cartas
         System.out.println("Escoge una carta con un número del 1 al 6.");
-        //Creamos un escaneador para introducir el número
-        Scanner scan= new Scanner(System.in);
-        String num_carta = scan.nextLine();
-        // SE DA POR HECHO QUE SE INTRODUCE UN VALOR CONVERTIBLE A ENTERO!! HAY QUE CAMBIARLO
-        int n = Integer.parseInt(num_carta);
+        int n=leerDadoValido(); //Leemos input hasta que sea un número válido
         mostrarCartaEscogida(baraja, n); //Volvemos a mostrar las cartas con la escogida dada la vuelta
         //evaluarCarta(); work in progress.....
     }
@@ -1120,6 +1148,50 @@ public class Menu {
             acabarPartida();
         }
 
+    }
+
+    // MÉTODOS SIN GRUPO:
+
+    /**Método que transforma un String a un entero si el String es un número entre 1 y 6.
+     * Si no es un número válido imprime un mensaje de error y devuelve 0.
+     * Método auxiliar para leerDadoValido() pero que también sirve para dadosTrampa().
+     */
+    public int dadoValido(String numero) {
+        // Función .matches() para ver si los caracteres de un String son del tipo indicado
+        // En nuestro caso "\\d" significa que el String debe contener un único dígito
+        if(numero.matches("\\d")) {
+            // Convertimos el String a int si es un dígito y vemos que esté entre 1 y 6
+            int n = Integer.parseInt(numero);
+            if(0<n && n<7) {
+                n = Integer.parseInt(numero);
+                return n;
+            }
+            else {
+                System.out.println("Número inválido.");
+                return 0;
+            }
+        }
+        else {
+            System.out.println("Número inválido.");
+            return 0;
+        }
+    }
+
+    /**Método que lee input hasta que el valor introducido sea un número entre 1 y 6.*/
+    public int leerDadoValido() {
+        // Creamos un escaneador para introducir el número
+        Scanner scan= new Scanner(System.in);
+        int n=0;
+
+        // Bucle que para cuando metemos un número entre 1 y 6 por teclado
+        while(n==0) {
+            String numero = scan.nextLine();
+            // dadoValido() transforma el String en un número
+            // Si no es un número válido devuelve 0
+            n=dadoValido(numero);
+        }
+
+        return n;
     }
 
     private boolean esTipoAvatar(String tipo) {

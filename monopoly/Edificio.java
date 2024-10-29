@@ -30,7 +30,7 @@ public class Edificio {
         if(this.tipo.equals("piscina"))
             this.coste = casilla.getValor() * 0.40f;
             
-        if(this.tipo.equals("pista deporte"))
+        if(this.tipo.equals("pista de deporte"))
             this.coste = casilla.getValor() * 1.25f;
 
     }
