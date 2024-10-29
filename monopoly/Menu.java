@@ -71,13 +71,16 @@ public class Menu {
         Casilla casilla= tablero.encontrar_casilla(nombre);
         Jugador jugador= obtenerTurno();
         if(casilla.getDuenho().equals(jugador)){
-            casilla.hipotecar();
             if(!casilla.estaHipotecada()){
+                casilla.hipotecar();
                 System.out.println("El jugador "+ jugador.getNombre()+" recibe "+ casilla.getHipoteca()+
                 " por la hipoteca de " + casilla.getNombre()+
                 ". No puede recibir alquileres ni edificar en el grupo "+ casilla.getGrupo().getColorGrupo());
                 jugador.sumarFortuna(casilla.getHipoteca());
                 banca.sumarFortuna(-casilla.getHipoteca());
+            }        
+            else{
+                System.out.println("No puedes hipotecar esta propiedad porque ya está hipotecada.");
             }
         }
         else{
@@ -91,13 +94,16 @@ public class Menu {
         Jugador jugador =obtenerTurno();
         if(casilla.getDuenho().equals(jugador)){
             if(casilla.getHipoteca()<=jugador.getFortuna()){
-                casilla.desHipotecar();
                 if(casilla.estaHipotecada()){
-                    System.out.println("El jugador "+ jugador.getNombre()+" recibe "+ casilla.getHipoteca()+
+                    casilla.desHipotecar();
+                    System.out.println("El jugador "+ jugador.getNombre()+" paga "+ (casilla.getHipoteca()+casilla.getHipoteca()*0.10f)+
                     " por la hipoteca de " + casilla.getNombre()+
-                    ". No puede recibir alquileres ni edificar en el grupo "+ casilla.getGrupo().getColorGrupo());
+                    ". Ahora puede recibir alquileres y edificar en el grupo "+ casilla.getGrupo().getColorGrupo());
                     jugador.sumarFortuna(-(casilla.getHipoteca()+casilla.getHipoteca()*0.10f));
                     banca.sumarFortuna((casilla.getHipoteca()+casilla.getHipoteca()*0.10f));
+                }
+                else{
+                    System.out.println("No puedes deshipotecar esta propiedad porque no está hipotecada.");
                 }
             }
             else{
@@ -378,6 +384,7 @@ public class Menu {
 
                         case "deshipotecar":
                             deshipotecar(comando[1]);
+                            break;
                     
                         //Para comprar una casilla
                         case "comprar":

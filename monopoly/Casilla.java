@@ -103,32 +103,24 @@ public class Casilla {
     }
 
     public void hipotecar() {
-        if(!this.estaHipotecada){
-            boolean sinEdificios = true;
-            for (ArrayList<Edificio> tipoEdificio : this.edificios) {
-                if (!tipoEdificio.isEmpty()) {
-                    sinEdificios = false;
-                    break;
-                }
-            }
-            if (!sinEdificios) {
-                System.out.println("No puedes hipotecar la casilla " + this.getNombre() + " porque tienes que vender todas tus edificaciones.");
-            } else {
-                this.estaHipotecada = true;
+        boolean sinEdificios = true;
+        for (ArrayList<Edificio> tipoEdificio : this.edificios) {
+            if (!tipoEdificio.isEmpty()) {
+                sinEdificios = false;
+                break;
             }
         }
-        else{
-            System.out.println("No puedes hipotecar esta propiedad porque ya está hipotecada.");
+        if (!sinEdificios) {
+            System.out.println("No puedes hipotecar la casilla " + this.getNombre() + " porque tienes que vender todas tus edificaciones.");
+        } else {
+            this.estaHipotecada = true;
         }
     }
 
     public void desHipotecar(){
-        if(this.estaHipotecada){
-            this.estaHipotecada=false;
-        }
-        else{
-            System.out.println("No puedes deshipotecar esta propiedad porque no está hipotecada.");
-        }
+        
+        this.estaHipotecada=false;
+        
     }
 
 
