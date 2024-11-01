@@ -65,6 +65,56 @@ public class Menu {
         cartas_caja.add(new Carta(Texto.CARTA_CAJA_6));
         this.carta_del_reves = new Carta();
     }
+    
+    private void acabarPartida() {
+        if(this.jugadores.size()==1){
+            partidaTerminada = true;
+        }
+        partidaTerminada=false;
+    }
+
+
+
+    public void eliminarJugador(Jugador jugador){
+
+        for(Jugador j: this.jugadores){
+            if(j.equals(jugador)){
+                this.jugadores.remove(j);
+            }
+        }
+
+    }
+
+
+    public void desclararBancarrota(){
+        Jugador jugador= obtenerTurno();
+        if(jugador.estaEnBancarrota()){
+            Jugador cobrador=jugador.getDeudaConJugador();
+
+            if(cobrador.equals(banca)){
+                System.out.println("El jugador"+ jugador.getNombre()+
+                " se declara en bancarrota. Sus propiedades pasan a estar de nuevo en venta al precio al que estaban.");
+                ArrayList<Casilla> propiedades =jugador.getPropiedades();
+
+                for( Casilla c : propiedades){
+                    jugador.eliminarPropiedad(c);
+                }
+                eliminarJugador(jugador);
+            }
+            else{
+                System.out.println("El jugador "+jugador.getNombre()+
+                " se declara en bancarrota. Sus propiedades pasan a ser de "+cobrador.getNombre());
+                ArrayList<Casilla> propiedades= jugador.getPropiedades();
+                for (Casilla c: propiedades){
+                    cobrador.anhadirPropiedad(c);
+                    jugador.eliminarPropiedad(c);
+
+                }
+                eliminarJugador(jugador);
+            }
+        }
+    }
+
 
 
     public void hipotecar(String nombre){
@@ -289,6 +339,10 @@ public class Menu {
 
         switch(comando_entero){
             //Primer bloque de comandos: no dependen de una instancia
+
+            case "bancarrota":
+                desclararBancarrota();
+                break;
 
             //Acabar la partida
             case "terminar partida":
@@ -618,7 +672,9 @@ public class Menu {
                     }
 
                     //EVALUAMOS QUÉ HAY QUE HACER EN FUNCIÓN DE LA CASILLA
-                    avatar.getLugar().evaluarCasilla(jugador,this.banca,sumaDados);
+                    if(!avatar.getLugar().evaluarCasilla(jugador,this.banca,sumaDados)){//el codigo de dentro se debería de ejecutar, si no fuck java
+                        System.out.println("Debes declararte en bancarrota");//no se como forzar que el jugador se declare en bancarrota y como controlar que esté en bancarrota si no le llega la pasta en la carcel
+                    }
 
                     // No podemos encarcelar al jugador desde evaluarCasilla
                     if(destino.getNombre().equals("IrCarcel")) {
@@ -1201,9 +1257,6 @@ public class Menu {
                 "pelota".equals(tipo);
     }
 
-    private void acabarPartida() {
-        partidaTerminada = true;
-    }
 }
 
 

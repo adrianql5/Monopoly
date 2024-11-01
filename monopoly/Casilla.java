@@ -437,7 +437,10 @@ public class Casilla {
                             actual.sumarGastos(this.impuesto);
                             actual.restarFortuna(this.impuesto);
 
-                            if (actual.estaEnBancarrota()) return false;
+                            if (actual.estaEnBancarrota()){ 
+                                actual.setDeudaConJugador(this.duenho); 
+                                return false;
+                            }
 
                             propietario.sumarFortuna(this.impuesto);
                             return true;
@@ -480,8 +483,11 @@ public class Casilla {
                             actual.sumarGastos(this.impuesto);
                             actual.restarFortuna(this.impuesto);
 
-                            if (actual.estaEnBancarrota()) return false;
-
+                            if (actual.estaEnBancarrota()) {
+                                actual.setDeudaConJugador(this.duenho);
+                                return false;
+                            }
+                            
                             this.duenho.sumarFortuna(this.impuesto);
                             return true;
                         } else {
@@ -497,7 +503,10 @@ public class Casilla {
                     actual.sumarGastos(this.impuesto);
                     actual.restarFortuna(this.impuesto);
 
-                    if (actual.estaEnBancarrota()) return false;
+                    if (actual.estaEnBancarrota()){
+                        actual.setDeudaConJugador(banca);
+                        return false;
+                    }
 
                     banca.sumarFortuna(this.impuesto);
                     return true;
@@ -511,7 +520,10 @@ public class Casilla {
                             actual.sumarGastos(pagar);
                             actual.restarFortuna(pagar);
 
-                            if (actual.estaEnBancarrota()) return false;
+                            if (actual.estaEnBancarrota()){
+                                actual.setDeudaConJugador(this.duenho);
+                                return false;
+                            }
 
                             this.duenho.sumarFortuna(pagar);
                             return true;

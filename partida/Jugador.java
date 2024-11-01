@@ -17,7 +17,8 @@ public class Jugador {
     private int vueltas; //Cuenta las vueltas dadas al tablero.
     private ArrayList<Casilla> propiedades; //Propiedades que posee el jugador.
     private int vueltas_sin_comprar;
-    
+   
+    private Jugador jugadorConElQueEstanEnDeuda;//si es true está en deuda con la banca, si es false con un jugador
 
 
     //SECCIÓN DE CONSTRUCTORES DE JUGADOR
@@ -56,12 +57,20 @@ public class Jugador {
         this.avatar.setJugador(this);
         this.propiedades = new ArrayList<Casilla>();
         this.vueltas_sin_comprar=0;
-      
+        
+        this.jugadorConElQueEstanEnDeuda=null;
         
 
     }
     
 
+    public void setDeudaConJugador(Jugador jugador){
+        this.jugadorConElQueEstanEnDeuda=jugador;
+    }
+    
+    public Jugador getDeudaConJugador(){
+        return this.jugadorConElQueEstanEnDeuda;
+    }
     //SECCIÓN DE MÉTODOS ÚTILES DE JUGADOR
 
     /**Método para añadir una propiedad al jugador.
@@ -145,13 +154,13 @@ public class Jugador {
     //work in progress pa la segunda entrega
     public boolean estaEnBancarrota() {
         if (this.getFortuna() <= 0) {
-            // Comprobar si tiene propiedades hipotecables
-            //for (Casilla propiedad : this.getPropiedades()) {
-            //    if (!propiedad.estaHipotecada()) {
-            //        // Si el jugador tiene al menos una propiedad sin hipotecar, no está en bancarrota
-            //        return false;
-            //    }
-            //}
+            //Comprobar si tiene propiedades hipotecables
+            for (Casilla propiedad : this.getPropiedades()) {
+                if (!propiedad.estaHipotecada()) {
+                    // Si el jugador tiene al menos una propiedad sin hipotecar, no está en bancarrota
+                    return false;
+                }
+            }
             // Si llega aquí, significa que no tiene dinero ni propiedades útiles
             return true;
         }
