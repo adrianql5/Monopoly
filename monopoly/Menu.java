@@ -340,10 +340,6 @@ public class Menu {
         switch(comando_entero){
             //Primer bloque de comandos: no dependen de una instancia
 
-            case "bancarrota":
-                desclararBancarrota();
-                break;
-
             //Acabar la partida
             case "terminar partida":
             case "acabar partida":
@@ -671,10 +667,21 @@ public class Menu {
 
                     }
 
-                    //EVALUAMOS QUÉ HAY QUE HACER EN FUNCIÓN DE LA CASILLA
-                    if(!avatar.getLugar().evaluarCasilla(jugador,this.banca,sumaDados)){//el codigo de dentro se debería de ejecutar, si no fuck java
-                        System.out.println("Debes declararte en bancarrota");//no se como forzar que el jugador se declare en bancarrota y como controlar que esté en bancarrota si no le llega la pasta en la carcel
+
+                   // EVALUAMOS QUÉ HAY QUE HACER EN FUNCIÓN DE LA CASILLA
+                    if (!avatar.getLugar().evaluarCasilla(jugador, this.banca, sumaDados)) {
+                        Scanner scan = new Scanner(System.in);
+                        
+                        String respuesta;
+                        do {//con esto forzamos a que se declare en bancarrota
+                            System.out.println("Debes declararte en bancarrota");
+                            respuesta = scan.nextLine();
+                        } while (!respuesta.equals("bancarrota"));
+                        
+                        analizarComando(respuesta);
+                        scan.close();
                     }
+
 
                     // No podemos encarcelar al jugador desde evaluarCasilla
                     if(destino.getNombre().equals("IrCarcel")) {
@@ -1246,7 +1253,7 @@ public class Menu {
             // Si no es un número válido devuelve 0
             n=dadoValido(numero);
         }
-
+        
         return n;
     }
 
