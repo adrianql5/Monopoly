@@ -670,16 +670,18 @@ public class Menu {
 
                    // EVALUAMOS QUÉ HAY QUE HACER EN FUNCIÓN DE LA CASILLA
                     if (!avatar.getLugar().evaluarCasilla(jugador, this.banca, sumaDados)) {
-                        Scanner scan = new Scanner(System.in);
-                        
-                        String respuesta;
-                        do {//con esto forzamos a que se declare en bancarrota
-                            System.out.println("Debes declararte en bancarrota");
-                            respuesta = scan.nextLine();
-                        } while (!respuesta.equals("bancarrota"));
-                        
-                        analizarComando(respuesta);
-                        scan.close();
+                        if(jugador.estaEnBancarrota()){
+                            Scanner scan = new Scanner(System.in);
+                            
+                            String respuesta;
+                            do {//con esto forzamos a que se declare en bancarrota
+                                System.out.println("Debes declararte en bancarrota");
+                                respuesta = scan.nextLine();
+                            } while (!respuesta.equals("bancarrota"));
+                            
+                            analizarComando(respuesta);
+                            scan.close();
+                        }
                     }
 
 
