@@ -5,6 +5,8 @@ import java.util.ArrayList;
 public class Carta {
     // ATRIBUTOS
     private ArrayList<String> texto;
+    String tipo;
+    int indice;
 
     // CONSTRUCTORES
     /**
@@ -13,9 +15,13 @@ public class Carta {
      * Separa el texto introducido en palabras y las va añadiendo a cada línea de la carta final (si cogen).
      * Nótese que la carta se guarda como un ArrayList<String> (porque luego se imprimirán varias cartas en fila).
      * @param texto Mensaje que contiene la carta
+     * @param indice Número para diferenciar las cartas dentro de una baraja, en la función evaluarCasilla que es la
+     *               que ejecuta las acciones de la carta hay un switch en función de este índice
      */
-    public Carta(String texto) {
+    public Carta(String texto, String tipo, int indice) {
         this.texto = new ArrayList<String>();
+        setTipo(tipo);
+        this.indice = indice;
 
         //Borde superior
         this.texto.add(Texto.CARTA_BORDESUP);
@@ -45,9 +51,26 @@ public class Carta {
         this.texto.add(Texto.CARTA_BORDEINF);
     }
 
-    //GETTER
+    //GETTERS Y SETTERS
     public ArrayList<String> getTexto() {
-        return texto;
+        return this.texto;
+    }
+
+    public String getTipo() {
+        return this.tipo;
+    }
+
+    public void setTipo(String tipo) {
+        if("Caja".equals(tipo) || "Suerte".equals(tipo)) {
+            this.tipo = tipo;
+        }
+        else {
+            System.out.println("Error al crear una carta: tipo inválido.");
+        }
+    }
+
+    public int getIndice() {
+        return this.indice;
     }
 
 

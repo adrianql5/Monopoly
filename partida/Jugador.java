@@ -92,8 +92,6 @@ public class Jugador {
         }
     }
 
-
-   
     
     /**Método para establecer al jugador en la cárcel.
      * @param pos Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).
