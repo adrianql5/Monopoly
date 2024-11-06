@@ -13,6 +13,7 @@ public class Avatar {
     private String tipo; //Sombrero, Esfinge, Pelota, Coche
     private Jugador jugador; //Un jugador al que pertenece ese avatar.
     private Casilla lugar; //Los avatares se sitúan en casillas del tablero.
+    private boolean movimientoAvanzado; //TRUE si el avatar está en modo de movimiento avanzado.
     private ArrayList<Avatar> avCreados;
 
     //SECCIÓN DE CONSTRUCTORES DE AVATAR
@@ -33,6 +34,7 @@ public class Avatar {
         this.tipo = tipo;
         this.jugador = jugador;
         this.lugar = lugar;
+        this.movimientoAvanzado = false;
         this.avCreados = avCreados;
         generarId(avCreados);
         this.avCreados.add(this);
@@ -137,6 +139,14 @@ public class Avatar {
 
     public void setLugar(Casilla casilla_avatar) {
         this.lugar = casilla_avatar;
+    }
+
+    public boolean getMovimientoAvanzado() {
+        return movimientoAvanzado;
+    }
+
+    public void cambiarMovimiento() {
+        this.movimientoAvanzado = !this.movimientoAvanzado;
     }
 
 

@@ -81,7 +81,7 @@ public class Menu {
     }
 
 
-    public void desclararBancarrota(){
+    public void declararBancarrota(){
         Jugador jugador= obtenerTurno();
         if(jugador.estaEnBancarrota()){
             Jugador cobrador=jugador.getDeudaConJugador();
@@ -353,6 +353,9 @@ public class Menu {
             //Imprimir el tablero
             case "ver tablero": verTablero(); break;
 
+            //Cambiar el modo de movimiento del avatar
+            case "cambiar modo": cambiarModo(); break;
+
             //Listar todas las propiedades en venta
             case "listar enventa": listarVenta(); break;
 
@@ -479,7 +482,7 @@ public class Menu {
     }
 
 
-    //SECCIÓN DE COMANDOS QUE NO DEPENDEN DE NINGUNA INSTANCIA
+    //SECCIÓN DE COMANDOS QUE NO DEPENDEN DE NINGUNA INSTANCIA----------------------------------------------------------
 
     /**Método que ejecuta todas las acciones relacionadas con el comando 'jugador'.
      * Imprime la información del jugador que tiene el turno.
@@ -611,7 +614,7 @@ public class Menu {
                         else if(!destino.getNombre().equals("IrCarcel")) {
                             System.out.println("Vuelves a tirar.");
                         }
-                        // No podemos encarcelar al jugador desde evaluarCasilla
+                        // Encarcelado por caer
                         else {
                             jugador.encarcelar(this.tablero.getPosiciones());
                         }
@@ -639,12 +642,6 @@ public class Menu {
                             analizarComando(respuesta);
                             scan.close();
                         }
-                    }
-
-
-                    // No podemos encarcelar al jugador desde evaluarCasilla
-                    if(destino.getNombre().equals("IrCarcel")) {
-                        jugador.encarcelar(this.tablero.getPosiciones());
                     }
 
                 }
@@ -716,6 +713,7 @@ public class Menu {
                             break;
                         case "IrCarcel":
                             System.out.println("Mala suerte, te vas a la cárcel.");
+                            jugadorActual.encarcelar(this.tablero.getPosiciones());
                             break;
                         case "Salida":
                             System.out.println("Has llegado a la casilla de Salida.");
@@ -853,8 +851,8 @@ public class Menu {
         // Comprobar si el jugador actual ya lanzó los dados en su turno
         if (this.tirado) {
             // Si los lanzó y sacó dobles está obligado a volver a tirar!
-            // A no ser que lo acaben de encarcelar por sacar 3 dobles seguidos
-            if (this.dado1.getValor()==this.dado2.getValor() && this.lanzamientos<3) {
+            // A no ser que lo acaben de encarcelar
+            if (this.dado1.getValor()==this.dado2.getValor() && !obtenerTurno().isEnCarcel()) {
                 System.out.println("Sacaste dobles, tienes que volver a tirar.");
             } else {
                 this.tirado = false; // Reiniciar el estado de "tirado"
@@ -871,6 +869,18 @@ public class Menu {
         } else {
             // Si no ha tirado los dados aún, informar al jugador
             System.out.println("Aún no has lanzado los dados este turno!");
+        }
+    }
+
+    /**Método para cambiar el modo de movimiento del avatar que tiene el turno*/
+    private void cambiarModo() {
+        obtenerTurno().getAvatar().cambiarMovimiento();
+        Avatar avatar = obtenerTurno().getAvatar();
+        if(avatar.getMovimientoAvanzado()) {
+            System.out.println("El avatar " + avatar + " (tipo " + avatar.getTipo() + ") activa el movimiento avanzado.");
+        }
+        else {
+            System.out.println("El avatar " + avatar + " (tipo " + avatar.getTipo() + ") vuelve al movimiento normal.");
         }
     }
 
@@ -995,7 +1005,7 @@ public class Menu {
      */
     private void jugadoresEnCarcel() {
 
-        // Obtenemos la lista de avatares que hay en la casilla cárcel
+        // Obtenemos la lista de avatares que hay en la casilla cárcel (pos=10)
         ArrayList<Avatar> avataresEnCasilla = tablero.getCasilla(10).getAvatares();
 
         // Si hubiera avatares se imprimen
@@ -1366,11 +1376,6 @@ public class Menu {
 
                     //EVALUAMOS QUÉ HAY QUE HACER EN FUNCIÓN DE LA CASILLA
                     evaluarCasilla(avatar.getLugar());
-
-                    // No podemos encarcelar al jugador desde evaluarCasilla
-                    if(destino.getNombre().equals("IrCarcel")) {
-                        jugador.encarcelar(this.tablero.getPosiciones());
-                    }
 
                 }
 
