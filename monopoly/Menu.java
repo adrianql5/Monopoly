@@ -13,22 +13,21 @@ public class Menu {
     //Atributos
     private ArrayList<Jugador> jugadores; //Jugadores de la partida.
     private ArrayList<Avatar> avatares; //Avatares en la partida.
-    private int turno; //Índice correspondiente a la posición en el arrayList del jugador (y el avatar) que tienen el turno
+    private int turno; //Índice de la posición en el arrayList del jugador (y el avatar) que tienen el turno.
     private int lanzamientos; //Variable para contar el número de lanzamientos de un jugador en un turno.
     private Tablero tablero; //Tablero en el que se juega.
     private Dado dado1; //Dos dados para lanzar y avanzar casillas.
     private Dado dado2;
     private Jugador banca; //El jugador banca.
     private boolean tirado; //Booleano para comprobar si el jugador que tiene el turno ha tirado o no.
-    private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente, es decir, si ha pagado sus deudas.
+    private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente (no tiene deudas).
 
-    private float bote; //El bote del Parking se guarda en este atributo
     private ArrayList<Carta> cartas_suerte;
     private ArrayList<Carta> cartas_caja;
     private Carta carta_del_reves;
     private boolean partidaTerminada; //Booleano para acabar la partida
 
-    //SECCIÓN DE CONSTRUIR EL MENÚ
+    //SECCIÓN DE CONSTRUIR EL MENÚ--------------------------------------------------------------------------------------
     //Hay que asignar un valor por defecto para cada atributo
     public Menu(){
         this.jugadores = new ArrayList<Jugador>();
@@ -41,7 +40,6 @@ public class Menu {
         this.dado2 = new Dado();
         this.tirado = false;
         this.solvente = true;
-        this.bote = 0;
         anhadirBarajas();
         this.partidaTerminada = false;
 
@@ -65,22 +63,48 @@ public class Menu {
         cartas_caja.add(new Carta(Texto.CARTA_CAJA_6, "Caja", 6));
         this.carta_del_reves = new Carta();
     }
-    
-    private void acabarPartida() {
-        partidaTerminada = true;
+
+    //SECCIÓN DE MÉTODOS ÚTILES DEL MENÚ--------------------------------------------------------------------------------
+
+    /**Método que devuelve el jugador que tiene el turno.*/
+    public Jugador obtenerTurno() {
+        return this.jugadores.get(this.turno);
     }
 
+    /**Método que elimina al jugador correspondiente de la lista de jugadores.
+     * Si se le pasa un jugador que no está en la lista de jugadores no hace nada.
+     */
     public void eliminarJugador(Jugador jugador){
-
         for(Jugador j: this.jugadores){
             if(j.equals(jugador)){
                 this.jugadores.remove(j);
             }
         }
+    }
 
+    //Se puede hacer desde aquí porque no existe encapsulación de sus elementos al ser un String[]
+    /**Método para cambiar el texto que se muestra en medio del tablero.
+     * Se presupone que el texto viene ya con los saltos de línea y cumple con el máximo de longitud de cada línea.
+     * Si se intenta introducir un texto con más líneas de las posibles salta un error y no hace nada.
+     */
+    public void setTextoTablero(String nuevo_texto) {
+        //Dividimos el String en partes en función de los saltos de línea
+        String[] nuevo_texto_tablero = nuevo_texto.split("\n");
+
+        if(nuevo_texto_tablero.length<17) {
+            // Se empieza en el índice 1 porque la primera línea del centro del tablero se deja vacía
+            // Nótese que para asignar bien el texto el índice de nuevo_texto_tablero es i-1
+            for (int i = 1; i < nuevo_texto_tablero.length + 1; i++) {
+                Texto.TABLERO[i] = nuevo_texto_tablero[i - 1];
+            }
+        }
+        else {
+            System.out.println("Se ha intentado meter más líneas de las que caben en el medio del tablero.");
+        }
     }
 
 
+    //SECCIÓN DE MÉTODOS QUE HIZO ADRI LA ÚLTIMA VEZ Y NO ESTÁN BIEN ORDENADOS------------------------------------------
     public void declararBancarrota(){
         Jugador jugador= obtenerTurno();
         if(jugador.estaEnBancarrota()){
@@ -176,7 +200,8 @@ public class Menu {
                 jugador.sumarFortuna(-edificio.getCoste()); // Reducir la fortuna del jugador
                 this.banca.sumarFortuna(edificio.getCoste()); // Aumentar la fortuna de la banca
 
-                System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " + edificio.getId() +" por "+edificio.getCoste());
+                System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
+                        edificio.getId() + " por " +edificio.getCoste());
 
                 // Si es un hotel, eliminar todas las casas de la casilla
                 if (tipo.equals("hotel")) {
@@ -252,7 +277,8 @@ public class Menu {
     }
 
 
-    //SECCIÓN DE CONTROL DEL FLUJO DE LA PARTIDA
+
+    //SECCIÓN DE CONTROL DEL FLUJO DE LA PARTIDA------------------------------------------------------------------------
 
     // Método para inciar una partida: crea los jugadores y avatares.
     public void iniciarPartida() {
@@ -314,18 +340,18 @@ public class Menu {
         }
         //Acabouse, liberar memoria estaría duro
         scan.close();
-        terminarPartida();
-    }
-
-    /**Método para acabar la partida cuando se termina de jugar o cuando alguien pierde*/
-    private void terminarPartida(){
         System.out.println("La partida ha finalizado, esperamos que disfrutáseis la experiencia.");
         System.exit(0);
     }
 
+    /**Método para acabar la partida cuando se termina de jugar o cuando alguien pierde*/
+    private void acabarPartida() {
+        partidaTerminada = true;
+    }
 
 
-    //SECCIÓN DE COMANDOS DEL MENÚ
+
+    //SECCIÓN DE COMANDOS DEL MENÚ--------------------------------------------------------------------------------------
 
     /**Método que interpreta el comando introducido y toma la accion correspondiente.
      * @param comando_entero Línea de comando que introduce el jugador
@@ -371,10 +397,8 @@ public class Menu {
             //CHEATS
             //DINERO INFINITO (+mil millones)
             case "dinero infinito": dineroInfinito(); break;
-
             //AVANZAR 40 CASILLAS HASTA LA MISMA CASILLA
             case "dar vuelta": obtenerTurno().sumarVuelta(); break;
-
             //PROBANDO LA IMPRESIÓN DE CARTAS
             case "probar cartas": probarCartas(); break;
             case "coger carta caja": cogerCarta(this.cartas_caja); break;
@@ -399,16 +423,16 @@ public class Menu {
                     //Podría ser uno de los siguientes:
                     switch(comando[0]){
 
+                        //Para describir una casilla
+                        case "describir": descCasilla(comando[1]); break;
+
+                        //Para comprar una casilla
+                        case "comprar": comprar(comando[1]); break;
+
                         // Comandos de edificar, hipotecar, deshipotecar (para pista de deporte en length==4)
                         case "edificar": edificar(comando[1]); break;
                         case "hipotecar": hipotecar(comando[1]); break;
                         case "deshipotecar": deshipotecar(comando[1]); break;
-                    
-                        //Para comprar una casilla
-                        case "comprar": comprar(comando[1]); break;
-
-                        //Para describir una casilla
-                        case "describir": descCasilla(comando[1]); break;
 
                         //Comando inválido
                         default: System.out.println(comando_entero + " no es un comando válido."); break;
@@ -458,10 +482,10 @@ public class Menu {
                         if("edificar".equals(comando[0])) {
                             edificar("pistadedeporte");
                         }
-                        if("hipotecar".equals(comando[0])) {
+                        else if("hipotecar".equals(comando[0])) {
                             hipotecar("pistadedeporte");
                         }
-                        if("deshipotecar".equals(comando[0])) {
+                        else if("deshipotecar".equals(comando[0])) {
                             deshipotecar("pistadedeporte");
                         }
                         else {
@@ -480,6 +504,7 @@ public class Menu {
 
         }
     }
+
 
 
     //SECCIÓN DE COMANDOS QUE NO DEPENDEN DE NINGUNA INSTANCIA----------------------------------------------------------
@@ -591,14 +616,11 @@ public class Menu {
                 }
                 else {
                     // No estás encarcelado: TURNO NORMAL
-                    // Establecemos la casilla de salida (solo para imprimirla después)
-
-
-                    //Variables útiles
+                    // Variables útiles
                     int sumaDados = resultado1+resultado2;
                     Casilla origen = avatar.getLugar();
 
-                    //POR FIN Movemos al avatar a la casilla
+                    // POR FIN Movemos al avatar a la casilla
                     avatar.moverAvatar(tablero.getPosiciones(), sumaDados);
 
                     Casilla destino = avatar.getLugar();
@@ -707,9 +729,11 @@ public class Menu {
                             System.out.println("Has caído en la Cárcel. Disfruta de la visita.");
                             break;
                         case "Parking":
-                            System.out.printf("Has ganado el bote de la banca: %,.0f€\n", this.banca.getFortuna());
-                            jugadorActual.sumarFortuna(this.banca.getFortuna());
-                            this.banca.setFortuna(0f);
+                            //v2: ahora el bote del Parking se guarda en Parking.valor
+                            System.out.printf("Has ganado el bote del Parking: %,.0f€\n",
+                                    this.tablero.getCasilla(20).getValor());
+                            jugadorActual.sumarFortuna(this.tablero.getCasilla(20).getValor());
+                            this.tablero.getCasilla(20).setValor(0f);
                             break;
                         case "IrCarcel":
                             System.out.println("Mala suerte, te vas a la cárcel.");
@@ -808,6 +832,7 @@ public class Menu {
      * También resetea el boolean de la tirada y el número de lanzamientos del turno.
      * Nótese que por ese motivo al salir de la cárcel puedes tirar los dados como un turno normal.
      * Lo usa salirCarcel pero tb se llama cuando sales por sacar dobles.
+     * Por este motivo de que se use en varios casos NO SE COBRA LA FIANZA AQUÍ.
      * @param jugador Jugador que vamos a desencarcelar
      */
     private void desencarcelar(Jugador jugador) {
@@ -829,9 +854,10 @@ public class Menu {
         if (jugador.isEnCarcel()) {
             // Si ya ha tirado este turno no puede pagar la fianza!
             if (!this.tirado) {
-                if(jugador.getFortuna() < Valor.SALIR_CARCEL) {
+                if(jugador.getFortuna() >= Valor.SALIR_CARCEL) {
                     desencarcelar(jugador);
-                    jugador.sumarFortuna(-Valor.SALIR_CARCEL);
+                    jugador.restarFortuna(Valor.SALIR_CARCEL);
+                    this.banca.sumarFortuna(Valor.SALIR_CARCEL);
                     System.out.printf("%s paga la fianza de %,.0f € y sale de la cárcel. Puedes tirar los dados.\n",
                             jugador.getNombre(), Valor.SALIR_CARCEL);
                 }
@@ -844,7 +870,6 @@ public class Menu {
 
         } else System.out.println("El jugador " + jugador.getNombre() + " no está en la cárcel.");
     }
-
 
     /**Método que realiza las acciones asociadas al comando 'acabar turno'.*/
     private void acabarTurno() {
@@ -877,10 +902,10 @@ public class Menu {
         obtenerTurno().getAvatar().cambiarMovimiento();
         Avatar avatar = obtenerTurno().getAvatar();
         if(avatar.getMovimientoAvanzado()) {
-            System.out.println("El avatar " + avatar + " (tipo " + avatar.getTipo() + ") activa el movimiento avanzado.");
+            System.out.println("El avatar " + avatar + " vuelve el movimiento normal.");
         }
         else {
-            System.out.println("El avatar " + avatar + " (tipo " + avatar.getTipo() + ") vuelve al movimiento normal.");
+            System.out.println("El avatar " + avatar + " activa al movimiento avanzado (" + avatar.getTipo() + ")");
         }
     }
 
@@ -916,6 +941,7 @@ public class Menu {
             }
         }
     }
+
 
 
     //SECCIÓN DE COMANDOS QUE DEPENDEN DE UNA INSTANCIA-----------------------------------------------------------------
@@ -972,7 +998,7 @@ public class Menu {
             // ya que la fortuna de la banca es un valor que no se puede acceder desde la clase casilla
             case "Parking":
                 // Imprimir el bote
-                System.out.printf("{\n\tBote acumulado: %,.0f€\n", banca.getFortuna());
+                System.out.printf("{\n\tBote acumulado: %,.0f€\n", this.tablero.getCasilla(20).getValor());
 
                 // Imprimimos los jugadores de la casilla si los hubiera
                 // Línea jodida por como está implementado jugadoresEnCasilla pero confíen en el proceso
@@ -1067,20 +1093,18 @@ public class Menu {
         System.out.println("Avatar con ID " + ID + " no encontrado.");
     }
 
-    public Jugador obtenerTurno() {
-        return this.jugadores.get(this.turno);
-    }
+
 
     //SECCIÓN DE COMANDOS QUE DEPENDEN DE DOS INSTANCIAS----------------------------------------------------------------
 
     /**Método que realiza las acciones asociadas al comando 'crear jugador'.
      * Solo se usa antes de empezar la partida, una vez empezada no se pueden crear más jugadores.
      * @param nombre Nombre del jugador
-     * @param avatar Tipo de avatar
+     * @param tipoAvatar Tipo de avatar
      */
-    private void crearJugador(String nombre, String avatar) {
+    private void crearJugador(String nombre, String tipoAvatar) {
 
-        String tipo = avatar.trim().toLowerCase();  // Eliminar espacios y convertir a minúsculas
+        String tipo = tipoAvatar.trim().toLowerCase();  // Eliminar espacios y convertir a minúsculas
 
         // Definir la casilla de inicio.
         Casilla casillaInicio = tablero.getCasilla(0);
@@ -1108,26 +1132,6 @@ public class Menu {
     }
 
 
-    //SECCIÓN DE MÉTODOS ÚTILES DE MENÚ---------------------------------------------------------------------------------
-
-    //Petadinha (longitud máxima de líneas de nuevo_texto=17)
-    //Se puede hacer desde aquí porque no existe encapsulación de sus elementos al ser un String[]
-    /**Método para cambiar el texto que se muestra en medio del tablero*/
-    public void setTextoTablero(String nuevo_texto) {
-        //Dividimos el String en partes en función de los saltos de línea
-        String[] nuevo_texto_tablero = nuevo_texto.split("\n");
-
-        if(nuevo_texto_tablero.length<17) {
-            // Se empieza en el índice 1 porque la primera línea del centro del tablero se deja vacía
-            // Nótese que para asignar bien el texto el índice de nuevo_texto_tablero es i-1
-            for (int i = 1; i < nuevo_texto_tablero.length + 1; i++) {
-                Texto.TABLERO[i] = nuevo_texto_tablero[i - 1];
-            }
-        }
-        else {
-            System.out.println("Se ha intentado meter más líneas de las que caben en el medio del tablero.");
-        }
-    }
 
     // SECCIÓN DE MÉTODOS RELACIONADOS CON LAS CARTAS TIPO SUERTE Y CAJA DE COMUNIDAD-----------------------------------
 
@@ -1161,9 +1165,11 @@ public class Menu {
                     //Siempre se pasa por la salida ya que no hay ninguna casilla Suerte entre la Salida y Trans1
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), 45-posicion);
                     cobrarSalida(jugadorActual);
+                    evaluarCasilla(this.tablero.getCasilla(5));
                     break;
                 case 2: //Ir a Solar15 (pos=26) sin pasar por la Salida (y por tanto sin cobrar)
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), posicion<26 ? 26-posicion : 66-posicion);
+                    evaluarCasilla(this.tablero.getCasilla(26));
                     break;
                 case 3: //Cobrar 500.000€
                     jugadorActual.sumarFortuna(500000);
@@ -1172,6 +1178,7 @@ public class Menu {
                     //Siempre se pasa por la salida ya que no hay ninguna casilla Suerte entre la Salida y Solar3
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), 46-posicion);
                     cobrarSalida(jugadorActual);
+                    evaluarCasilla(this.tablero.getCasilla(6));
                     break;
                 case 5: //Ir a la cárcel (encarcelado) sin pasar por la Salida (y por tanto sin cobrar)
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), posicion<10 ? 10-posicion : 50-posicion);
@@ -1213,12 +1220,12 @@ public class Menu {
                     }
                     break;
             }
-            //Falta implementar si el jugador es solvente o no
         }
         else {
             System.out.println("Esta carta tiene un tipo inválido.");
         }
 
+        //Falta implementar si el jugador es solvente o no
         return true;
     }
 
@@ -1256,7 +1263,7 @@ public class Menu {
 
 
 
-    //SECCIÓN DE CHEATS DE MENÚ
+    //SECCIÓN DE CHEATS DE MENÚ-----------------------------------------------------------------------------------------
 
     /**Método para conseguir mucho dinero.*/
     private void dineroInfinito() {

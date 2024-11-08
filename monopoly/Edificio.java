@@ -19,10 +19,8 @@ public class Edificio {
         this.id = lugar.generarID(tipo); 
         this.tipo = tipo;
         this.casilla = lugar;
-        this.duenho=casilla.getDuenho();
+        this.duenho = casilla.getDuenho();
         this.grupo = casilla.getGrupo();
-        
-     
 
         if(this.tipo.equals("casa") || this.tipo.equals("hotel"))
             this.coste = casilla.getValor() * 0.60f;
@@ -36,7 +34,7 @@ public class Edificio {
     }
 
     public boolean esTipoComprable(String tipo) {
-        return tipo.equals("Casa") || tipo.equals("Hotel") || tipo.equals("Piscina") || tipo.equals("Pistas de Deportes");
+        return tipo.equals("casa") || tipo.equals("hotel") || tipo.equals("piscina") || tipo.equals("pista de deporte");
     }
 
     
@@ -45,7 +43,6 @@ public class Edificio {
     public String infoEdificio() {
         String cadena = "";
 
-        
         cadena += "{\n";
         cadena += "\tid: " + this.id + ",\n";
         cadena += "\tpropietario: " + this.duenho.getNombre() + ",\n";
@@ -53,8 +50,7 @@ public class Edificio {
         cadena += "\tgrupo: " + this.grupo.getColorGrupo() + ",\n";
         cadena += "\tcoste: " + this.coste + "\n";
         cadena += "},\n";
-            
-        
+
         return cadena;
     }
 

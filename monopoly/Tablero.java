@@ -170,6 +170,17 @@ public class Tablero {
     
     //METODOS ÚTILES DEL TABLERO
 
+    public ArrayList<ArrayList<Casilla>> getPosiciones() {
+        return posiciones;
+    }
+
+    public Casilla getCasilla(int posicion){
+        if(posicion<40 && posicion>-1){
+            return this.posiciones.get(posicion/10).get(posicion%10);
+        }
+        else return null;
+    }
+
     /**Método usado para buscar la casilla con el nombre pasado como argumento.
      * @param nombre Nombre de la casilla
      */
@@ -182,17 +193,6 @@ public class Tablero {
 
         }
         return null;
-    }
-
-    public Casilla getCasilla(int posicion){
-        if(posicion<40 && posicion>-1){
-            return this.posiciones.get(posicion/10).get(posicion%10);
-        }
-        else return null;
-    }
-
-    public ArrayList<ArrayList<Casilla>> getPosiciones() {
-        return posiciones;
     }
 
     /**Método para aumentar el coste de los solares que pertenecen a la banca cuando todos dan 4 vueltas sin comprar.*/

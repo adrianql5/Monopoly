@@ -49,6 +49,10 @@ public class Carta {
 
         //Borde inferior
         this.texto.add(Texto.CARTA_BORDEINF);
+
+        //Inicializamos el resto de atributos a unos valores por defecto
+        this.tipo="";
+        this.indice=0;
     }
 
     //GETTERS Y SETTERS
@@ -87,7 +91,7 @@ public class Carta {
             }
         }
         else {
-            System.out.println("\nError en la función conEspacios: tiene que introducirse un número positivo de espacios.\n");
+            System.out.println("\nError en la función conEspacios: número negativo de espacios.\n");
             //Nótese que igualmente devuelve una cadena vacía si se introduce un número negativo
         }
         return(cadena);
