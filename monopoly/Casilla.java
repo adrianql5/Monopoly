@@ -20,6 +20,7 @@ public class Casilla {
     private ArrayList<Avatar> avatares; //Avatares que están situados en la casilla.
     private ArrayList<ArrayList<Edificio>> edificios;
     private boolean estaHipotecada;
+    private boolean ya_se_duplico;
 
 
     //SECCIÓN DE CONSTRUCTORES DE CASILLA
@@ -41,6 +42,7 @@ public class Casilla {
         this.impuesto= valor * 0.10f;
         this.hipoteca= valor/2f;
         this.duenho= duenho;
+        this.ya_se_duplico =false;
         this.avatares= new ArrayList<Avatar>();
         if(this.tipo.equals("Solar")){ //solo se edifican los solares
             this.edificios = new ArrayList<>(4); 
@@ -130,35 +132,44 @@ public class Casilla {
     //SECCION DE BUILDEAR Y COMPRAR EDIFICIOS
     public void evaluarAlquiler() {
         if (this.tipo.equals("Solar")) {
-            if (this.grupo.esDuenhoGrupo(this.duenho)) {
-                this.impuesto *= 2f; // Duplica el impuesto si es dueño del grupo
+            if (this.grupo.esDuenhoGrupo(this.duenho)){
                 float baseAlquiler = this.impuesto; // Almacena el valor base del alquiler para cálculos
+                if (!this.ya_se_duplico) {
+                    this.impuesto *= 2f; // Duplica el impuesto si es dueño del grupo
+                    this.ya_se_duplico =true;
+                }
+                    // Cálculo del alquiler de casas
+                //esto esta mal pero ahora misno no se me courre una solucion sin 5 atributos nuevos
+                //y 5 ifs apara comprobra si ya se a modificado
 
-                // Cálculo del alquiler de casas
-                int numCasas = this.edificios.get(0).size();
-                switch (numCasas) {
-                    case 1:
-                        this.impuesto = baseAlquiler * 5f;
-                        break;
-                    case 2:
-                        this.impuesto = baseAlquiler * 15f;
-                        break;
-                    case 3:
-                        this.impuesto = baseAlquiler * 35f;
-                        break;
-                    case 4:
-                        this.impuesto = baseAlquiler * 50f;
-                        break;
-                    default:
-                        this.impuesto = baseAlquiler;
-                        break;
+
+
+                //HABRA QUE MIRARR MAS ADELANTEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+                    int numCasas = this.edificios.get(0).size();
+                    switch (numCasas) {
+                        case 1:
+                            this.impuesto = baseAlquiler * 5f;
+                            break;
+                        case 2:
+                            this.impuesto = baseAlquiler * 15f;
+                            break;
+                        case 3:
+                            this.impuesto = baseAlquiler * 35f;
+                            break;
+                        case 4:
+                            this.impuesto = baseAlquiler * 50f;
+                            break;
+                        default:
+                            this.impuesto = baseAlquiler;
+                            break;
+                    }
+
+                    // Cálculo del alquiler de hoteles, piscinas y pistas de deporte
+                    this.impuesto += baseAlquiler * 70f * this.edificios.get(1).size(); // Hoteles
+                    this.impuesto += baseAlquiler * 25f * this.edificios.get(2).size(); // Piscinas
+                    this.impuesto += baseAlquiler * 25f * this.edificios.get(3).size(); // Pistas de deporte
                 }
 
-                // Cálculo del alquiler de hoteles, piscinas y pistas de deporte
-                this.impuesto += baseAlquiler * 70f * this.edificios.get(1).size(); // Hoteles
-                this.impuesto += baseAlquiler * 25f * this.edificios.get(2).size(); // Piscinas
-                this.impuesto += baseAlquiler * 25f * this.edificios.get(3).size(); // Pistas de deporte
-            }
         } else if (this.tipo.equals("Transporte")) {
             // Cálculo del alquiler para casillas de tipo Transporte
             int multiplicador = this.duenho.numeroCasillasTipo("Transporte");
@@ -695,4 +706,15 @@ public class Casilla {
     public ArrayList<Avatar> getAvatares(){
         return avatares;
     }
+    public int getNumeroEdificios() {
+        int totalEdificios = 0;
+        if(this.edificios==null){
+            return 0;
+        }
+        for (ArrayList<Edificio> tipoEdificio : this.edificios) {
+            totalEdificios += tipoEdificio.size();
+        }
+        return totalEdificios;
+    }
 }
+

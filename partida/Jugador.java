@@ -17,6 +17,7 @@ public class Jugador {
     private int vueltas; //Cuenta las vueltas dadas al tablero.
     private ArrayList<Casilla> propiedades; //Propiedades que posee el jugador.
     private int vueltas_sin_comprar;
+    private int bloqueado;
    
     private Jugador jugadorConElQueEstanEnDeuda;//si es true está en deuda con la banca, si es false con un jugador
 
@@ -34,6 +35,7 @@ public class Jugador {
         this.vueltas=0;
         this.propiedades=new ArrayList<Casilla>();
         this.vueltas_sin_comprar=0;
+        this.bloqueado=0;
     }
     
     /**Constructor principal. Desde este constructor también se crea el avatar.
@@ -57,13 +59,18 @@ public class Jugador {
         this.avatar.setJugador(this);
         this.propiedades = new ArrayList<Casilla>();
         this.vueltas_sin_comprar=0;
-        
+        this.bloqueado=0;
         this.jugadorConElQueEstanEnDeuda=null;
         
 
     }
     
-
+    public void setBloqueado(int turnos){
+        this.bloqueado=turnos;
+    }
+    public int restarBloqueado(int turnos){
+        return this.bloqueado = turnos -1;
+    }
     public void setDeudaConJugador(Jugador jugador){
         this.jugadorConElQueEstanEnDeuda=jugador;
     }
@@ -244,27 +251,38 @@ public class Jugador {
 
             // Imprimir edificios
             System.out.println("\tEdificios: {");
-
             String[] tipos = {"casa", "hotel", "piscina", "pista deportes"};
-            for (String tipo : tipos) {
-                ArrayList<Edificio> edificios = this.getPropiedades().get(0).getEdificiosPorTipo(tipo); // Asumiendo que trabajas con la primera propiedad
-                if (!edificios.isEmpty()) {
-                    System.out.print("\t\t" + tipo + ": [");
-                    for (int j = 0; j < edificios.size(); j++) {
-                        System.out.print(edificios.get(j).getId());
-                        if (j < edificios.size() - 1) {
-                            System.out.print(", "); // Añade coma a todo menos a la última
+            for (int i = 0; i < this.getPropiedades().size(); i++) {
+                if( this.getPropiedades().get(i).getTipo().equals("Solar"));
+                {
+                    if (0 != this.getPropiedades().get(i).getNumeroEdificios()) {
+                        System.out.println("\t\t" + this.getPropiedades().get(i).getNombre() + ": {");
+
+                        for (String tipo : tipos) {
+                            ArrayList<Edificio> edificios = this.getPropiedades().get(i).getEdificiosPorTipo(tipo);
+
+                            if (!edificios.isEmpty()) {
+                                System.out.print("\t\t\t" + tipo + ": [");
+                                for (int j = 0; j < edificios.size(); j++) {
+                                    System.out.print(edificios.get(j).getId());
+                                    if (j < edificios.size() - 1) {
+                                        System.out.print(", "); // Añade coma a todo menos a la última
+                                    }
+                                }
+                                System.out.println("]");
+                            }
                         }
+                        System.out.println("\t\t}");
                     }
-                    System.out.println("]");
+                    System.out.println("\t}");
                 }
+
             }
-            
-            System.out.println("\t}");
+
+
         }
         System.out.println("}");
     }
-
     
 }
 

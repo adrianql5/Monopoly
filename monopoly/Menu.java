@@ -464,8 +464,15 @@ public class Menu {
                         int dado1 = dadoValido(comando[1]);
                         int dado2 = dadoValido(comando[2]);
                         if (dado1!=0 && dado2!=0) {
-                            dadosTrampa(dado1, dado2);
-                            verTablero();
+                            Jugador jugador_actual = obtenerTurno();
+                            if(jugador_actual.getAvatar().getMovimientoAvanzado()){
+                                dadosTrampaAvanzado(dado1, dado2);
+                                verTablero();
+                            }else{
+                                dadosTrampa(dado1, dado2);
+                                verTablero();
+                            }
+
                         }
                     }
                     else {
@@ -680,6 +687,117 @@ public class Menu {
         }
 
     }
+    private void lanzarDadoAvanzados() {
+
+        //Obtenemos el avatar que tiene el turno
+        Jugador jugador = obtenerTurno();
+        Avatar avatar = jugador.getAvatar();
+
+        // Comprobamos si acaba de ser encarcelado
+        if (this.tirado && jugador.isEnCarcel() && jugador.getTiradasCarcel()==0) {
+            System.out.println("Acabas de ir a la cárcel, no puedes volver a tirar hasta el siguiente turno.\n" +
+                    "Si no tienes nada más que hacer usa el comando " +
+                    Valor.BOLD_STRING + "acabar turno" + Valor.RESET);
+
+        }
+        else {
+            // Comprobamos si aún no se ha tirado en el turno o vienes de haber sacado dobles
+            // IMPORTANTE EL ORDEN DEL IF: el valor de los dados antes de la primera tirada de la partida es null
+            if(!this.tirado || this.dado1.getValor()==this.dado2.getValor()) {
+                // Lanzamos 2 dados e imprimimos sus resultados
+                int resultado1 = this.dado1.tirarDado();
+                int resultado2 = this.dado2.tirarDado();
+                System.out.println("[" + resultado1 + "] [" + resultado2 + "]");
+                // Se vuelve a asignar true en segundas/terceras tiradas a no ser que hagamos un caso a parte
+                this.tirado = true;
+                this.lanzamientos += 1;
+
+                // ¿Estás encarcelado?
+                if(jugador.isEnCarcel()) {
+                    // Si sacas dobles sales!
+                    if(resultado1==resultado2) {
+                        System.out.println("DOBLES!!\nSales de la cárcel.");
+                        desencarcelar(jugador);
+                    }
+                    else {
+                        // No sales a menos que sea la tercera vez que tiras, caso en el que estás obligado
+                        // a pagar la fianza. Si no puedes te declaras en bancarrota
+                        if(jugador.getTiradasCarcel()==2) {
+                            System.out.println("No ha habido suerte con los dados, toca pagar la fianza...");
+                            //Por cómo está implementado salirCarcel(), el comando no se puede usar si ya tiraste
+                            this.tirado=false;
+                            //Pagas la fianza y sales de la cárcel
+                            salirCarcel();
+                        }
+                        else {
+                            System.out.println("Continúas en la carcel.");
+                            jugador.setTiradasCarcel(1+jugador.getTiradasCarcel());
+                        }
+                    }
+                }
+                else {
+                    // No estás encarcelado: TURNO NORMAL
+                    // Establecemos la casilla de salida (solo para imprimirla después)
+
+
+                    //Variables útiles
+                    int sumaDados = resultado1+resultado2;
+                    Casilla origen = avatar.getLugar();
+
+                    //POR FIN Movemos al avatar a la casilla
+                    // avatar.moverAvatar(tablero.getPosiciones(), sumaDados);
+
+                    Casilla destino = avatar.getLugar();
+
+
+                    System.out.println("El avatar " + avatar.getId() + " avanza " + (sumaDados) +
+                            " casillas desde " + origen.getNombre() + " hasta " + destino.getNombre() + ".");
+
+                    // Si pasamos por la salida hay que cobrar!
+                    if (origen.getPosicion() > destino.getPosicion()) {
+                        System.out.printf("¡Al pasar por la salida ganaste %,.0f€!\n", Valor.SUMA_VUELTA);
+                        jugador.sumarFortuna(Valor.SUMA_VUELTA);
+                        jugador.sumarVuelta();
+                        jugador.sumarVueltas_sin_comprar();
+                        cuatroVueltasSinCompras();
+
+                    }
+
+
+                    // EVALUAMOS QUÉ HAY QUE HACER EN FUNCIÓN DE LA CASILLA
+                    if (evaluarCasilla(destino)) {
+                        Scanner scan = new Scanner(System.in);
+
+                        String respuesta;
+                        do {//con esto forzamos a que se declare en bancarrota
+                            System.out.println("Debes declararte en bancarrota");
+                            respuesta = scan.nextLine();
+                        } while (!respuesta.equals("bancarrota"));
+
+                        analizarComando(respuesta);
+                        scan.close();
+                    }
+
+
+                    // No podemos encarcelar al jugador desde evaluarCasilla
+                    if(destino.getNombre().equals("IrCarcel")) {
+                        jugador.encarcelar(this.tablero.getPosiciones());
+                    }
+
+                }
+
+            }
+            else {
+                System.out.println("¡Ya has tirado! Si no tienes nada más que hacer usa el comando " +
+                        Valor.BOLD_STRING + "acabar turno" + Valor.RESET);
+            }
+        }
+        if(jugador.estaEnBancarrota()){
+            System.out.println("El jugador " + jugador.getNombre() + " esta en bancarrota \n");
+            acabarPartida();
+        }
+
+    }
 
     /** Método para evaluar qué hacer en una casilla concreta.
      * @param casilla Casilla que tenemos que evaluar
@@ -695,10 +813,11 @@ public class Menu {
         float impuestoCasilla = casilla.getImpuesto();
         Grupo grupoCasilla = casilla.getGrupo();
 
+
         if (jugadorActual != duenhoCasilla) {
             switch (casilla.getTipo()) {
                 case "Solar":
-                    if (!grupoCasilla.estaHipotecadoGrupo()) {
+                    if (!casilla.estaHipotecada()) {
                         if (duenhoCasilla != this.banca) {
                             Jugador propietario = casilla.getDuenho();
                             casilla.evaluarAlquiler();
@@ -718,8 +837,7 @@ public class Menu {
                             System.out.println("La casilla " + nombreCasilla + " está a la venta.\n");
                         }
                     } else {
-                        System.out.println("La casilla " + nombreCasilla + " (o alguna de su grupo) está hipotecada. " +
-                                "No es necesario pagar el alquiler.");
+                        System.out.println("La casilla " + nombreCasilla +   " No es necesario pagar el alquiler.");
                     }
                     break;
 
@@ -749,7 +867,7 @@ public class Menu {
                     return true;
 
                 case "Transporte":
-                    if (!grupoCasilla.estaHipotecadoGrupo()) {
+                    if (!casilla.estaHipotecada()) {
                         if (duenhoCasilla != this.banca) {
                             casilla.evaluarAlquiler();
                             System.out.printf("%s debe pagar el servicio de transporte a %s: %,.0f€\n",
@@ -768,8 +886,7 @@ public class Menu {
                             System.out.println("La casilla " + nombreCasilla + " está a la venta.");
                         }
                     } else {
-                        System.out.println("La casilla " + nombreCasilla + " (u otra de Transporte) está hipotecada. " +
-                                "No es necesario pagar el alquiler.");
+                        System.out.println("La casilla " + nombreCasilla + " está hipotecada, ¡No pagas!");
                     }
                     break;
 
@@ -787,7 +904,7 @@ public class Menu {
                     return true;
 
                 case "Servicio":
-                    if (!grupoCasilla.estaHipotecadoGrupo()) {
+                    if (!casilla.estaHipotecada()) {
                         if (duenhoCasilla != this.banca) {
                             float pagar = tirada * (duenhoCasilla.numeroCasillasTipo("Servicio") == 1 ? 4 : 10) * impuestoCasilla;
                             System.out.printf("%s debe pagar el servicio a %s: %,.0f€\n",
@@ -806,8 +923,7 @@ public class Menu {
                             System.out.println("La casilla " + nombreCasilla + " está a la venta.");
                         }
                     } else {
-                        System.out.println("La casilla " + nombreCasilla + " (o la otra de Servicio) está hipotecada." +
-                                " No es necesario pagar el alquiler.");
+                        System.out.println("La casilla " + nombreCasilla + " Esta hipotecada");
                     }
                     break;
 
@@ -827,6 +943,8 @@ public class Menu {
         }
         return true;
     }
+
+
 
     /**Método que resetea los atributos relacionados con la cárcel del jugador que se desencarcela.
      * También resetea el boolean de la tirada y el número de lanzamientos del turno.
@@ -905,7 +1023,7 @@ public class Menu {
             System.out.println("El avatar " + avatar + " vuelve el movimiento normal.");
         }
         else {
-            System.out.println("El avatar " + avatar + " activa al movimiento avanzado (" + avatar.getTipo() + ")");
+            System.out.println("El avatar " + avatar.getId() + " activa al movimiento avanzado (" + avatar.getTipo() + ")");
         }
     }
 
@@ -1399,6 +1517,112 @@ public class Menu {
 
     }
 
+
+    private void dadosTrampaAvanzado(int d1, int d2) {
+
+        //Obtenemos el avatar que tiene el turno
+        Jugador jugador = obtenerTurno();
+        Avatar avatar = jugador.getAvatar();
+
+        // Comprobamos si acaba de ser encarcelado
+        if (this.tirado && jugador.isEnCarcel() && jugador.getTiradasCarcel()==0) {
+            System.out.println("Acabas de ir a la cárcel, no puedes volver a tirar hasta el siguiente turno.\n" +
+                    "Si no tienes nada más que hacer usa el comando " +
+                    Valor.BOLD_STRING + "acabar turno" + Valor.RESET);
+
+        }
+        else {
+            // Comprobamos si aún no se ha tirado en el turno o vienes de haber sacado dobles
+            // MUY IMPORTANTE EL ORDEN DEL IF: el valor de los dados antes de la primera tirada de la partida es null
+            if(!this.tirado || this.dado1.getValor()==this.dado2.getValor()) {
+                // ESTABLECEMOS EL VALOR DE LOS 2 DADOS COMO LOS ENTEROS QUE PASAMOS
+                this.dado1.setValor(d1);
+                this.dado2.setValor(d2);
+                int resultado1 = this.dado1.getValor();
+                int resultado2 = this.dado2.getValor();
+                System.out.println("[" + resultado1 + "] [" + resultado2 + "]");
+                //Se vuelve a asignar true en segundas/terceras tiradas a no ser que hagamos un caso a parte
+                this.tirado = true;
+                this.lanzamientos += 1;
+
+                // ¿Estás encarcelado?
+                if(jugador.isEnCarcel()) {
+                    // Si sacas dobles sales!
+                    if(resultado1==resultado2) {
+                        System.out.println("DOBLES!!\nSales de la cárcel.");
+                        desencarcelar(jugador);
+                    }
+                    else {
+                        // No sales a menos que sea la tercera vez que tiras, caso en el que estás obligado
+                        // a pagar la fianza. Si no puedes te declaras en bancarrota
+                        if(jugador.getTiradasCarcel()==2) {
+                            System.out.println("No ha habido suerte con los dados, toca pagar la fianza...");
+                            //Por cómo está implementado salirCarcel(), el comando no se puede usar si ya tiraste
+                            this.tirado=false;
+                            //Pagas la fianza y sales de la cárcel
+                            salirCarcel();
+                        }
+                        else {
+                            System.out.println("Continúas en la carcel.");
+                            jugador.setTiradasCarcel(1+jugador.getTiradasCarcel());
+                        }
+                    }
+                }
+                else {
+                    // No estás encarcelado: TURNO NORMAL
+                    // Establecemos la casilla de salida (solo para imprimirla después)
+
+
+                    //Variables útiles
+                    int sumaDados = resultado1+resultado2;
+                    Casilla origen = avatar.getLugar();
+
+                    moverpersonajes(jugador,sumaDados);
+
+                    Casilla destino = avatar.getLugar();
+
+                    if(resultado1==resultado2) {
+                        System.out.println("DOBLES!!");
+                        if(this.lanzamientos==3) {
+                            jugador.encarcelar(this.tablero.getPosiciones());
+                            System.out.println("Tres dobles son muchos, vas a la cárcel sin pasar por la salida.");
+                            return;
+                        }
+                        // Vuelves a tirar a no ser que caigas en IrCarcel
+                        else if(!destino.getNombre().equals("IrCarcel")) {
+                            System.out.println("Vuelves a tirar.");
+                        }
+                        // No podemos encarcelar al jugador desde evaluarCasilla
+                        else {
+                            jugador.encarcelar(this.tablero.getPosiciones());
+                        }
+                    }
+
+                    System.out.println("El avatar " + avatar.getId() + " se movio " + (sumaDados) +
+                            " casillas desde " + origen.getNombre() + " hasta " + destino.getNombre() + ".");
+
+                    // a pensar esta
+                    if (origen.getPosicion() > destino.getPosicion()) {
+                        cobrarSalida(jugador);
+                    }
+
+
+
+                }
+
+            }
+            else {
+                System.out.println("¡Ya has tirado! Si no tienes nada más que hacer usa el comando " +
+                        Valor.BOLD_STRING + "acabar turno" + Valor.RESET);
+            }
+        }
+        if(jugador.estaEnBancarrota()){
+            System.out.println("El jugador " + jugador.getNombre() + " esta en bancarrota \n");
+            acabarPartida();
+        }
+
+    }
+
     // MÉTODOS SIN GRUPO:
 
     /**Método que transforma un String a un entero si el String es un número entre 1 y 6.
@@ -1449,7 +1673,101 @@ public class Menu {
                 "sombrero".equals(tipo) ||
                 "pelota".equals(tipo);
     }
+    public void moverpersonajes(Jugador jugador, int valorTirada){
+        Casilla posicionActualC = jugador.getAvatar().getLugar();
+        int posicionActual = posicionActualC.getPosicion();
+        boolean haComprado = false;
 
+        switch (jugador.getAvatar().getTipo()) {
+            case "coche":
+                int lanzamientosRestantes = 3; // Máximo de tres lanzamientos adicionales
+                boolean puedeLanzar = true;
+
+                while (valorTirada > 4 && lanzamientosRestantes > 0 && puedeLanzar) {
+                    jugador.getAvatar().moverAvatar(this.tablero.getPosiciones(), valorTirada);
+                    posicionActual = jugador.getAvatar().getLugar().getPosicion();
+
+                    // Evaluar la casilla y permitir una sola compra en el turno
+                    if (!haComprado && jugador.getAvatar().getLugar().esTipoComprable() ) {
+                        if( evaluarCasilla(jugador.getAvatar().getLugar())){
+                            Scanner scanner = new Scanner(System.in);
+                            System.out.print("¿Quieres comprar la casilla " + jugador.getAvatar().getLugar().getNombre() + "? (0/1): ");
+                            if (scanner.nextInt() == 1) {
+                                comprar(jugador.getAvatar().getLugar().getNombre());
+                                haComprado = true; // Marca que ya se ha realizado una compra en este turno
+                            }
+                        }
+
+                    }
+
+                    // Permitir edificación en cada intento
+                    String nombre_casilla = obtenerTurno().getAvatar().getLugar().getNombre();
+                    if( obtenerTurno().getAvatar().getLugar().esEdificable(nombre_casilla,obtenerTurno())){
+                        System.out.print("¿Quieres edificar en esta casilla? (0/1): ");
+                        Scanner scanner = new Scanner(System.in);
+                        if (scanner.nextInt() == 1) {
+                            edificar("tipoDeEdificio"); // Tipo de edificio depende del contexto
+                        }
+
+                    }
+
+                    // Reducir el contador de lanzamientos restantes y volver a tirar los dados
+                    lanzamientosRestantes--;
+                    valorTirada = this.dado1.tirarDado();
+                    puedeLanzar = (valorTirada > 4);
+                }
+
+                if (valorTirada <= 4) {
+                    // Retroceder el número de casillas correspondiente y bloquear lanzamientos en los siguientes dos turnos
+                    jugador.getAvatar().moverAvatar(this.tablero.getPosiciones(), -valorTirada);
+                    evaluarCasilla(jugador.getAvatar().getLugar());
+                    jugador.setBloqueado(3);
+                }
+
+                break;
+            case "pelota":
+                int incremento = (valorTirada > 4) ? 1 : -1;
+                int posicionFinal =   (posicionActual + valorTirada * incremento)% 40;
+                int posicion_inicial = posicionActual;
+
+                while (posicionActual != posicionFinal) {
+                    jugador.getAvatar().moverAvatar(this.tablero.getPosiciones(),incremento);
+                    posicionActual= jugador.getAvatar().getLugar().getPosicion();
+                    if (posicionActual%2 == 1){
+                        System.out.print("LLego hasta aqui");
+                        verTablero();
+                        if(evaluarCasilla(jugador.getAvatar().getLugar())) {
+                            if (!jugador.isEnCarcel()) {
+                                if (jugador.getAvatar().getLugar().esTipoComprable()) {
+                                    Scanner scanner = new Scanner(System.in);
+                                    System.out.print("Quieres comprarla la casilla " + jugador.getAvatar().getLugar().getNombre()+" pon 0/1 segun tu decision: ");
+                                    int numero = scanner.nextInt();
+                                    if (numero == 1) {
+                                        comprar(jugador.getAvatar().getLugar().getNombre());
+
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    }
+
+                break;
+            case "esfinge":
+                System.out.println("Pues esta es pa la soiguiente entrega :)");
+                break;
+            case "sombrero":
+                System.out.println("Pues esto es pa la siguiente entrega :).");
+                break;
+            default:
+                System.out.println("Caso no reconocido.");
+                break;
+
+    }
+
+}
 }
 
 
