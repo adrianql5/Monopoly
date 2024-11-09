@@ -1577,7 +1577,7 @@ public class Menu {
                     int sumaDados = resultado1+resultado2;
                     Casilla origen = avatar.getLugar();
 
-                    moverpersonajes(jugador,sumaDados);
+                    moverpersonajes(jugador,sumaDados,true);
 
                     Casilla destino = avatar.getLugar();
 
@@ -1673,25 +1673,37 @@ public class Menu {
                 "sombrero".equals(tipo) ||
                 "pelota".equals(tipo);
     }
-    public void moverpersonajes(Jugador jugador, int valorTirada){
+    public void moverpersonajes(Jugador jugador, int valorTirada, boolean trucado){
+        //pillamos la casilla donde se encuentra y su valor en posicion de dicha casilla
         Casilla posicionActualC = jugador.getAvatar().getLugar();
         int posicionActual = posicionActualC.getPosicion();
+        //reiniciamos parametro comprado EL COCHE SOLO PUEDE COMPRAR UNA VEZ
         boolean haComprado = false;
 
+        //switch de los 4 tipos de avatares posibles
         switch (jugador.getAvatar().getTipo()) {
             case "coche":
+                /*
+                EL COCHE PUEDE TIRAR HASTA 3 VECES MIENTRAS EL RESULTADO DE LOSS DADOS SEA MAYOR QUE 4
+                SOLO PUEDE COMPRAR 1 CASILLA EN ESOS 3 LANZAMIENTOS MAXIMOS
+                PUEDE EDIFICAR LAS VECES QUE QUIERA
+                SI SACA MENOS DE 4 NO PUEDE LANZAR EN 2 TURNOS PERO TIENE DERECHO A ACABAR SU TURNO ES DECIR EJECUTAR ACCIONES
+                 */
                 int lanzamientosRestantes = 3; // Máximo de tres lanzamientos adicionales
-                boolean puedeLanzar = true;
 
-                while (valorTirada > 4 && lanzamientosRestantes > 0 && puedeLanzar) {
+                while (valorTirada > 4 && lanzamientosRestantes > 0) {
                     jugador.getAvatar().moverAvatar(this.tablero.getPosiciones(), valorTirada);
                     posicionActual = jugador.getAvatar().getLugar().getPosicion();
 
-                    // Evaluar la casilla y permitir una sola compra en el turno
-                    if (!haComprado && jugador.getAvatar().getLugar().esTipoComprable() ) {
+                    // SI NO HA COMPRADO , LA CASILLA ES COMPRABLE O LA CASILA LE PERTENECE
+                    if (!haComprado && jugador.getAvatar().getLugar().esTipoComprable() || jugador.getNombre().equals( jugador.getAvatar().getLugar().getDuenho().getNombre()) ) {
+                        //HACE LA ACCION DE LA CASILLA EN EVALUAR
                         if( evaluarCasilla(jugador.getAvatar().getLugar())){
+                            //YA QUE NO PODEMOS ACCEDER AL ANALIZADOR DE COMANDOS
+                            //PREGUNTAMOS SI QUIERE COMPRAR Y LLAMAMOS COMPRAR DESDE AQUI
                             Scanner scanner = new Scanner(System.in);
                             System.out.print("¿Quieres comprar la casilla " + jugador.getAvatar().getLugar().getNombre() + "? (0/1): ");
+                           //SI QUIERE COMPRAR == 1 HACE LO SIGUIENTE
                             if (scanner.nextInt() == 1) {
                                 comprar(jugador.getAvatar().getLugar().getNombre());
                                 haComprado = true; // Marca que ya se ha realizado una compra en este turno
@@ -1702,19 +1714,56 @@ public class Menu {
 
                     // Permitir edificación en cada intento
                     String nombre_casilla = obtenerTurno().getAvatar().getLugar().getNombre();
+                    //ES EDIFICABLE MIRA SI ES EL DUENHO Y SI ES POSIBLE EDIFICAR EN ELLA
                     if( obtenerTurno().getAvatar().getLugar().esEdificable(nombre_casilla,obtenerTurno())){
                         System.out.print("¿Quieres edificar en esta casilla? (0/1): ");
                         Scanner scanner = new Scanner(System.in);
                         if (scanner.nextInt() == 1) {
-                            edificar("tipoDeEdificio"); // Tipo de edificio depende del contexto
+                            //Le preguntamos el tipo de edificacion
+                            System.out.print("Los tipos de edificacion son 'C' casa, 'H' hotel, 'P' piscina, 'D' pista deportes \n");
+                            System.out.print("¿Que quieres edificar?");
+                            Scanner scanner2 = new Scanner(System.in);
+                            String tipo = scanner2.next();
+                            //el if comprueba que sea posible eddificar el tipo elegido
+                            if(obtenerTurno().getAvatar().getLugar().esEdificable(tipo,obtenerTurno())){
+                                //EDIFICA EL TIPO ELEGIDO
+                                switch (tipo){
+                                    case "C":
+                                        edificar("casa");
+                                        break;
+                                    case "H":
+                                        edificar("hotel");
+                                        break;
+                                    case "P":
+                                        edificar("piscina");
+                                        break;
+                                    case "D":
+                                        edificar("pista deportes");
+                                        break;
+                                }
+                            }else {
+                                System.out.print("No es posible edificar una casilla de "+ tipo + " en esta casilla");
+                            }
+
+
                         }
 
                     }
 
                     // Reducir el contador de lanzamientos restantes y volver a tirar los dados
                     lanzamientosRestantes--;
-                    valorTirada = this.dado1.tirarDado();
-                    puedeLanzar = (valorTirada > 4);
+                    //SI EL DADO ES TRUCADO  HAY QUE ELEGIR LOS NUMEROS
+                    if(trucado){
+                        System.out.print("introduce el valor del primer dado ");
+                        Scanner scanner3 = new Scanner(System.in);
+                        int dado1 = scanner3.nextInt();
+                        System.out.print("introduce el valor del segundo dado ");
+                        int dado2 = scanner3.nextInt();
+                        valorTirada = dado1+ dado2;
+                    } else {
+                        //los porcentajes es para asegurar que el numero es valido
+                        valorTirada = this.dado1.tirarDado()%7 + this.dado2.tirarDado()%7;
+                    }
                 }
 
                 if (valorTirada <= 4) {
@@ -1726,6 +1775,12 @@ public class Menu {
 
                 break;
             case "pelota":
+                /*
+                LA PELOTA SI EL RESULTADO ES MAYOR QUE 4 SE MUEVE LAS CASILLAS DE FORMA NORMAL PERO EJECUTA LAS ACCIONES
+                DE LAS CASILLAS IMPARES QUE HAY DE CAMINO ES DECIR PAGA IMPUESTOS, EJECUTA CARTAS, ALQUILERES IR CARCEL COMPRAR
+
+                SI SACA MENOS DE 4 ESTA HARA LO MISMO PERO MARCHA ATRAS
+                 */
                 int incremento = (valorTirada > 4) ? 1 : -1;
                 int posicionFinal =   (posicionActual + valorTirada * incremento)% 40;
                 int posicion_inicial = posicionActual;
@@ -1734,7 +1789,7 @@ public class Menu {
                     jugador.getAvatar().moverAvatar(this.tablero.getPosiciones(),incremento);
                     posicionActual= jugador.getAvatar().getLugar().getPosicion();
                     if (posicionActual%2 == 1){
-                        System.out.print("LLego hasta aqui");
+
                         verTablero();
                         if(evaluarCasilla(jugador.getAvatar().getLugar())) {
                             if (!jugador.isEnCarcel()) {
