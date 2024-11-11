@@ -3,6 +3,9 @@ package monopoly;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Collections; // Lo usamos para barajar las cartas
+import java.util.Iterator;
+
+
 
 import partida.Avatar;
 import partida.Dado;
@@ -247,37 +250,47 @@ public class Menu {
         Casilla casilla = jugador.getAvatar().getLugar(); // Obtener la casilla donde se encuentra el jugador
 
         // Verificar si la casilla es del tipo correcto (solar)
-        if (!casilla.getNombre().equals(solar)) {
-            System.out.println("No se pueden vender " + tipo + " en " + solar + ". Esta propiedad no pertenece a " + jugador.getNombre() + ".");
-            return; // Salir si la propiedad no pertenece al jugador
-        }
+        if (casilla.getDuenho().equals(jugador)) {
+            if (casilla.getTipo().equals("Solar")) {
+                ArrayList<Edificio> eds = casilla.getEdificiosPorTipo(tipo);
+                int tamaño = eds.size();
+                
+                if (tamaño >= n) {
+                    float suma = 0.0f;
+                    Iterator<Edificio> iterator = eds.iterator();
+                    int count = 0;
 
-        if(casilla.getDuenho().equals(jugador)){
-            ArrayList<Edificio> eds = casilla.getEdificiosPorTipo(tipo); // Obtener edificios del tipo especificado
-            if (eds.size() >= n) { // Comprobar si hay suficientes edificios para vender
-                float suma = 0;
-                for(int i=n-1; i>=0; i--){ //odio java
-                    eds.remove(i);
-                    suma+=eds.get(i).getCoste();
-                }   
-                this.banca.sumarFortuna(-suma); // Restar de la fortuna de la banca
-                jugador.sumarFortuna(suma); // Sumar a la fortuna del jugador
+                    // Usamos el iterador para eliminar los edificios, motivo nº 01974182347123 de porqé odio java
+                    while (iterator.hasNext() && count < n) {
+                        Edificio edificio = iterator.next();
+                        suma += edificio.getCoste();
+                        iterator.remove();
+                        count++;
+                    }
 
-                // Mensaje de éxito
-                System.out.println("El jugador " + jugador.getNombre() + " ha vendido " + n + " " + tipo + " en " + solar + ", recibiendo " + suma + "€. En la propiedad queda " + (eds.size() - n) + " " + tipo + ".");
-            } else {
-                // Si no hay suficientes edificios para vender, mostrar mensaje
-                if (eds.size() > 0) {
-                    System.out.println("Solamente se puede vender " + eds.size() + " " + tipo + ", recibiendo " + (eds.size() > 0 ? (eds.get(0).getCoste() / 2) * eds.size() : 0) + "€.");
-                } else {
-                    System.out.println("No hay " + tipo + " para vender en " + solar + ".");
+                    this.banca.sumarFortuna(-suma); // Restar de la fortuna de la banca
+                    jugador.sumarFortuna(suma); 
+                    System.out.println("El jugador " + jugador.getNombre() + " ha vendido " + 
+                                    n + " " + tipo + " en " + solar + ", recibiendo " + suma + 
+                                    "€. En la propiedad queda " + eds.size() + " " + tipo + ".");
+                } 
+                else if(tamaño==0){
+                    System.out.println("No puedes vender ninguna propiedad del tipo "+tipo+
+                    " porque no hay ninguna en la casilla "+ solar);
                 }
+                
+                else {
+                    System.out.println("Solamente se puede vender " + eds.size() + " " + tipo + 
+                                    ", recibiendo " + (eds.size() > 0 ? (eds.get(0).getCoste() / 2) * eds.size() : 0) + "€.");
+                }
+            } else {
+                System.out.println("El tipo de edificio introducido no es válido (<casa, hotel, piscina, pista de deporte>.)");   
             }
-        }
-        else{
-            System.out.println("No puedes vender las propiedades porque no te pertencen.");
+        } else {
+            System.out.println("No puedes vender las edificaciones de esta propiedad porque no te pertenece.");
         }
     }
+
 
 
 
