@@ -251,49 +251,23 @@ public class Casilla {
 
         return contador;
     }
+    
+    
 
-    //funcion por si se pasa de número total de propiedades del grupo
-    public int contarTodasPropiedadesGrupo(Grupo grupo){
-        int contador=0;
-
-        for (Casilla c: grupo.getMiembrosGrupo()){
-            contador+=c.contarTipoPropiedadesCasilla("casa");
-            contador+=c.contarTipoPropiedadesCasilla("hotel");
-            contador+=c.contarTipoPropiedadesCasilla("piscina");
-            contador+=c.contarTipoPropiedadesCasilla("pista de deporte");
-        }
-
-        return contador;
-    }
-
-
-    public boolean noSuperaMaximoPropiedadesPorGrupo() {
-        int max = this.getGrupo().getNumCasillasGrupo(); // Obtener el número de casillas del grupo
-
-        // Contar el número total de edificaciones de cada tipo
-        int totalCasas = this.contarTipoPropiedadesGrupos("casa", this.getGrupo());
-        int totalHoteles = this.contarTipoPropiedadesGrupos("hotel", this.getGrupo());
-        int totalPiscinas = this.contarTipoPropiedadesGrupos("piscina", this.getGrupo());
-        int totalPistas = this.contarTipoPropiedadesGrupos("pista de deporte", this.getGrupo());
-
-        // Comprobar que no se excede el máximo para cada tipo de edificación
-        if ((totalCasas > max && totalHoteles >max && totalPiscinas > max && totalPistas > max)||
-         contarTodasPropiedadesGrupo(this.grupo)>4*max) {
-            return false; // No se supera el máximo permitido
-        }
-        return true; // Se ha superado el máximo permitido
-    }
 
 
     // Verifica si es posible edificar una propiedad del tipo dado
     public boolean esEdificable(String tipo, Jugador solicitante) {
-        if (this.getDuenho().equals(solicitante) && solicitante.getAvatar().getLugar().equals(this)) {
             if(!this.getGrupo().estaHipotecadoGrupo()){
-                if (noSuperaMaximoPropiedadesPorGrupo()) {
                     switch (tipo) {
                         case "casa":
                             if (this.contarTipoPropiedadesCasilla("casa") < 4) {
-                                return true;
+                                if(this.contarTipoPropiedadesCasilla("hotel")==this.getGrupo().getNumCasillasGrupo()
+                                && this.contarTipoPropiedadesCasilla("casa")==this.getGrupo().getNumCasillasGrupo()){
+                                    System.out.println("Has alcanzado el número máximo de casas en el grupo "+this.getGrupo().getColorGrupo());
+                                    return false;
+                                }
+                                return true; //java tremebunda basura
                             }
                             else{
                                 System.out.println("No puedes construir más casas, debes construir un hotel.");
@@ -302,7 +276,12 @@ public class Casilla {
                             }
 
                         case "hotel":
-                            if (this.contarTipoPropiedadesCasilla("casa") > 3) {
+                            //criticadme por mis métodos pero no por mis resultados
+                            if (this.contarTipoPropiedadesCasilla("casa") > 3 || this.contarTipoPropiedadesCasilla("hotel")==this.getGrupo().getNumCasillasGrupo()) {
+                                if(this.contarTipoPropiedadesCasilla("hotel")==this.getGrupo().getNumCasillasGrupo()){
+                                    System.out.println("Has alcanzado el número máximo de hoteles en el grupo "+this.getGrupo().getColorGrupo());
+                                    return false;
+                                }
                                 return true;
                             }
                             else{
@@ -313,6 +292,10 @@ public class Casilla {
 
                         case "piscina":
                             if (this.contarTipoPropiedadesCasilla("hotel") > 0 && this.contarTipoPropiedadesCasilla("casa") > 1) {
+                                if(this.contarTipoPropiedadesCasilla("piscina")==this.getGrupo().getNumCasillasGrupo()){
+                                    System.out.println("Has alcanzado el número máximo de piscinas en el grupo "+this.getGrupo().getColorGrupo());
+                                    return false;
+                                }
                                 return true;
                             }
                             else{
@@ -322,6 +305,10 @@ public class Casilla {
 
                         case "pista de deporte":
                             if (this.contarTipoPropiedadesCasilla("hotel") > 1) {
+                                if(this.contarTipoPropiedadesCasilla("pista de deporte")==this.getGrupo().getNumCasillasGrupo()){
+                                    System.out.println("Has alcanzado el número máximo de pistas de deporte en el grupo "+this.getGrupo().getColorGrupo());
+                                    return false;
+                                }
                                 return true;
                             }
                             else{
@@ -334,21 +321,12 @@ public class Casilla {
                             System.out.println("Tipo de edificación inválido. Introduce casa, hotel, piscina o pista de deporte.");
                             return false;
                     }
-                }
-                else{
-                    System.out.println("No puedes edificar porque has alcanzado el límite de propiedades de este grupo.");
-                    return false;
-                }
+                
             }
             else{
                 System.out.println("No puedes edificar porque la casilla (o alguna casilla de su grupo) está hipotecada");
                 return false;
             }
-        }
-        else{
-            System.out.println("hdfasdjfhasdkj");
-            return false;
-        }
     }
 
  
