@@ -140,17 +140,13 @@ public class Menu {
         Casilla casilla= tablero.encontrar_casilla(nombre);
         Jugador jugador= obtenerTurno();
         if(casilla.getDuenho().equals(jugador)){
-            if(!casilla.estaHipotecada()){
-                casilla.hipotecar();
+            if(casilla.esHipotecable()){
                 System.out.println("El jugador "+ jugador.getNombre()+" recibe "+ casilla.getHipoteca()+
                 " por la hipoteca de " + casilla.getNombre()+
                 ". No puede recibir alquileres ni edificar en el grupo "+ casilla.getGrupo().getColorGrupo());
                 jugador.sumarFortuna(casilla.getHipoteca());
                 banca.sumarFortuna(-casilla.getHipoteca());
             }        
-            else{
-                System.out.println("No puedes hipotecar esta propiedad porque ya está hipotecada.");
-            }
         }
         else{
             System.out.println("El jugador "+jugador.getNombre() +" no puede hipotecar "
@@ -163,16 +159,12 @@ public class Menu {
         Jugador jugador =obtenerTurno();
         if(casilla.getDuenho().equals(jugador)){
             if(casilla.getHipoteca()<=jugador.getFortuna()){
-                if(casilla.estaHipotecada()){
-                    casilla.desHipotecar();
+                if(casilla.esDesHipotecable()){
                     System.out.println("El jugador "+ jugador.getNombre()+" paga "+ (casilla.getHipoteca()+casilla.getHipoteca()*0.10f)+
                     " por la hipoteca de " + casilla.getNombre()+
                     ". Ahora puede recibir alquileres y edificar en el grupo "+ casilla.getGrupo().getColorGrupo());
                     jugador.sumarFortuna(-(casilla.getHipoteca()+casilla.getHipoteca()*0.10f));
                     banca.sumarFortuna((casilla.getHipoteca()+casilla.getHipoteca()*0.10f));
-                }
-                else{
-                    System.out.println("No puedes deshipotecar esta propiedad porque no está hipotecada.");
                 }
             }
             else{
@@ -191,26 +183,37 @@ public class Menu {
         Jugador jugador = obtenerTurno(); // Obtener el jugador cuyo turno es actualmente
         Casilla casilla = jugador.getAvatar().getLugar(); // Obtener la casilla en la que se encuentra el jugador
 
-        if (casilla.esEdificable(tipo, jugador)) {
-            Edificio edificio = new Edificio(tipo, casilla);
+        //modificar if para que sea dueño del grupo
+        //En un solar se puede construir una casa si dicho solar pertenece al jugador cuyo avatar se encuentra
+        //en la casilla y si (1) el avatar ha caído más de dos veces en esa misma casilla o (2) el jugador posee el
+        //grupo de casillas a la que pertenece dicha casilla.
 
-            if (jugador.getFortuna() >= edificio.getCoste()) {
-                casilla.anhadirEdificio(edificio); // Añadir el edificio a la casilla
-                jugador.sumarGastos(edificio.getCoste()); // Restar el coste del edificio
-                jugador.sumarFortuna(-edificio.getCoste()); // Reducir la fortuna del jugador
-                this.banca.sumarFortuna(edificio.getCoste()); // Aumentar la fortuna de la banca
 
-                System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
-                        edificio.getId() + " por " +edificio.getCoste());
+        if(casilla.getDuenho().equals(jugador)){
+            if (casilla.esEdificable(tipo, jugador)) {
+                Edificio edificio = new Edificio(tipo, casilla);
 
-                // Si es un hotel, eliminar todas las casas de la casilla
-                if (tipo.equals("hotel")) {
-                    casilla.eliminarCasasDeCasilla();
+                if (jugador.getFortuna() >= edificio.getCoste()) {
+                    casilla.anhadirEdificio(edificio); // Añadir el edificio a la casilla
+                    jugador.sumarGastos(edificio.getCoste()); // Restar el coste del edificio
+                    jugador.sumarFortuna(-edificio.getCoste()); // Reducir la fortuna del jugador
+                    this.banca.sumarFortuna(edificio.getCoste()); // Aumentar la fortuna de la banca
+
+                    System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
+                            edificio.getId() + " por " +edificio.getCoste());
+
+                    // Si es un hotel, eliminar todas las casas de la casilla
+                    if (tipo.equals("hotel")) {
+                        casilla.eliminarCasasDeCasilla();
+                    }
+                } else {
+                    System.out.println("No tienes suficiente dinero para edificar.");
                 }
-            } else {
-                System.out.println("No tienes suficiente dinero.");
-            }
-        } 
+            } 
+        }
+        else{
+            System.out.println("No puedes edificar en esta casilla porque no te pertenece.");
+        }
     }
 
 
@@ -487,13 +490,13 @@ public class Menu {
                     else if("pistadedeporte".equals(comando[1]+comando[2]+comando[3])) {
                         // Comandos de edificar, hipotecar, deshipotecar PARA PISTA DE DEPORTE
                         if("edificar".equals(comando[0])) {
-                            edificar("pistadedeporte");
+                            edificar("pista de deporte");
                         }
                         else if("hipotecar".equals(comando[0])) {
-                            hipotecar("pistadedeporte");
+                            hipotecar("pista de deporte");
                         }
                         else if("deshipotecar".equals(comando[0])) {
-                            deshipotecar("pistadedeporte");
+                            deshipotecar("pista de deporte");
                         }
                         else {
                             System.out.println(comando_entero + " no es un comando válido.");
@@ -501,6 +504,9 @@ public class Menu {
                     }
                     else if("crearjugador".equals(comando[0] + comando[1])){
                         System.out.println("No se pueden crear más jugadores con la partida empezada.");
+                    }
+                    else{
+                        System.out.println("Comando inválido. Si esta relacionado con edificaciones recuerda <casa, hotel, piscina, pista de deporte>.");
                     }
                 }
 
@@ -837,7 +843,7 @@ public class Menu {
                             System.out.println("La casilla " + nombreCasilla + " está a la venta.\n");
                         }
                     } else {
-                        System.out.println("La casilla " + nombreCasilla +   " No es necesario pagar el alquiler.");
+                        System.out.println("La casilla " + nombreCasilla +   " esta hipotecada. No es necesario pagar el alquiler.");
                     }
                     break;
 
@@ -1720,7 +1726,7 @@ public class Menu {
                         Scanner scanner = new Scanner(System.in);
                         if (scanner.nextInt() == 1) {
                             //Le preguntamos el tipo de edificacion
-                            System.out.print("Los tipos de edificacion son 'C' casa, 'H' hotel, 'P' piscina, 'D' pista deportes \n");
+                            System.out.print("Los tipos de edificacion son 'C' casa, 'H' hotel, 'P' piscina, 'D' pista de deporte \n");
                             System.out.print("¿Que quieres edificar?");
                             Scanner scanner2 = new Scanner(System.in);
                             String tipo = scanner2.next();
@@ -1738,7 +1744,7 @@ public class Menu {
                                         edificar("piscina");
                                         break;
                                     case "D":
-                                        edificar("pista deportes");
+                                        edificar("pista de deporte");
                                         break;
                                 }
                             }else {

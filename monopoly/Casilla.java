@@ -100,33 +100,44 @@ public class Casilla {
 
     //SECCION DE HIPOTECAR
 
-    public boolean estaHipotecada(){
+    public boolean estaHipotecada() {
         return estaHipotecada;
     }
 
-    public void hipotecar() {
-        boolean sinEdificios = true;
-        for (ArrayList<Edificio> tipoEdificio : this.edificios) {
-            if (!tipoEdificio.isEmpty()) {
-                sinEdificios = false;
-                break;
+    public boolean esHipotecable() {
+        if (!estaHipotecada) { // Simplificación de la condición
+            boolean sinEdificios = true;
+
+            for (ArrayList<Edificio> tipoEdificio : this.edificios) {
+                if (!tipoEdificio.isEmpty()) {
+                    sinEdificios = false;
+                    break;
+                }
             }
-        }
-        if (!sinEdificios) {
-            System.out.println("No puedes hipotecar la casilla " + this.getNombre() + " porque tienes que vender todas tus edificaciones.");
+
+            if (!sinEdificios) {
+                System.out.println("No puedes hipotecar la casilla " + this.getNombre() + " porque tienes que vender todas tus edificaciones.");
+                return false; // Corregido: aquí debe devolver `false` para indicar que no se puede hipotecar
+            } else {
+                estaHipotecada = true;
+                return true; // Retorna `true` si la propiedad fue hipotecada exitosamente
+            }
         } else {
-            this.estaHipotecada = true;
+            System.out.println("No puedes hipotecar esta propiedad porque ya está hipotecada.");
+            return false;
         }
     }
 
-    public void desHipotecar(){
-        
-        this.estaHipotecada=false;
-        
+    public boolean esDesHipotecable() {
+        if(estaHipotecada){
+            this.estaHipotecada = false;
+            return true;
+        }
+        else{
+            System.out.println("No puedes deshipotecar esta propiedad porque no está hipotecada.");
+            return false;
+        }
     }
-
-
-
 
 
     //SECCION DE BUILDEAR Y COMPRAR EDIFICIOS
@@ -186,10 +197,9 @@ public class Casilla {
                 return 1;
             case "piscina":
                 return 2;
-            case "pista deportes":
+            case "pista de deporte":
                 return 3;
             default:
-                System.out.println("Error: Tipo de edificación no válido");
                 return -1;
         }
     }
@@ -247,7 +257,7 @@ public class Casilla {
             contador+=c.contarTipoPropiedadesCasilla("casa");
             contador+=c.contarTipoPropiedadesCasilla("hotel");
             contador+=c.contarTipoPropiedadesCasilla("piscina");
-            contador+=c.contarTipoPropiedadesCasilla("pista deportes");
+            contador+=c.contarTipoPropiedadesCasilla("pista de deporte");
         }
 
         return contador;
@@ -261,7 +271,7 @@ public class Casilla {
         int totalCasas = this.contarTipoPropiedadesGrupos("casa", this.getGrupo());
         int totalHoteles = this.contarTipoPropiedadesGrupos("hotel", this.getGrupo());
         int totalPiscinas = this.contarTipoPropiedadesGrupos("piscina", this.getGrupo());
-        int totalPistas = this.contarTipoPropiedadesGrupos("pista deportes", this.getGrupo());
+        int totalPistas = this.contarTipoPropiedadesGrupos("pista de deporte", this.getGrupo());
 
         // Comprobar que no se excede el máximo para cada tipo de edificación
         if ((totalCasas > max && totalHoteles >max && totalPiscinas > max && totalPistas > max)||
@@ -307,23 +317,23 @@ public class Casilla {
                                 return false;
                             }
 
-                        case "pista deportes":
+                        case "pista de deporte":
                             if (this.contarTipoPropiedadesCasilla("hotel") > 1) {
                                 return true;
                             }
                             else{
 
-                                System.out.println("No puedes construir una pista de deportes, necesitas al menos 2 hoteles.");
+                                System.out.println("No puedes construir una pista de deporte, necesitas al menos 2 hoteles.");
                                 return false;
                             }
 
                         default:
-                            System.out.println("Tipo de edificación inválido.");
+                            System.out.println("Tipo de edificación inválido. Introduce casa, hotel, piscina o pista de deporte.");
                             return false;
                     }
                 }
                 else{
-                    System.out.println("ñlñlkñljasñljñljañ");
+                    System.out.println("No puedes edificar porque has alcanzado el límite de propiedades de este grupo.");
                     return false;
                 }
             }
@@ -393,7 +403,7 @@ public class Casilla {
         String str = ""; // Inicializar la cadena vacía
 
         // Recorrer cada tipo de edificación y listarlas
-        String[] tipos = {"casa", "hotel", "piscina", "pista deportes"};
+        String[] tipos = {"casa", "hotel", "piscina", "pista de deporte"};
         for (String tipo : tipos) {
             ArrayList<Edificio> edificios = getEdificiosPorTipo(tipo);
             if (!edificios.isEmpty()) {

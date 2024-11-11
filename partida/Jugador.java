@@ -251,7 +251,7 @@ public class Jugador {
 
             // Imprimir edificios
             System.out.println("\tEdificios: {");
-            String[] tipos = {"casa", "hotel", "piscina", "pista deportes"};
+            String[] tipos = {"casa", "hotel", "piscina", "pista de deporte"};
             for (int i = 0; i < this.getPropiedades().size(); i++) {
                 if( this.getPropiedades().get(i).getTipo().equals("Solar"));
                 {
