@@ -15,12 +15,10 @@ public class Avatar {
     private Casilla lugar; //Los avatares se sitúan en casillas del tablero.
     private boolean movimientoAvanzado; //TRUE si el avatar está en modo de movimiento avanzado.
     private ArrayList<Avatar> avCreados;
+    private int bloqueado; //Valor para casos en los que hay que bloquear algún comando en el turno
 
-    //SECCIÓN DE CONSTRUCTORES DE AVATAR
-    
-    //Constructor vacío
-    public Avatar() {
-    }
+
+    //SECCIÓN DE CONSTRUCTORES DE AVATAR--------------------------------------------------------------------------------
     
     /**
      * Constructor principal.
@@ -38,11 +36,9 @@ public class Avatar {
         this.avCreados = avCreados;
         generarId(avCreados);
         this.avCreados.add(this);
+        this.bloqueado=0;
     }
-   
-    
-    //SECCIÓN DE MÉTODOS ÚTILES DE AVATAR
-    
+
     /**
      * Método que permite generar un ID para un avatar. Sólo lo usamos en esta clase (por ello es privado).
      * El ID generado será una letra mayúscula entre A y Z.
@@ -53,11 +49,11 @@ public class Avatar {
         Random num = new Random();
         String ID;
         boolean repetido = true;
-        
+
         while (repetido) {
             repetido = false;
             ID = String.valueOf((char) (num.nextInt(26) + 'A'));
-            
+
             for (Avatar a : avCreados) {
                 if (a != null && a.getId().equals(ID)) {
                     repetido = true;
@@ -69,7 +65,27 @@ public class Avatar {
             }
         }
     }
+
+
     
+    //SECCIÓN DE MÉTODOS ÚTILES DE AVATAR-------------------------------------------------------------------------------
+
+    /**Método que imprime la información sobre el avatar.*/
+    public void infoAvatar() {
+        String str = "{\n\tID: " + this.id + "\n" +
+                "\tTipo: " + this.tipo + "\n" +
+                "\tJugador: " + this.jugador.getNombre() + "\n" +
+                "\tCasilla: " + this.lugar.getNombre() + "\n}";
+
+        // Imprimir directamente el string
+        System.out.println(str);
+    }
+
+    /**Método para cambiar el tipo de movimiento del avatar.*/
+    public void cambiarMovimiento() {
+        this.movimientoAvanzado = !this.movimientoAvanzado;
+    }
+
     /**
      * Método que permite mover a un avatar a una casilla concreta.
      * Este método no comprueba si se pasa por la Salida ni hace el ingreso correspondiente.
@@ -92,7 +108,6 @@ public class Avatar {
             nuevaPosicion = 40 + ( (posicionActual + valorTirada) % 40 );
         }
 
-
         // Eliminar el avatar de la casilla actual
         this.lugar.eliminarAvatar(this);
 
@@ -104,15 +119,13 @@ public class Avatar {
                     break;
                 }
             }
-            
         }
 
         // Añadir el avatar a la nueva casilla
         this.lugar.anhadirAvatar(this);
     }
 
-
-    //SECCIÓN DE GETTERS Y SETTERS DE AVATAR
+    //SECCIÓN DE GETTERS Y SETTERS DE AVATAR----------------------------------------------------------------------------
     public String getId() {
         return id;
     }
@@ -155,23 +168,4 @@ public class Avatar {
         return movimientoAvanzado;
     }
 
-    public void cambiarMovimiento() {
-        this.movimientoAvanzado = !this.movimientoAvanzado;
-    }
-
-
-    //SECCIÓN QUE DEVUELVE INFORMACIÓN DE AVATAR
-    public void infoAvatar() {
-        String str = "{\n\tID: " + this.id + "\n" +
-                "\tTipo: " + this.tipo + "\n" +
-                "\tJugador: " + this.jugador.getNombre() + "\n" +
-                "\tCasilla: " + this.lugar.getNombre() + "\n}";
-
-        // Imprimir directamente el string
-        System.out.println(str);
-    }
-
 }
-        
-
-

@@ -6,7 +6,7 @@ public class Carta {
     // ATRIBUTOS
     private ArrayList<String> texto;
     String tipo;
-    int indice;
+    int ID;
 
     // CONSTRUCTORES
     /**
@@ -21,7 +21,7 @@ public class Carta {
     public Carta(String texto, String tipo, int indice) {
         this.texto = new ArrayList<String>();
         setTipo(tipo);
-        this.indice = indice;
+        this.ID = indice;
 
         //Borde superior
         this.texto.add(Texto.CARTA_BORDESUP);
@@ -52,7 +52,7 @@ public class Carta {
 
         //Inicializamos el resto de atributos a unos valores por defecto
         this.tipo="";
-        this.indice=0;
+        this.ID =0;
     }
 
     //GETTERS Y SETTERS
@@ -73,8 +73,8 @@ public class Carta {
         }
     }
 
-    public int getIndice() {
-        return this.indice;
+    public int getID() {
+        return this.ID;
     }
 
 

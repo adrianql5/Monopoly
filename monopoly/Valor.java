@@ -1,6 +1,5 @@
 package monopoly;
 
-
 public class Valor {
     // Estos 3 venían dados
     public static final float FORTUNA_BANCA = 372642563;

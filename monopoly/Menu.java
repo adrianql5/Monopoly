@@ -385,6 +385,9 @@ public class Menu {
             //Cambiar el modo de movimiento del avatar
             case "cambiar modo": cambiarModo(); break;
 
+            //Estadísticas de la partida (generales)
+            case "estadisticas": estadisticasGenerales(); break;
+
             //Listar todas las propiedades en venta
             case "listar enventa": listarVenta(); break;
 
@@ -697,6 +700,57 @@ public class Menu {
         }
 
     }
+
+    /**Método que mueve el avatar de jugador en el tablero (gestiona si está en modo normal o modo avanzado).
+     * Llama a evaluarCasilla() para realizar las acciones que corresponden.
+     * @param jugador Jugador cuyo avatar hay que mover
+     * @param tirada Suma del resultado al tirar los dados
+     */
+    private void mover(Jugador jugador, int tirada) {
+        //Establecemos el avatar, ya que lo usaremos varias veces directamente
+        Avatar avatar = jugador.getAvatar();
+
+        //Comprobamos si el jugador está en movimiento avanzado o normal
+        if(!avatar.getMovimientoAvanzado()) {
+            //Si está en movimiento normal simplemente movemos el valor de la tirada y evaluamos la casilla
+        }
+        else {
+            //Si el jugador está en movimiento avanzado movemos de una manera u otra en función del tipo de avatar
+            switch(avatar.getTipo()) {
+                case "coche":
+                    /*
+                    EL COCHE PUEDE TIRAR HASTA 4 VECES MIENTRAS EL RESULTADO DE LOSS DADOS SEA MAYOR QUE 4
+                    SOLO PUEDE COMPRAR 1 CASILLA EN ESOS 3 LANZAMIENTOS MAXIMOS
+                    PUEDE EDIFICAR LAS VECES QUE QUIERA
+                    SI SACA MENOS DE 4 NO PUEDE LANZAR EN 2 TURNOS (PERO PUEDE EJECUTAR EL RESTO DE ACCIONES)
+                     */
+
+                    break;
+                case "pelota":
+                    // SI VALORTIRADA > 4: VA PARANDO EN LAS CASILLAS IMPARES A PARTIR DE 5 HASTA LLEGAR A VALORTIRADA
+                    // EN CADA CASILLA QUE PARA SE EJECUTAN LAS ACCIONES CORRESPONDIENTES (INCLUIDO EL DESTINO FINAL)
+                    if(tirada > 4) {
+
+                    }
+                    // SI VALORTIRADA <= 4: RETROCEDE ESE NÚMERO DE CASILLAS
+                    else {
+                        avatar.moverAvatar(this.tablero.getPosiciones(), -tirada);
+                        evaluarCasilla(avatar.getLugar());
+                    }
+                    break;
+                case "esfinge":
+                    // SE IMPLEMENTA EN LA TERCERA ENTREGA
+                    break;
+
+                case "sombrero":
+                    // SE IMPLEMENTA EN LA TERCERA ENTREGA
+                    break;
+
+                default: System.out.println("Caso no reconocido."); break;
+            }
+        }
+    }
+
     private void lanzarDadoAvanzados() {
 
         //Obtenemos el avatar que tiene el turno
@@ -914,7 +968,7 @@ public class Menu {
                     System.out.printf("Debes pagar tus impuestos a la banca: %,.0f€\n", impuestoCasilla);
                     jugadorActual.sumarGastos(impuestoCasilla);
                     jugadorActual.restarFortuna(impuestoCasilla);
-                    jugadorActual.getEstadisticas().sumartImpuestosPagados(impuestoCasilla);
+                    jugadorActual.getEstadisticas().sumarImpuestosPagados(impuestoCasilla);
                     //NO SE SI EST UN GASTO
                     jugadorActual.sumarGastos(impuestoCasilla);
 
@@ -1304,7 +1358,7 @@ public class Menu {
         int posicion = avatarActual.getLugar().getPosicion();
 
         if(carta.getTipo().equals("Suerte")) {
-            switch(carta.getIndice()) {
+            switch(carta.getID()) {
                 case 1: //Ir a Transportes1 (pos=5). Si pasas por la Salida cobrar
                     //Siempre se pasa por la salida ya que no hay ninguna casilla Suerte entre la Salida y Trans1
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), 45-posicion);
@@ -1334,7 +1388,7 @@ public class Menu {
             }
         }
         else if(carta.getTipo().equals("Caja")) {
-            switch(carta.getIndice()) {
+            switch(carta.getID()) {
                 case 1: //Pagar 500.000€ (a la banca)
                     jugadorActual.restarFortuna(500000);
                     this.banca.sumarFortuna(500000);
@@ -1656,7 +1710,7 @@ public class Menu {
 
     /**Método que transforma un String a un entero si el String es un número entre 1 y 6.
      * Si no es un número válido imprime un mensaje de error y devuelve 0.
-     * Método auxiliar para leerDadoValido() pero que también sirve para dadosTrampa().
+     * Método auxiliar para leerDadoValido() pero que también sirve para antes de llamar a dadosTrampa().
      */
     public int dadoValido(String numero) {
         // Función .matches() para ver si los caracteres de un String son del tipo indicado
@@ -1702,7 +1756,8 @@ public class Menu {
                 "sombrero".equals(tipo) ||
                 "pelota".equals(tipo);
     }
-    public void moverpersonajes(Jugador jugador, int valorTirada, boolean trucado){
+
+    public void moverpersonajes(Jugador jugador, int valorTirada, boolean trucado) {
         //pillamos la casilla donde se encuentra y su valor en posicion de dicha casilla
         Casilla posicionActualC = jugador.getAvatar().getLugar();
         int posicionActual = posicionActualC.getPosicion();
@@ -1725,14 +1780,14 @@ public class Menu {
                     posicionActual = jugador.getAvatar().getLugar().getPosicion();
 
                     // SI NO HA COMPRADO , LA CASILLA ES COMPRABLE O LA CASILA LE PERTENECE
-                    if (!haComprado && jugador.getAvatar().getLugar().esTipoComprable() || jugador.getNombre().equals( jugador.getAvatar().getLugar().getDuenho().getNombre()) ) {
+                    if (!haComprado && jugador.getAvatar().getLugar().esTipoComprable() || jugador.getNombre().equals(jugador.getAvatar().getLugar().getDuenho().getNombre())) {
                         //HACE LA ACCION DE LA CASILLA EN EVALUAR
-                        if( evaluarCasilla(jugador.getAvatar().getLugar())){
+                        if (evaluarCasilla(jugador.getAvatar().getLugar())) {
                             //YA QUE NO PODEMOS ACCEDER AL ANALIZADOR DE COMANDOS
                             //PREGUNTAMOS SI QUIERE COMPRAR Y LLAMAMOS COMPRAR DESDE AQUI
                             Scanner scanner = new Scanner(System.in);
                             System.out.print("¿Quieres comprar la casilla " + jugador.getAvatar().getLugar().getNombre() + "? (0/1): ");
-                           //SI QUIERE COMPRAR == 1 HACE LO SIGUIENTE
+                            //SI QUIERE COMPRAR == 1 HACE LO SIGUIENTE
                             if (scanner.nextInt() == 1) {
                                 comprar(jugador.getAvatar().getLugar().getNombre());
                                 haComprado = true; // Marca que ya se ha realizado una compra en este turno
@@ -1744,7 +1799,7 @@ public class Menu {
                     // Permitir edificación en cada intento
                     String nombre_casilla = obtenerTurno().getAvatar().getLugar().getNombre();
                     //ES EDIFICABLE MIRA SI ES EL DUENHO Y SI ES POSIBLE EDIFICAR EN ELLA
-                    if( obtenerTurno().getAvatar().getLugar().esEdificable(nombre_casilla,obtenerTurno())){
+                    if (obtenerTurno().getAvatar().getLugar().esEdificable(nombre_casilla, obtenerTurno())) {
                         System.out.print("¿Quieres edificar en esta casilla? (0/1): ");
                         Scanner scanner = new Scanner(System.in);
                         if (scanner.nextInt() == 1) {
@@ -1754,9 +1809,9 @@ public class Menu {
                             Scanner scanner2 = new Scanner(System.in);
                             String tipo = scanner2.next();
                             //el if comprueba que sea posible eddificar el tipo elegido
-                            if(obtenerTurno().getAvatar().getLugar().esEdificable(tipo,obtenerTurno())){
+                            if (obtenerTurno().getAvatar().getLugar().esEdificable(tipo, obtenerTurno())) {
                                 //EDIFICA EL TIPO ELEGIDO
-                                switch (tipo){
+                                switch (tipo) {
                                     case "C":
                                         edificar("casa");
                                         break;
@@ -1770,8 +1825,8 @@ public class Menu {
                                         edificar("pista de deporte");
                                         break;
                                 }
-                            }else {
-                                System.out.print("No es posible edificar una casilla de "+ tipo + " en esta casilla");
+                            } else {
+                                System.out.print("No es posible edificar una casilla de " + tipo + " en esta casilla");
                             }
 
 
@@ -1782,16 +1837,16 @@ public class Menu {
                     // Reducir el contador de lanzamientos restantes y volver a tirar los dados
                     lanzamientosRestantes--;
                     //SI EL DADO ES TRUCADO  HAY QUE ELEGIR LOS NUMEROS
-                    if(trucado){
+                    if (trucado) {
                         System.out.print("introduce el valor del primer dado ");
                         Scanner scanner3 = new Scanner(System.in);
                         int dado1 = scanner3.nextInt();
                         System.out.print("introduce el valor del segundo dado ");
                         int dado2 = scanner3.nextInt();
-                        valorTirada = dado1+ dado2;
+                        valorTirada = dado1 + dado2;
                     } else {
                         //los porcentajes es para asegurar que el numero es valido
-                        valorTirada = this.dado1.tirarDado()%7 + this.dado2.tirarDado()%7;
+                        valorTirada = this.dado1.tirarDado() % 7 + this.dado2.tirarDado() % 7;
                     }
                 }
 
@@ -1811,20 +1866,20 @@ public class Menu {
                 SI SACA MENOS DE 4 ESTA HARA LO MISMO PERO MARCHA ATRAS
                  */
                 int incremento = (valorTirada > 4) ? 1 : -1;
-                int posicionFinal =   (posicionActual + valorTirada * incremento)% 40;
+                int posicionFinal = (posicionActual + valorTirada * incremento) % 40;
                 int posicion_inicial = posicionActual;
 
                 while (posicionActual != posicionFinal) {
-                    jugador.getAvatar().moverAvatar(this.tablero.getPosiciones(),incremento);
-                    posicionActual= jugador.getAvatar().getLugar().getPosicion();
-                    if (posicionActual%2 == 1){
+                    jugador.getAvatar().moverAvatar(this.tablero.getPosiciones(), incremento);
+                    posicionActual = jugador.getAvatar().getLugar().getPosicion();
+                    if (posicionActual % 2 == 1) {
 
                         verTablero();
-                        if(evaluarCasilla(jugador.getAvatar().getLugar())) {
+                        if (evaluarCasilla(jugador.getAvatar().getLugar())) {
                             if (!jugador.isEnCarcel()) {
                                 if (jugador.getAvatar().getLugar().esTipoComprable()) {
                                     Scanner scanner = new Scanner(System.in);
-                                    System.out.print("Quieres comprarla la casilla " + jugador.getAvatar().getLugar().getNombre()+" pon 0/1 segun tu decision: ");
+                                    System.out.print("Quieres comprarla la casilla " + jugador.getAvatar().getLugar().getNombre() + " pon 0/1 segun tu decision: ");
                                     int numero = scanner.nextInt();
                                     if (numero == 1) {
                                         comprar(jugador.getAvatar().getLugar().getNombre());
@@ -1836,7 +1891,7 @@ public class Menu {
                         }
                     }
 
-                    }
+                }
 
                 break;
             case "esfinge":
@@ -1849,9 +1904,10 @@ public class Menu {
                 System.out.println("Caso no reconocido.");
                 break;
 
+        }
+
     }
 
-}
     private void estadisticasGenerales() {
         System.out.println("{");
 
@@ -1868,7 +1924,7 @@ public class Menu {
         }
 
         // Segundo for: construir la lista de nombres de las casillas más visitadas
-        StringBuilder nombresCasillas = new StringBuilder();
+        StringBuilder nombresCasillas = new StringBuilder(); //chat gue pe te
         for (int i = 0; i < 40; i++) {
             casillaAux = tablero.getCasilla(i);
             if (vecesMaxima == casillaAux.getVecesVisitada()) {

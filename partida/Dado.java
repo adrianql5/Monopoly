@@ -7,6 +7,7 @@ public class Dado {
     private int valor;
 
     private Random numeroRandom = new Random();
+
     /**Metodo para simular lanzamiento de un dado: devolverá un valor aleatorio entre 1 y 6.*/
     public int tirarDado() {
         valor= numeroRandom.nextInt(1,7);

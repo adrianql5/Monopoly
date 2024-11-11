@@ -26,12 +26,11 @@ public class Estadisticas {
 
     // Getters y Setters para cada atributo
 
-
     public float getImpuestosPagados() {
         return impuestosPagados;
     }
 
-    public void sumartImpuestosPagados(float impuestosPagados) {
+    public void sumarImpuestosPagados(float impuestosPagados) {
         this.impuestosPagados += impuestosPagados;
     }
 
@@ -43,7 +42,6 @@ public class Estadisticas {
         this.pagoDeAlquileres += pagoDeAlquileres;
     }
 
-
     public float getCobroDeAlquileres() {
         return cobroDeAlquileres;
     }
@@ -51,7 +49,6 @@ public class Estadisticas {
     public void sumarCobroDeAlquileres(float cobroDeAlquileres) {
         this.cobroDeAlquileres += cobroDeAlquileres;
     }
-
 
     public float getDineroSalidaRecaudado() {
         return dineroSalidaRecaudado;
@@ -88,6 +85,7 @@ public class Estadisticas {
     public int getVecesSalida() {
         return vecesSalida;
     }
+
     public void sumarVecesSalida(int vecesSalida) {
         this.vecesSalida += vecesSalida;
     }
