@@ -21,6 +21,8 @@ public class Casilla {
     private ArrayList<ArrayList<Edificio>> edificios;
     private boolean estaHipotecada;
     private boolean ya_se_duplico;
+    private int veces_visitada;
+    private float dinero_recaudado;
 
 
     //SECCIÓN DE CONSTRUCTORES DE CASILLA
@@ -51,6 +53,7 @@ public class Casilla {
             }
         } 
         this.estaHipotecada=false;
+        this.dinero_recaudado = 0;
     }
 
     /**Constructor para casillas de tipo Impuestos.
@@ -715,6 +718,23 @@ public class Casilla {
             totalEdificios += tipoEdificio.size();
         }
         return totalEdificios;
+    }
+
+    // Getter para obtener el valor de veces_visitada
+    public int getVecesVisitada() {
+        return this.veces_visitada;
+    }
+
+    // Setter para establecer el valor de veces_visitada
+    public void sumarVecesVisitada(int vecesVisitada) {
+        this.veces_visitada += vecesVisitada;
+    }
+
+    public float getDinero_recaudado(){
+        return this.dinero_recaudado;
+    }
+    public void sumarDinero_recaudado(float dinero_recaudado){
+        this.dinero_recaudado += dinero_recaudado;
     }
 }
 
