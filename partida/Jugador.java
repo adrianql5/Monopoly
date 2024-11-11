@@ -263,8 +263,7 @@ public class Jugador {
             System.out.println("\tEdificios: {");
             String[] tipos = {"casa", "hotel", "piscina", "pista de deporte"};
             for (int i = 0; i < this.getPropiedades().size(); i++) {
-                if( this.getPropiedades().get(i).getTipo().equals("Solar"));
-                {
+                if( this.getPropiedades().get(i).getTipo().equals("Solar")) {
                     if (0 != this.getPropiedades().get(i).getNumeroEdificios()) {
                         System.out.println("\t\t" + this.getPropiedades().get(i).getNombre() + ": {");
 

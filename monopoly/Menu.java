@@ -183,39 +183,46 @@ public class Menu {
 
 
     public void edificar(String tipo) {
-        Jugador jugador = obtenerTurno(); // Obtener el jugador cuyo turno es actualmente
-        Casilla casilla = jugador.getAvatar().getLugar(); // Obtener la casilla en la que se encuentra el jugador
+        if (esEdificioValido(tipo)) {
+            if (obtenerTurno().getAvatar().getLugar().getTipo().equals("Solar")) {
+                Jugador jugador = obtenerTurno(); // Obtener el jugador cuyo turno es actualmente
+                Casilla casilla = jugador.getAvatar().getLugar(); // Obtener la casilla en la que se encuentra el jugador
 
-        //modificar if para que sea dueño del grupo
-        //En un solar se puede construir una casa si dicho solar pertenece al jugador cuyo avatar se encuentra
-        //en la casilla y si (1) el avatar ha caído más de dos veces en esa misma casilla o (2) el jugador posee el
-        //grupo de casillas a la que pertenece dicha casilla.
+                // En un solar se puede construir una casa si dicho solar pertenece al jugador cuyo avatar se encuentra
+                // en la casilla y si (1) el avatar ha caído más de dos veces en esa misma casilla o (2) el jugador posee el
+                // grupo de casillas al que pertenece dicha casilla.
 
+                if (casilla.getDuenho().equals(jugador)) {
+                    if (casilla.esEdificable(tipo, jugador)) {
+                        Edificio edificio = new Edificio(tipo, casilla);
 
-        if(casilla.getDuenho().equals(jugador)){
-            if (casilla.esEdificable(tipo, jugador)) {
-                Edificio edificio = new Edificio(tipo, casilla);
+                        if (jugador.getFortuna() >= edificio.getCoste()) {
+                            casilla.anhadirEdificio(edificio); // Añadir el edificio a la casilla
+                            jugador.sumarGastos(edificio.getCoste()); // Restar el coste del edificio
+                            jugador.sumarFortuna(-edificio.getCoste()); // Reducir la fortuna del jugador
+                            this.banca.sumarFortuna(edificio.getCoste()); // Aumentar la fortuna de la banca
 
-                if (jugador.getFortuna() >= edificio.getCoste()) {
-                    casilla.anhadirEdificio(edificio); // Añadir el edificio a la casilla
-                    jugador.sumarGastos(edificio.getCoste()); // Restar el coste del edificio
-                    jugador.sumarFortuna(-edificio.getCoste()); // Reducir la fortuna del jugador
-                    this.banca.sumarFortuna(edificio.getCoste()); // Aumentar la fortuna de la banca
+                            System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
+                                    edificio.getId() + " por " + edificio.getCoste());
 
-                    System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
-                            edificio.getId() + " por " +edificio.getCoste());
-
-                    // Si es un hotel, eliminar todas las casas de la casilla
-                    if (tipo.equals("hotel")) {
-                        casilla.eliminarCasasDeCasilla();
+                            // Si es un hotel, eliminar todas las casas de la casilla
+                            if (tipo.equals("hotel")) {
+                                casilla.eliminarCasasDeCasilla();
+                            }
+                        } else {
+                            System.out.println("No tienes suficiente dinero para edificar.");
+                        }
+                    } else {
+                        System.out.println("No puedes edificar en esta casilla porque no cumple los requisitos necesarios.");
                     }
                 } else {
-                    System.out.println("No tienes suficiente dinero para edificar.");
+                    System.out.println("No puedes edificar en esta casilla porque no te pertenece.");
                 }
-            } 
-        }
-        else{
-            System.out.println("No puedes edificar en esta casilla porque no te pertenece.");
+            } else {
+                System.out.println("No puedes edificar en una casilla que no es de tipo solar.");
+            }
+        } else {
+            System.out.println("El tipo de edificio " + tipo + " no es válido para edificar.");
         }
     }
 
@@ -330,6 +337,32 @@ public class Menu {
                 }
                 else if(this.avatares.size()!=1) {
                     this.turno = 0; //El primer jugador creado tiene el turno
+
+                    System.out.println(Valor.RED + "$$$$$$$$\\ $$\\      $$\\ $$$$$$$\\ $$$$$$\\ $$$$$$$$\\ $$$$$$$$\\  $$$$$$\\" + Valor.RESET);
+                    System.out.println(Valor.GREEN + "$$  _____|$$$\\    $$$ |$$  __$$\\\\_$$  _|$$  _____|\\____$$  |$$  __$$\\" + Valor.RESET);
+                    System.out.println(Valor.YELLOW + "$$ |      $$$$\\  $$$$ |$$ |  $$ | $$ |  $$ |          $$  / $$ /  $$ |" + Valor.RESET);
+                    System.out.println(Valor.BLUE + "$$$$$\\    $$\\$$\\$$ $$ |$$$$$$$  | $$ |  $$$$$\\       $$  /  $$$$$$$$ |" + Valor.RESET);
+                    System.out.println(Valor.PURPLE + "$$  __|   $$ \\$$$  $$ |$$  ____/  $$ |  $$  __|     $$  /   $$  __$$ |" + Valor.RESET);
+                    System.out.println(Valor.CYAN + "$$ |      $$ |\\$  /$$ |$$ |       $$ |  $$ |       $$  /    $$ |  $$ |" + Valor.RESET);
+                    System.out.println(Valor.RED + "$$$$$$$$\\ $$ | \\_/ $$ |$$ |     $$$$$$\\ $$$$$$$$\\ $$$$$$$$\\ $$ |  $$ |" + Valor.RESET);
+                    System.out.println(Valor.GREEN + "\\________|\\__|     \\__|\\__|     \\______|\\________|\\________|\\__|  \\__|" + Valor.RESET);
+                    System.out.println(Valor.YELLOW + "$$\\        $$$$$$\\" + Valor.RESET);
+                    System.out.println(Valor.BLUE + "$$ |      $$  __$$\\" + Valor.RESET);
+                    System.out.println(Valor.PURPLE + "$$ |      $$ /  $$ |" + Valor.RESET);
+                    System.out.println(Valor.CYAN + "$$ |      $$$$$$$$ |" + Valor.RESET);
+                    System.out.println(Valor.RED + "$$ |      $$  __$$ |" + Valor.RESET);
+                    System.out.println(Valor.GREEN + "$$ |      $$ |  $$ |" + Valor.RESET);
+                    System.out.println(Valor.YELLOW + "$$$$$$$$\\ $$ |  $$ |" + Valor.RESET);
+                    System.out.println(Valor.BLUE + "\\________|\\__|  \\__|" + Valor.RESET);
+                    System.out.println(Valor.PURPLE + "$$$$$$$\\   $$$$$$\\  $$$$$$$\\ $$$$$$$$\\ $$$$$$\\ $$$$$$$\\   $$$$$$\\" + Valor.RESET);
+                    System.out.println(Valor.CYAN + "$$  __$$\\ $$  __$$\\ $$  __$$\\\\__$$  __|\\_$$  _|$$  __$$\\ $$  __$$\\" + Valor.RESET);
+                    System.out.println(Valor.RED + "$$ |  $$ |$$ /  $$ |$$ |  $$ |  $$ |     $$ |  $$ |  $$ |$$ /  $$ |" + Valor.RESET);
+                    System.out.println(Valor.GREEN + "$$$$$$$  |$$$$$$$$ |$$$$$$$  |  $$ |     $$ |  $$ |  $$ |$$$$$$$$ |" + Valor.RESET);
+                    System.out.println(Valor.YELLOW + "$$  ____/ $$  __$$ |$$  __$$<   $$ |     $$ |  $$ |  $$ |$$  __$$ |" + Valor.RESET);
+                    System.out.println(Valor.BLUE + "$$ |      $$ |  $$ |$$ |  $$ |  $$ |     $$ |  $$ |  $$ |$$ |  $$ |" + Valor.RESET);
+                    System.out.println(Valor.PURPLE + "$$ |      $$ |  $$ |$$ |  $$ |  $$ |   $$$$$$\\ $$$$$$$  |$$ |  $$ |" + Valor.RESET);
+                    System.out.println(Valor.CYAN + "\\__|      \\__|  \\__|\\__|  \\__|  \\__|   \\______|\\_______/ \\__|  \\__|" + Valor.RESET);
+
                     System.out.println("¡Que comienze la partida!\nEs el turno de " + obtenerTurno().getNombre() +
                             ". Puedes tirar los dados con el comando " + Valor.BOLD_STRING + "lanzar dados" +
                             Valor.RESET + ".");
@@ -1993,6 +2026,14 @@ public class Menu {
 
         System.out.println("\n}");
     }
+
+    public static boolean esEdificioValido(String tipo) {
+        return tipo.equals("casa") ||
+                tipo.equals("hotel") ||
+                tipo.equals("pista de deportes") ||
+                tipo.equals("piscina");
+    }
+
 }
 
 
