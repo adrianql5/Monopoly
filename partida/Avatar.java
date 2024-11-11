@@ -110,66 +110,7 @@ public class Avatar {
         // Añadir el avatar a la nueva casilla
         this.lugar.anhadirAvatar(this);
     }
-    /*
-    public boolean moverPelota(ArrayList<ArrayList<Casilla>> casillas, int valorTirada, Jugador banca) {
-        int posicionActual = this.lugar.getPosicion();
-        int incremento = (valorTirada > 4) ? 1 : -1;
-        int posicionFinal = posicionActual + (valorTirada * incremento);
 
-        while (posicionActual != posicionFinal) {
-            posicionActual += incremento;
-
-            // Buscar la casilla correspondiente en el tablero
-            Casilla casillaActual = null;
-            for (ArrayList<Casilla> lado : casillas) {
-                for (Casilla casilla : lado) {
-                    if (casilla.getPosicion() == posicionActual) {
-                        casillaActual = casilla;
-                        break;
-                    }
-                }
-                if (casillaActual != null) break;
-            }
-
-            // Si no se encuentra la casilla, detén el movimiento
-            if (casillaActual == null) {
-                System.out.println("Error: casilla no encontrada.");
-                return false;
-            }
-
-            // Detenerse en casillas impares desde la posición 4
-            if ((posicionActual - 4) % 2 != 0) {
-                if (casillaActual.getDuenho()!= banca  && !casillaActual.getDuenho()!=this.jugador){
-                    casillaActual.evaluarCasilla(this.jugador,banca);
-                } else if (!casillaActual.tienePropietario()) {
-                    casillaActual.comprar(this.jugador);
-                }
-
-                // Detener movimiento si la casilla es "Ir a Cárcel"
-                if (casillaActual.esIrACarcel()) {
-                    this.lugar = casillaActual;
-                    System.out.println("El avatar ha sido enviado a la cárcel.");
-                    return false;
-                }
-            }
-        }
-
-        // Al llegar a la posición final, actualizar la posición del avatar y devolver true
-        this.lugar = casillaActual;
-        System.out.println("El avatar ha llegado a la posición final.");
-        return true;
-    }
-
-    public void moverCoche(ArrayList<ArrayList<Casilla>> casillas, int valorTirada) {
-        int posicionActual = this.lugar.getPosicion();
-        if(valorTirada>4){
-
-        }
-        if(valorTirada<4){
-
-        }
-    }
-*/
 
     //SECCIÓN DE GETTERS Y SETTERS DE AVATAR
     public String getId() {

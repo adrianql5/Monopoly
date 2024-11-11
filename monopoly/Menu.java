@@ -559,6 +559,8 @@ public class Menu {
         jugador.sumarFortuna(Valor.SUMA_VUELTA);
         jugador.sumarVuelta();
         jugador.sumarVueltas_sin_comprar();
+        jugador.getEstadisticas().sumarVecesSalida(1);
+        jugador.getEstadisticas().sumarDineroSalidaRecaudado(Valor.SUMA_VUELTA);
         cuatroVueltasSinCompras();
     }
 
@@ -636,6 +638,7 @@ public class Menu {
                         }
                         else {
                             System.out.println("Continúas en la carcel.");
+                            obtenerTurno().getEstadisticas().sumarVecesTirado(1);
                             jugador.setTiradasCarcel(1+jugador.getTiradasCarcel());
                         }
                     }
@@ -643,6 +646,7 @@ public class Menu {
                 else {
                     // No estás encarcelado: TURNO NORMAL
                     // Variables útiles
+                    obtenerTurno().getEstadisticas().sumarVecesTirado(1);
                     int sumaDados = resultado1+resultado2;
                     Casilla origen = avatar.getLugar();
 
@@ -831,6 +835,8 @@ public class Menu {
         Jugador duenhoCasilla = casilla.getDuenho();
         float impuestoCasilla = casilla.getImpuesto();
         Grupo grupoCasilla = casilla.getGrupo();
+        //sumamos en uno las veces visitadas
+        casilla.sumarVecesVisitada(1);
 
 
         if (jugadorActual != duenhoCasilla) {
@@ -840,9 +846,14 @@ public class Menu {
                         if (duenhoCasilla != this.banca) {
                             Jugador propietario = casilla.getDuenho();
                             casilla.evaluarAlquiler();
+                            impuestoCasilla = casilla.getImpuesto();
                             System.out.printf("%s debe pagarle el alquiler de %s a %s: %,.0f€\n",
                                     jugadorActual.getNombre(), nombreCasilla, propietario.getNombre(), impuestoCasilla);
                             jugadorActual.sumarGastos(impuestoCasilla);
+                            jugadorActual.getEstadisticas().sumarPagoDeAlquileres(impuestoCasilla);
+                            duenhoCasilla.getEstadisticas().sumarCobroDeAlquileres(impuestoCasilla);
+                            jugadorActual.getAvatar().getLugar().sumarDinero_recaudado(impuestoCasilla);
+
                             jugadorActual.restarFortuna(impuestoCasilla);
 
                             if (jugadorActual.estaEnBancarrota()){
@@ -867,13 +878,14 @@ public class Menu {
                             break;
                         case "Parking":
                             //v2: ahora el bote del Parking se guarda en Parking.valor
-                            System.out.printf("Has ganado el bote del Parking: %,.0f€\n",
-                                    this.tablero.getCasilla(20).getValor());
-                            jugadorActual.sumarFortuna(this.tablero.getCasilla(20).getValor());
-                            this.tablero.getCasilla(20).setValor(0f);
+                            System.out.printf("Has ganado el bote del Parking: %,.0f€\n", casilla.getValor());
+                            jugadorActual.sumarFortuna(casilla.getValor());
+                            jugadorActual.getEstadisticas().sumarDineroRecaudadoBote(casilla.getValor());
+                            casilla.setValor(0f);
                             break;
                         case "IrCarcel":
                             System.out.println("Mala suerte, te vas a la cárcel.");
+                            ;
                             jugadorActual.encarcelar(this.tablero.getPosiciones());
                             break;
                         case "Salida":
@@ -893,7 +905,9 @@ public class Menu {
                                     jugadorActual.getNombre(), duenhoCasilla.getNombre(), impuestoCasilla);
                             jugadorActual.sumarGastos(impuestoCasilla);
                             jugadorActual.restarFortuna(impuestoCasilla);
-
+                            jugadorActual.getEstadisticas().sumarPagoDeAlquileres(impuestoCasilla);
+                            duenhoCasilla.getEstadisticas().sumarCobroDeAlquileres(impuestoCasilla);
+                            jugadorActual.getAvatar().getLugar().sumarDinero_recaudado(impuestoCasilla);
                             if (jugadorActual.estaEnBancarrota()) {
                                 jugadorActual.setDeudaConJugador(duenhoCasilla);
                                 return false;
@@ -913,6 +927,9 @@ public class Menu {
                     System.out.printf("Debes pagar tus impuestos a la banca: %,.0f€\n", impuestoCasilla);
                     jugadorActual.sumarGastos(impuestoCasilla);
                     jugadorActual.restarFortuna(impuestoCasilla);
+                    jugadorActual.getEstadisticas().sumartImpuestosPagados(impuestoCasilla);
+                    //NO SE SI EST UN GASTO
+                    jugadorActual.sumarGastos(impuestoCasilla);
 
                     if (jugadorActual.estaEnBancarrota()){
                         jugadorActual.setDeudaConJugador(this.banca);
@@ -930,6 +947,9 @@ public class Menu {
                                     jugadorActual.getNombre(), duenhoCasilla.getNombre(), pagar);
                             jugadorActual.sumarGastos(pagar);
                             jugadorActual.restarFortuna(pagar);
+                            jugadorActual.getEstadisticas().sumarPagoDeAlquileres(pagar);
+                            duenhoCasilla.getEstadisticas().sumarCobroDeAlquileres(pagar);
+                            jugadorActual.getAvatar().getLugar().sumarDinero_recaudado(pagar);
 
                             if (jugadorActual.estaEnBancarrota()){
                                 jugadorActual.setDeudaConJugador(duenhoCasilla);
@@ -1475,6 +1495,7 @@ public class Menu {
                         }
                         else {
                             System.out.println("Continúas en la carcel.");
+                            obtenerTurno().getEstadisticas().sumarVecesTirado(1);
                             jugador.setTiradasCarcel(1+jugador.getTiradasCarcel());
                         }
                     }
@@ -1482,7 +1503,7 @@ public class Menu {
                 else {
                     // No estás encarcelado: TURNO NORMAL
                     // Establecemos la casilla de salida (solo para imprimirla después)
-
+                    obtenerTurno().getEstadisticas().sumarVecesTirado(1);
 
                     //Variables útiles
                     int sumaDados = resultado1+resultado2;
@@ -1555,6 +1576,7 @@ public class Menu {
             // MUY IMPORTANTE EL ORDEN DEL IF: el valor de los dados antes de la primera tirada de la partida es null
             if(!this.tirado || this.dado1.getValor()==this.dado2.getValor()) {
                 // ESTABLECEMOS EL VALOR DE LOS 2 DADOS COMO LOS ENTEROS QUE PASAMOS
+
                 this.dado1.setValor(d1);
                 this.dado2.setValor(d2);
                 int resultado1 = this.dado1.getValor();
@@ -1583,6 +1605,7 @@ public class Menu {
                         }
                         else {
                             System.out.println("Continúas en la carcel.");
+                            obtenerTurno().getEstadisticas().sumarVecesTirado(1);
                             jugador.setTiradasCarcel(1+jugador.getTiradasCarcel());
                         }
                     }
@@ -1590,7 +1613,7 @@ public class Menu {
                 else {
                     // No estás encarcelado: TURNO NORMAL
                     // Establecemos la casilla de salida (solo para imprimirla después)
-
+                    obtenerTurno().getEstadisticas().sumarVecesTirado(1);
 
                     //Variables útiles
                     int sumaDados = resultado1+resultado2;
@@ -1842,6 +1865,77 @@ public class Menu {
     }
 
 }
+    private void estadisticasGenerales() {
+        System.out.println("{");
+
+        // Obtener la casilla más visitada
+        Casilla casillaAux;
+        int vecesMaxima = 0;
+
+        // Primer for: determinar la cantidad máxima de visitas
+        for (int i = 0; i < 40; i++) {
+            casillaAux = tablero.getCasilla(i);
+            if (vecesMaxima < casillaAux.getVecesVisitada()) {
+                vecesMaxima = casillaAux.getVecesVisitada();
+            }
+        }
+
+        // Segundo for: construir la lista de nombres de las casillas más visitadas
+        StringBuilder nombresCasillas = new StringBuilder();
+        for (int i = 0; i < 40; i++) {
+            casillaAux = tablero.getCasilla(i);
+            if (vecesMaxima == casillaAux.getVecesVisitada()) {
+                if (nombresCasillas.length() > 0) {
+                    nombresCasillas.append(", "); // Agrega una coma solo si ya hay un nombre en la cadena
+                }
+                nombresCasillas.append(casillaAux.getNombre());
+            }
+        }
+        String nombre_max = "NULL";
+        float recaudacionMaxima = 0;
+        for (int i = 0; i < 40; i++) {
+            casillaAux = tablero.getCasilla(i);
+            if (recaudacionMaxima < casillaAux.getDinero_recaudado()) {
+                recaudacionMaxima = casillaAux.getDinero_recaudado();
+                nombre_max = casillaAux.getNombre();
+            }
+        }
+        String nombre_vueltas = "Null";
+        int max_vueltas  = 0;
+        for(Jugador j: jugadores) {
+            if (max_vueltas < j.getVueltas()) {
+                max_vueltas = j.getVueltas();
+                nombre_vueltas = j.getNombre();
+            }
+        }
+        String nombre_dados = "Null";
+        int max_tiradas  = 0;
+        for(Jugador j: jugadores) {
+            if (max_tiradas < j.getEstadisticas().getVecesTirado()) {
+                max_tiradas = j.getEstadisticas().getVecesTirado();
+                nombre_dados = j.getNombre();
+            }
+        }
+        String nombre_cabwza = "Null";
+        float max_dinero  = 0;
+        for(Jugador j: jugadores) {
+            if (max_dinero < j.getFortuna()) {
+                max_dinero = j.getFortuna();
+                nombre_cabwza = j.getNombre();
+            }
+        }
+
+
+
+        // Imprimir los nombres de las casillas más visitadas en una sola línea
+        System.out.println("Casillas más visitadas: " + nombresCasillas.toString());
+        System.out.print("La casilla mas visitada es :" + nombre_max);
+        System.out.print("El jugador con mas vueltas  es :" + nombre_vueltas);
+        System.out.print("El jugador con mas tiradas  es :" + nombre_dados);
+        System.out.print("El jugador en cabeza es  es :" + nombre_cabwza);
+
+        System.out.println("}");
+    }
 }
 
 

@@ -18,6 +18,7 @@ public class Jugador {
     private ArrayList<Casilla> propiedades; //Propiedades que posee el jugador.
     private int vueltas_sin_comprar;
     private int bloqueado;
+    private Estadisticas estadisticas;
    
     private Jugador jugadorConElQueEstanEnDeuda;//si es true está en deuda con la banca, si es false con un jugador
 
@@ -61,6 +62,7 @@ public class Jugador {
         this.vueltas_sin_comprar=0;
         this.bloqueado=0;
         this.jugadorConElQueEstanEnDeuda=null;
+        this.estadisticas = new Estadisticas();
         
 
     }
@@ -77,6 +79,9 @@ public class Jugador {
     
     public Jugador getDeudaConJugador(){
         return this.jugadorConElQueEstanEnDeuda;
+    }
+    public Estadisticas getEstadisticas() {
+        return this.estadisticas;
     }
     //SECCIÓN DE MÉTODOS ÚTILES DE JUGADOR
 
@@ -106,6 +111,7 @@ public class Jugador {
     public void encarcelar(ArrayList<ArrayList<Casilla>> pos) {
         this.avatar.getLugar().eliminarAvatar(this.avatar);
         this.avatar.setLugar(pos.get(1).get(0));
+        this.getEstadisticas().sumarVecesEnLaCarcel(1);
         this.enCarcel = true;
         this.avatar.getLugar().anhadirAvatar(this.avatar);
     }
@@ -150,7 +156,9 @@ public class Jugador {
         this.gastos += valor;
     }
 
-
+    public float getGastos() {
+        return this.gastos;
+    }
     //SECCÓN DE MÉTODOS BOOLEANOS DE JUGADOR
     public boolean isEnCarcel() {
         return enCarcel;
@@ -202,6 +210,8 @@ public class Jugador {
     public int getTiradasCarcel(){
         return tiradasCarcel;
     }
+
+    public int getVueltas(){return this.vueltas;}
 
     public ArrayList<Casilla> getPropiedades() {
         return propiedades;
@@ -281,6 +291,19 @@ public class Jugador {
 
 
         }
+        System.out.println("}");
+    }
+
+    // Método para mostrar las estadísticas
+    public void infoEstadisticas() {
+        System.out.println("{");
+        System.out.printf("\tdineroInvertido: %,.2f,\n",this.getGastos());
+        System.out.printf("\tpagoTasasEImpuestos: %,.2f,\n", this.getEstadisticas().getImpuestosPagados());
+        System.out.printf("\tpagoDeAlquileres: %,.2f,\n", this.getEstadisticas().getPagoDeAlquileres());
+        System.out.printf("\tcobroDeAlquileres: %,.2f,\n", this.getEstadisticas().getCobroDeAlquileres());
+        System.out.printf("\tpasarPorCasillaDeSalida: %,.2f,\n", this.getEstadisticas().getDineroSalidaRecaudado());
+        System.out.printf("\tpremiosInversionesOBote: %,.2f,\n", this.getEstadisticas().getDineroRecaudadoBote());
+        System.out.printf("\tvecesEnLaCarcel: %d\n", this.getEstadisticas().getVecesEnLaCarcel());
         System.out.println("}");
     }
     
