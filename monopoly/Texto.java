@@ -20,12 +20,16 @@ public class Texto {
                     ">lanzar dados\n" +
                     ">comprar <Casilla>\n" +
                     ">acabar turno\n" +
-                    ">listar jugadores\n" +
-                    ">listar avatares\n" +
-                    ">listar enventa\n" +
+                    ">listar jugadores / avatares / enventa\n" +
                     ">describir <Casilla>\n" +
                     ">describir jugador <Nombre>\n" +
                     ">describir avatar <ID>\n" +
+                    ">edificar <casa, hotel, piscina, pista deportes>\n"+
+                    ">listar edificios <color grupo (opcional)>\n"+
+                    ">hipotecar / deshipotecar <Casilla>\n"+
+                    ">vender <tipo edificio> <Casilla> <Nº edificios>\n"+
+                    ">estadisticas <Jugador(opcional)>\n"+
+                    ">cambiar modo\n"+ 
                     ">ver tablero\n";
 
 
