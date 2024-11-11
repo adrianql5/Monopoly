@@ -1951,31 +1951,31 @@ public class Menu {
         float recaudacionMaxima = 0;
         for (int i = 0; i < 40; i++) {
             casillaAux = tablero.getCasilla(i);
-            if (recaudacionMaxima < casillaAux.getDinero_recaudado()) {
+            if (recaudacionMaxima <= casillaAux.getDinero_recaudado()) {
                 recaudacionMaxima = casillaAux.getDinero_recaudado();
                 nombre_max = casillaAux.getNombre();
             }
         }
-        String nombre_vueltas = "Null";
+        String nombre_vueltas = "";
         int max_vueltas  = 0;
         for(Jugador j: jugadores) {
-            if (max_vueltas < j.getVueltas()) {
+            if (max_vueltas <= j.getVueltas()) {
                 max_vueltas = j.getVueltas();
                 nombre_vueltas = j.getNombre();
             }
         }
-        String nombre_dados = "Null";
+        String nombre_dados = "";
         int max_tiradas  = 0;
         for(Jugador j: jugadores) {
-            if (max_tiradas < j.getEstadisticas().getVecesTirado()) {
+            if (max_tiradas <= j.getEstadisticas().getVecesTirado()) {
                 max_tiradas = j.getEstadisticas().getVecesTirado();
                 nombre_dados = j.getNombre();
             }
         }
-        String nombre_cabwza = "Null";
+        String nombre_cabwza = "";
         float max_dinero  = 0;
         for(Jugador j: jugadores) {
-            if (max_dinero < j.getFortuna()) {
+            if (max_dinero <= j.getFortuna()) {
                 max_dinero = j.getFortuna();
                 nombre_cabwza = j.getNombre();
             }
@@ -1984,13 +1984,14 @@ public class Menu {
 
 
         // Imprimir los nombres de las casillas más visitadas en una sola línea
-        System.out.println("Casillas más visitadas: " + nombresCasillas.toString());
-        System.out.print("La casilla mas visitada es :" + nombre_max);
-        System.out.print("El jugador con mas vueltas  es :" + nombre_vueltas);
-        System.out.print("El jugador con mas tiradas  es :" + nombre_dados);
-        System.out.print("El jugador en cabeza es  es :" + nombre_cabwza);
+        System.out.print("Casillas más visitadas :" + nombresCasillas.toString());
+        //falta grupo mas rentable
+        System.out.print("\nLa casilla mas rentable es :" + nombre_max);
+        System.out.print("\nEl jugador con mas vueltas es :" + nombre_vueltas);
+        System.out.print("\nEl jugador con mas tiradas es :" + nombre_dados);
+        System.out.print("\nEl jugador en cabeza es: " + nombre_cabwza);
 
-        System.out.println("}");
+        System.out.println("\n}");
     }
 }
 
