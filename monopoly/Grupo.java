@@ -72,7 +72,7 @@ public class Grupo {
      * @return TRUE si es dueño de todas las casillas del grupo, FALSE en otro caso
      */
     public boolean esDuenhoGrupo(Jugador jugador) {
-        for (Casilla c: miembros){
+        for(Casilla c: miembros){
             if(c.getDuenho()!=jugador){
                 return false;
             }

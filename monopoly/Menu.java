@@ -475,16 +475,19 @@ public class Menu {
                     //Podría ser uno de los siguientes:
                     switch(comando[0]){
 
-                        //Para describir una casilla
+                        // Para describir una casilla
                         case "describir": descCasilla(comando[1]); break;
 
-                        //Para comprar una casilla
+                        // Para comprar una casilla
                         case "comprar": comprar(comando[1]); break;
 
                         // Comandos de edificar, hipotecar, deshipotecar (para pista de deporte en length==4)
                         case "edificar": edificar(comando[1]); break;
                         case "hipotecar": hipotecar(comando[1]); break;
                         case "deshipotecar": deshipotecar(comando[1]); break;
+
+                        // Estadísticas de un jugador
+                        case "estadisticas": estadisticasJugador(comando[1]); break;
 
                         //Comando inválido
                         default: System.out.println(comando_entero + " no es un comando válido."); break;
@@ -629,6 +632,7 @@ public class Menu {
     /**Método que ejecuta todas las acciones relacionadas con el comando 'lanzar dados'.
      * Hace las comprobaciones pertinentes: primero si realmente se pueden tirar los dados,
      * luego si el jugador está en la cárcel o no, etc.
+     * Llama a la función mover() en caso de que el jugador pueda mover.
      */
     private void lanzarDados() {
 
@@ -651,6 +655,8 @@ public class Menu {
                 int resultado1 = this.dado1.tirarDado();
                 int resultado2 = this.dado2.tirarDado();
                 System.out.println("[" + resultado1 + "] [" + resultado2 + "]");
+                // Actualizamos las stats~
+                obtenerTurno().getEstadisticas().sumarVecesTirado(1);
                 // Se vuelve a asignar true en segundas/terceras tiradas a no ser que hagamos un caso a parte
                 this.tirado = true;
                 this.lanzamientos += 1;
@@ -674,17 +680,17 @@ public class Menu {
                         }
                         else {
                             System.out.println("Continúas en la carcel.");
-                            obtenerTurno().getEstadisticas().sumarVecesTirado(1);
                             jugador.setTiradasCarcel(1+jugador.getTiradasCarcel());
                         }
                     }
                 }
                 else {
                     // No estás encarcelado: TURNO NORMAL
-                    // Variables útiles
-                    obtenerTurno().getEstadisticas().sumarVecesTirado(1);
                     int sumaDados = resultado1+resultado2;
-                    Casilla origen = avatar.getLugar();
+
+                    mover(jugador, sumaDados);
+
+                    Casilla origen = avatar.getLugar(); //AÑADIDO A MOVER()
 
                     // POR FIN Movemos al avatar a la casilla
                     avatar.moverAvatar(tablero.getPosiciones(), sumaDados);
@@ -741,7 +747,7 @@ public class Menu {
             }
         }
         if(jugador.estaEnBancarrota()){
-            System.out.println("El jugador " + jugador.getNombre() + " esta en bancarrota \n");
+            System.out.println("El jugador " + jugador.getNombre() + " está en bancarrota \n");
             acabarPartida();
         }
 
@@ -753,15 +759,18 @@ public class Menu {
      * @param tirada Suma del resultado al tirar los dados
      */
     private void mover(Jugador jugador, int tirada) {
-        //Establecemos el avatar, ya que lo usaremos varias veces directamente
+        // Establecemos el avatar, ya que lo usaremos varias veces directamente
         Avatar avatar = jugador.getAvatar();
+        // Establecemos la casilla de salida
+        Casilla origen = avatar.getLugar();
 
-        //Comprobamos si el jugador está en movimiento avanzado o normal
+        // Comprobamos si el jugador está en movimiento avanzado o normal
         if(!avatar.getMovimientoAvanzado()) {
             //Si está en movimiento normal simplemente movemos el valor de la tirada y evaluamos la casilla
+            avatar.moverAvatar(tablero.getPosiciones(), tirada);
         }
         else {
-            //Si el jugador está en movimiento avanzado movemos de una manera u otra en función del tipo de avatar
+            // Si el jugador está en movimiento avanzado movemos de una manera u otra en función del tipo de avatar
             switch(avatar.getTipo()) {
                 case "coche":
                     /*
@@ -921,7 +930,6 @@ public class Menu {
         String nombreCasilla = casilla.getNombre();
         Jugador duenhoCasilla = casilla.getDuenho();
         float impuestoCasilla = casilla.getImpuesto();
-        Grupo grupoCasilla = casilla.getGrupo();
         //sumamos en uno las veces visitadas
         casilla.sumarVecesVisitada(1);
 
@@ -931,30 +939,23 @@ public class Menu {
                 case "Solar":
                     if (!casilla.estaHipotecada()) {
                         if (duenhoCasilla != this.banca) {
-                            Jugador propietario = casilla.getDuenho();
-                            casilla.evaluarAlquiler();
-                            impuestoCasilla = casilla.getImpuesto();
-                            System.out.printf("%s debe pagarle el alquiler de %s a %s: %,.0f€\n",
-                                    jugadorActual.getNombre(), nombreCasilla, propietario.getNombre(), impuestoCasilla);
-                            jugadorActual.sumarGastos(impuestoCasilla);
-                            jugadorActual.getEstadisticas().sumarPagoDeAlquileres(impuestoCasilla);
-                            duenhoCasilla.getEstadisticas().sumarCobroDeAlquileres(impuestoCasilla);
-                            jugadorActual.getAvatar().getLugar().sumarDinero_recaudado(impuestoCasilla);
 
-                            jugadorActual.restarFortuna(impuestoCasilla);
+                            float precio = casilla.evaluarAlquiler();
+                            System.out.printf("%s debe pagarle el alquiler de %s a %s: %,.0f€\n",
+                                    jugadorActual.getNombre(), nombreCasilla, duenhoCasilla.getNombre(), precio);
+                            jugadorActual.pagar(duenhoCasilla, precio);
 
                             if (jugadorActual.estaEnBancarrota()){
                                 jugadorActual.setDeudaConJugador(duenhoCasilla);
                                 return false;
                             }
 
-                            propietario.sumarFortuna(impuestoCasilla);
                             return true;
                         } else {
                             System.out.println("La casilla " + nombreCasilla + " está a la venta.\n");
                         }
                     } else {
-                        System.out.println("La casilla " + nombreCasilla +   " esta hipotecada. No es necesario pagar el alquiler.");
+                        System.out.println("La casilla " + nombreCasilla + " está hipotecada. No hay que pagar.");
                     }
                     break;
 
@@ -972,41 +973,38 @@ public class Menu {
                             break;
                         case "IrCarcel":
                             System.out.println("Mala suerte, te vas a la cárcel.");
-                            ;
+                            System.out.println("Vas directamente sin pasar por la Salida ni cobrar.");
                             jugadorActual.encarcelar(this.tablero.getPosiciones());
                             break;
                         case "Salida":
                             System.out.println("Has llegado a la casilla de Salida.");
                             break;
                         default:
-                            System.out.println("Error en evaluar casilla.");
+                            System.out.println("Error en evaluarCasilla.");
                             return false;
                     }
                     return true;
 
                 case "Transporte":
-                    if (!casilla.estaHipotecada()) {
-                        if (duenhoCasilla != this.banca) {
-                            casilla.evaluarAlquiler();
+                    if (duenhoCasilla != this.banca) {
+                        if (!casilla.estaHipotecada()) {
+                            float precio = casilla.evaluarAlquiler();
                             System.out.printf("%s debe pagar el servicio de transporte a %s: %,.0f€\n",
-                                    jugadorActual.getNombre(), duenhoCasilla.getNombre(), impuestoCasilla);
-                            jugadorActual.sumarGastos(impuestoCasilla);
-                            jugadorActual.restarFortuna(impuestoCasilla);
-                            jugadorActual.getEstadisticas().sumarPagoDeAlquileres(impuestoCasilla);
-                            duenhoCasilla.getEstadisticas().sumarCobroDeAlquileres(impuestoCasilla);
-                            jugadorActual.getAvatar().getLugar().sumarDinero_recaudado(impuestoCasilla);
+                                    jugadorActual.getNombre(), duenhoCasilla.getNombre(), precio);
+                            jugadorActual.pagar(duenhoCasilla, precio);
+
+                            //ojooooooooooooooooooooooooo
                             if (jugadorActual.estaEnBancarrota()) {
                                 jugadorActual.setDeudaConJugador(duenhoCasilla);
                                 return false;
                             }
 
-                            duenhoCasilla.sumarFortuna(impuestoCasilla);
                             return true;
                         } else {
-                            System.out.println("La casilla " + nombreCasilla + " está a la venta.");
+                            System.out.println("La casilla " + nombreCasilla + " está hipotecada. No hay que pagar.");
                         }
                     } else {
-                        System.out.println("La casilla " + nombreCasilla + " está hipotecada, ¡No pagas!");
+                        System.out.println("La casilla " + nombreCasilla + " está a la venta.");
                     }
                     break;
 
@@ -1015,7 +1013,7 @@ public class Menu {
                     jugadorActual.sumarGastos(impuestoCasilla);
                     jugadorActual.restarFortuna(impuestoCasilla);
                     jugadorActual.getEstadisticas().sumarImpuestosPagados(impuestoCasilla);
-                    //NO SE SI EST UN GASTO
+                    //NO SE SI EST UN GASTO--------- si lo es
                     jugadorActual.sumarGastos(impuestoCasilla);
 
                     if (jugadorActual.estaEnBancarrota()){
@@ -1027,29 +1025,26 @@ public class Menu {
                     return true;
 
                 case "Servicio":
-                    if (!casilla.estaHipotecada()) {
-                        if (duenhoCasilla != this.banca) {
-                            float pagar = tirada * (duenhoCasilla.numeroCasillasTipo("Servicio") == 1 ? 4 : 10) * impuestoCasilla;
+                    if (duenhoCasilla != this.banca) {
+                        if (!casilla.estaHipotecada()) {
+                            float precio = casilla.evaluarAlquiler(tirada);
                             System.out.printf("%s debe pagar el servicio a %s: %,.0f€\n",
-                                    jugadorActual.getNombre(), duenhoCasilla.getNombre(), pagar);
-                            jugadorActual.sumarGastos(pagar);
-                            jugadorActual.restarFortuna(pagar);
-                            jugadorActual.getEstadisticas().sumarPagoDeAlquileres(pagar);
-                            duenhoCasilla.getEstadisticas().sumarCobroDeAlquileres(pagar);
-                            jugadorActual.getAvatar().getLugar().sumarDinero_recaudado(pagar);
+                                    jugadorActual.getNombre(), duenhoCasilla.getNombre(), precio);
+                            jugadorActual.pagar(duenhoCasilla, precio);
 
+                            //ojooooooooooooooooooooooooo
                             if (jugadorActual.estaEnBancarrota()){
                                 jugadorActual.setDeudaConJugador(duenhoCasilla);
                                 return false;
                             }
 
-                            duenhoCasilla.sumarFortuna(pagar);
+                            duenhoCasilla.sumarFortuna(precio);
                             return true;
                         } else {
-                            System.out.println("La casilla " + nombreCasilla + " está a la venta.");
+                            System.out.println("La casilla " + nombreCasilla + " está hipotecada. No hay que pagar.");
                         }
                     } else {
-                        System.out.println("La casilla " + nombreCasilla + " Esta hipotecada");
+                        System.out.println("La casilla " + nombreCasilla + " está a la venta.");
                     }
                     break;
 
@@ -1300,25 +1295,41 @@ public class Menu {
         }
     }
 
+    /**Método para encontrar a un jugador a partir de su nombre.
+     * Si no lo encuentra devuelve null
+     * @param nombre_jugador Nombre del jugador que tenemos que buscar
+     */
+    private Jugador encontrarJugador(String nombre_jugador) {
+        // Si no se encuentra ningún jugador con ese nombre se devolverá null
+        Jugador jugadorEncontrado=null;
+
+        // En partes están los nombres de los jugadores, comprueba que el nombre existe y saca su info si existe
+        for(Jugador jugador : jugadores) {
+            if(jugador.getNombre().equals(nombre_jugador)) {
+                jugadorEncontrado = jugador;
+                break;
+            }
+        }
+
+        return jugadorEncontrado;
+    }
 
     /**Método que realiza las acciones asociadas al comando 'describir jugador'.
      * @param partes comando introducido
      */
     private void descJugador(String[] partes) {
-        boolean encontrado = false;
+        Jugador jugador=null;
 
-        // en partes están los nombres de los jugadores, comprueba que el nombre existe y saca su info si existe
-        for (Jugador jugador : jugadores) {
-            for(int i=2; i<partes.length; i++) {
-                if (jugador.getNombre().equals(partes[i])) {
-                    encontrado = true;
-                    // Llamar a la función infoJugador del jugador encontrado
-                    jugador.infoJugador();
-                    break;
-                }
-            }
+        // Buscamos el jugador
+        for(int i=2; i<partes.length; i++) {
+            jugador=encontrarJugador(partes[i]);
         }
-        if(!encontrado){
+
+        //Si encontramos al jugador imprimimos su info; si no, avisamos al usuario
+        if(jugador!=null) {
+            jugador.infoJugador();
+        }
+        else {
             System.out.println("No se ha encontrado el jugador buscado.");
         }
         
@@ -1387,7 +1398,7 @@ public class Menu {
      */
     public void cogerCarta(ArrayList<Carta> baraja) {
         System.out.println("Barajando las cartas...");
-        Collections.shuffle(baraja); //Barajamos las cartas
+        //Collections.shuffle(baraja); //Barajamos las cartas //ESTÁ COMENTADO PORQUE EN ESTA ENTREGA NO SE BARAJAN
         cartasAlReves(); //Mostramos el reverso de las cartas
         System.out.println("Escoge una carta con un número del 1 al 6.");
         int n=leerDadoValido(); //Leemos input hasta que sea un número válido
@@ -1956,6 +1967,19 @@ public class Menu {
 
     }
 
+    /**Método que imprime las estadísticas de un jugador de la partida.*/
+    private void estadisticasJugador(String nombre_jugador) {
+        Jugador jugador=encontrarJugador(nombre_jugador);
+
+        if(jugador!=null) {
+            jugador.infoEstadisticas();
+        }
+        else {
+            System.out.println("No se ha encontrado el jugador " + nombre_jugador + ".");
+        }
+    }
+
+    /**Método que imprime las estadísticas generales de la partida.*/
     private void estadisticasGenerales() {
         System.out.println("{");
 

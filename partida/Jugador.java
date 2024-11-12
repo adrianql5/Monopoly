@@ -66,7 +66,77 @@ public class Jugador {
         
 
     }
-    
+
+    //FUNCIONES CLAVE DE LA CLASE JUGADOR-------------------------------------------------------------------------------
+
+    //OG
+    /**Método para pagar dinero a otro jugador.
+     * Sólo quita el dinero de un jugador y se lo ingresa a otro (actualizando los atributos correspondientes).
+     * @param cobrador Jugador que recibe la cantidad que paga este jugador
+     * @param cantidad Cantidad que tiene que pagar el jugador
+     */
+    public void pagar(Jugador cobrador, float cantidad) {
+        // Modificamos los atributos del pagador
+        this.restarFortuna(cantidad);
+        this.sumarGastos(cantidad);
+        this.estadisticas.sumarPagoDeAlquileres(cantidad);
+
+        // Modificamos los atributos del cobrador
+        cobrador.sumarFortuna(cantidad);
+        cobrador.getEstadisticas().sumarCobroDeAlquileres(cantidad);
+
+        // Modificamos los atributos de la casilla
+        this.getAvatar().getLugar().sumarDinero_recaudado(cantidad);
+
+    }
+
+
+    // SOBRECARGA DEL MÉTODO "pagar" para casillas tipo Impuesto y otras tasas
+    /**Método para pagar casillas que no pueden ser compradas
+     * @param nombre_casilla Nombre de la casilla que hay que pagar
+
+    public void pagar(String nombre_casilla) {
+        if() {
+
+        }
+    }*/
+
+    // SOBRECARGA DEL MÉTODO "pagar"
+    /**Método para pagar una casilla.
+     * @param banca Es necesaria para varias comprobaciones
+     * @param casilla Casilla cuyo alquiler hay que cobrar
+
+    public void pagar(Jugador banca, Casilla casilla) {
+        // Valores que nos van a hacer falta varias veces
+        Jugador duenhoCasilla = casilla.getDuenho();
+
+        // Ligera comprobación
+        if(!duenhoCasilla.equals(banca)) {
+            System.out.println("Llamada errónea a la función PAGAR(dueño, casilla): dueño incorrecto.");
+            return;
+        }
+
+        //
+    }*/
+
+    // SOBRECARGA DEL MÉTODO "pagar"
+
+    /**Método para pagar el alquiler de una casilla a su dueño.
+     * Esta manera de llamarlo PRESUPONE QUE EL DUEÑO NO ES LA BANCA.
+     * //@param casilla Casilla cuyo alquiler hay que pagar
+
+    public void pagar(Casilla casilla) {
+        // Valores que nos van a hacer falta varias veces
+        Jugador duenhoCasilla = casilla.getDuenho();
+        float alquiler = casilla.evaluarAlquiler();
+
+        // Realizamos el pago
+        pagar(duenhoCasilla, alquiler);
+    }*/
+
+
+    // GETTERS Y SETTERS------------------------------------------------------------------------------------------------
+
     public void setBloqueado(int turnos){
         this.bloqueado=turnos;
     }
@@ -83,7 +153,9 @@ public class Jugador {
     public Estadisticas getEstadisticas() {
         return this.estadisticas;
     }
-    //SECCIÓN DE MÉTODOS ÚTILES DE JUGADOR
+
+
+    //SECCIÓN DE MÉTODOS ÚTILES DE JUGADOR------------------------------------------------------------------------------
 
     /**Método para añadir una propiedad al jugador.
      * @param casilla Casilla a añadir
@@ -94,7 +166,6 @@ public class Jugador {
         }
     }
     
-    
     /**Método para eliminar una propiedad del arraylist de propiedades de jugador.
      * @param casilla Casilla a añadir
      */
@@ -103,7 +174,6 @@ public class Jugador {
             this.propiedades.remove(casilla);
         }
     }
-
     
     /**Método para establecer al jugador en la cárcel.
      * @param pos Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).
@@ -111,7 +181,7 @@ public class Jugador {
     public void encarcelar(ArrayList<ArrayList<Casilla>> pos) {
         this.avatar.getLugar().eliminarAvatar(this.avatar);
         this.avatar.setLugar(pos.get(1).get(0));
-        this.getEstadisticas().sumarVecesEnLaCarcel(1);
+        this.estadisticas.sumarVecesEnLaCarcel(1);
         this.enCarcel = true;
         this.avatar.getLugar().anhadirAvatar(this.avatar);
     }
@@ -130,7 +200,7 @@ public class Jugador {
         return contador;
     }
     
-    //SECCIÓN DE MÉTODOS QUE GESTIONAN LA FORTUNA DEL JUGADOR
+    //SECCIÓN DE MÉTODOS QUE GESTIONAN LA FORTUNA DEL JUGADOR-----------------------------------------------------------
 
     /**
      * Método para añadir fortuna a un jugador.
@@ -159,7 +229,8 @@ public class Jugador {
     public float getGastos() {
         return this.gastos;
     }
-    //SECCÓN DE MÉTODOS BOOLEANOS DE JUGADOR
+
+    //SECCÓN DE MÉTODOS BOOLEANOS DE JUGADOR----------------------------------------------------------------------------
     public boolean isEnCarcel() {
         return enCarcel;
     }
@@ -237,19 +308,19 @@ public class Jugador {
 
 
     //SECCIÓN QUE DEVUELVE INFORMACIÓN DE JUGADOR
+    /**Método que devuelve la información de un jugador*/
     public void infoJugador() {
         System.out.println("{");
         // Imprimir nombre, avatar y fortuna con separador de miles para la fortuna
         System.out.println("\tnombre: " + this.getNombre() + ",");
         System.out.println("\tavatar: " + this.getAvatar().getId() + ",");
-        System.out.printf("\tfortuna: %,.0f,\n", this.getFortuna()); // Formato con separador de miles sin decimales
+        System.out.printf("\tfortuna: %,.0f,\n", this.getFortuna()); // Usar formato con separador de miles y sin decimales
 
         // Imprimir propiedades
-
+        System.out.print("\tpropiedades: ");
         if (this.getPropiedades().isEmpty()) {
-            System.out.print("");
+            System.out.println("Ninguna");
         } else {
-            System.out.print("\tpropiedades: ");
             System.out.print("[");
             for (int i = 0; i < this.getPropiedades().size(); i++) {
                 System.out.print(this.getPropiedades().get(i).getNombre());
@@ -257,14 +328,14 @@ public class Jugador {
                     System.out.print(", "); // Añade coma a todo menos a la última
                 }
             }
-            System.out.println("],");
+            System.out.println("]");
 
             // Imprimir edificios
             System.out.println("\tEdificios: {");
             String[] tipos = {"casa", "hotel", "piscina", "pista de deporte"};
             for (int i = 0; i < this.getPropiedades().size(); i++) {
-                if (this.getPropiedades().get(i).getTipo().equals("Solar")) {
-                    if (this.getPropiedades().get(i).getNumeroEdificios() != 0) {
+                if( this.getPropiedades().get(i).getTipo().equals("Solar")){
+                    if (0 != this.getPropiedades().get(i).getNumeroEdificios()) {
                         System.out.println("\t\t" + this.getPropiedades().get(i).getNombre() + ": {");
 
                         for (String tipo : tipos) {
@@ -283,23 +354,23 @@ public class Jugador {
                         }
                         System.out.println("\t\t}");
                     }
+                    System.out.println("\t}");
                 }
             }
-            System.out.println("\t}");
         }
         System.out.println("}");
     }
 
-    // Método para mostrar las estadísticas
+    /**Método para mostrar las estadísticas de un jugador*/
     public void infoEstadisticas() {
         System.out.println("{");
-        System.out.printf("\tdineroInvertido: %,.2f,\n",this.getGastos());
-        System.out.printf("\tpagoTasasEImpuestos: %,.2f,\n", this.getEstadisticas().getImpuestosPagados());
-        System.out.printf("\tpagoDeAlquileres: %,.2f,\n", this.getEstadisticas().getPagoDeAlquileres());
-        System.out.printf("\tcobroDeAlquileres: %,.2f,\n", this.getEstadisticas().getCobroDeAlquileres());
-        System.out.printf("\tpasarPorCasillaDeSalida: %,.2f,\n", this.getEstadisticas().getDineroSalidaRecaudado());
-        System.out.printf("\tpremiosInversionesOBote: %,.2f,\n", this.getEstadisticas().getDineroRecaudadoBote());
-        System.out.printf("\tvecesEnLaCarcel: %d\n", this.getEstadisticas().getVecesEnLaCarcel());
+        System.out.printf("\tdineroInvertido: %,.2f€,\n",this.getGastos());
+        System.out.printf("\tpagoTasasEImpuestos: %,.2f€,\n", this.estadisticas.getImpuestosPagados());
+        System.out.printf("\tpagoDeAlquileres: %,.2f€,\n", this.estadisticas.getPagoDeAlquileres());
+        System.out.printf("\tcobroDeAlquileres: %,.2f€,\n", this.estadisticas.getCobroDeAlquileres());
+        System.out.printf("\tpasarPorCasillaDeSalida: %,.2f€,\n", this.estadisticas.getDineroSalidaRecaudado());
+        System.out.printf("\tpremiosInversionesOBote: %,.2f€,\n", this.estadisticas.getDineroRecaudadoBote());
+        System.out.printf("\tvecesEnLaCarcel: %d\n", this.estadisticas.getVecesEnLaCarcel());
         System.out.println("}");
     }
     
