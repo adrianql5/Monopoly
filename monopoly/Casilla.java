@@ -380,7 +380,7 @@ public class Casilla {
                     }
                 }
                 else{
-                    System.out.println("No puedes edificar porque has alcanzado el límite de propiedades de este grupo.");
+                    System.out.println("No puedes edificar porque alguna propiedad del grupo está hipotecada.");
                     return false;
                 }
             
