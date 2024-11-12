@@ -46,7 +46,6 @@ public class Casilla {
         this.impuesto= valor * 0.10f;
         this.hipoteca= valor/2f;
         this.duenho= duenho;
-        this.ya_se_duplico =false;
         this.avatares= new ArrayList<Avatar>();
         if(this.tipo.equals("Solar")){ //solo se edifican los solares
             this.edificios = new ArrayList<>(4); 
@@ -155,52 +154,63 @@ public class Casilla {
     }
 
 
-    //SECCION DE BUILDEAR Y COMPRAR EDIFICIOS
-    public void evaluarAlquiler() {
-        if (this.tipo.equals("Solar")) {
-            if (this.grupo.esDuenhoGrupo(this.duenho)){
-                float baseAlquiler = this.impuesto; // Almacena el valor base del alquiler para cálculos
-                if (!this.ya_se_duplico) {
-                    this.impuesto *= 2f; // Duplica el impuesto si es dueño del grupo
-                    this.ya_se_duplico =true;
-                }
-                    // Cálculo del alquiler de casas
-                //esto esta mal pero ahora misno no se me courre una solucion sin 5 atributos nuevos
-                //y 5 ifs apara comprobra si ya se a modificado
+    //SECCION DE BUILDEAR Y COMPRAR EDIFICIOS---------------------------------------------------------------------------
+    /**Método para evaluar lo que hay que pagar en una casilla de tipo Servicio.
+     * Sobrecarga del método para las casillas de este tipo ya que necesitan el valor de la tirada.
+     * @param tirada Valor de la tirada
+     */
+    public float evaluarAlquiler(int tirada) {
+        // Precio base del alquiler de cualquier casilla
+        float totalAlquiler = this.impuesto;
 
-
-
-                //HABRA QUE MIRARR MAS ADELANTEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-                    int numCasas = this.edificios.get(0).size();
-                    switch (numCasas) {
-                        case 1:
-                            this.impuesto = baseAlquiler * 5f;
-                            break;
-                        case 2:
-                            this.impuesto = baseAlquiler * 15f;
-                            break;
-                        case 3:
-                            this.impuesto = baseAlquiler * 35f;
-                            break;
-                        case 4:
-                            this.impuesto = baseAlquiler * 50f;
-                            break;
-                        default:
-                            this.impuesto = baseAlquiler;
-                            break;
-                    }
-
-                    // Cálculo del alquiler de hoteles, piscinas y pistas de deporte
-                    this.impuesto += baseAlquiler * 70f * this.edificios.get(1).size(); // Hoteles
-                    this.impuesto += baseAlquiler * 25f * this.edificios.get(2).size(); // Piscinas
-                    this.impuesto += baseAlquiler * 25f * this.edificios.get(3).size(); // Pistas de deporte
-                }
-
-        } else if (this.tipo.equals("Transporte")) {
-            // Cálculo del alquiler para casillas de tipo Transporte
-            int multiplicador = this.duenho.numeroCasillasTipo("Transporte");
-            this.impuesto = multiplicador * 0.25f * this.impuesto;
+        if(this.tipo.equals("Servicio")) {
+            totalAlquiler *= tirada * (this.duenho.numeroCasillasTipo("Servicio") == 1 ? 4 : 10);
         }
+        else {
+            System.out.println("Error en evaluarAlquiler(tirada): se intentó usar en una casilla que no es Servicio.");
+        }
+
+        return totalAlquiler;
+    }
+
+    /**Método para evaluar lo que hay que pagar en una casilla de tipo Transporte o Solar.*/
+    public float evaluarAlquiler() {
+        // Precio base del alquiler de cualquier casilla
+        float totalAlquiler = this.impuesto;
+
+        if(this.tipo.equals("Transporte")) {
+            // Se paga 25% más por cada casilla de Transporte que posee el jugador
+            totalAlquiler *= 0.25f * this.duenho.numeroCasillasTipo("Transporte");;
+        }
+        else if(this.tipo.equals("Solar")) {
+            // Si es dueño del grupo se duplica el precio base del alquiler del solar
+            if (this.grupo.esDuenhoGrupo(this.duenho)){
+                totalAlquiler *= 2f;
+            }
+
+            // Sumamos al total el precio de las casas si las hubiera
+            // En el ArrayList de edificios la posición 0 es el ArrayList de las casas :)
+            switch(this.edificios.get(0).size()) {
+                case 0: break;
+                case 1: totalAlquiler += this.impuesto * 5f; break;
+                case 2: totalAlquiler += this.impuesto * 15f; break;
+                case 3: totalAlquiler += this.impuesto * 35f; break;
+                case 4: totalAlquiler += this.impuesto * 50f; break;
+                default:
+                    System.out.println("Cómo pudiste edificar más de 4 casas en un Solar meu...");
+            }
+
+            // Sumamos al total el precio de los hoteles, piscinas y pistas de deporte
+            // (posiciones 1,2,3 en el ArrayList de edificios respectivamente)
+            totalAlquiler += this.impuesto * 70f * this.edificios.get(1).size();
+            totalAlquiler += this.impuesto * 25f * ( this.edificios.get(2).size() + this.edificios.get(3).size() );
+
+        }
+        else {
+            System.out.println("Error en evaluarAlquiler: tipo de casilla inválido.");
+        }
+
+        return totalAlquiler;
     }
 
    // Devuelve el índice correspondiente al tipo de edificación
@@ -368,12 +378,12 @@ public class Casilla {
                             System.out.println("Tipo de edificación inválido. Introduce casa, hotel, piscina o pista de deporte.");
                             return false;
                     }
-                
-            }
-            else{
-                System.out.println("No puedes edificar porque la casilla (o alguna casilla de su grupo) está hipotecada");
-                return false;
-            }
+                }
+                else{
+                    System.out.println("No puedes edificar porque has alcanzado el límite de propiedades de este grupo.");
+                    return false;
+                }
+            
     }
 
  

@@ -8,7 +8,7 @@ public class Carta {
     String tipo;
     int ID;
 
-    // CONSTRUCTORES
+    // CONSTRUCTORES----------------------------------------------------------------------------------------------------
     /**
      * Constructor de la clase Carta que crea la carta en formato Ascii
      * a partir del mensaje que tiene que mostrar dentro.
@@ -34,7 +34,6 @@ public class Carta {
         this.texto.add(Texto.CARTA_BORDEINF);
     }
 
-    // Este es más directo
     /**Constructor vacío para el reverso de las cartas.*/
     public Carta() {
         this.texto = new ArrayList<String>();
@@ -55,7 +54,8 @@ public class Carta {
         this.ID =0;
     }
 
-    //GETTERS Y SETTERS
+
+    //GETTERS Y SETTERS-------------------------------------------------------------------------------------------------
     public ArrayList<String> getTexto() {
         return this.texto;
     }
@@ -78,7 +78,7 @@ public class Carta {
     }
 
 
-    //MÉTODOS ÚTILES DE CARTA
+    //MÉTODOS ÚTILES DE CARTA-------------------------------------------------------------------------------------------
 
     /**Método para crear cadenas de espacios.
      * @param n Número de espacios en blanco que se quieren
