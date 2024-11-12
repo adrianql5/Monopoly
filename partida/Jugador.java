@@ -235,21 +235,21 @@ public class Jugador {
         return enCarcel;
     }
 
-    //work in progress pa la segunda entrega
-    public boolean estaEnBancarrota() {
-        if (this.getFortuna() <= 0) {
-            //Comprobar si tiene propiedades hipotecables
-            for (Casilla propiedad : this.getPropiedades()) {
-                if (!propiedad.estaHipotecada()) {
-                    // Si el jugador tiene al menos una propiedad sin hipotecar, no está en bancarrota
-                    return false;
-                }
-            }
-            // Si llega aquí, significa que no tiene dinero ni propiedades útiles
-            return true;
+    
+    public boolean tieneDinero(){
+        if(fortuna<=0){
+            return false;
         }
-        // Si tiene fortuna, no está en bancarrota
-        return false;
+        return true;
+    }
+
+    public boolean tienePropiedadesHipotecables(){
+        for( Casilla c: propiedades){
+            if(!c.estaHipotecada()){
+                return false;
+            }
+        }
+        return true;
     }
 
 

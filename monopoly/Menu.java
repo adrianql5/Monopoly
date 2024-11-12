@@ -49,6 +49,34 @@ public class Menu {
         this.comandos_reducidos = false;
     }
 
+    private void forzarHipotecar(){
+        Scanner scan = new Scanner(System.in);
+                            
+        String respuesta;
+        do {//con esto forzamos a que se declare en bancarrota
+            System.out.println("Debes hipotecar alguna casilla");
+            respuesta = scan.nextLine();
+        } while (!respuesta.equals("hipotecar"));
+                        
+        analizarComando(respuesta);
+        scan.close();
+
+
+    }
+
+    private void forzarBancarrota(){
+        Scanner scan = new Scanner(System.in);
+                            
+        String respuesta;
+        do {//con esto forzamos a que se declare en bancarrota
+            System.out.println("Debes declararte en bancarrota");
+            respuesta = scan.nextLine();
+        } while (!respuesta.equals("bancarrota"));
+                        
+        analizarComando(respuesta);
+        scan.close();
+    }
+
     /**Método para generar las cartas de tipo Suerte y de tipo Caja de comunidad (más la carta dada la vuelta).*/
     private void anhadirBarajas() {
         this.cartas_suerte = new ArrayList<Carta>();
@@ -111,29 +139,36 @@ public class Menu {
     //SECCIÓN DE MÉTODOS QUE HIZO ADRI LA ÚLTIMA VEZ Y NO ESTÁN BIEN ORDENADOS------------------------------------------
     public void declararBancarrota(){
         Jugador jugador= obtenerTurno();
-        if(jugador.estaEnBancarrota()){
-            Jugador cobrador=jugador.getDeudaConJugador();
+        if(!jugador.tieneDinero()){
+            if(!jugador.tienePropiedadesHipotecables()){
+                Jugador cobrador=jugador.getDeudaConJugador();
 
-            if(cobrador.equals(banca)){
-                System.out.println("El jugador"+ jugador.getNombre()+
-                " se declara en bancarrota. Sus propiedades pasan a estar de nuevo en venta al precio al que estaban.");
-                ArrayList<Casilla> propiedades =jugador.getPropiedades();
+                if(cobrador.equals(banca)){
+                    System.out.println("El jugador"+ jugador.getNombre()+
+                    " se declara en bancarrota. Sus propiedades pasan a estar de nuevo en venta al precio al que estaban.");
+                    ArrayList<Casilla> propiedades =jugador.getPropiedades();
 
-                for( Casilla c : propiedades){
-                    jugador.eliminarPropiedad(c);
+                    for( Casilla c : propiedades){
+                        c.setDeshipotecada();
+                        jugador.eliminarPropiedad(c);
+                    }
+                    eliminarJugador(jugador);
                 }
-                eliminarJugador(jugador);
+                else{
+                    System.out.println("El jugador "+jugador.getNombre()+
+                    " se declara en bancarrota. Sus propiedades pasan a ser de "+cobrador.getNombre());
+                    ArrayList<Casilla> propiedades= jugador.getPropiedades();
+                    for (Casilla c: propiedades){
+                        c.setDeshipotecada();
+                        cobrador.anhadirPropiedad(c);
+                        jugador.eliminarPropiedad(c);
+
+                    }
+                    eliminarJugador(jugador);
+                }
             }
             else{
-                System.out.println("El jugador "+jugador.getNombre()+
-                " se declara en bancarrota. Sus propiedades pasan a ser de "+cobrador.getNombre());
-                ArrayList<Casilla> propiedades= jugador.getPropiedades();
-                for (Casilla c: propiedades){
-                    cobrador.anhadirPropiedad(c);
-                    jugador.eliminarPropiedad(c);
-
-                }
-                eliminarJugador(jugador);
+                System.out.println("Todabía tienes alguna propiedad que puedes hipotecar.");
             }
         }
     }
@@ -144,20 +179,19 @@ public class Menu {
         Casilla casilla= tablero.encontrar_casilla(nombre);
         Jugador jugador= obtenerTurno();
 
-        if(casilla.getGrupo().esDuenhoGrupo(jugador) || casilla.getVecesVisitadaPorDuenho()>2){
-            if(casilla.getDuenho().equals(jugador)){
-                if(casilla.esHipotecable()){
-                    System.out.println("El jugador "+ jugador.getNombre()+" recibe "+ casilla.getHipoteca()+
-                    " por la hipoteca de " + casilla.getNombre()+
-                    ". No puede recibir alquileres ni edificar en el grupo "+ casilla.getGrupo().getColorGrupo());
-                    jugador.sumarFortuna(casilla.getHipoteca());
-                    banca.sumarFortuna(-casilla.getHipoteca());
-                }        
-            }
-            else{
-                System.out.println("El jugador "+jugador.getNombre() +" no puede hipotecar "
-                + casilla.getNombre()+". No es una propiedad que le pertenezca.");
-            }
+        
+        if(casilla.getDuenho().equals(jugador)){
+            if(casilla.esHipotecable()){
+                System.out.println("El jugador "+ jugador.getNombre()+" recibe "+ casilla.getHipoteca()+
+                " por la hipoteca de " + casilla.getNombre()+
+                ". No puede recibir alquileres ni edificar en el grupo "+ casilla.getGrupo().getColorGrupo());
+                //jugador.sumarFortuna(casilla.getHipoteca());
+                banca.sumarFortuna(-casilla.getHipoteca());
+            }        
+        }
+        else{
+            System.out.println("El jugador "+jugador.getNombre() +" no puede hipotecar "
+            + casilla.getNombre()+". No es una propiedad que le pertenezca.");
         }
     }
 
@@ -757,21 +791,7 @@ public class Menu {
                     }
 
                     // EVALUAMOS QUÉ HAY QUE HACER EN FUNCIÓN DE LA CASILLA
-                    if (!evaluarCasilla(avatar.getLugar())) {
-                        if(jugador.estaEnBancarrota()){
-                            Scanner scan = new Scanner(System.in);
-                            
-                            String respuesta;
-                            do {//con esto forzamos a que se declare en bancarrota
-                                System.out.println("Debes declararte en bancarrota");
-                                respuesta = scan.nextLine();
-                            } while (!respuesta.equals("bancarrota"));
-                            
-                            analizarComando(respuesta);
-                            scan.close();
-                        }
-                    }
-
+                    evaluarCasilla(avatar.getLugar());
                 }
 
             }
@@ -780,11 +800,6 @@ public class Menu {
                         Valor.BOLD_STRING + "acabar turno" + Valor.RESET);
             }
         }
-        if(jugador.estaEnBancarrota()){
-            System.out.println("El jugador " + jugador.getNombre() + " está en bancarrota \n");
-            acabarPartida();
-        }
-
     }
 
     /**Método que mueve el avatar de jugador en el tablero (gestiona si está en modo normal o modo avanzado).
@@ -918,18 +933,7 @@ public class Menu {
 
 
                     // EVALUAMOS QUÉ HAY QUE HACER EN FUNCIÓN DE LA CASILLA
-                    if (evaluarCasilla(destino)) {
-                        Scanner scan = new Scanner(System.in);
-
-                        String respuesta;
-                        do {//con esto forzamos a que se declare en bancarrota
-                            System.out.println("Debes declararte en bancarrota");
-                            respuesta = scan.nextLine();
-                        } while (!respuesta.equals("bancarrota"));
-
-                        analizarComando(respuesta);
-                        scan.close();
-                    }
+                    evaluarCasilla(destino);
 
 
                     // No podemos encarcelar al jugador desde evaluarCasilla
@@ -945,11 +949,6 @@ public class Menu {
                         Valor.BOLD_STRING + "acabar turno" + Valor.RESET);
             }
         }
-        if(jugador.estaEnBancarrota()){
-            System.out.println("El jugador " + jugador.getNombre() + " esta en bancarrota \n");
-            acabarPartida();
-        }
-
     }
 
     /** Método para evaluar qué hacer en una casilla concreta.
@@ -979,7 +978,7 @@ public class Menu {
                                     jugadorActual.getNombre(), nombreCasilla, duenhoCasilla.getNombre(), precio);
                             jugadorActual.pagar(duenhoCasilla, precio);
 
-                            if (jugadorActual.estaEnBancarrota()){
+                            if (!jugadorActual.tieneDinero()){
                                 jugadorActual.setDeudaConJugador(duenhoCasilla);
                                 return false;
                             }
@@ -1687,11 +1686,6 @@ public class Menu {
                         Valor.BOLD_STRING + "acabar turno" + Valor.RESET);
             }
         }
-        if(jugador.estaEnBancarrota()){
-            System.out.println("El jugador " + jugador.getNombre() + " esta en bancarrota \n");
-            acabarPartida();
-        }
-
     }
 
 
@@ -1795,11 +1789,6 @@ public class Menu {
                         Valor.BOLD_STRING + "acabar turno" + Valor.RESET);
             }
         }
-        if(jugador.estaEnBancarrota()){
-            System.out.println("El jugador " + jugador.getNombre() + " esta en bancarrota \n");
-            acabarPartida();
-        }
-
     }
 
     // MÉTODOS SIN GRUPO:

@@ -118,6 +118,10 @@ public class Casilla {
         return estaHipotecada;
     }
 
+    public void setDeshipotecada(){
+        estaHipotecada=false;
+    }
+
     public boolean esHipotecable() {
         if (!estaHipotecada) { // Simplificación de la condición
             boolean sinEdificios = true;
