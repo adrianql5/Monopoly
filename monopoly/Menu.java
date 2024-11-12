@@ -1143,13 +1143,15 @@ public class Menu {
 
     /**Método para cambiar el modo de movimiento del avatar que tiene el turno*/
     private void cambiarModo() {
-        obtenerTurno().getAvatar().cambiarMovimiento();
+
         Avatar avatar = obtenerTurno().getAvatar();
         if(avatar.getMovimientoAvanzado()) {
-            System.out.println("El avatar " + avatar + " vuelve el movimiento normal.");
+            System.out.println("El avatar " + avatar.getId() + " vuelve el movimiento normal.");
+            obtenerTurno().getAvatar().cambiarMovimiento();
         }
         else {
             System.out.println("El avatar " + avatar.getId() + " activa al movimiento avanzado (" + avatar.getTipo() + ")");
+            obtenerTurno().getAvatar().cambiarMovimiento();
         }
     }
 
@@ -2013,6 +2015,19 @@ public class Menu {
                 nombre_cabwza = j.getNombre();
             }
         }
+        String color = "";
+        float recaudacion_grupo_max = 0;
+        for (int i = 0; i < 40; i++) {
+            casillaAux = tablero.getCasilla(i);
+            if(casillaAux.getTipo().equals("Solar"))
+            // Si el color del grupo coincide con el proporcionado, listar las edificaciones
+                if(recaudacion_grupo_max < casillaAux.getGrupo().getRecaudacionGrupo()){
+                    recaudacion_grupo_max = casillaAux.getGrupo().getRecaudacionGrupo();
+                    color = casillaAux.getGrupo().getColorGrupo();
+                }
+
+
+        }
 
 
 
@@ -2020,6 +2035,7 @@ public class Menu {
         System.out.print("Casillas más visitadas :" + nombresCasillas.toString());
         //falta grupo mas rentable
         System.out.print("\nLa casilla mas rentable es :" + nombre_max);
+        System.out.print("\nEl grupo mas rentable es :" + color);
         System.out.print("\nEl jugador con mas vueltas es :" + nombre_vueltas);
         System.out.print("\nEl jugador con mas tiradas es :" + nombre_dados);
         System.out.print("\nEl jugador en cabeza es: " + nombre_cabwza);

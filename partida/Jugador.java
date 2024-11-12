@@ -237,19 +237,19 @@ public class Jugador {
 
 
     //SECCIÓN QUE DEVUELVE INFORMACIÓN DE JUGADOR
-    /**Método que devuelve la información de un jugador*/
     public void infoJugador() {
         System.out.println("{");
         // Imprimir nombre, avatar y fortuna con separador de miles para la fortuna
         System.out.println("\tnombre: " + this.getNombre() + ",");
         System.out.println("\tavatar: " + this.getAvatar().getId() + ",");
-        System.out.printf("\tfortuna: %,.0f,\n", this.getFortuna()); // Usar formato con separador de miles y sin decimales
+        System.out.printf("\tfortuna: %,.0f,\n", this.getFortuna()); // Formato con separador de miles sin decimales
 
         // Imprimir propiedades
-        System.out.print("\tpropiedades: ");
+
         if (this.getPropiedades().isEmpty()) {
-            System.out.println("Ninguna");
+            System.out.print("");
         } else {
+            System.out.print("\tpropiedades: ");
             System.out.print("[");
             for (int i = 0; i < this.getPropiedades().size(); i++) {
                 System.out.print(this.getPropiedades().get(i).getNombre());
@@ -257,14 +257,14 @@ public class Jugador {
                     System.out.print(", "); // Añade coma a todo menos a la última
                 }
             }
-            System.out.println("]");
+            System.out.println("],");
 
             // Imprimir edificios
             System.out.println("\tEdificios: {");
             String[] tipos = {"casa", "hotel", "piscina", "pista de deporte"};
             for (int i = 0; i < this.getPropiedades().size(); i++) {
-                if( this.getPropiedades().get(i).getTipo().equals("Solar")) {
-                    if (0 != this.getPropiedades().get(i).getNumeroEdificios()) {
+                if (this.getPropiedades().get(i).getTipo().equals("Solar")) {
+                    if (this.getPropiedades().get(i).getNumeroEdificios() != 0) {
                         System.out.println("\t\t" + this.getPropiedades().get(i).getNombre() + ": {");
 
                         for (String tipo : tipos) {
@@ -283,12 +283,9 @@ public class Jugador {
                         }
                         System.out.println("\t\t}");
                     }
-                    System.out.println("\t}");
                 }
-
             }
-
-
+            System.out.println("\t}");
         }
         System.out.println("}");
     }

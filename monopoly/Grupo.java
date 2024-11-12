@@ -11,6 +11,7 @@ public class Grupo {
     private ArrayList<Casilla> miembros; //Casillas miembros del grupo.
     private String colorGrupo; //Color del grupo
     private int numCasillas; //Número de casillas del grupo.
+    private float recaudacion_grupo; //lo que recauda el grupo
 
 
     //SECCIÓN DE CONSTRUCTORES DE GRUPOS
@@ -104,4 +105,12 @@ public class Grupo {
     public void setNumCasillasGrupo(int numCasillas){
         this.numCasillas=numCasillas;
     }
+
+    public float getRecaudacionGrupo() {
+        return recaudacion_grupo;
+    }
+    public void sumarRecaudacionGrupo(float recaudacionGrupo) {
+        this.recaudacion_grupo += recaudacionGrupo;
+    }
+
 }
