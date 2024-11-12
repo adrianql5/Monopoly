@@ -142,18 +142,21 @@ public class Menu {
     public void hipotecar(String nombre){
         Casilla casilla= tablero.encontrar_casilla(nombre);
         Jugador jugador= obtenerTurno();
-        if(casilla.getDuenho().equals(jugador)){
-            if(casilla.esHipotecable()){
-                System.out.println("El jugador "+ jugador.getNombre()+" recibe "+ casilla.getHipoteca()+
-                " por la hipoteca de " + casilla.getNombre()+
-                ". No puede recibir alquileres ni edificar en el grupo "+ casilla.getGrupo().getColorGrupo());
-                jugador.sumarFortuna(casilla.getHipoteca());
-                banca.sumarFortuna(-casilla.getHipoteca());
-            }        
-        }
-        else{
-            System.out.println("El jugador "+jugador.getNombre() +" no puede hipotecar "
-            + casilla.getNombre()+". No es una propiedad que le pertenezca.");
+
+        if(casilla.getGrupo().esDuenhoGrupo(jugador) || casilla.getVecesVisitadaPorDuenho()>2){
+            if(casilla.getDuenho().equals(jugador)){
+                if(casilla.esHipotecable()){
+                    System.out.println("El jugador "+ jugador.getNombre()+" recibe "+ casilla.getHipoteca()+
+                    " por la hipoteca de " + casilla.getNombre()+
+                    ". No puede recibir alquileres ni edificar en el grupo "+ casilla.getGrupo().getColorGrupo());
+                    jugador.sumarFortuna(casilla.getHipoteca());
+                    banca.sumarFortuna(-casilla.getHipoteca());
+                }        
+            }
+            else{
+                System.out.println("El jugador "+jugador.getNombre() +" no puede hipotecar "
+                + casilla.getNombre()+". No es una propiedad que le pertenezca.");
+            }
         }
     }
 
@@ -247,7 +250,7 @@ public class Menu {
 
     public void venderEdificios(String tipo, String solar, int n) {
         Jugador jugador = obtenerTurno(); // Obtener el jugador cuyo turno es
-        Casilla casilla = jugador.getAvatar().getLugar(); // Obtener la casilla donde se encuentra el jugador
+        Casilla casilla =tablero.encontrar_casilla(solar);
 
         // Verificar si la casilla es del tipo correcto (solar)
         if (casilla.getDuenho().equals(jugador)) {
@@ -1033,6 +1036,9 @@ public class Menu {
             }
         } else {
             System.out.println("Esta casilla te pertenece.");
+            if(casilla.getTipo().equals("Solar")){
+                casilla.setVecesVisitadaPorDuenho(1);
+            }
         }
         return true;
     }
