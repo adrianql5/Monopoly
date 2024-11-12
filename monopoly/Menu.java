@@ -29,6 +29,7 @@ public class Menu {
     private ArrayList<Carta> cartas_caja;
     private Carta carta_del_reves;
     private boolean partidaTerminada; //Booleano para acabar la partida
+    private boolean comandos_reducidos;
 
     //SECCIÓN DE CONSTRUIR EL MENÚ--------------------------------------------------------------------------------------
     //Hay que asignar un valor por defecto para cada atributo
@@ -45,7 +46,7 @@ public class Menu {
         this.solvente = true;
         anhadirBarajas();
         this.partidaTerminada = false;
-
+        this.comandos_reducidos = false;
     }
 
     /**Método para generar las cartas de tipo Suerte y de tipo Caja de comunidad (más la carta dada la vuelta).*/
@@ -420,19 +421,44 @@ public class Menu {
             case "jugador": infoJugadorTurno(); break;
 
             //Lanzar los dados (hay que imprimir el tablero después)
-            case "lanzar dados": lanzarDados(); verTablero(); break;
+            case "lanzar dados":
+                if(!this.comandos_reducidos ==true){
+                    lanzarDados();
+                    verTablero();
+                }else{
+                    System.out.print("Comando no valido mientras se usa el modo avanzado");
+                }
+                 break;
 
             //Salir de la cárcel
-            case "salir carcel": salirCarcel(); break;
+            case "salir carcel":
+                if(!this.comandos_reducidos ==true){
+                    salirCarcel();
+                }else{
+                    System.out.print("Comando no valido mientras se usa el modo avanzado");
+                }
+                 break;
 
             //Pasar el turno al siguiente jugador
-            case "acabar turno": acabarTurno(); break;
+            case "acabar turno":
+                if(!this.comandos_reducidos ==true){
+                    acabarTurno();
+                }else{
+                    System.out.print("Comando no valido mientras se usa el modo avanzado");
+                }
+                 break;
 
             //Imprimir el tablero
             case "ver tablero": verTablero(); break;
 
             //Cambiar el modo de movimiento del avatar
-            case "cambiar modo": cambiarModo(); break;
+            case "cambiar modo":
+                if(!this.comandos_reducidos ==true){
+                    cambiarModo();
+                }else{
+                    System.out.print("Comando no valido mientras se usa el modo avanzado");
+                }
+                 break;
 
             //Estadísticas de la partida (generales)
             case "estadisticas": estadisticasGenerales(); break;
@@ -519,19 +545,24 @@ public class Menu {
                     // Si alguno de los valores de dados introducidos no es válido
                     // se imprime un mensaje de error (lo hace dadoValido) y no hace nada
                     else if("dados".equals(comando[0])) {
-                        int dado1 = dadoValido(comando[1]);
-                        int dado2 = dadoValido(comando[2]);
-                        if (dado1!=0 && dado2!=0) {
-                            Jugador jugador_actual = obtenerTurno();
-                            if(jugador_actual.getAvatar().getMovimientoAvanzado()){
-                                dadosTrampaAvanzado(dado1, dado2);
-                                verTablero();
-                            }else{
-                                dadosTrampa(dado1, dado2);
-                                verTablero();
-                            }
+                        if(!this.comandos_reducidos ==true){
+                            int dado1 = dadoValido(comando[1]);
+                            int dado2 = dadoValido(comando[2]);
+                            if (dado1!=0 && dado2!=0) {
+                                Jugador jugador_actual = obtenerTurno();
+                                if(jugador_actual.getAvatar().getMovimientoAvanzado()){
+                                    dadosTrampaAvanzado(dado1, dado2);
+                                    verTablero();
+                                }else{
+                                    dadosTrampa(dado1, dado2);
+                                    verTablero();
+                                }
 
+                            }
+                        }else{
+                            System.out.print("Comando no valido mientras se usa el modo avanzado");
                         }
+
                     }
                     else {
                         System.out.println(comando_entero + " no es un comando válido.");
@@ -1933,25 +1964,28 @@ public class Menu {
                 int incremento = (valorTirada > 4) ? 1 : -1;
                 int posicionFinal = (posicionActual + valorTirada * incremento) % 40;
                 int posicion_inicial = posicionActual;
-
+                int ya_movido = 0;
                 while (posicionActual != posicionFinal) {
                     jugador.getAvatar().moverAvatar(this.tablero.getPosiciones(), incremento);
+                    ya_movido += incremento;
                     posicionActual = jugador.getAvatar().getLugar().getPosicion();
-                    if (posicionActual % 2 == 1) {
-
+                    if ((posicionActual % 2 == 1 && (ya_movido >= 4 || incremento < 0))) {
                         verTablero();
                         if (evaluarCasilla(jugador.getAvatar().getLugar())) {
                             if (!jugador.isEnCarcel()) {
                                 if (jugador.getAvatar().getLugar().esTipoComprable()) {
                                     Scanner scanner = new Scanner(System.in);
-                                    System.out.print("Quieres comprarla la casilla " + jugador.getAvatar().getLugar().getNombre() + " pon 0/1 segun tu decision: ");
-                                    int numero = scanner.nextInt();
-                                    if (numero == 1) {
-                                        comprar(jugador.getAvatar().getLugar().getNombre());
-
-
-                                    }
+                                    String comando;
+                                    this.comandos_reducidos=true;
+                                    do {
+                                        System.out.print("Pon continuar para seguir ejecutando la accion de la pelota \n");
+                                        comando = scanner.nextLine();
+                                        analizarComando(comando);
+                                    } while (!comando.equals("continuar"));
+                                    this.comandos_reducidos= false;
                                 }
+                            }else{
+                                System.out.print("El jugador esta en la carcel; no puede continuar la accion de pelota.\n");
                             }
                         }
                     }
