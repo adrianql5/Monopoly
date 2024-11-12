@@ -49,33 +49,60 @@ public class Menu {
         this.comandos_reducidos = false;
     }
 
-    private void forzarHipotecar(){
-        Scanner scan = new Scanner(System.in);
-                            
-        String respuesta;
-        do {//con esto forzamos a que se declare en bancarrota
-            System.out.println("Debes hipotecar alguna casilla");
-            respuesta = scan.nextLine();
-        } while (!respuesta.equals("hipotecar"));
-                        
-        analizarComando(respuesta);
-        scan.close();
 
+    void evaluarSinDinero(){
+        Jugador jugador = obtenerTurno();
 
+        if (jugador.tienePropiedadesHipotecables()) {
+            System.out.println("Te has quedado sin dinero, tienes 2 opciones: declararte en bancarrota o hipotecar alguna de tus propiedades.");
+            Scanner scan = new Scanner(System.in);
+            String comando;
+
+            while (true) {
+                System.out.print("Escribe 'bancarrota' o 'hipotecar [nombre_casilla]': ");
+                comando = scan.nextLine().trim();
+
+                if (comando.equalsIgnoreCase("bancarrota")) {
+                    declararBancarrota();
+                    System.out.println("Te has declarado en bancarrota.");
+                    break;
+                } else if (comando.startsWith("hipotecar ")) {
+                    String nombreCasilla = comando.substring(10).trim();
+                    Casilla casilla=tablero.encontrar_casilla(nombreCasilla);
+                    if (casilla.getDuenho().equals(jugador)) {
+                        hipotecar(nombreCasilla);
+                        System.out.println("Has hipotecado la propiedad: " + nombreCasilla);
+                        break;
+                    } else {
+                        System.out.println("No tienes esa propiedad o no se puede hipotecar. Inténtalo de nuevo.");
+                    }
+                } else {
+                    System.out.println("Comando no válido. Debes escribir 'bancarrota' o 'hipotecar [nombre_casilla]'.");
+                }
+            }
+            scan.close();
+
+        } else {
+            System.out.println("Te has quedado sin dinero y no tienes propiedades hipotecables. Debes declararte en bancarrota.");
+            Scanner scan = new Scanner(System.in);
+            String comando;
+
+            while (true) {
+                System.out.print("Escribe 'bancarrota' para continuar: ");
+                comando = scan.nextLine().trim();
+                if (comando.equalsIgnoreCase("bancarrota")) {
+                    declararBancarrota();
+                    System.out.println("Te has declarado en bancarrota.");
+                    break;
+                } else {
+                    System.out.println("Comando no válido. Debes escribir 'bancarrota' para continuar.");
+                }
+            }
+            scan.close();
+        }
     }
+    
 
-    private void forzarBancarrota(){
-        Scanner scan = new Scanner(System.in);
-                            
-        String respuesta;
-        do {//con esto forzamos a que se declare en bancarrota
-            System.out.println("Debes declararte en bancarrota");
-            respuesta = scan.nextLine();
-        } while (!respuesta.equals("bancarrota"));
-                        
-        analizarComando(respuesta);
-        scan.close();
-    }
 
     /**Método para generar las cartas de tipo Suerte y de tipo Caja de comunidad (más la carta dada la vuelta).*/
     private void anhadirBarajas() {
@@ -139,38 +166,32 @@ public class Menu {
     //SECCIÓN DE MÉTODOS QUE HIZO ADRI LA ÚLTIMA VEZ Y NO ESTÁN BIEN ORDENADOS------------------------------------------
     public void declararBancarrota(){
         Jugador jugador= obtenerTurno();
-        if(!jugador.tieneDinero()){
-            if(!jugador.tienePropiedadesHipotecables()){
-                Jugador cobrador=jugador.getDeudaConJugador();
+        Jugador cobrador=jugador.getDeudaConJugador();
 
-                if(cobrador.equals(banca)){
-                    System.out.println("El jugador"+ jugador.getNombre()+
-                    " se declara en bancarrota. Sus propiedades pasan a estar de nuevo en venta al precio al que estaban.");
-                    ArrayList<Casilla> propiedades =jugador.getPropiedades();
+        if(cobrador.equals(banca)){
+            System.out.println("El jugador"+ jugador.getNombre()+
+            " se declara en bancarrota. Sus propiedades pasan a estar de nuevo en venta al precio al que estaban.");
+            ArrayList<Casilla> propiedades =jugador.getPropiedades();
 
-                    for( Casilla c : propiedades){
-                        c.setDeshipotecada();
-                        jugador.eliminarPropiedad(c);
-                    }
-                    eliminarJugador(jugador);
-                }
-                else{
-                    System.out.println("El jugador "+jugador.getNombre()+
-                    " se declara en bancarrota. Sus propiedades pasan a ser de "+cobrador.getNombre());
-                    ArrayList<Casilla> propiedades= jugador.getPropiedades();
-                    for (Casilla c: propiedades){
-                        c.setDeshipotecada();
-                        cobrador.anhadirPropiedad(c);
-                        jugador.eliminarPropiedad(c);
-
-                    }
-                    eliminarJugador(jugador);
-                }
+            for( Casilla c : propiedades){
+                c.setDeshipotecada();
+                jugador.eliminarPropiedad(c);
             }
-            else{
-                System.out.println("Todabía tienes alguna propiedad que puedes hipotecar.");
-            }
+            eliminarJugador(jugador);
         }
+        else{
+            System.out.println("El jugador "+jugador.getNombre()+
+            " se declara en bancarrota. Sus propiedades pasan a ser de "+cobrador.getNombre());
+            ArrayList<Casilla> propiedades= jugador.getPropiedades();
+            for (Casilla c: propiedades){
+                c.setDeshipotecada();
+                cobrador.anhadirPropiedad(c);
+                jugador.eliminarPropiedad(c);
+
+            }
+            eliminarJugador(jugador);
+        }
+    
     }
 
 
@@ -412,6 +433,9 @@ public class Menu {
                     while (!partidaTerminada) {
                         System.out.println();
                         analizarComando(scan.nextLine());
+                        if(jugadores.size()==1){
+                            acabarPartida();
+                        }
                     }
                 }
                 else {
@@ -450,6 +474,8 @@ public class Menu {
 
             //Acabar la partida
             case "terminar partida": case "acabar partida": acabarPartida(); break;
+
+            case "bancarrota": declararBancarrota();break;
 
             //Indicar jugador que tiene el turno
             case "jugador": infoJugadorTurno(); break;
@@ -839,7 +865,9 @@ public class Menu {
                     // SI VALORTIRADA <= 4: RETROCEDE ESE NÚMERO DE CASILLAS
                     else {
                         avatar.moverAvatar(this.tablero.getPosiciones(), -tirada);
-                        evaluarCasilla(avatar.getLugar());
+                        if(!evaluarCasilla(avatar.getLugar())){
+                            evaluarSinDinero();
+                        }
                     }
                     break;
                 case "esfinge":
@@ -933,7 +961,9 @@ public class Menu {
 
 
                     // EVALUAMOS QUÉ HAY QUE HACER EN FUNCIÓN DE LA CASILLA
-                    evaluarCasilla(destino);
+                    if(!evaluarCasilla(destino)){
+                        evaluarSinDinero();
+                    }
 
 
                     // No podemos encarcelar al jugador desde evaluarCasilla
@@ -979,8 +1009,8 @@ public class Menu {
                             jugadorActual.pagar(duenhoCasilla, precio);
 
                             if (!jugadorActual.tieneDinero()){
-                                jugadorActual.setDeudaConJugador(duenhoCasilla);
-                                return false;
+                                    jugadorActual.setDeudaConJugador(duenhoCasilla);
+                                    return false;
                             }
 
                             return true;
@@ -1027,7 +1057,7 @@ public class Menu {
                             jugadorActual.pagar(duenhoCasilla, precio);
 
                             //ojooooooooooooooooooooooooo
-                            if (jugadorActual.estaEnBancarrota()) {
+                            if (!jugadorActual.tieneDinero()) {
                                 jugadorActual.setDeudaConJugador(duenhoCasilla);
                                 return false;
                             }
@@ -1049,7 +1079,7 @@ public class Menu {
                     //NO SE SI EST UN GASTO--------- si lo es
                     jugadorActual.sumarGastos(impuestoCasilla);
 
-                    if (jugadorActual.estaEnBancarrota()){
+                    if (!jugadorActual.tieneDinero()){
                         jugadorActual.setDeudaConJugador(this.banca);
                         return false;
                     }
@@ -1066,7 +1096,7 @@ public class Menu {
                             jugadorActual.pagar(duenhoCasilla, precio);
 
                             //ojooooooooooooooooooooooooo
-                            if (jugadorActual.estaEnBancarrota()){
+                            if (!jugadorActual.tieneDinero()){   
                                 jugadorActual.setDeudaConJugador(duenhoCasilla);
                                 return false;
                             }
@@ -1410,7 +1440,7 @@ public class Menu {
 
         // Creamos el nuevo jugador con el tipo indicado
         Jugador nuevoJugador = new Jugador(nombre, tipo, casillaInicio, avatares);
-
+        nuevoJugador.setDeudaConJugador(banca);
         // Añadir el jugador a la lista de jugadores y a la casilla de inicio
         this.jugadores.add(nuevoJugador);
         casillaInicio.anhadirAvatar(nuevoJugador.getAvatar());
@@ -1458,11 +1488,15 @@ public class Menu {
                     //Siempre se pasa por la salida ya que no hay ninguna casilla Suerte entre la Salida y Trans1
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), 45-posicion);
                     cobrarSalida(jugadorActual);
-                    evaluarCasilla(this.tablero.getCasilla(5));
+                    if(!evaluarCasilla(this.tablero.getCasilla(5))){
+                        evaluarSinDinero();
+                    }
                     break;
                 case 2: //Ir a Solar15 (pos=26) sin pasar por la Salida (y por tanto sin cobrar)
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), posicion<26 ? 26-posicion : 66-posicion);
-                    evaluarCasilla(this.tablero.getCasilla(26));
+                    if(!evaluarCasilla(this.tablero.getCasilla(26))){
+                        evaluarSinDinero();
+                    }
                     break;
                 case 3: //Cobrar 500.000€
                     jugadorActual.sumarFortuna(500000);
@@ -1471,7 +1505,9 @@ public class Menu {
                     //Siempre se pasa por la salida ya que no hay ninguna casilla Suerte entre la Salida y Solar3
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), 46-posicion);
                     cobrarSalida(jugadorActual);
-                    evaluarCasilla(this.tablero.getCasilla(6));
+                    if(!evaluarCasilla(this.tablero.getCasilla(6))){
+                        evaluarSinDinero();
+                    }
                     break;
                 case 5: //Ir a la cárcel (encarcelado) sin pasar por la Salida (y por tanto sin cobrar)
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), posicion<10 ? 10-posicion : 50-posicion);
@@ -1676,7 +1712,9 @@ public class Menu {
                     }
 
                     //EVALUAMOS QUÉ HAY QUE HACER EN FUNCIÓN DE LA CASILLA
-                    evaluarCasilla(avatar.getLugar());
+                    if(!evaluarCasilla(avatar.getLugar())){
+                        evaluarSinDinero();
+                    }
 
                 }
 
@@ -1832,6 +1870,7 @@ public class Menu {
             n=dadoValido(numero);
         }
         
+        scan.close();
         return n;
     }
 
@@ -1877,6 +1916,10 @@ public class Menu {
                                 comprar(jugador.getAvatar().getLugar().getNombre());
                                 haComprado = true; // Marca que ya se ha realizado una compra en este turno
                             }
+                            scanner.close();
+                        }
+                        else{
+                            evaluarSinDinero();
                         }
 
                     }
@@ -1910,12 +1953,15 @@ public class Menu {
                                         edificar("pista de deporte");
                                         break;
                                 }
-                            } else {
+                            } 
+                            else {
                                 System.out.print("No es posible edificar una casilla de " + tipo + " en esta casilla");
                             }
-
+                            scanner2.close();
+                            
 
                         }
+                        scanner.close();
 
                     }
 
@@ -1929,6 +1975,7 @@ public class Menu {
                         System.out.print("introduce el valor del segundo dado ");
                         int dado2 = scanner3.nextInt();
                         valorTirada = dado1 + dado2;
+                        scanner3.close();
                     } else {
                         //los porcentajes es para asegurar que el numero es valido
                         valorTirada = this.dado1.tirarDado() % 7 + this.dado2.tirarDado() % 7;
@@ -1938,7 +1985,9 @@ public class Menu {
                 if (valorTirada <= 4) {
                     // Retroceder el número de casillas correspondiente y bloquear lanzamientos en los siguientes dos turnos
                     jugador.getAvatar().moverAvatar(this.tablero.getPosiciones(), -valorTirada);
-                    evaluarCasilla(jugador.getAvatar().getLugar());
+                    if(evaluarCasilla(jugador.getAvatar().getLugar())){
+                        evaluarSinDinero();
+                    }
                     jugador.setBloqueado(3);
                 }
 
@@ -1972,10 +2021,14 @@ public class Menu {
                                         analizarComando(comando);
                                     } while (!comando.equals("continuar"));
                                     this.comandos_reducidos= false;
+                                    scanner.close();
                                 }
                             }else{
                                 System.out.print("El jugador esta en la carcel; no puede continuar la accion de pelota.\n");
                             }
+                        }
+                        else{
+                            evaluarSinDinero();
                         }
                     }
 
