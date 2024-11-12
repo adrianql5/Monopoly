@@ -195,32 +195,35 @@ public class Menu {
                 // En un solar se puede construir una casa si dicho solar pertenece al jugador cuyo avatar se encuentra
                 // en la casilla y si (1) el avatar ha caído más de dos veces en esa misma casilla o (2) el jugador posee el
                 // grupo de casillas al que pertenece dicha casilla.
+                if ((casilla.getVecesVisitadaPorDuenho() > 2 || casilla.getGrupo().esDuenhoGrupo(jugador))) {
+                    if (casilla.getDuenho().equals(jugador)) {
+                        if (casilla.esEdificable(tipo, jugador)) {
+                            Edificio edificio = new Edificio(tipo, casilla);
 
-                if (casilla.getDuenho().equals(jugador)) {
-                    if (casilla.esEdificable(tipo, jugador)) {
-                        Edificio edificio = new Edificio(tipo, casilla);
+                            if (jugador.getFortuna() >= edificio.getCoste()) {
+                                casilla.anhadirEdificio(edificio); // Añadir el edificio a la casilla
+                                jugador.sumarGastos(edificio.getCoste()); // Restar el coste del edificio
+                                jugador.sumarFortuna(-edificio.getCoste()); // Reducir la fortuna del jugador
+                                this.banca.sumarFortuna(edificio.getCoste()); // Aumentar la fortuna de la banca
 
-                        if (jugador.getFortuna() >= edificio.getCoste()) {
-                            casilla.anhadirEdificio(edificio); // Añadir el edificio a la casilla
-                            jugador.sumarGastos(edificio.getCoste()); // Restar el coste del edificio
-                            jugador.sumarFortuna(-edificio.getCoste()); // Reducir la fortuna del jugador
-                            this.banca.sumarFortuna(edificio.getCoste()); // Aumentar la fortuna de la banca
+                                System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
+                                        edificio.getId() + " por " + edificio.getCoste());
 
-                            System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
-                                    edificio.getId() + " por " + edificio.getCoste());
-
-                            // Si es un hotel, eliminar todas las casas de la casilla
-                            if (tipo.equals("hotel")) {
-                                casilla.eliminarCasasDeCasilla();
+                                // Si es un hotel, eliminar todas las casas de la casilla
+                                if (tipo.equals("hotel")) {
+                                    casilla.eliminarCasasDeCasilla();
+                                }
+                            } else {
+                                System.out.println("No tienes suficiente dinero para edificar.");
                             }
                         } else {
-                            System.out.println("No tienes suficiente dinero para edificar.");
+                            System.out.println("No puedes edificar en esta casilla porque no cumple los requisitos necesarios.");
                         }
                     } else {
-                        System.out.println("No puedes edificar en esta casilla porque no cumple los requisitos necesarios.");
+                        System.out.println("No puedes edificar en esta casilla porque no te pertenece.");
                     }
                 } else {
-                    System.out.println("No puedes edificar en esta casilla porque no te pertenece.");
+                    System.out.println("Para edificar debes ser dueño del grupo o haber caído más de dos veces en la casilla siendo el propietario.");
                 }
             } else {
                 System.out.println("No puedes edificar en una casilla que no es de tipo solar.");
@@ -229,9 +232,6 @@ public class Menu {
             System.out.println("El tipo de edificio " + tipo + " no es válido para edificar.");
         }
     }
-
-
-    
 
 
     public void listarEdificios(String color) {
