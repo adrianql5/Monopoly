@@ -13,13 +13,18 @@ public class Jugador {
     private float fortuna; //Dinero que posee.
     private float gastos; //Gastos realizados a lo largo del juego.
     private boolean enCarcel; //Será true si el jugador está en la carcel
-    private int tiradasCarcel; //Cuando está en la carcel, contará las tiradas sin éxito que ha hecho allí para intentar salir (se usa para limitar el numero de intentos).
+    private int tiradasCarcel; //Cuenta las tiradas sin éxito que ha hecho el jugador para intentar salir.
     private int vueltas; //Cuenta las vueltas dadas al tablero.
     private ArrayList<Casilla> propiedades; //Propiedades que posee el jugador.
     private int vueltas_sin_comprar;
     private int bloqueado;
     private Estadisticas estadisticas;
-   
+    /**Atributo para movimiento avanzado. Lo usa buclePartida() para comprobaciones antes de llamar a analizarComando().
+     * Pelota: se almacenan los siguientes movimientos que tiene que hacer el avatar si hubiese (ej: [2, 2, 1])
+     * Coche: si en los 2 próximos turnos no puede mover se almacena [0, 0].
+     */
+    private ArrayList<Integer> movimientos_pendientes;
+
     private Jugador jugadorConElQueEstanEnDeuda;//si es true está en deuda con la banca, si es false con un jugador
 
 
@@ -37,6 +42,7 @@ public class Jugador {
         this.propiedades=new ArrayList<Casilla>();
         this.vueltas_sin_comprar=0;
         this.bloqueado=0;
+        // No inicializamos ni las estadísticas ni los movimientos pendientes pa la banca!
     }
     
     /**Constructor principal. Desde este constructor también se crea el avatar.
@@ -63,7 +69,7 @@ public class Jugador {
         this.bloqueado=0;
         this.jugadorConElQueEstanEnDeuda=null;
         this.estadisticas = new Estadisticas();
-        
+        this.movimientos_pendientes = new ArrayList<Integer>();
 
     }
 
@@ -71,68 +77,105 @@ public class Jugador {
 
     //OG
     /**Método para pagar dinero a otro jugador.
+     * ESTA MANERA DE LLAMARLO SE USA PARA PAGAR ALQUILERES.
      * Sólo quita el dinero de un jugador y se lo ingresa a otro (actualizando los atributos correspondientes).
+     * Se presupone que no se pasa la banca como cobrador (se actualizarían estadísticas que no tocan!!).
      * @param cobrador Jugador que recibe la cantidad que paga este jugador
-     * @param cantidad Cantidad que tiene que pagar el jugador
+     * @param alquiler Cantidad que tiene que pagar el jugador
      */
-    public void pagar(Jugador cobrador, float cantidad) {
+    public void pagar(Jugador cobrador, float alquiler) {
         // Modificamos los atributos del pagador
-        this.restarFortuna(cantidad);
-        this.sumarGastos(cantidad);
-        this.estadisticas.sumarPagoDeAlquileres(cantidad);
+        this.restarFortuna(alquiler);
+        this.sumarGastos(alquiler);
+        this.estadisticas.sumarPagoDeAlquileres(alquiler);
 
         // Modificamos los atributos del cobrador
-        cobrador.sumarFortuna(cantidad);
-        cobrador.getEstadisticas().sumarCobroDeAlquileres(cantidad);
+        cobrador.sumarFortuna(alquiler);
+        cobrador.getEstadisticas().sumarCobroDeAlquileres(alquiler);
 
         // Modificamos los atributos de la casilla
-        this.getAvatar().getLugar().sumarDinero_recaudado(cantidad);
+        this.getAvatar().getLugar().sumarDinero_recaudado(alquiler);
 
     }
 
 
-    // SOBRECARGA DEL MÉTODO "pagar" para casillas tipo Impuesto y otras tasas
-    /**Método para pagar casillas que no pueden ser compradas
-     * @param nombre_casilla Nombre de la casilla que hay que pagar
-
-    public void pagar(String nombre_casilla) {
-        if() {
+    // SOBRECARGA DEL MÉTODO "pagar" para pagar a la banca
+    /**Método para pagar dinero a otro jugador.
+     * ESTA MANERA DE LLAMARLO SE USA PARA PAGAR A LA BANCA (IMPUESTOS O TASAS).
+     * @param cantidad Dinero que hay que pagar a la banca
+     * @param banca Estamos obligados a pasar la banca para actualizar sus atributos desde aquí
+     * @param tasa TRUE si estamos pagando una tasa, FALSE si estamos pagando una casilla de tipo Impuesto
+     */
+    public void pagar(float cantidad, Jugador banca, boolean tasa) {
+        // ¿Estamos pagando una tasa (en las cartas)?
+        if(tasa) {
 
         }
-    }*/
+        // Estamos pagando una casilla de tipo Impuesto
+        else {
+            // Modificamos los atributos del pagador
+            this.restarFortuna(cantidad);
+            this.sumarGastos(cantidad);
+            this.estadisticas.sumarImpuestosYTasasPagados(cantidad);
 
-    // SOBRECARGA DEL MÉTODO "pagar"
-    /**Método para pagar una casilla.
-     * @param banca Es necesaria para varias comprobaciones
-     * @param casilla Casilla cuyo alquiler hay que cobrar
+            // Modificamos los atributos del cobrador
+            banca.sumarFortuna(cantidad);
+        }
+    }
 
-    public void pagar(Jugador banca, Casilla casilla) {
-        // Valores que nos van a hacer falta varias veces
-        Jugador duenhoCasilla = casilla.getDuenho();
+    /**Método que elimina el primer elemento del ArrayList movimientos_pendientes*/
+    public void eliminarMovimientoPendiente() {
+        if(!this.movimientos_pendientes.isEmpty()) {
+            this.movimientos_pendientes.remove(0);
+        }
+    }
 
-        // Ligera comprobación
-        if(!duenhoCasilla.equals(banca)) {
-            System.out.println("Llamada errónea a la función PAGAR(dueño, casilla): dueño incorrecto.");
+    /**Método que deja al jugador sin poder tirar los 2 siguientes turnos.
+     * Añadimos 3 ceros al ArrayList de movimientos pendientes.
+     * Cada vez que pase turno se borra uno (por eso son 3, al pasar el primer turno ya quedan 2).
+     * Cuando le llega el turno un 0 en este ArrayList bloquea la función lanzarDados().
+     */
+    public void dosTurnosSinTirar() {
+        for (int i=0; i<3; i++) {
+            this.movimientos_pendientes.add(0);
+        }
+    }
+
+    /**Método que calcula los movimientos pendientes (sólo se usa para la pelota)
+     * Si TIRADA>4 avanza. Si TIRADA<=4 retrocede.
+     * Va parando en las casillas impares (a partir del 4 en el caso de avanzar)
+     * @param tirada SE PRESUPONE QUE EL VALOR DE TIRADA TIENE SENTIDO (número entre 2 y 12)
+     */
+    public void calcularMovimientosPendientes(int tirada) {
+        // Checkeo por si se usa mal la función (si se quieren calcular los movimientos restantes cuando ya hay)
+        if(!this.movimientos_pendientes.isEmpty()) {
+            System.out.println("Error en la función calcularMovimientosPendientes: ya hay movimientos pendientes.");
             return;
         }
 
-        //
-    }*/
+        if(tirada>4) {
+            // Si la tirada es mayor que 4 siempre va a haber que parar en la quinta casilla al avanzar
+            this.movimientos_pendientes.add(5);
+            // Cuando la tirada vale más de 5: por cada par (6y7, 8y9, etc.)
+            for(int i=5; i<tirada; i+=2) {
+                if (i+1==tirada) this.movimientos_pendientes.add(1);
+                else this.movimientos_pendientes.add(2);
+            }
+            return;
+        }
 
-    // SOBRECARGA DEL MÉTODO "pagar"
-
-    /**Método para pagar el alquiler de una casilla a su dueño.
-     * Esta manera de llamarlo PRESUPONE QUE EL DUEÑO NO ES LA BANCA.
-     * //@param casilla Casilla cuyo alquiler hay que pagar
-
-    public void pagar(Casilla casilla) {
-        // Valores que nos van a hacer falta varias veces
-        Jugador duenhoCasilla = casilla.getDuenho();
-        float alquiler = casilla.evaluarAlquiler();
-
-        // Realizamos el pago
-        pagar(duenhoCasilla, alquiler);
-    }*/
+        // Si la tirada es menor o igual a 4 siempre va a haber que parar en la primera casilla al retroceder
+        this.movimientos_pendientes.add(-1);
+        if(tirada==2) {
+            this.movimientos_pendientes.add(-1);
+            return;
+        }
+        // tirada >=3
+        this.movimientos_pendientes.add(-2);
+        if(tirada==4) {
+            this.movimientos_pendientes.add(-1);
+        }
+    }
 
 
     // GETTERS Y SETTERS------------------------------------------------------------------------------------------------
@@ -152,6 +195,14 @@ public class Jugador {
     }
     public Estadisticas getEstadisticas() {
         return this.estadisticas;
+    }
+
+    public ArrayList<Integer> getMovimientos_pendientes() {
+        return this.movimientos_pendientes;
+    }
+
+    public float getGastos() {
+        return this.gastos;
     }
 
 
@@ -224,10 +275,6 @@ public class Jugador {
      */
     public void sumarGastos(float valor) {
         this.gastos += valor;
-    }
-
-    public float getGastos() {
-        return this.gastos;
     }
 
     //SECCÓN DE MÉTODOS BOOLEANOS DE JUGADOR----------------------------------------------------------------------------
@@ -365,7 +412,7 @@ public class Jugador {
     public void infoEstadisticas() {
         System.out.println("{");
         System.out.printf("\tdineroInvertido: %,.2f€,\n",this.getGastos());
-        System.out.printf("\tpagoTasasEImpuestos: %,.2f€,\n", this.estadisticas.getImpuestosPagados());
+        System.out.printf("\tpagoTasasEImpuestos: %,.2f€,\n", this.estadisticas.getImpuestosYTasasPagados());
         System.out.printf("\tpagoDeAlquileres: %,.2f€,\n", this.estadisticas.getPagoDeAlquileres());
         System.out.printf("\tcobroDeAlquileres: %,.2f€,\n", this.estadisticas.getCobroDeAlquileres());
         System.out.printf("\tpasarPorCasillaDeSalida: %,.2f€,\n", this.estadisticas.getDineroSalidaRecaudado());

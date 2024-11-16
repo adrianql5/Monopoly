@@ -3,7 +3,7 @@ package partida;
 public class Estadisticas {
 
     // Atributos
-    private float impuestosPagados;
+    private float impuestosYTasasPagados;
     private float pagoDeAlquileres;
     private float cobroDeAlquileres;
     private float dineroSalidaRecaudado;
@@ -14,7 +14,7 @@ public class Estadisticas {
 
     // Constructor
     public Estadisticas() {
-        this.impuestosPagados = 0;
+        this.impuestosYTasasPagados = 0;
         this.pagoDeAlquileres = 0;
         this.cobroDeAlquileres = 0;
         this.dineroSalidaRecaudado = 0;;
@@ -26,12 +26,12 @@ public class Estadisticas {
 
     // Getters y Setters para cada atributo
 
-    public float getImpuestosPagados() {
-        return impuestosPagados;
+    public float getImpuestosYTasasPagados() {
+        return impuestosYTasasPagados;
     }
 
-    public void sumarImpuestosPagados(float impuestosPagados) {
-        this.impuestosPagados += impuestosPagados;
+    public void sumarImpuestosYTasasPagados(float impuestosPagados) {
+        this.impuestosYTasasPagados += impuestosPagados;
     }
 
     public float getPagoDeAlquileres() {

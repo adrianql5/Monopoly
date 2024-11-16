@@ -96,7 +96,7 @@ public class Casilla {
         return veces_visitada_por_duenho;
     }
 
-    public void setVecesVisitadaPorDuenho(int valor){
+    public void sumarVecesVisitadaPorDuenho(int valor){
         veces_visitada_por_duenho+=valor;
     }
 
