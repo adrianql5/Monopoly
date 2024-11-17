@@ -123,7 +123,9 @@ public class Jugador {
         }
     }
 
-    /**Método que elimina el primer elemento del ArrayList movimientos_pendientes*/
+    /**Método que elimina el primer elemento del ArrayList movimientos_pendientes.
+     * Si el ArrayList está vacío no hace nada.
+     */
     public void eliminarMovimientoPendiente() {
         if(!this.movimientos_pendientes.isEmpty()) {
             this.movimientos_pendientes.remove(0);
