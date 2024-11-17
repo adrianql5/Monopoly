@@ -497,9 +497,19 @@ public class Menu {
         jugador.sumarFortuna(Valor.SUMA_VUELTA);
         jugador.sumarVuelta();
         jugador.sumarVueltas_sin_comprar();
-        jugador.getEstadisticas().sumarVecesSalida(1);
         jugador.getEstadisticas().sumarDineroSalidaRecaudado(Valor.SUMA_VUELTA);
         cuatroVueltasSinCompras();
+    }
+    /**
+     * Método que se llama cada vez que se pasa por la Salida. Marcha atras
+     * [1] Avisa de la cantidad que se pierde y la resta a la fortuna del jugador correspondiente.
+     */
+    private void devolverCobrarSalida(Jugador jugador) {
+        System.out.printf("¡Al pasar por la salida marcha atras perdiste %,.0f€!\n", Valor.SUMA_VUELTA);
+        jugador.sumarFortuna(-Valor.SUMA_VUELTA);
+        jugador.restarVuelta();
+        jugador.setVueltas_sin_comprar(jugador.getVueltas_sin_comprar()-1);
+        jugador.getEstadisticas().sumarDineroSalidaRecaudado(-Valor.SUMA_VUELTA);
     }
 
     /**Método para comprobar si los jugadores llevan cuatro vueltas al tablero sin comprar.
@@ -703,8 +713,14 @@ public class Menu {
                 " casillas desde " + origen.getNombre() + " hasta " + destino.getNombre() + ".");
 
         // Si pasamos por la salida hay que cobrar!
-        if (origen.getPosicion() > destino.getPosicion()) {
+        if (origen.getPosicion() > destino.getPosicion() && !avatar.getMovimientoAvanzado()) {
             cobrarSalida(jugador);
+        }
+        if(avatar.getMovimientoAvanzado() && (avatar.getTipo().equals("pelota")||avatar.getTipo().equals("coche"))&&(tirada<=4)){
+            if (destino.getPosicion() > origen.getPosicion() && (jugador.getEstadisticas().getDineroSalidaRecaudado() > 1)) {
+                devolverCobrarSalida(jugador);
+
+            }
         }
 
         // EVALUAR
@@ -1448,6 +1464,7 @@ public class Menu {
                 nombresCasillas.append(casillaAux.getNombre());
             }
         }
+        //bucle para averiguar la casilla que mas recaudo
         String nombre_max = "NULL";
         float recaudacionMaxima = 0;
         for (int i = 0; i < 40; i++) {
@@ -1457,6 +1474,7 @@ public class Menu {
                 nombre_max = casillaAux.getNombre();
             }
         }
+        //bucle que mira quien lleva mas vueltas
         String nombre_vueltas = "";
         int max_vueltas  = 0;
         for(Jugador j: jugadores) {
@@ -1465,6 +1483,7 @@ public class Menu {
                 nombre_vueltas = j.getNombre();
             }
         }
+        //bucle que mira quien tiro mas veces
         String nombre_dados = "";
         int max_tiradas  = 0;
         for(Jugador j: jugadores) {
@@ -1473,6 +1492,7 @@ public class Menu {
                 nombre_dados = j.getNombre();
             }
         }
+        //bucle que compara quien tiene mas dinero
         String nombre_cabwza = "";
         float max_dinero  = 0;
         for(Jugador j: jugadores) {
@@ -1481,6 +1501,7 @@ public class Menu {
                 nombre_cabwza = j.getNombre();
             }
         }
+        //bbucle que busca el grupo que mas dinero a dado
         String color = "";
         float recaudacion_grupo_max = 0;
         for (int i = 0; i < 40; i++) {
@@ -1499,7 +1520,6 @@ public class Menu {
 
         // Imprimir los nombres de las casillas más visitadas en una sola línea
         System.out.println("Casillas más visitadas :" + nombresCasillas.toString());
-        //falta grupo mas rentable
         System.out.println("La casilla mas rentable es :" + nombre_max);
         System.out.println("El grupo mas rentable es :" + color);
         System.out.println("El jugador con mas vueltas es :" + nombre_vueltas);

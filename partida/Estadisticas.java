@@ -10,7 +10,6 @@ public class Estadisticas {
     private float dineroRecaudadoBote;
     private int vecesEnLaCarcel;
     private int vecesTirado;
-    private int vecesSalida;
 
     // Constructor
     public Estadisticas() {
@@ -21,7 +20,7 @@ public class Estadisticas {
         this.dineroRecaudadoBote = 0;
         this.vecesEnLaCarcel = 0;
         this.vecesTirado = 0;
-        this.vecesSalida = 0;
+
     }
 
     // Getters y Setters para cada atributo
@@ -82,13 +81,9 @@ public class Estadisticas {
         this.vecesTirado += vecesTirado;
     }
 
-    public int getVecesSalida() {
-        return vecesSalida;
-    }
 
-    public void sumarVecesSalida(int vecesSalida) {
-        this.vecesSalida += vecesSalida;
-    }
+
+
 
 
 

@@ -182,12 +182,6 @@ public class Jugador {
 
     // GETTERS Y SETTERS------------------------------------------------------------------------------------------------
 
-    public void setBloqueado(int turnos){
-        this.bloqueado=turnos;
-    }
-    public int restarBloqueado(int turnos){
-        return this.bloqueado = turnos -1;
-    }
     public void setDeudaConJugador(Jugador jugador){
         this.jugadorConElQueEstanEnDeuda=jugador;
     }
@@ -350,6 +344,9 @@ public class Jugador {
     //SECCIÓN DE MÉTODOS QUE TIENE QUE VER CON VUELTAS EN EL TABLERO
     public void sumarVuelta(){
         vueltas++;
+    }
+    public void restarVuelta(){
+        vueltas--;
     }
 
     public int getVueltas_sin_comprar(){
