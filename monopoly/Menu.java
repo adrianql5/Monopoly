@@ -430,12 +430,17 @@ public class Menu {
                     // Si alguno de los valores de dados introducidos no es válido
                     // se imprime un mensaje de error (lo hace dadoValido) y no hace nada
                     else if("dados".equals(comando[0])) {
-                        int dado1 = dadoValido(comando[1]);
-                        int dado2 = dadoValido(comando[2]);
-                        // Si dado1 y dado2 no son números válidos se salta este if
-                        if (dado1!=0 && dado2!=0) {
-                            lanzarDados(dado1, dado2);
-                            verTablero();
+                        if(this.controlComandos==0) {
+                            int dado1 = dadoValido(comando[1]);
+                            int dado2 = dadoValido(comando[2]);
+                            // Si dado1 y dado2 no son números válidos se salta este if
+                            if (dado1!=0 && dado2!=0) {
+                                lanzarDados(dado1, dado2);
+                                verTablero();
+                            }
+                        }
+                        else {
+                            System.out.println(Texto.M_COMANDO_BLOQUEADO);
                         }
 
                     }
