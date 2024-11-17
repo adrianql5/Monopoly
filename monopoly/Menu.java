@@ -908,6 +908,14 @@ public class Menu {
 
     /**Método que realiza las acciones asociadas al comando 'acabar turno'.*/
     private void acabarTurno() {
+        // Cuando no se puede tirar en un turno (caso coche avanzado si en un turno anterior se sacó <5)
+        // ponemos this.tirado a true y reutilizamos el resto del código
+        if(!movimientosPendientesActual().isEmpty()) {
+            // Recordar: un 0 en movimientos_pendientes equivale a que no se puede tirar en este turno
+            if(movimientosPendientesActual().get(0)==0) {
+                this.tirado=true;
+            }
+        }
         // Comprobar si el jugador actual ya lanzó los dados en su turno
         if (this.tirado) {
             // Si los lanzó y sacó dobles está obligado a volver a tirar!
