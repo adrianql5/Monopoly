@@ -3,6 +3,7 @@ package monopoly;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Iterator;
+import java.util.List;
 
 import partida.Avatar;
 import partida.Dado;
@@ -1445,98 +1446,146 @@ public class Menu {
         }
     }
 
-    /**Método que imprime las estadísticas generales de la partida.*/
+    /**
+     * Método que imprime las estadísticas generales de la partida.
+     * Muestra información como las casillas más visitadas, casillas más rentables,
+     * grupos más rentables, jugadores con más vueltas, tiradas y fortuna.
+     */
     private void estadisticasGenerales() {
         System.out.println("{");
 
-        // Obtener la casilla más visitada
-        Casilla casillaAux;
+
+        //.clear() limpia la lista
+        //.add()añade a la lista
+
+
+        // Casillas más visitadas
+        List<String> nombresCasillas = new ArrayList<>();
         int vecesMaxima = 0;
 
-        // Primer for: determinar la cantidad máxima de visitas
+        // Determinar la cantidad máxima de visitas entre todas las casillas
         for (int i = 0; i < 40; i++) {
-            casillaAux = tablero.getCasilla(i);
-            if (vecesMaxima < casillaAux.getVecesVisitada()) {
+            Casilla casillaAux = tablero.getCasilla(i);
+
+            // Si la casilla tiene más visitas que el máximo actual, se actualiza el máximo
+            if (casillaAux.getVecesVisitada() > vecesMaxima) {
                 vecesMaxima = casillaAux.getVecesVisitada();
+                nombresCasillas.clear(); // Reinicia la lista con la nueva casilla más visitada
+                nombresCasillas.add(casillaAux.getNombre());
+            }
+            // Si tiene el mismo número de visitas que el máximo, se añade a la lista
+            else if (casillaAux.getVecesVisitada() == vecesMaxima) {
+                nombresCasillas.add(casillaAux.getNombre());
             }
         }
 
-        // Segundo for: construir la lista de nombres de las casillas más visitadas
-        StringBuilder nombresCasillas = new StringBuilder(); //chat gue pe te
-        for (int i = 0; i < 40; i++) {
-            casillaAux = tablero.getCasilla(i);
-            if (vecesMaxima == casillaAux.getVecesVisitada()) {
-                if (nombresCasillas.length() > 0) {
-                    nombresCasillas.append(", "); // Agrega una coma solo si ya hay un nombre en la cadena
-                }
-                nombresCasillas.append(casillaAux.getNombre());
-            }
-        }
-        //bucle para averiguar la casilla que mas recaudo
-        String nombre_max = "NULL";
+        // Casillas más rentables
+        List<String> nombresRentables = new ArrayList<>();
         float recaudacionMaxima = 0;
+
+        // Determinar la casilla con mayor dinero recaudado
         for (int i = 0; i < 40; i++) {
-            casillaAux = tablero.getCasilla(i);
-            if (recaudacionMaxima <= casillaAux.getDinero_recaudado()) {
+            Casilla casillaAux = tablero.getCasilla(i);
+
+            // Actualizar si esta casilla tiene una recaudación mayor
+            if (casillaAux.getDinero_recaudado() > recaudacionMaxima) {
                 recaudacionMaxima = casillaAux.getDinero_recaudado();
-                nombre_max = casillaAux.getNombre();
+                nombresRentables.clear();
+                nombresRentables.add(casillaAux.getNombre());
             }
-        }
-        //bucle que mira quien lleva mas vueltas
-        String nombre_vueltas = "";
-        int max_vueltas  = 0;
-        for(Jugador j: jugadores) {
-            if (max_vueltas <= j.getVueltas()) {
-                max_vueltas = j.getVueltas();
-                nombre_vueltas = j.getNombre();
-            }
-        }
-        //bucle que mira quien tiro mas veces
-        String nombre_dados = "";
-        int max_tiradas  = 0;
-        for(Jugador j: jugadores) {
-            if (max_tiradas <= j.getEstadisticas().getVecesTirado()) {
-                max_tiradas = j.getEstadisticas().getVecesTirado();
-                nombre_dados = j.getNombre();
-            }
-        }
-        //bucle que compara quien tiene mas dinero
-        String nombre_cabwza = "";
-        float max_dinero  = 0;
-        for(Jugador j: jugadores) {
-            if (max_dinero <= j.getFortuna()) {
-                max_dinero = j.getFortuna();
-                nombre_cabwza = j.getNombre();
-            }
-        }
-        //bbucle que busca el grupo que mas dinero a dado
-        String color = "";
-        float recaudacion_grupo_max = 0;
-        for (int i = 0; i < 40; i++) {
-            casillaAux = tablero.getCasilla(i);
-            if(casillaAux.getTipo().equals("Solar"))
-            // Si el color del grupo coincide con el proporcionado, listar las edificaciones
-                if(recaudacion_grupo_max < casillaAux.getGrupo().getRecaudacionGrupo()){
-                    recaudacion_grupo_max = casillaAux.getGrupo().getRecaudacionGrupo();
-                    color = casillaAux.getGrupo().getColorGrupo();
+            // Si la recaudación es igual a la máxima, verificar su tipo y añadirla si aplica
+            else if (casillaAux.getDinero_recaudado() == recaudacionMaxima) {
+                if (casillaAux.getTipo().equals("Solar") || casillaAux.getTipo().equals("Servicio")
+                        || casillaAux.getTipo().equals("Transporte")) {
+                    nombresRentables.add(casillaAux.getNombre());
                 }
-
-
+            }
         }
 
+        // Jugadores con más vueltas
+        List<String> jugadoresVueltas = new ArrayList<>();
+        int maxVueltas = 0;
 
+        // Determinar el jugador con más vueltas dadas
+        for (Jugador j : jugadores) {
+            if (j.getVueltas() > maxVueltas) {
+                maxVueltas = j.getVueltas();
+                jugadoresVueltas.clear();
+                jugadoresVueltas.add(j.getNombre());
+            } else if (j.getVueltas() == maxVueltas) {
+                jugadoresVueltas.add(j.getNombre());
+            }
+        }
 
-        // Imprimir los nombres de las casillas más visitadas en una sola línea
-        System.out.println("Casillas más visitadas :" + nombresCasillas.toString());
-        System.out.println("La casilla mas rentable es :" + nombre_max);
-        System.out.println("El grupo mas rentable es :" + color);
-        System.out.println("El jugador con mas vueltas es :" + nombre_vueltas);
-        System.out.println("El jugador con mas tiradas es :" + nombre_dados);
-        System.out.println("El jugador en cabeza es: " + nombre_cabwza);
+        // Jugadores con más tiradas de dados
+        List<String> jugadoresDados = new ArrayList<>();
+        int maxTiradas = 0;
+
+        // Determinar el jugador con más tiradas
+        for (Jugador j : jugadores) {
+            int tiradas = j.getEstadisticas().getVecesTirado();
+
+            if (tiradas > maxTiradas) {
+                maxTiradas = tiradas;
+                jugadoresDados.clear();
+                jugadoresDados.add(j.getNombre());
+            } else if (tiradas == maxTiradas) {
+                jugadoresDados.add(j.getNombre());
+            }
+        }
+
+        // Jugadores con más fortuna
+        List<String> jugadoresRicos = new ArrayList<>();
+        float maxFortuna = 0;
+
+        // Determinar el jugador más rico
+        for (Jugador j : jugadores) {
+            if (j.getFortuna() > maxFortuna) {
+                maxFortuna = j.getFortuna();
+                jugadoresRicos.clear();
+                jugadoresRicos.add(j.getNombre());
+            } else if (j.getFortuna() == maxFortuna) {
+                jugadoresRicos.add(j.getNombre());
+            }
+        }
+
+        // Grupos más rentables
+        List<String> gruposRentables = new ArrayList<>();
+        float recaudacionGrupoMax = 0;
+
+        // Determinar el grupo con mayor recaudación
+        for (int i = 0; i < 40; i++) {
+            Casilla casillaAux = tablero.getCasilla(i);
+
+            // Solo considerar casillas de tipo "Solar"
+            if (casillaAux.getTipo().equals("Solar")) {
+                float recaudacionGrupo = casillaAux.getGrupo().getRecaudacionGrupo();
+
+                // Actualizar si el grupo tiene una mayor recaudación
+                if (recaudacionGrupo > recaudacionGrupoMax) {
+                    recaudacionGrupoMax = recaudacionGrupo;
+                    gruposRentables.clear();
+                    gruposRentables.add(casillaAux.getGrupo().getColorGrupo());
+                }
+                // Si la recaudación es igual al máximo, añadir el grupo si no está en la lista
+                else if (recaudacionGrupo == recaudacionGrupoMax) {
+                    if (!gruposRentables.contains(casillaAux.getGrupo().getColorGrupo())) {
+                        gruposRentables.add(casillaAux.getGrupo().getColorGrupo());
+                    }
+                }
+            }
+        }
+
+        // Imprimir los resultados de las estadísticas
+        System.out.println("Casillas más visitadas: " + String.join(", ", nombresCasillas));
+        System.out.println("Casillas más rentables: " + String.join(", ", nombresRentables));
+        System.out.println("Grupos más rentables: " + String.join(", ", gruposRentables));
+        System.out.println("Jugadores con más vueltas: " + String.join(", ", jugadoresVueltas));
+        System.out.println("Jugadores con más tiradas: " + String.join(", ", jugadoresDados));
+        System.out.println("Jugadores con más fortuna: " + String.join(", ", jugadoresRicos));
 
         System.out.println("\n}");
     }
-
     public static boolean esEdificioValido(String tipo) {
         return tipo.equals("casa") ||
                 tipo.equals("hotel") ||
