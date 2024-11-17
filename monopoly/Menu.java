@@ -257,10 +257,12 @@ public class Menu {
     /**Método que elimina al jugador correspondiente de la lista de jugadores.
      * Si se le pasa un jugador que no está en la lista de jugadores no hace nada.
      */
-    public void eliminarJugador(Jugador jugador){
-        for(Jugador j: this.jugadores){
-            if(j.equals(jugador)){
-                this.jugadores.remove(j);
+    public void eliminarJugador(Jugador jugador) {
+        Iterator<Jugador> iterator = this.jugadores.iterator();
+        while (iterator.hasNext()) {
+            Jugador j = iterator.next();
+            if (j.equals(jugador)) {
+                iterator.remove(); // Elimina de manera segura el jugador actual
             }
         }
     }
@@ -304,6 +306,7 @@ public class Menu {
             case "jugador": infoJugadorTurno(); break;
             case "estadisticas": estadisticasGenerales(); break;
             case "salir carcel": salirCarcel(); break;
+            case "ayuda": ayuda(); break;
 
             // Comandos de listar cosas
             case "listar enventa": listarVenta(); break;
@@ -470,7 +473,6 @@ public class Menu {
                 }
         }
     }
-
 
 
     //SECCIÓN DE COMANDOS QUE NO DEPENDEN DE NINGUNA INSTANCIA----------------------------------------------------------
@@ -709,8 +711,14 @@ public class Menu {
         Casilla destino = avatar.getLugar();
 
         // Avisamos del movimiento del jugador en el tablero
-        System.out.println("El avatar " + avatar.getId() + " avanza " + tirada +
-                " casillas desde " + origen.getNombre() + " hasta " + destino.getNombre() + ".");
+        if(tirada > 4){
+            System.out.println("El avatar " + avatar.getId() + " avanza " + tirada +
+                    " casillas desde " + origen.getNombre() + " hasta " + destino.getNombre() + ".");
+        }else{
+            System.out.println("El avatar " + avatar.getId() + " retrocede " + tirada +
+                    " casillas desde " + origen.getNombre() + " hasta " + destino.getNombre() + ".");
+        }
+
 
         // Si pasamos por la salida hay que cobrar!
         if (origen.getPosicion() > destino.getPosicion() && !avatar.getMovimientoAvanzado()) {
@@ -1583,34 +1591,32 @@ public class Menu {
 
 
     //SECCIÓN DE MÉTODOS QUE HIZO ADRI LA ÚLTIMA VEZ Y NO ESTÁN BIEN ORDENADOS------------------------------------------
-    public void declararBancarrota(){
-        Jugador jugador= obtenerTurno();
-        Jugador cobrador=jugador.getDeudaConJugador();
+    public void declararBancarrota() {
+        Jugador jugador = obtenerTurno();
+        Jugador cobrador = jugador.getDeudaConJugador();
 
-        if(cobrador.equals(banca)){
-            System.out.println("El jugador"+ jugador.getNombre() +
+        if (cobrador.equals(banca)) {
+            System.out.println("El jugador " + jugador.getNombre() +
                     " se declara en bancarrota. Sus propiedades pasan a estar de nuevo en venta al precio al que estaban.");
-            ArrayList<Casilla> propiedades =jugador.getPropiedades();
+            ArrayList<Casilla> propiedades = new ArrayList<>(jugador.getPropiedades());
 
-            for( Casilla c : propiedades){
+            for (Casilla c : propiedades) {
                 c.setDeshipotecada();
                 jugador.eliminarPropiedad(c);
             }
-            eliminarJugador(jugador);
-        }
-        else{
+        } else {
             System.out.println("El jugador " + jugador.getNombre() +
                     " se declara en bancarrota. Sus propiedades pasan a ser de " + cobrador.getNombre());
-            ArrayList<Casilla> propiedades= jugador.getPropiedades();
-            for (Casilla c: propiedades){
+            ArrayList<Casilla> propiedades = new ArrayList<>(jugador.getPropiedades());
+
+            for (Casilla c : propiedades) {
                 c.setDeshipotecada();
                 cobrador.anhadirPropiedad(c);
                 jugador.eliminarPropiedad(c);
-
             }
-            eliminarJugador(jugador);
         }
 
+        eliminarJugador(jugador);
     }
 
 
@@ -1774,6 +1780,41 @@ public class Menu {
         } else {
             System.out.println("No puedes vender las edificaciones de esta propiedad porque no te pertenece.");
         }
+    }
+    private void ayuda() {
+        System.out.println("Lista de comandos disponibles:");
+        System.out.println("- terminar partida / acabar partida: Termina la partida.");
+        System.out.println("- bancarrota: Declararse en bancarrota.");
+        System.out.println("- ver tablero: Muestra el estado actual del tablero.");
+        System.out.println("- jugador: Muestra la información del jugador actual.");
+        System.out.println("- estadisticas: Muestra estadísticas generales.");
+        System.out.println("- salir carcel: Salir de la cárcel.");
+        System.out.println("- listar enventa: Lista las casillas en venta.");
+        System.out.println("- listar jugadores: Lista todos los jugadores.");
+        System.out.println("- listar avatares: Lista todos los avatares.");
+        System.out.println("- listar edificios: Lista todos los edificios.");
+        System.out.println("- lanzar dados: Lanza los dados (si está permitido).");
+        System.out.println("- acabar turno: Finaliza el turno del jugador actual.");
+        System.out.println("- cambiar modo: Cambia el modo del avatar.");
+        System.out.println("- siguiente: Realiza el siguiente movimiento.");
+        System.out.println("- dinero infinito: Activa el modo dinero infinito.");
+        System.out.println("- dar vuelta: Avanza 40 casillas.");
+        System.out.println("- probar cartas: Prueba la impresión de cartas.");
+        System.out.println("- coger carta caja: Coge una carta de Caja de Comunidad.");
+        System.out.println("- coger carta suerte: Coge una carta de Suerte.");
+        System.out.println("- describir [nombre_casilla]: Describe la casilla indicada.");
+        System.out.println("- comprar [nombre_casilla]: Compra la casilla indicada.");
+        System.out.println("- edificar [nombre_casilla]: Construye un edificio.");
+        System.out.println("- hipotecar [nombre_casilla]: Hipoteca una propiedad.");
+        System.out.println("- deshipotecar [nombre_casilla]: Deshipoteca una propiedad.");
+        System.out.println("- estadisticas [nombre_jugador]: Muestra estadísticas de un jugador.");
+        System.out.println("- describir jugador [nombre_jugador]: Describe un jugador.");
+        System.out.println("- crear jugador [nombre_avatar]: Crea un jugador (solo antes de empezar la partida).");
+        System.out.println("- describir avatar [Letra avatar]: Describe un avatar.");
+        System.out.println("- listar edificios [gruoi]: Lista edificios de un tipo.");
+        System.out.println("- dados [valor1] [valor2]: Lanza dados con valores específicos.");
+        System.out.println("- vender [nombre_propiedad] [tipo_edificio] [cantidad]: Vende edificios.");
+        System.out.println("- edificar/deshipotecar/hipotecar [Tipo edificio]e: Gestiona pistas de deporte.");
     }
 
 
