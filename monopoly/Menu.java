@@ -658,8 +658,10 @@ public class Menu {
                     // El jugador puede volver a tirar hasta un total de cuatro veces (lo gestiona lanzarDados())
                     avatar.moverAvatar(this.tablero.getPosiciones(), tirada);
                     System.out.println("Has sacado más de 4! Puedes volver a tirar!");
-                    // Pequeña gitanada para no molestar mucho a lanzarDados(): hacer como que no tiró aún
-                    this.tirado = false;
+                    // Pequeña gitanada para no molestar mucho a lanzarDados():
+                    // hacer como que sacó dobles pa dejar volver a tirar
+                    this.dado1.setValor(3);
+                    this.dado2.setValor(3);
                 }
                 else {
                     // Si saca menos de un 4 retrocede ese número de casillas
@@ -672,7 +674,7 @@ public class Menu {
             else if(avatar.getTipo().equals("pelota")) {
 
                 if(movimientosPendientesActual().isEmpty()) {
-                    // Cuando se llama a moverYEvaluar() al tirar los dados hay que crear el ArrayList de movimientos pendientes
+                    // Cuando se llama a moverYEvaluar() al tirar los dados calculamos los movimientos pendientes
                     jugador.calcularMovimientosPendientes(tirada);
                     avatar.moverAvatar(this.tablero.getPosiciones(), movimientosPendientesActual().get(0));
                     this.controlComandos=1;
