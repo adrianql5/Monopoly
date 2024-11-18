@@ -565,7 +565,11 @@ public class Menu {
         else {
             // Comprobamos si aún no se ha tirado en el turno o vienes de haber sacado dobles
             // IMPORTANTE EL ORDEN DEL IF: el valor de los dados antes de la primera tirada de la partida es null
-            if(!this.tirado || this.dado1.getValor()==this.dado2.getValor()) {
+            // Actualización: también se puede tirar si un coche avanzado sacó >4 en el último turno
+            if(!this.tirado || this.dado1.getValor()==this.dado2.getValor() ||
+                    ( obtenerTurno().getAvatar().getTipo().equals("coche") &&
+                            obtenerTurno().getAvatar().getMovimientoAvanzado() &&
+                            this.dado1.getValor()+this.dado2.getValor()>4 ) ) {
                 int resultado1, resultado2;
                 if(dadoTrucado1==0 && dadoTrucado2==0) {
                     // Lanzamos 2 dados (aleatorios)
@@ -668,13 +672,9 @@ public class Menu {
                 SOLO PUEDE COMPRAR 1 CASILLA EN ESOS 3 LANZAMIENTOS MAXIMOS
                  */
                 if(tirada>4) {
-                    // El jugador puede volver a tirar hasta un total de cuatro veces (lo gestiona lanzarDados())
+                    // El jugador puede volver a tirar hasta un total de cuatro veces (lo limita lanzarDados())
                     avatar.moverAvatar(this.tablero.getPosiciones(), tirada);
-                    System.out.println("Has sacado más de 4! Puedes volver a tirar!");
-                    // Pequeña gitanada para no molestar mucho a lanzarDados():
-                    // hacer como que sacó dobles pa dejar volver a tirar
-                    this.dado1.setValor(3);
-                    this.dado2.setValor(3);
+                    System.out.println("Has sacado más de 4! Vuelves a tirar!");
                 }
                 else {
                     // Si saca menos de un 4 retrocede ese número de casillas
@@ -947,10 +947,20 @@ public class Menu {
             // A no ser que lo acaben de encarcelar
             if (this.dado1.getValor()==this.dado2.getValor() && !obtenerTurno().isEnCarcel()) {
                 System.out.println("Sacaste dobles, tienes que volver a tirar.");
-            } else {
-                // Si un avatar coche acaba un turno en el que no pudo tirar los dados...
-                // ...eliminamos el primer elemento ya que es el que acabamos de gestionar este turno
-                if(obtenerTurno().getAvatar().getTipo().equals("coche")) {
+            }
+            else {
+                // EL JUGADOR SÍ PUEDE ACABAR EL TURNO
+
+                // Gestionamos excepciones del avatar tipo coche avanzado
+                if(obtenerTurno().getAvatar().getTipo().equals("coche") &&
+                        obtenerTurno().getAvatar().getMovimientoAvanzado()) {
+                    if (this.dado1.getValor()+this.dado2.getValor()>4) {
+                        // Si sacó más de 4 tiene que volver a tirar
+                        System.out.println("Sacaste más que 4, tienes que volver a tirar.");
+                        return;
+                    }
+                    // Si un avatar coche acaba un turno en el que no pudo tirar los dados...
+                    // ...eliminamos el primer elemento ya que es el que acabamos de gestionar este turno
                     obtenerTurno().eliminarMovimientoPendiente();
                 }
 

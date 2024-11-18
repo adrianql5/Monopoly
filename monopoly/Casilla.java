@@ -28,9 +28,6 @@ public class Casilla {
 
 
     //SECCIÓN DE CONSTRUCTORES DE CASILLA
-    public Casilla() {
-    }//Parámetros vacíos
-
     /**Constructor para casillas tipo Solar, Servicio y Transporte.
      * @param nombre Nombre de la casilla
      * @param tipo Debe ser Solar, Servicio o Transporte
@@ -39,23 +36,23 @@ public class Casilla {
      * @param duenho Dueño de la casilla
      */
     public Casilla(String nombre, String tipo, int posicion, float valor, Jugador duenho) {
-        this.nombre=nombre;
-        this.tipo= tipo;
-        this.posicion= posicion;
-        this.valor= valor;
-        this.impuesto= valor * 0.10f;
-        this.hipoteca= valor/2f;
-        this.duenho= duenho;
-        this.avatares= new ArrayList<Avatar>();
+        this.nombre = nombre;
+        this.tipo = tipo;
+        this.posicion = posicion;
+        this.valor = valor;
+        this.impuesto = valor * 0.10f;
+        this.hipoteca = valor/2f;
+        this.duenho = duenho;
+        this.avatares = new ArrayList<Avatar>();
         if(this.tipo.equals("Solar")){ //solo se edifican los solares
             this.edificios = new ArrayList<>(4); 
             for (int i = 0; i < 4; i++) {
                 this.edificios.add(new ArrayList<Edificio>()); // Array de casas, hoteles, piscinas, pistas
             }
         } 
-        this.estaHipotecada=false;
+        this.estaHipotecada = false;
         this.dinero_recaudado = 0;
-        this.veces_visitada_por_duenho=0;
+        this.veces_visitada_por_duenho = 0;
     }
 
     /**Constructor para casillas de tipo Impuestos.

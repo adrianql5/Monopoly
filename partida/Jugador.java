@@ -284,24 +284,20 @@ public class Jugador {
 
     //SECCÓN DE MÉTODOS BOOLEANOS DE JUGADOR----------------------------------------------------------------------------
     public boolean isEnCarcel() {
-        return enCarcel;
+        return this.enCarcel;
     }
-
     
     public boolean tieneDinero(){
-        if(fortuna<=0){
-            return false;
-        }
-        return true;
+        return this.fortuna > 0;
     }
 
     public boolean tienePropiedadesHipotecables(){
-        for( Casilla c: propiedades){
+        for(Casilla c: this.propiedades){
             if(!c.estaHipotecada()){
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
 

@@ -36,6 +36,9 @@ public class Texto {
     // [3] Otros]
     public static final String M_UNA_CASILLA_POR_TURNO = "Sólo puedes comprar una casilla por turno en el modo " +
             "avanzado del coche.";
+    public static final String M_NO_HAY_DINERO_SUFICIENTE = "No tienes dinero suficiente para pagar el alquiler. " +
+            "Tienes que hipotecar tus propiedades hasta tener dinero.\nPara ello usa el comando " + Valor.BOLD_STRING +
+            "hipotecar <nombre_propiedad>" + Valor.RESET + ".";
 
 
     // TEXTO QUE SE METE EN EL MEDIO DEL TABLERO------------------------------------------------------------------------
