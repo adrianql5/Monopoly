@@ -726,7 +726,7 @@ public class Menu {
         Casilla destino = avatar.getLugar();
 
         // Avisamos del movimiento del jugador en el tablero
-        if(tirada > 4){
+        if(tirada > 4 ||!jugador.getAvatar().getMovimientoAvanzado()){
             System.out.println("El avatar " + avatar.getId() + " avanza " + tirada +
                     " casillas desde " + origen.getNombre() + " hasta " + destino.getNombre() + ".");
         }else{
@@ -1009,6 +1009,7 @@ public class Menu {
         Avatar avatar = obtenerTurno().getAvatar();
         if(avatar.getMovimientoAvanzado()) {
             System.out.println("El avatar " + avatar.getId() + " vuelve el movimiento normal.");
+            this.controlComandos=0;
         }
         else {
             System.out.printf(Texto.M_ACTIVAR_MOVIMIENTO_AVANZADO + "\n", avatar.getId(), avatar.getTipo());
