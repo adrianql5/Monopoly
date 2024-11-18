@@ -24,7 +24,9 @@ public class Texto {
             Valor.BOLD_STRING + "acabar turno" + Valor.RESET;
     public static final String M_YA_SE_TIRO = "¡Ya has tirado! Si no tienes nada más que hacer usa el comando " +
             Valor.BOLD_STRING + "acabar turno" + Valor.RESET;
-    public static final String M_YA_SE_HICIERON_TODOS_LOS_MOVIMIENTOS = "Ya has realizado todos los movimientos" +
+    public static final String M_YA_SE_HICIERON_TODOS_LOS_MOVIMIENTOS_TIRADA = "Ya has realizado todos los movimientos" +
+            " de la tirada. Pero como sacaste dobles vuelves a tirar.";
+    public static final String M_YA_SE_HICIERON_TODOS_LOS_MOVIMIENTOS_TURNO = "Ya has realizado todos los movimientos" +
             " de este turno. Si no tienes nada más que hacer usa el comando " + Valor.BOLD_STRING + "acabar turno" +
             Valor.RESET;
     public static final String M_ACTIVAR_MOVIMIENTO_AVANZADO = "El avatar %s activa al movimiento avanzado (tipo %s).";

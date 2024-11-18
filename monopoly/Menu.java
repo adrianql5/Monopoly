@@ -352,7 +352,12 @@ public class Menu {
                     moverYEvaluar(obtenerTurno(), movimientosPendientesActual().get(0));
                     verTablero();
                     if(movimientosPendientesActual().isEmpty()) {
-                        System.out.println(Texto.M_YA_SE_HICIERON_TODOS_LOS_MOVIMIENTOS);
+                        if(this.dado1.getValor()==this.dado2.getValor()) {
+                            System.out.println(Texto.M_YA_SE_HICIERON_TODOS_LOS_MOVIMIENTOS_TIRADA);
+                        }
+                        else {
+                            System.out.println(Texto.M_YA_SE_HICIERON_TODOS_LOS_MOVIMIENTOS_TURNO);
+                        }
                     }
                 }
                 else {
@@ -564,7 +569,7 @@ public class Menu {
             System.out.println("No puedes tirar más de cuatro veces en el mismo turno.");
         }
         // Un avatar coche avanzado no puede tirar si sacó menos que 5
-        else if(obtenerTurno().esCocheAvanzado() && this.dado1.getValor()+this.dado2.getValor()<5)  {
+        else if(obtenerTurno().esCocheAvanzado() && this.tirado && this.dado1.getValor()+this.dado2.getValor()<5)  {
             System.out.println("Sacaste menos que 5, no puedes volver a tirar.");
         }
         else {
