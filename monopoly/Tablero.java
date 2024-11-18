@@ -46,7 +46,7 @@ public class Tablero {
         ladoSur.add(new Casilla("Solar2","Solar",3,Valor.GRUPO1/2,banca));
         ladoSur.add(new Casilla("Imp1",4,Valor.SUMA_VUELTA/2,banca));
         ladoSur.add(new Casilla("Trans1","Transporte",5,Valor.TRANSPORTE,banca));
-        ladoSur.add(new Casilla("Solar3","li Solar",6,Valor.GRUPO2/3,banca));
+        ladoSur.add(new Casilla("Solar3","Solar",6,Valor.GRUPO2/3,banca));
         ladoSur.add(new Casilla("Suerte","Suerte",7,banca));
         ladoSur.add(new Casilla("Solar4","Solar",8,Valor.GRUPO2/3,banca));
         ladoSur.add(new Casilla("Solar5","Solar",9,Valor.GRUPO2/3,banca));
