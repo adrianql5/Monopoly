@@ -31,7 +31,7 @@ public class Menu {
 
     /**Atributo que usa analizarComando() para saber qué comandos bloquear.
      * / 0->turno normal.
-     * / 1->pelota avanzado (ya tiró).
+     * / 1->pelota avanzado cuando tira y tiene movimientos pendientes.
      * / 2->coche avanzado no puede mover este turno.
      * / 3->coche avanzado ya compró una propiedad.
      */
@@ -696,13 +696,22 @@ public class Menu {
                     // Cuando se llama a moverYEvaluar() al tirar los dados calculamos los movimientos pendientes
                     jugador.calcularMovimientosPendientes(tirada);
                     avatar.moverAvatar(this.tablero.getPosiciones(), movimientosPendientesActual().get(0));
-                    this.controlComandos=1;
                 }
                 else {
                     // Si se llama a moverYEvaluar() para seguir moviendo se hace el movimiento que toca directamente
                     avatar.moverAvatar(this.tablero.getPosiciones(), tirada);
                 }
+
                 obtenerTurno().eliminarMovimientoPendiente();
+
+                // Si aún tiene movimientos pendientes ponemos controlComandos a 1
+                // Si era el último movimiento pendiente ponemos el controlComandos a 0
+                if(movimientosPendientesActual().isEmpty()) {
+                    this.controlComandos=0;
+                }
+                else {
+                    this.controlComandos=1;
+                }
             }
             else {
                 System.out.println("Modo avanzado de la esfinge y el sombrero no implementado. Movimiento normal.");
