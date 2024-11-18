@@ -1811,7 +1811,7 @@ public class Menu {
                     // Usamos el iterador para eliminar los edificios, motivo nº 01974182347123 de porqé odio java
                     while (iterator.hasNext() && count < n) {
                         Edificio edificio = iterator.next();
-                        suma += edificio.getCoste();
+                        suma += (edificio.getCoste())/2;
                         iterator.remove();
                         count++;
                     }

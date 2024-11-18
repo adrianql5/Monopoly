@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import partida.Jugador;
 
+import java.util.Map;
 
 
 public class Edificio {
@@ -22,16 +23,44 @@ public class Edificio {
         this.duenho = casilla.getDuenho();
         this.grupo = casilla.getGrupo();
 
-        if(this.tipo.equals("casa") || this.tipo.equals("hotel"))
-            this.coste = casilla.getValor() * 0.60f;
- 
-        if(this.tipo.equals("piscina"))
-            this.coste = casilla.getValor() * 0.40f;
-            
-        if(this.tipo.equals("pista de deporte"))
-            this.coste = casilla.getValor() * 1.25f;
-
+        asignarValores();
     }
+
+
+    public void asignarValores() {
+        String grupo = this.casilla.getGrupo().getColorGrupo();
+        int n=this.casilla.getGrupo().getNumCasillasGrupo();
+        
+        Map<String, Float> grupoValores = Map.of(
+            "WHITE", Valor.GRUPO1/n,
+            "CYAN", Valor.GRUPO2/n,
+            "BLUE", Valor.GRUPO3/n,
+            "YELLOW", Valor.GRUPO4/n,
+            "BLACK", Valor.GRUPO5/n,
+            "GREEN", Valor.GRUPO6/n,
+            "RED", Valor.GRUPO7/n,
+            "PURPLE", Valor.GRUPO8/n
+        );
+
+        
+        Float valorGrupo = grupoValores.get(grupo);
+
+        if (valorGrupo != null) {
+            this.coste = calcularCoste(valorGrupo, tipo);
+        } else {
+            this.coste = 0; 
+        }
+    }
+
+    private float calcularCoste(float valorGrupo, String tipo) {
+        return switch (tipo) {
+            case "casa", "hotel" -> valorGrupo * 0.60f;
+            case "pista de deporte" -> valorGrupo * 1.25f;
+            case "piscina" -> valorGrupo * 0.40f;
+            default -> 0;
+        };
+    }
+
 
     public boolean esTipoComprable(String tipo) {
         return tipo.equals("casa") || tipo.equals("hotel") || tipo.equals("piscina") || tipo.equals("pista de deporte");
