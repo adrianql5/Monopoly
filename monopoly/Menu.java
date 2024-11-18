@@ -637,10 +637,13 @@ public class Menu {
                                 !(avatar.getTipo().equals("coche") && (sumaDados==4 || sumaDados==2) ) ) {
                             System.out.println("Vuelves a tirar.");
                         }
+                    }else{
+                        // Reiniciamos el contador de dados dobles
+                        this.dadosDoblesSeguidos = 0;
+
                     }
 
-                    // Reiniciamos el contador de dados dobles
-                    this.dadosDoblesSeguidos = 0;
+
 
                     // Esta función es la cabra
                     moverYEvaluar(jugador, sumaDados);
@@ -954,7 +957,7 @@ public class Menu {
             }
         }
         // Si no acabas de ser encarcelado...
-        else if(obtenerTurno().isEnCarcel() && obtenerTurno().getTiradasCarcel()==0) {
+        else if(!obtenerTurno().isEnCarcel() && obtenerTurno().getTiradasCarcel()==0) {
             // ...vemos si es un coche en modo avanzado
             if(obtenerTurno().esCocheAvanzado()) {
                 // Si es un coche en modo avanzado el único caso en el que no puede pasar turno es si saca >4
@@ -966,11 +969,16 @@ public class Menu {
             else {
                 // Si no es un coche en modo avanzado NO puede acabar el turno si sacó dobles
                 if (this.dado1.getValor()==this.dado2.getValor()) {
-                    System.out.println("Sacaste dobles, tienes que volver a tirar.");
+                    System.out.println("¡¡¡Sacaste dobles!!!, tienes que volver a tirar.");
                     return;
                 }
             }
+        } else if (this.dado1.getValor()==this.dado2.getValor()&& controlComandos!=2 &&this.dadosDoblesSeguidos!=3) {
+            System.out.println("Sacaste dobles, tienes que volver a tirar.");
+            return;
         }
+
+
 
         // CUANDO SE LLEGA AQUÍ EL JUGADOR SÍ PUEDE ACABAR EL TURNO
 

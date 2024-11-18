@@ -225,6 +225,7 @@ public class Jugador {
         this.enCarcel = true;
         this.avatar.getLugar().anhadirAvatar(this.avatar);
 
+
         // Si el avatar tiene movimientos pendientes (DISTINTOS DE 0) se eliminan
         // Nótese que con el caso actual del coche si el primer elemento es 0 el resto (si los hay) también lo son
         if(!this.movimientos_pendientes.isEmpty() && this.movimientos_pendientes.get(0)!=0) {
