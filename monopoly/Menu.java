@@ -350,6 +350,7 @@ public class Menu {
                 if(this.controlComandos==1 && this.tirado && !movimientosPendientesActual().isEmpty()) {
                     // Cuando este comando tiene sentido hay movimientos pendientes del mismo turno, pues movemos
                     moverYEvaluar(obtenerTurno(), movimientosPendientesActual().get(0));
+                    verTablero();
                     if(movimientosPendientesActual().isEmpty()) {
                         System.out.println(Texto.M_YA_SE_HICIERON_TODOS_LOS_MOVIMIENTOS);
                     }
@@ -562,14 +563,14 @@ public class Menu {
         else if(this.lanzamientos==4) {
             System.out.println("No puedes tirar más de cuatro veces en el mismo turno.");
         }
+        // Un avatar coche avanzado no puede tirar si sacó menos que 5
+        else if(obtenerTurno().esCocheAvanzado() && this.dado1.getValor()+this.dado2.getValor()<5)  {
+            System.out.println("Sacaste menos que 5, no puedes volver a tirar.");
+        }
         else {
             // Comprobamos si aún no se ha tirado en el turno o vienes de haber sacado dobles
             // IMPORTANTE EL ORDEN DEL IF: el valor de los dados antes de la primera tirada de la partida es null
-            // Actualización: también se puede tirar si un coche avanzado sacó >4 en el último turno
-            if(!this.tirado || this.dado1.getValor()==this.dado2.getValor() ||
-                    ( obtenerTurno().getAvatar().getTipo().equals("coche") &&
-                            obtenerTurno().getAvatar().getMovimientoAvanzado() &&
-                            this.dado1.getValor()+this.dado2.getValor()>4 ) ) {
+            if(!this.tirado || this.dado1.getValor()==this.dado2.getValor()) {
                 int resultado1, resultado2;
                 if(dadoTrucado1==0 && dadoTrucado2==0) {
                     // Lanzamos 2 dados (aleatorios)
@@ -944,23 +945,22 @@ public class Menu {
         // Comprobar si el jugador actual ya lanzó los dados en su turno
         if (this.tirado) {
             // Si los lanzó y sacó dobles está obligado a volver a tirar!
-            // A no ser que lo acaben de encarcelar
-            if (this.dado1.getValor()==this.dado2.getValor() && !obtenerTurno().isEnCarcel()) {
-                System.out.println("Sacaste dobles, tienes que volver a tirar.");
+            // Si un coche avanzado sacó más de 4 está obligado a volver a tirar!
+            // Ambas a no ser que lo acaben de encarcelar
+            if(!obtenerTurno().isEnCarcel()) {
+                if(obtenerTurno().esCocheAvanzado() && this.dado1.getValor()+this.dado2.getValor()>4) {
+                    System.out.println("Sacaste más que 4, tienes que volver a tirar.");
+                }
+                else if (this.dado1.getValor()==this.dado2.getValor()) {
+                    System.out.println("Sacaste dobles, tienes que volver a tirar.");
+                }
             }
             else {
                 // EL JUGADOR SÍ PUEDE ACABAR EL TURNO
 
-                // Gestionamos excepciones del avatar tipo coche avanzado
-                if(obtenerTurno().getAvatar().getTipo().equals("coche") &&
-                        obtenerTurno().getAvatar().getMovimientoAvanzado()) {
-                    if (this.dado1.getValor()+this.dado2.getValor()>4) {
-                        // Si sacó más de 4 tiene que volver a tirar
-                        System.out.println("Sacaste más que 4, tienes que volver a tirar.");
-                        return;
-                    }
-                    // Si un avatar coche acaba un turno en el que no pudo tirar los dados...
-                    // ...eliminamos el primer elemento ya que es el que acabamos de gestionar este turno
+                // Si un avatar coche acaba un turno en el que no pudo tirar los dados...
+                // ...eliminamos el primer elemento ya que es el que acabamos de gestionar este turno
+                if(obtenerTurno().esCocheAvanzado()) {
                     obtenerTurno().eliminarMovimientoPendiente();
                 }
 
@@ -978,7 +978,7 @@ public class Menu {
                 // Actualizamos controlComandos para el nuevo jugador que tiene el turno
                 this.controlComandos = 0;
                 if(!movimientosPendientesActual().isEmpty()) {
-                    // El nuevo jugador de tipo coche no va a poder mover este turno
+                    // Si hay un 0 en movimientos_pendientes el jugador no va a poder mover este turno
                     if(movimientosPendientesActual().get(0)==0) this.controlComandos = 2;
                 }
 
@@ -1840,7 +1840,7 @@ public class Menu {
                             ", recibiendo " + (eds.size() > 0 ? (eds.get(0).getCoste() / 2) * eds.size() : 0) + "€.");
                 }
             } else {
-                System.out.println("El tipo de edificio introducido no es válido (<casa, hotel, piscina, pista de deporte>.)");
+                System.out.println("Tipo de edificio inválido (correctos: casa/hotel/piscina/pista de deporte).");
             }
         } else {
             System.out.println("No puedes vender las edificaciones de esta propiedad porque no te pertenece.");
