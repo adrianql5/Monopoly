@@ -1008,10 +1008,14 @@ public class Menu {
 
         Avatar avatar = obtenerTurno().getAvatar();
         if(avatar.getMovimientoAvanzado()) {
-            System.out.println("El avatar " + avatar.getId() + " vuelve el movimiento normal.");
-            this.controlComandos=0;
-        }
-        else {
+            if(movimientosPendientesActual().isEmpty()){
+                System.out.println("El avatar " + avatar.getId() + " vuelve el movimiento normal.");
+                this.controlComandos=0;
+            }else{
+                System.out.println("El avatar " + avatar.getId() + " no puede cambiar de modo ya que esta bloqueado.");
+            }
+
+        } else {
             System.out.printf(Texto.M_ACTIVAR_MOVIMIENTO_AVANZADO + "\n", avatar.getId(), avatar.getTipo());
         }
         obtenerTurno().getAvatar().cambiarMovimiento();
