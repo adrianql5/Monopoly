@@ -319,7 +319,6 @@ public class Menu {
             case "lanzar dados":
                 if(this.controlComandos==0) {
                     lanzarDados(0, 0);
-                    verTablero();
                 }
                 else {
                     System.out.println(Texto.M_COMANDO_BLOQUEADO);
@@ -446,7 +445,6 @@ public class Menu {
                             // Si dado1 y dado2 no son números válidos se salta este if
                             if (dado1!=0 && dado2!=0) {
                                 lanzarDados(dado1, dado2);
-                                verTablero();
                             }
                         }
                         else {
@@ -652,7 +650,8 @@ public class Menu {
                         System.out.println(Texto.M_MOVIMIENTOS_PENDIENTES);
                     }
                 }
-
+                // Si se ha podido tirar los dados imprimimos el tablero
+                verTablero();
             }
             else {
                 System.out.println(Texto.M_YA_SE_TIRO);
@@ -843,11 +842,8 @@ public class Menu {
 
                 case "Impuestos":
                     System.out.printf("Debes pagar tus impuestos a la banca: %,.0f€\n", impuestoCasilla);
-                    jugadorActual.sumarGastos(impuestoCasilla);
-                    jugadorActual.restarFortuna(impuestoCasilla);
-                    jugadorActual.getEstadisticas().sumarImpuestosYTasasPagados(impuestoCasilla);
-                    //NO SE SI EST UN GASTO--------- si lo es
-                    jugadorActual.sumarGastos(impuestoCasilla);
+                    jugadorActual.pagar(impuestoCasilla, this.banca);
+                    this.tablero.getCasilla(20).sumarValor(impuestoCasilla);
 
                     if (!jugadorActual.tieneDinero()){
                         jugadorActual.setDeudaConJugador(this.banca);
@@ -948,68 +944,63 @@ public class Menu {
 
     /**Método que realiza las acciones asociadas al comando 'acabar turno'.*/
     private void acabarTurno() {
-        // Cuando no se puede tirar en un turno (caso coche avanzado si en un turno anterior se sacó <5)
-        // ponemos this.tirado a true y reutilizamos el resto del código
-        if(!movimientosPendientesActual().isEmpty()) {
-            // Recordar: un 0 en movimientos_pendientes equivale a que no se puede tirar en este turno
-            if(movimientosPendientesActual().get(0)==0) {
-                this.tirado=true;
-            }
-        }
-        // Comprobar si el jugador actual ya lanzó los dados en su turno
-        if (this.tirado) {
-            // Si los lanzó y sacó dobles está obligado a volver a tirar!
-            // Si un coche avanzado sacó más de 4 está obligado a volver a tirar!
-            // Ambas a no ser que lo acaben de encarcelar
-            if(!obtenerTurno().isEnCarcel()) {
-                if(obtenerTurno().esCocheAvanzado() && this.dado1.getValor()+this.dado2.getValor()>4) {
-                    System.out.println("Sacaste más que 4, tienes que volver a tirar.");
-                }
-                else if (this.dado1.getValor()==this.dado2.getValor()) {
-                    System.out.println("Sacaste dobles, tienes que volver a tirar.");
-                }
-            }
-            else {
-                // EL JUGADOR SÍ PUEDE ACABAR EL TURNO
-
-                // Si un avatar coche acaba un turno en el que no pudo tirar los dados...
-                // ...eliminamos el primer elemento ya que es el que acabamos de gestionar este turno
-                if(obtenerTurno().esCocheAvanzado()) {
-                    obtenerTurno().eliminarMovimientoPendiente();
-                }
-
-                // Vamos a pasar el turno: actualizamos los atributos correspondientes
-                this.tirado = false; // Reiniciar el estado de "tirado"
-                this.lanzamientos = 0; // Reiniciar los lanzamientos
-                this.dadosDoblesSeguidos = 0; // Reiniciar el contador de dados dobles
-
-                // Incrementar el turno y asegurar que no exceda el tamaño del array
-                this.turno += 1;
-                if (this.turno >= this.jugadores.size()) {
-                    this.turno = 0; // Reiniciar el turno si llegamos al final de la lista
-                }
-
-                // Actualizamos controlComandos para el nuevo jugador que tiene el turno
-                this.controlComandos = 0;
-                if(!movimientosPendientesActual().isEmpty()) {
-                    // Si hay un 0 en movimientos_pendientes el jugador no va a poder mover este turno
-                    if(movimientosPendientesActual().get(0)==0) this.controlComandos = 2;
-                }
-
-                // Imprimir el nombre del nuevo jugador actual
-                System.out.println("El jugador actual es: " + obtenerTurno().getNombre());
-            }
-        } else {
-
-            // Parcheada dura pero todos tenemos nuestros defectos
-            if(obtenerTurno().getAvatar().getTipo().equals("coche")) {
-                System.out.println("Tienes que tirar!");
-            }
-            else {
-                // Si no ha tirado los dados aún, informar al jugador
+        // Si aún no tiraste este turno...
+        if(!this.tirado) {
+            // ...a no ser que tengas el turno actual bloqueado (no puedes lanzar dados) no puedes acabar el turno
+            // IMPORTANTE: comprobar que el arraylist no esté vacío antes de intentar acceder a un elemento
+            if(!movimientosPendientesActual().isEmpty() && !(movimientosPendientesActual().get(0)==0) ) {
                 System.out.println("Aún no has lanzado los dados este turno!");
+                return;
             }
         }
+        // Si no acabas de ser encarcelado...
+        else if(obtenerTurno().isEnCarcel() && obtenerTurno().getTiradasCarcel()==0) {
+            // ...vemos si es un coche en modo avanzado
+            if(obtenerTurno().esCocheAvanzado()) {
+                // Si es un coche en modo avanzado el único caso en el que no puede pasar turno es si saca >4
+                if(this.dado1.getValor()+this.dado2.getValor()>4) {
+                    System.out.println("Sacaste más que 4, tienes que volver a tirar.");
+                    return;
+                }
+            }
+            else {
+                // Si no es un coche en modo avanzado NO puede acabar el turno si sacó dobles
+                if (this.dado1.getValor()==this.dado2.getValor()) {
+                    System.out.println("Sacaste dobles, tienes que volver a tirar.");
+                    return;
+                }
+            }
+        }
+
+        // CUANDO SE LLEGA AQUÍ EL JUGADOR SÍ PUEDE ACABAR EL TURNO
+
+        // Si un avatar coche acaba un turno en el que no pudo tirar los dados...
+        // ...eliminamos el primer elemento ya que es el que acabamos de gestionar este turno
+        if(obtenerTurno().esCocheAvanzado()) {
+            obtenerTurno().eliminarMovimientoPendiente();
+        }
+
+        // Vamos a pasar el turno: actualizamos los atributos correspondientes
+        this.tirado = false; // Reiniciar el estado de "tirado"
+        this.lanzamientos = 0; // Reiniciar los lanzamientos
+        this.dadosDoblesSeguidos = 0; // Reiniciar el contador de dados dobles
+
+        // Incrementar el turno y asegurar que no exceda el tamaño del array
+        this.turno += 1;
+        if (this.turno >= this.jugadores.size()) {
+            this.turno = 0; // Reiniciar el turno si llegamos al final de la lista
+        }
+
+        // Actualizamos controlComandos para el nuevo jugador que tiene el turno
+        this.controlComandos = 0;
+        if(!movimientosPendientesActual().isEmpty()) {
+            // Si hay un 0 en movimientos_pendientes el jugador no va a poder mover este turno
+            if(movimientosPendientesActual().get(0)==0) this.controlComandos = 2;
+            System.out.println("Este turno no puedes lanzar los dados.");
+        }
+
+        // Imprimir el nombre del nuevo jugador actual
+        System.out.println("El jugador actual es: " + obtenerTurno().getNombre());
     }
 
     /**Método para cambiar el modo de movimiento del avatar que tiene el turno*/
@@ -1309,8 +1300,8 @@ public class Menu {
         else if(carta.getTipo().equals("Caja")) {
             switch(carta.getID()) {
                 case 1: //Pagar 500.000€ (a la banca)
-                    jugadorActual.restarFortuna(500000);
-                    this.banca.sumarFortuna(500000);
+                    jugadorActual.pagar(500000, this.banca);
+                    this.tablero.getCasilla(20).sumarValor(500000);
                     break;
                 case 2: //Ir a la cárcel (encarcelado) sin pasar por la Salida (y por tanto sin cobrar)
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), posicion<10 ? 10-posicion : 50-posicion);
@@ -1324,8 +1315,8 @@ public class Menu {
                     jugadorActual.sumarFortuna(2000000);
                     break;
                 case 5: //Pagar 1.000.000€ (a la banca)
-                    jugadorActual.restarFortuna(1000000);
-                    this.banca.sumarFortuna(1000000);
+                    jugadorActual.pagar(1000000, this.banca);
+                    this.tablero.getCasilla(20).sumarValor(1000000);
                     break;
                 case 6: //Pagar 200.000€ a cada jugador
                     jugadorActual.restarFortuna(200000 * (this.jugadores.size()-1) );

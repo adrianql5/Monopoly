@@ -102,25 +102,18 @@ public class Jugador {
     // SOBRECARGA DEL MÉTODO "pagar" para pagar a la banca
     /**Método para pagar dinero a otro jugador.
      * ESTA MANERA DE LLAMARLO SE USA PARA PAGAR A LA BANCA (IMPUESTOS O TASAS).
+     * CUANDO SE PAGAN IMPUESTOS O TASAS RECORDAR AÑADIR EL DINERO AL BOTE DEL PARKING EN EL MENÚ.
      * @param cantidad Dinero que hay que pagar a la banca
      * @param banca Estamos obligados a pasar la banca para actualizar sus atributos desde aquí
-     * @param tasa TRUE si estamos pagando una tasa, FALSE si estamos pagando una casilla de tipo Impuesto
      */
-    public void pagar(float cantidad, Jugador banca, boolean tasa) {
-        // ¿Estamos pagando una tasa (en las cartas)?
-        if(tasa) {
+    public void pagar(float cantidad, Jugador banca) {
+        // Modificamos los atributos del pagador
+        this.restarFortuna(cantidad);
+        this.sumarGastos(cantidad);
+        this.estadisticas.sumarImpuestosYTasasPagados(cantidad);
 
-        }
-        // Estamos pagando una casilla de tipo Impuesto
-        else {
-            // Modificamos los atributos del pagador
-            this.restarFortuna(cantidad);
-            this.sumarGastos(cantidad);
-            this.estadisticas.sumarImpuestosYTasasPagados(cantidad);
-
-            // Modificamos los atributos del cobrador
-            banca.sumarFortuna(cantidad);
-        }
+        // Modificamos los atributos del cobrador
+        banca.sumarFortuna(cantidad);
     }
 
     /**Método que elimina el primer elemento del ArrayList movimientos_pendientes.
