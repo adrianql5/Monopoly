@@ -779,7 +779,10 @@ public class Casilla {
         return this.dinero_recaudado;
     }
     public void sumarDinero_recaudado(float dinero_recaudado){
-        this.grupo.sumarRecaudacionGrupo(dinero_recaudado);
+        if(this.getTipo().equals("Solar")){
+            this.grupo.sumarRecaudacionGrupo(dinero_recaudado);
+        }
+
         this.dinero_recaudado += dinero_recaudado;
     }
 }
