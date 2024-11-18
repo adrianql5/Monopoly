@@ -1688,8 +1688,8 @@ public class Menu {
                 System.out.println("El jugador "+ jugador.getNombre()+" recibe "+ casilla.getHipoteca()+
                         " por la hipoteca de " + casilla.getNombre()+
                         ". No puede recibir alquileres ni edificar en el grupo "+ casilla.getGrupo().getColorGrupo());
-                //jugador.sumarFortuna(casilla.getHipoteca());
-                banca.sumarFortuna(-casilla.getHipoteca());
+                jugador.sumarFortuna(casilla.getHipoteca());
+                
             }
         }
         else{
@@ -1708,7 +1708,7 @@ public class Menu {
                             " por la hipoteca de " + casilla.getNombre()+
                             ". Ahora puede recibir alquileres y edificar en el grupo "+ casilla.getGrupo().getColorGrupo());
                     jugador.sumarFortuna(-(casilla.getHipoteca()+casilla.getHipoteca()*0.10f));
-                    banca.sumarFortuna((casilla.getHipoteca()+casilla.getHipoteca()*0.10f));
+                    jugador.sumarGastos(casilla.getHipoteca()+casilla.getHipoteca()*0.10f);
                 }
             }
             else{
@@ -1741,7 +1741,6 @@ public class Menu {
                                 casilla.anhadirEdificio(edificio); // Añadir el edificio a la casilla
                                 jugador.sumarGastos(edificio.getCoste()); // Restar el coste del edificio
                                 jugador.sumarFortuna(-edificio.getCoste()); // Reducir la fortuna del jugador
-                                this.banca.sumarFortuna(edificio.getCoste()); // Aumentar la fortuna de la banca
 
                                 System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
                                         edificio.getId() + " por " + edificio.getCoste());
@@ -1816,7 +1815,6 @@ public class Menu {
                         count++;
                     }
 
-                    this.banca.sumarFortuna(-suma); // Restar de la fortuna de la banca
                     jugador.sumarFortuna(suma);
                     System.out.println("El jugador " + jugador.getNombre() + " ha vendido " +
                             n + " " + tipo + " en " + solar + ", recibiendo " + suma +

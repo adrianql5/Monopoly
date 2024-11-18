@@ -487,7 +487,6 @@ public class Casilla {
                     if (solicitante.getFortuna()>=this.valor) {
                         solicitante.restarFortuna(this.valor);
                         solicitante.sumarGastos(this.valor);
-                        banca.sumarFortuna(this.valor);  //Ojo que la banca acumula el precio de las compras en el bote
                         banca.eliminarPropiedad(this);
                         solicitante.anhadirPropiedad(this);
                         this.duenho=solicitante;
