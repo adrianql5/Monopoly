@@ -819,6 +819,7 @@ public class Menu {
                             comando[0].equals("vender") ) ) {
 
                         System.out.println("Comando inválido.");
+                        break;
                     }
                     if(comando_entero.equals("bancarrota")) {
                         declararBancarrota(cobrador);
@@ -826,6 +827,7 @@ public class Menu {
                     }
                     if(comando[0].equals("hipotecar")) {
                         hipotecar(comando[1]);
+                        break;
                     }
                     if(comando[0].equals("vender")) {
                         // Desde aquí se permiten valores entre 1 y 6
@@ -833,6 +835,7 @@ public class Menu {
                         if(num_edificios!=0) {
                             venderEdificios(comando[1], comando[2], num_edificios);
                         }
+                        break;
                     }
 
                     // Si después de la operación ya puede pagar devolvemos true
