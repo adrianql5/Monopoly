@@ -809,56 +809,45 @@ public class Menu {
             Scanner scannerBancarrota = new Scanner(System.in);
 
             // Mientras tenga propiedades hipotecables puede ganar dinero (también se puede declarar en bancarrota)
-            while(pagador.tienePropiedadesHipotecables()) {
+            while(pagador.tienePropiedadesHipotecables() && cantidad>pagador.getFortuna()) {
                 System.out.println(Texto.M_NO_HAY_DINERO_OPCIONES);
 
+                System.out.println();
                 String comando_entero = scannerBancarrota.nextLine();
                 String[] comando = comando_entero.split(" ");
-                
-                while(cantidad>pagador.getFortuna()) {
-                    // Mientras no sea uno de estos tres el comando no es válido
-                    while( !( comando_entero.equals("bancarrota") || comando[0].equals("hipotecar") ||
-                            comando[0].equals("vender") ) ) {
 
-                        System.out.println("Comando inválido.");
-                        break;
-                    }
-                    if(comando_entero.equals("bancarrota")) {
-                        declararBancarrota(cobrador);
-                        return false;
-                    }
-                    if(comando[0].equals("hipotecar")) {
-                        hipotecar(comando[1]);
-                        if(cantidad<=pagador.getFortuna()) {
-                            System.out.println("Ya conseguiste dinero para pagar! Realizas el pago.");
-                            return true;
-                        }
-                        System.out.println("No has podido hipotecar esa casilla o no te ha dado el dinero suficiente, así que te declaras en bancarrota");
-                        declararBancarrota(cobrador);
-                        return false;
-                    }
-                    if(comando[0].equals("vender")) {
-                        // Desde aquí se permiten valores entre 1 y 6
-                        int num_edificios = dadoValido(comando[3]);
-                        if(num_edificios!=0) {
-                            venderEdificios(comando[1], comando[2], num_edificios);
-                            if(cantidad<=pagador.getFortuna()) {
-                                System.out.println("Ya conseguiste dinero para pagar! Realizas el pago.");
-                                return true;
-                            }
-                            System.out.println("No has podido vender ese edificio o no te ha dado el dinero suficiente, así que te declaras en bancarrota");
-                            declararBancarrota(cobrador);
-                            return false;
-                            
-                        }
-                        System.out.println("Caso raro");
-                        declararBancarrota(cobrador);
-                        return false;
-                        
-                    }
+                // Mientras no sea uno de estos tres el comando no es válido
+                while( !( comando_entero.equals("bancarrota") || comando[0].equals("hipotecar") ||
+                        comando[0].equals("vender") ) ) {
 
-                    // Si después de la operación ya puede pagar devolvemos true
+                    System.out.println("Comando inválido.");
+
+                    // Volvemos a pedir comandos hasta que sea uno válido
+                    System.out.println();
+                    comando_entero = scannerBancarrota.nextLine();
+                    comando = comando_entero.split(" ");
                 }
+                if(comando_entero.equals("bancarrota")) {
+                    declararBancarrota(cobrador);
+                    return false;
+                }
+                if(comando.length==2 && comando[0].equals("hipotecar")) {
+                    hipotecar(comando[1]);
+                }
+                if(comando.length==4 && comando[0].equals("vender")) {
+                    // Desde aquí se permiten valores entre 1 y 6
+                    int num_edificios = dadoValido(comando[3]);
+                    if(num_edificios!=0) {
+                        venderEdificios(comando[1], comando[2], num_edificios);
+                    }
+                }
+
+                // Si después de la operación (vender edificios/hipotecar) ya puede pagar devolvemos true
+                if(cantidad<=pagador.getFortuna()) {
+                    System.out.println("Ya conseguiste dinero para pagar! Realizas el pago.");
+                    return true;
+                }
+
             }
 
             // No tiene ni dinero ni propiedades hipotecables
