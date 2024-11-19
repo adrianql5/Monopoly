@@ -820,7 +820,10 @@ public class Menu {
                     while( !( comando_entero.equals("bancarrota") || comando[0].equals("hipotecar") ||
                             comando[0].equals("vender") ) ) {
 
-                        System.out.println("Comando inválido.");
+                        System.out.println("Comando inválido.\n");
+
+                        comando_entero = scannerBancarrota.nextLine();
+                        comando = comando_entero.split(" ");
                     }
                     if(comando_entero.equals("bancarrota")) {
                         declararBancarrota(cobrador);
