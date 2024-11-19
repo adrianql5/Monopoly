@@ -326,7 +326,8 @@ public class Menu {
 
             // Comandos que no se pueden ejecutar en ciertos casos-----------------------
             case "lanzar dados":
-                if(this.controlComandos==0) {
+                if(this.controlComandos==0 ||
+                        this.controlComandos==2 && this.dado1.getValor()+this.dado2.getValor()>4) {
                     lanzarDados(0, 0);
                 }
                 else {
@@ -448,7 +449,8 @@ public class Menu {
                     // Si alguno de los valores de dados introducidos no es válido
                     // se imprime un mensaje de error (lo hace dadoValido) y no hace nada
                     else if("dados".equals(comando[0])) {
-                        if(this.controlComandos==0) {
+                        if(this.controlComandos==0 ||
+                                obtenerTurno().esCocheAvanzado() && this.dado1.getValor()+this.dado2.getValor()>4) {
                             int dado1 = dadoValido(comando[1]);
                             int dado2 = dadoValido(comando[2]);
                             // Si dado1 y dado2 no son números válidos se salta este if
@@ -1060,7 +1062,8 @@ public class Menu {
             // ...vemos si es un coche en modo avanzado
             if(obtenerTurno().esCocheAvanzado()) {
                 // Si es un coche en modo avanzado el único caso en el que no puede pasar turno es si saca >4
-                if(this.dado1.getValor()+this.dado2.getValor()>4) {
+                // A no ser que ya lleve 4 lanzamientos
+                if(this.dado1.getValor()+this.dado2.getValor()>4 && this.lanzamientos!=4) {
                     System.out.println("Sacaste más que 4, tienes que volver a tirar.");
                     return;
                 }
