@@ -241,13 +241,14 @@ public class Casilla {
 
 
 
-    // Método auxiliar para eliminar todas las casas de una casilla
     public void eliminarCasasDeCasilla() {
-        ArrayList<Edificio> casas = this.getCasas();
-        int n=casas.size();
-        for(int i=n-1; i>=0; i--){ //java es una pedazo de mierda descomunal
-            
-            casas.remove(i);
+        this.getCasas().clear();
+    }
+
+
+    public void eliminarTodosLosEds() {
+        for (ArrayList<Edificio> lista : this.edificios) {
+            lista.clear(); 
         }
     }
 
