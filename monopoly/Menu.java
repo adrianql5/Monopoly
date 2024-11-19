@@ -814,7 +814,7 @@ public class Menu {
 
                 String comando_entero = scannerBancarrota.nextLine();
                 String[] comando = comando_entero.split(" ");
-
+                
                 while(cantidad>pagador.getFortuna()) {
                     // Mientras no sea uno de estos tres el comando no es válido
                     while( !( comando_entero.equals("bancarrota") || comando[0].equals("hipotecar") ||
@@ -831,22 +831,35 @@ public class Menu {
                     }
                     if(comando[0].equals("hipotecar")) {
                         hipotecar(comando[1]);
-                        break;
+                        if(cantidad<=pagador.getFortuna()) {
+                            System.out.println("Ya conseguiste dinero para pagar! Realizas el pago.");
+                            return true;
+                        }
+                        System.out.println("No has podido hipotecar esa casilla, así que te declaras en bancarrota");
+                        declararBancarrota(cobrador);
+                        return false;
                     }
                     if(comando[0].equals("vender")) {
                         // Desde aquí se permiten valores entre 1 y 6
                         int num_edificios = dadoValido(comando[3]);
                         if(num_edificios!=0) {
                             venderEdificios(comando[1], comando[2], num_edificios);
+                            if(cantidad<=pagador.getFortuna()) {
+                                System.out.println("Ya conseguiste dinero para pagar! Realizas el pago.");
+                                return true;
+                            }
+                            System.out.println("No has podido hipotecar esa casilla, así que te declaras en bancarrota");
+                            declararBancarrota(cobrador);
+                            return false;
+                            
                         }
-                        break;
+                        System.out.println("No has podido hipotecar esa casilla, así que te declaras en bancarrota");
+                        declararBancarrota(cobrador);
+                        return false;
+                        
                     }
 
                     // Si después de la operación ya puede pagar devolvemos true
-                    if(cantidad<=pagador.getFortuna()) {
-                        System.out.println("Ya conseguiste dinero para pagar! Realizas el pago.");
-                        return true;
-                    }
                 }
             }
 
