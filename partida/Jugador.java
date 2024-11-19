@@ -298,6 +298,10 @@ public class Jugador {
         return this.avatar.getTipo().equals("coche") && this.avatar.getMovimientoAvanzado();
     }
 
+    public boolean esPelotaAvanzado() {
+        return this.avatar.getTipo().equals("pelota") && this.avatar.getMovimientoAvanzado();
+    }
+
 
     //SECCIÓN DE GETTERS Y SETTERS DE JUGADOR
     public String getNombre(){

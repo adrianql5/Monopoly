@@ -41,7 +41,6 @@ public class Edificio {
             "RED", Valor.GRUPO7/n,
             "PURPLE", Valor.GRUPO8/n
         );
-
         
         Float valorGrupo = grupoValores.get(grupo);
 

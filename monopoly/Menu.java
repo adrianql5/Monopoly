@@ -27,7 +27,7 @@ public class Menu {
     private ArrayList<Carta> cartas_caja;
     private Carta carta_del_reves;
     private boolean partidaTerminada; //Booleano para acabar la partida
-    private int dadosDoblesSeguidos; //Hay que diferenciar lanzamientos de este atributo
+    private int dadosDoblesSeguidos; //(DEL JUGADOR CON EL TURNO) Hay que diferenciar lanzamientos de este atributo
 
     /**Atributo que usa analizarComando() para saber qué comandos bloquear.
      * / 0->turno normal.
@@ -147,8 +147,6 @@ public class Menu {
 
                     //Este es el bucle de la partida básicamente: cada iteración es un turno
                     while(!this.partidaTerminada) {
-
-
                         bucleTurno();
                     }
 
@@ -264,6 +262,10 @@ public class Menu {
             Jugador j = iterator.next();
             if (j.equals(jugador)) {
                 iterator.remove(); // Elimina de manera segura el jugador actual
+                // Si eliminamos al último jugador establecemos el turno del primero
+                if(this.turno == this.jugadores.size()) {
+                    this.turno = 0;
+                }
             }
         }
     }
@@ -493,32 +495,6 @@ public class Menu {
         System.out.println("\tavatar: " + jugador.getAvatar().getId() + "\n}");
     }
 
-    /**
-     * Método que se llama cada vez que se pasa por la Salida.
-     * [1] Avisa de la cantidad que se cobra y la suma a la fortuna del jugador correspondiente.
-     * [2] Suma 1 vuelta y 1 vuelta sin comprar (la última se reinicia cuando se compra algo, claro).
-     * [3] Llama a cuatroVueltasSinCompras() para aumentar el precio de los solares si toca.
-     */
-    private void cobrarSalida(Jugador jugador) {
-        System.out.printf("¡Al pasar por la salida ganaste %,.0f€!\n", Valor.SUMA_VUELTA);
-        jugador.sumarFortuna(Valor.SUMA_VUELTA);
-        jugador.sumarVuelta();
-        jugador.sumarVueltas_sin_comprar();
-        jugador.getEstadisticas().sumarDineroSalidaRecaudado(Valor.SUMA_VUELTA);
-        cuatroVueltasSinCompras();
-    }
-    /**
-     * Método que se llama cada vez que se pasa por la Salida. Marcha atras
-     * [1] Avisa de la cantidad que se pierde y la resta a la fortuna del jugador correspondiente.
-     */
-    private void devolverCobrarSalida(Jugador jugador) {
-        System.out.printf("¡Al pasar por la salida marcha atras perdiste %,.0f€!\n", Valor.SUMA_VUELTA);
-        jugador.sumarFortuna(-Valor.SUMA_VUELTA);
-        jugador.restarVuelta();
-        jugador.setVueltas_sin_comprar(jugador.getVueltas_sin_comprar()-1);
-        jugador.getEstadisticas().sumarDineroSalidaRecaudado(-Valor.SUMA_VUELTA);
-    }
-
     /**Método para comprobar si los jugadores llevan cuatro vueltas al tablero sin comprar.
      * Si es cierto aumenta el precio de los solares un 5% y reinicia las vueltas sin comprar a 0.
      * Una vuelta == pasar por la casilla de salida.
@@ -543,6 +519,35 @@ public class Menu {
         for (Jugador j : jugadores) {
             j.setVueltas_sin_comprar(0);
         }
+    }
+
+    //SECCIÓN DE MÉTODOS QUE DEPENDEN DE INSTANCIAS---------------------------------------------------------------------
+
+    /**
+     * Método que se llama cada vez que se pasa por la Salida.
+     * [1] Avisa de la cantidad que se cobra y la suma a la fortuna del jugador correspondiente.
+     * [2] Suma 1 vuelta y 1 vuelta sin comprar (la última se reinicia cuando se compra algo, claro).
+     * [3] Llama a cuatroVueltasSinCompras() para aumentar el precio de los solares si toca.
+     */
+    private void cobrarSalida(Jugador jugador) {
+        System.out.printf("¡Al pasar por la salida ganaste %,.0f€!\n", Valor.SUMA_VUELTA);
+        jugador.sumarFortuna(Valor.SUMA_VUELTA);
+        jugador.sumarVuelta();
+        jugador.sumarVueltas_sin_comprar();
+        jugador.getEstadisticas().sumarDineroSalidaRecaudado(Valor.SUMA_VUELTA);
+        cuatroVueltasSinCompras();
+    }
+
+    /**
+     * Método que se llama cada vez que se pasa por la Salida. Marcha atras
+     * [1] Avisa de la cantidad que se pierde y la resta a la fortuna del jugador correspondiente.
+     */
+    private void devolverCobrarSalida(Jugador jugador) {
+        System.out.printf("¡Al pasar por la salida marcha atras perdiste %,.0f€!\n", Valor.SUMA_VUELTA);
+        jugador.sumarFortuna(-Valor.SUMA_VUELTA);
+        jugador.restarVuelta();
+        jugador.setVueltas_sin_comprar(jugador.getVueltas_sin_comprar()-1);
+        jugador.getEstadisticas().sumarDineroSalidaRecaudado(-Valor.SUMA_VUELTA);
     }
 
     /**Método que ejecuta todas las acciones relacionadas con el comando 'lanzar dados'.
@@ -573,7 +578,8 @@ public class Menu {
         else {
             // Comprobamos si aún no se ha tirado en el turno o vienes de haber sacado dobles
             // IMPORTANTE EL ORDEN DEL IF: el valor de los dados antes de la primera tirada de la partida es null
-            if(!this.tirado || this.dado1.getValor()==this.dado2.getValor()) {
+            if(!this.tirado || this.dado1.getValor()==this.dado2.getValor() ||
+                    (obtenerTurno().esCocheAvanzado() && this.tirado && this.dado1.getValor()+this.dado2.getValor()>4)) {
                 int resultado1, resultado2;
                 if(dadoTrucado1==0 && dadoTrucado2==0) {
                     // Lanzamos 2 dados (aleatorios)
@@ -637,13 +643,11 @@ public class Menu {
                                 !(avatar.getTipo().equals("coche") && (sumaDados==4 || sumaDados==2) ) ) {
                             System.out.println("Vuelves a tirar.");
                         }
-                    }else{
+                    }
+                    else{
                         // Reiniciamos el contador de dados dobles
                         this.dadosDoblesSeguidos = 0;
-
                     }
-
-
 
                     // Esta función es la cabra
                     moverYEvaluar(jugador, sumaDados);
@@ -673,6 +677,9 @@ public class Menu {
         // Guardamos la casilla de salida para luego
         Casilla origen = avatar.getLugar();
 
+        // Boolean que nos va a servir para imprimir mejor los mensajes del movimiento que se realiza
+        boolean primerMovimientoPelota = false;
+
         // Comprobamos si el jugador está en movimiento avanzado
         if(avatar.getMovimientoAvanzado()) {
             if(avatar.getTipo().equals("coche")) {
@@ -697,6 +704,7 @@ public class Menu {
                 if(movimientosPendientesActual().isEmpty()) {
                     // Cuando se llama a moverYEvaluar() al tirar los dados calculamos los movimientos pendientes
                     jugador.calcularMovimientosPendientes(tirada);
+                    primerMovimientoPelota = true;
                     avatar.moverAvatar(this.tablero.getPosiciones(), movimientosPendientesActual().get(0));
                 }
                 else {
@@ -717,10 +725,10 @@ public class Menu {
             }
             else {
                 System.out.println("Modo avanzado de la esfinge y el sombrero no implementado. Movimiento normal.");
+                avatar.moverAvatar(this.tablero.getPosiciones(), tirada);
             }
         }
         else {
-            // Como no hay que implementar esfinge ni sombrero se interpretan como movimiento normal
             // Si está en movimiento normal simplemente movemos el valor de la tirada y evaluamos la casilla
             avatar.moverAvatar(this.tablero.getPosiciones(), tirada);
         }
@@ -729,29 +737,104 @@ public class Menu {
         Casilla destino = avatar.getLugar();
 
         // Avisamos del movimiento del jugador en el tablero
-        if(tirada > 4 ||!jugador.getAvatar().getMovimientoAvanzado()){
-            System.out.println("El avatar " + avatar.getId() + " avanza " + tirada +
-                    " casillas desde " + origen.getNombre() + " hasta " + destino.getNombre() + ".");
-        }else{
-            System.out.println("El avatar " + avatar.getId() + " retrocede " + tirada +
-                    " casillas desde " + origen.getNombre() + " hasta " + destino.getNombre() + ".");
+        if(tirada > 4 || !jugador.getAvatar().getMovimientoAvanzado()){
+            if(obtenerTurno().esPelotaAvanzado() && primerMovimientoPelota) {
+                // Si un avatar en modo avanzado saca 5 o más siempre avanza primero 1 casilla
+                System.out.println("El avatar " + avatar.getId() + " avanza 5 casillas desde " +
+                        origen.getNombre() + " hasta " + destino.getNombre() + ".");
+            }
+            else {
+                System.out.println("El avatar " + avatar.getId() + " avanza " + tirada +
+                        " casillas desde " + origen.getNombre() + " hasta " + destino.getNombre() + ".");
+            }
+        }
+        else{
+            if(obtenerTurno().esPelotaAvanzado() && primerMovimientoPelota) {
+                // Si un avatar en modo avanzado saca 4 o menos siempre retrocede primero 1 casilla
+                System.out.println("El avatar " + avatar.getId() + " retrocede 1 casilla desde" +
+                        origen.getNombre() + " hasta " + destino.getNombre() + ".");
+            }
+            else {
+                System.out.println("El avatar " + avatar.getId() + " retrocede " + (tirada>0 ? tirada : -tirada) +
+                        " casillas desde " + origen.getNombre() + " hasta " + destino.getNombre() + ".");
+            }
         }
 
 
-        // Si pasamos por la salida hay que cobrar!
-        if (origen.getPosicion() > destino.getPosicion() && !avatar.getMovimientoAvanzado()) {
+        /*
+        Si pasamos por la salida hay que cobrar!
+        Nótese que "pasar por la salida" implica que origen.posicion>destino.posicion, pero para no confundirlo con
+        retroceder casillas (por ejemplo de la 28 a la 24) le sumamos a destino.posicion el máximo número de casillas
+        que se pueden retroceder: 4
+         */
+        if (origen.getPosicion()>destino.getPosicion()+4) {
             cobrarSalida(jugador);
         }
-        if(avatar.getMovimientoAvanzado() && (avatar.getTipo().equals("pelota")||avatar.getTipo().equals("coche"))&&(tirada<=4)){
-            if (destino.getPosicion() > origen.getPosicion() && (jugador.getEstadisticas().getDineroSalidaRecaudado() > 1)) {
+        /*
+        Si en los movimientos avanzados de pelota y coche avanzados pasamos por la Salida marcha atrás devolvemos
+        el dinero que se cobra al pasar por la salida ¡Pero sólo si ha cobrado alguna vez la salida!
+        Nótese que "pasar por la salida marcha atrás" implica que destino.posicion>origen.posicion, pero para no
+        confundirlo con avanzar casillas de manera normal (por ejemplo de la 24 a la 36) le sumamos a origen.posicion
+        el valor máximo que se puede avanzar tirando los dados: 12
+         */
+        if( destino.getPosicion()>origen.getPosicion()+12 && jugador.getEstadisticas().getDineroSalidaRecaudado()>0) {
+            // Este if no hace falta pero nunca está mal la programación defensiva
+            if (obtenerTurno().esCocheAvanzado() || obtenerTurno().esPelotaAvanzado()) {
                 devolverCobrarSalida(jugador);
-
             }
         }
 
         // EVALUAR
         // FALTA AÑADIR AQUÍ EL BUCLE DE BANCARROTA :)
         evaluarCasilla(avatar.getLugar());
+    }
+
+    /**Método para gestionar cuando un jugador no puede pagar un alquiler
+     * [1] Comprueba si un jugador puede pagar un alquiler con su dinero (fortuna).
+     * [2] Si puede devuelve TRUE.
+     * [3] Si no pudiese pero tiene propiedades hipotecables se pide que las hipoteque.
+     * [4] A cada propiedad que hipoteca se comprueba si ya puede pagar (y en ese caso devuelve TRUE).
+     * [5] Si al acabar este proceso sigue sin poder pagar se le obliga a declararse en bancarrota.
+     * @param pagador Jugador que tiene que pagar la cantidad
+     * @param cobrador Jugador al que se tiene que pagar la cantidad
+     * @param cantidad
+     * @return true si se acaba pudiendo pagar, false si el jugador se tuvo que declarar en bancarrota
+     */
+    public boolean bucleBancarrota(Jugador pagador, Jugador cobrador, float cantidad) {
+        if(cantidad>pagador.getFortuna()) {
+            Scanner scannerBancarrota = new Scanner(System.in);
+
+            // Mientras tenga propiedades hipotecables puede ganar dinero (también se puede declarar en bancarrota)
+            while(pagador.tienePropiedadesHipotecables()) {
+                System.out.println(Texto.M_NO_HAY_DINERO_OPCIONES);
+
+                String comando_entero = scannerBancarrota.nextLine();
+                String[] comando = comando_entero.split(" ");;
+
+                // Mientras no sea uno de estos dos el comando no es válido
+                while(!(comando_entero.equals("bancarrota") || comando[0].equals("hipotecar"))) {
+
+                    //case "hipotecar": hipotecar(comando[1]); break;
+                    System.out.println("Comando inválido.");
+                }
+                if(scannerBancarrota.nextLine().equals("bancarrota")) {
+                    declararBancarrota();
+                    return false;
+                }
+                if(scannerBancarrota.nextLine().equals("bancarrota")) {
+                }
+            }
+
+            // No tiene ni dinero ni propiedades hipotecables
+            do{
+                System.out.println(Texto.M_BANCARROTA_OBLIGATORIA);
+            } while(!scannerBancarrota.nextLine().equals("bancarrota"));
+            declararBancarrota();
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
     /** Método para evaluar qué hacer en una casilla concreta.
@@ -778,14 +861,14 @@ public class Menu {
                             float precio = casilla.evaluarAlquiler();
                             System.out.printf("%s debe pagarle el alquiler de %s a %s: %,.0f€\n",
                                     jugadorActual.getNombre(), nombreCasilla, duenhoCasilla.getNombre(), precio);
-                            jugadorActual.pagar(duenhoCasilla, precio);
 
-                            if (!jugadorActual.tieneDinero()){
-                                    jugadorActual.setDeudaConJugador(duenhoCasilla);
-                                    return false;
+                            // Si puede pagarlo de alguna manera se cobra
+                            if(bucleBancarrota(jugadorActual, duenhoCasilla, precio)) {
+                                jugadorActual.pagar(duenhoCasilla, precio);
+                                return true;
                             }
+                            return false;
 
-                            return true;
                         } else {
                             System.out.println("La casilla " + nombreCasilla + " está a la venta.\n");
                         }
@@ -826,15 +909,14 @@ public class Menu {
                             float precio = casilla.evaluarAlquiler();
                             System.out.printf("%s debe pagar el servicio de transporte a %s: %,.0f€\n",
                                     jugadorActual.getNombre(), duenhoCasilla.getNombre(), precio);
-                            jugadorActual.pagar(duenhoCasilla, precio);
 
-                            //ojooooooooooooooooooooooooo
-                            if (!jugadorActual.tieneDinero()) {
-                                jugadorActual.setDeudaConJugador(duenhoCasilla);
-                                return false;
+                            // Si puede pagarlo de alguna manera se cobra
+                            if(bucleBancarrota(jugadorActual, duenhoCasilla, precio)) {
+                                jugadorActual.pagar(duenhoCasilla, precio);
+                                return true;
                             }
+                            return false;
 
-                            return true;
                         } else {
                             System.out.println("La casilla " + nombreCasilla + " está hipotecada. No hay que pagar.");
                         }
@@ -845,16 +927,14 @@ public class Menu {
 
                 case "Impuestos":
                     System.out.printf("Debes pagar tus impuestos a la banca: %,.0f€\n", impuestoCasilla);
-                    jugadorActual.pagar(impuestoCasilla, this.banca);
-                    this.tablero.getCasilla(20).sumarValor(impuestoCasilla);
 
-                    if (!jugadorActual.tieneDinero()){
-                        jugadorActual.setDeudaConJugador(this.banca);
-                        return false;
+                    // Si puede pagarlo de alguna manera se cobra
+                    if(bucleBancarrota(jugadorActual, this.banca, impuestoCasilla)) {
+                        jugadorActual.pagar(impuestoCasilla, this.banca);
+                        this.tablero.getCasilla(20).sumarValor(impuestoCasilla);
+                        return true;
                     }
-
-                    this.banca.sumarFortuna(impuestoCasilla);
-                    return true;
+                    return false;
 
                 case "Servicio":
                     if (duenhoCasilla != this.banca) {
@@ -862,16 +942,14 @@ public class Menu {
                             float precio = casilla.evaluarAlquiler(tirada);
                             System.out.printf("%s debe pagar el servicio a %s: %,.0f€\n",
                                     jugadorActual.getNombre(), duenhoCasilla.getNombre(), precio);
-                            jugadorActual.pagar(duenhoCasilla, precio);
 
-                            //ojooooooooooooooooooooooooo
-                            if (!jugadorActual.tieneDinero()){   
-                                jugadorActual.setDeudaConJugador(duenhoCasilla);
-                                return false;
+                            // Si puede pagarlo de alguna manera se cobra
+                            if(bucleBancarrota(jugadorActual, duenhoCasilla, precio)) {
+                                jugadorActual.pagar(duenhoCasilla, precio);
+                                return true;
                             }
+                            return false;
 
-                            duenhoCasilla.sumarFortuna(precio);
-                            return true;
                         } else {
                             System.out.println("La casilla " + nombreCasilla + " está hipotecada. No hay que pagar.");
                         }
@@ -951,13 +1029,13 @@ public class Menu {
         if(!this.tirado) {
             // ...a no ser que tengas el turno actual bloqueado (no puedes lanzar dados) no puedes acabar el turno
             // IMPORTANTE: comprobar que el arraylist no esté vacío antes de intentar acceder a un elemento
-            if(!movimientosPendientesActual().isEmpty() && !(movimientosPendientesActual().get(0)==0) ) {
+            if( !(!movimientosPendientesActual().isEmpty() && movimientosPendientesActual().get(0)==0) ) {
                 System.out.println("Aún no has lanzado los dados este turno!");
                 return;
             }
         }
-        // Si no acabas de ser encarcelado...
-        else if(!obtenerTurno().isEnCarcel() && obtenerTurno().getTiradasCarcel()==0) {
+        // Si NO acabas de ser encarcelado...
+        else if( !(obtenerTurno().isEnCarcel() && obtenerTurno().getTiradasCarcel()==0) ) {
             // ...vemos si es un coche en modo avanzado
             if(obtenerTurno().esCocheAvanzado()) {
                 // Si es un coche en modo avanzado el único caso en el que no puede pasar turno es si saca >4
@@ -969,16 +1047,11 @@ public class Menu {
             else {
                 // Si no es un coche en modo avanzado NO puede acabar el turno si sacó dobles
                 if (this.dado1.getValor()==this.dado2.getValor()) {
-                    System.out.println("¡¡¡Sacaste dobles!!!, tienes que volver a tirar.");
+                    System.out.println("¡Sacaste dobles! Tienes que volver a tirar.");
                     return;
                 }
             }
-        } else if (this.dado1.getValor()==this.dado2.getValor()&& controlComandos!=2 &&this.dadosDoblesSeguidos!=3) {
-            System.out.println("Sacaste dobles, tienes que volver a tirar.");
-            return;
         }
-
-
 
         // CUANDO SE LLEGA AQUÍ EL JUGADOR SÍ PUEDE ACABAR EL TURNO
 
@@ -999,16 +1072,19 @@ public class Menu {
             this.turno = 0; // Reiniciar el turno si llegamos al final de la lista
         }
 
+        // Imprimir el nombre del nuevo jugador actual
+        System.out.println("El jugador actual es: " + obtenerTurno().getNombre());
+
         // Actualizamos controlComandos para el nuevo jugador que tiene el turno
         this.controlComandos = 0;
         if(!movimientosPendientesActual().isEmpty()) {
             // Si hay un 0 en movimientos_pendientes el jugador no va a poder mover este turno
-            if(movimientosPendientesActual().get(0)==0) this.controlComandos = 2;
-            System.out.println("Este turno no puedes lanzar los dados.");
+            if(movimientosPendientesActual().get(0)==0) {
+                this.controlComandos = 2;
+                System.out.println("Este turno no puedes lanzar los dados.");
+            }
         }
 
-        // Imprimir el nombre del nuevo jugador actual
-        System.out.println("El jugador actual es: " + obtenerTurno().getNombre());
     }
 
     /**Método para cambiar el modo de movimiento del avatar que tiene el turno*/
@@ -1315,9 +1391,12 @@ public class Menu {
         else if(carta.getTipo().equals("Caja")) {
             switch(carta.getID()) {
                 case 1: //Pagar 500.000€ (a la banca)
-                    jugadorActual.pagar(500000, this.banca);
-                    this.tablero.getCasilla(20).sumarValor(500000);
-                    break;
+                    if(bucleBancarrota(jugadorActual, this.banca, 500000f)) {
+                        jugadorActual.pagar(500000f, this.banca);
+                        this.tablero.getCasilla(20).sumarValor(500000f);
+                        return true;
+                    }
+                    return false;
                 case 2: //Ir a la cárcel (encarcelado) sin pasar por la Salida (y por tanto sin cobrar)
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), posicion<10 ? 10-posicion : 50-posicion);
                     jugadorActual.encarcelar(this.tablero.getPosiciones());
@@ -1330,25 +1409,33 @@ public class Menu {
                     jugadorActual.sumarFortuna(2000000);
                     break;
                 case 5: //Pagar 1.000.000€ (a la banca)
-                    jugadorActual.pagar(1000000, this.banca);
-                    this.tablero.getCasilla(20).sumarValor(1000000);
-                    break;
-                case 6: //Pagar 200.000€ a cada jugador
-                    jugadorActual.restarFortuna(200000 * (this.jugadores.size()-1) );
-                    //Recorremos el ArrayList de jugadoresda: si no es el jugador actual sumamos 200.000€
-                    for(Jugador j : this.jugadores) {
-                        if(!j.equals(jugadorActual)) {
-                            j.sumarFortuna(200000);
-                        }
+                    if(bucleBancarrota(jugadorActual, this.banca, 1000000f)) {
+                        jugadorActual.pagar(1000000f, this.banca);
+                        this.tablero.getCasilla(20).sumarValor(1000000f);
+                        return true;
                     }
-                    break;
+                    return false;
+                case 6: //Pagar 200.000€ a cada jugador
+                    float total_a_pagar = 200000 * (this.jugadores.size()-1);
+                    if(bucleBancarrota(jugadorActual, this.banca, total_a_pagar)) {
+                        jugadorActual.restarFortuna(total_a_pagar);
+                        this.tablero.getCasilla(20).sumarValor(500000);
+                        //Recorremos el ArrayList de jugadoresda: si no es el jugador actual sumamos 200.000€
+                        for(Jugador j : this.jugadores) {
+                            if(!j.equals(jugadorActual)) {
+                                j.sumarFortuna(200000);
+                            }
+                        }
+                        return true;
+                    }
+                    return false;
             }
         }
         else {
-            System.out.println("Esta carta tiene un tipo inválido.");
+            System.out.println("Error en evaluarCarta(): esta carta tiene un tipo inválido.");
         }
 
-        //Falta implementar si el jugador es solvente o no
+        // Si llega a aquí es que el jugador es solvente
         return true;
     }
 
@@ -1619,7 +1706,7 @@ public class Menu {
     public static boolean esEdificioValido(String tipo) {
         return tipo.equals("casa") ||
                 tipo.equals("hotel") ||
-                tipo.equals("pista de deportes") ||
+                tipo.equals("pista de deporte") ||
                 tipo.equals("piscina");
     }
 
@@ -1683,8 +1770,8 @@ public class Menu {
         Jugador cobrador = jugador.getDeudaConJugador();
 
         if (cobrador.equals(banca)) {
-            System.out.println("El jugador " + jugador.getNombre() +
-                    " se declara en bancarrota. Sus propiedades pasan a estar de nuevo en venta al precio al que estaban.");
+            System.out.println("El jugador " + jugador.getNombre() + " se declara en bancarrota. " +
+                    "Sus propiedades pasan a estar de nuevo en venta al precio al que estaban.");
             ArrayList<Casilla> propiedades = new ArrayList<>(jugador.getPropiedades());
 
             for (Casilla c : propiedades) {
@@ -1692,8 +1779,8 @@ public class Menu {
                 jugador.eliminarPropiedad(c);
             }
         } else {
-            System.out.println("El jugador " + jugador.getNombre() +
-                    " se declara en bancarrota. Sus propiedades pasan a ser de " + cobrador.getNombre());
+            System.out.println("El jugador " + jugador.getNombre() + " se declara en bancarrota. " +
+                    "Sus propiedades pasan a ser de " + cobrador.getNombre());
             ArrayList<Casilla> propiedades = new ArrayList<>(jugador.getPropiedades());
 
             for (Casilla c : propiedades) {

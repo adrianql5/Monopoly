@@ -35,12 +35,16 @@ public class Texto {
             Valor.BOLD_STRING + "siguiente" + Valor.RESET + " para desplazarte hasta la siguiente casilla :)";
     public static final String M_DOS_TURNOS_SIN_TIRAR = "Has sacado menos que 5... " +
             "No puedes volver a tirar ni en este turno ni en los próximos dos ⛓\uFE0F\uD83E\uDD40⛓\uFE0F";
-    // [3] Otros]
+    // [3] Otros
     public static final String M_UNA_CASILLA_POR_TURNO = "Sólo puedes comprar una casilla por turno en el modo " +
             "avanzado del coche.";
-    public static final String M_NO_HAY_DINERO_SUFICIENTE = "No tienes dinero suficiente para pagar el alquiler. " +
-            "Tienes que hipotecar tus propiedades hasta tener dinero.\nPara ello usa el comando " + Valor.BOLD_STRING +
+    public static final String M_NO_HAY_DINERO_OPCIONES = "No tienes dinero suficiente para pagar esta cantidad. " +
+            "Tienes 2 opciones:\nDeclararte en bancarrota con el comando " + Valor.BOLD_STRING + "bancarrota" +
+            Valor.RESET + ".\nHipotecar tus propiedades hasta tener dinero con el comando " + Valor.BOLD_STRING +
             "hipotecar <nombre_propiedad>" + Valor.RESET + ".";
+    public static final String M_BANCARROTA_OBLIGATORIA = "No tienes dinero suficiente ni más propiedades que " +
+            "hipotecar, debes declararte en bancarrota. Usa el comando " + Valor.BOLD_STRING + "bancarrota" +
+            Valor.RESET;
 
 
     // TEXTO QUE SE METE EN EL MEDIO DEL TABLERO------------------------------------------------------------------------
