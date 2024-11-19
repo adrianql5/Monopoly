@@ -266,6 +266,12 @@ public class Menu {
                 if(this.turno == this.jugadores.size()) {
                     this.turno = 0;
                 }
+                // Si sólo queda un jugador se acabó la partida!!!
+                if(this.jugadores.size()==1) {
+                    System.out.println("Increíble! Os ha dado tiempo a acabar una partida de Monopoly!" +
+                            "\n¡¡Y el ganador es " + obtenerTurno().getNombre() + "!!");
+                    this.partidaTerminada=true;
+                }
             }
         }
     }
