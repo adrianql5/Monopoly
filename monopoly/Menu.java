@@ -304,12 +304,13 @@ public class Menu {
 
             // Variado
             case "terminar partida": case "acabar partida": acabarPartida(); break;
-            case "bancarrota": declararBancarrota(); break; // Se elimina al jugador de la partida!!
+            case "bancarrota": declararBancarrota(this.banca); break; // Se elimina al jugador de la partida!!
             case "ver tablero": verTablero(); break;
             case "jugador": infoJugadorTurno(); break;
             case "estadisticas": estadisticasGenerales(); break;
             case "salir carcel": salirCarcel(); break;
             case "ayuda": ayuda(); break;
+            case "edificar pista de deporte": edificar("pista de deporte"); break;
 
             // Comandos de listar cosas
             case "listar enventa": listarVenta(); break;
@@ -460,15 +461,10 @@ public class Menu {
                 }
                 else if(comando.length==4){
                     if(comando[0].equals("vender")){
-                        venderEdificios(comando[1], comando[2], Integer.parseInt(comando[3]));
-                    }
-                    else if("pistadedeporte".equals(comando[1]+comando[2]+comando[3])) {
-                        // Comandos de edificar, hipotecar, deshipotecar PARA PISTA DE DEPORTE
-                        switch (comando[0]) {
-                            case "edificar": edificar("pista de deporte"); break;
-                            case "hipotecar": hipotecar("pista de deporte"); break;
-                            case "deshipotecar": deshipotecar("pista de deporte"); break;
-                            default: System.out.println(comando_entero + " no es un comando válido.");
+                        // Desde aquí se permiten valores entre 1 y 6
+                        int num_edificios = dadoValido(comando[3]);
+                        if(num_edificios!=0) {
+                            venderEdificios(comando[1], comando[2], num_edificios);
                         }
                     }
                     else{
@@ -809,19 +805,35 @@ public class Menu {
                 System.out.println(Texto.M_NO_HAY_DINERO_OPCIONES);
 
                 String comando_entero = scannerBancarrota.nextLine();
-                String[] comando = comando_entero.split(" ");;
+                String[] comando = comando_entero.split(" ");
 
-                // Mientras no sea uno de estos dos el comando no es válido
-                while(!(comando_entero.equals("bancarrota") || comando[0].equals("hipotecar"))) {
+                while(cantidad>pagador.getFortuna()) {
+                    // Mientras no sea uno de estos tres el comando no es válido
+                    while( !( comando_entero.equals("bancarrota") || comando[0].equals("hipotecar") ||
+                            comando[0].equals("vender") ) ) {
 
-                    //case "hipotecar": hipotecar(comando[1]); break;
-                    System.out.println("Comando inválido.");
-                }
-                if(scannerBancarrota.nextLine().equals("bancarrota")) {
-                    declararBancarrota();
-                    return false;
-                }
-                if(scannerBancarrota.nextLine().equals("bancarrota")) {
+                        System.out.println("Comando inválido.");
+                    }
+                    if(comando_entero.equals("bancarrota")) {
+                        declararBancarrota(cobrador);
+                        return false;
+                    }
+                    if(comando[0].equals("hipotecar")) {
+                        hipotecar(comando[1]);
+                    }
+                    if(comando[0].equals("vender")) {
+                        // Desde aquí se permiten valores entre 1 y 6
+                        int num_edificios = dadoValido(comando[3]);
+                        if(num_edificios!=0) {
+                            venderEdificios(comando[1], comando[2], num_edificios);
+                        }
+                    }
+
+                    // Si después de la operación ya puede pagar devolvemos true
+                    if(cantidad<=pagador.getFortuna()) {
+                        System.out.println("Ya conseguiste dinero para pagar! Realizas el pago.");
+                        return true;
+                    }
                 }
             }
 
@@ -829,7 +841,7 @@ public class Menu {
             do{
                 System.out.println(Texto.M_BANCARROTA_OBLIGATORIA);
             } while(!scannerBancarrota.nextLine().equals("bancarrota"));
-            declararBancarrota();
+            declararBancarrota(cobrador);
             return false;
         }
         else {
@@ -1707,11 +1719,10 @@ public class Menu {
 
 
     //SECCIÓN DE MÉTODOS QUE HIZO ADRI LA ÚLTIMA VEZ Y NO ESTÁN BIEN ORDENADOS------------------------------------------
-    public void declararBancarrota() {
+    public void declararBancarrota(Jugador cobrador) {
         Jugador jugador = obtenerTurno();
-        Jugador cobrador = jugador.getDeudaConJugador();
 
-        if (cobrador.equals(banca)) {
+        if (cobrador.equals(this.banca)) {
             System.out.println("El jugador " + jugador.getNombre() + " se declara en bancarrota. " +
                     "Sus propiedades pasan a estar de nuevo en venta al precio al que estaban.");
             ArrayList<Casilla> propiedades = new ArrayList<>(jugador.getPropiedades());
