@@ -123,13 +123,15 @@ public class Casilla {
         if (!estaHipotecada) { // Simplificación de la condición
             boolean sinEdificios = true;
 
-            for (ArrayList<Edificio> tipoEdificio : this.edificios) {
-                if (!tipoEdificio.isEmpty()) {
-                    sinEdificios = false;
-                    break;
+            if(this.tipo.equals("Solar")){
+                for (ArrayList<Edificio> tipoEdificio : this.edificios) {
+                    if (!tipoEdificio.isEmpty()) {
+                        sinEdificios = false;
+                        break;
+                    }
                 }
             }
-
+            
             if (!sinEdificios) {
                 System.out.println("No puedes hipotecar la casilla " + this.getNombre() + " porque tienes que vender todas tus edificaciones.");
                 return false; // Corregido: aquí debe devolver `false` para indicar que no se puede hipotecar
