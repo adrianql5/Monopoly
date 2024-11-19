@@ -820,10 +820,8 @@ public class Menu {
                     while( !( comando_entero.equals("bancarrota") || comando[0].equals("hipotecar") ||
                             comando[0].equals("vender") ) ) {
 
-                        System.out.println("Comando inválido.\n");
-
-                        comando_entero = scannerBancarrota.nextLine();
-                        comando = comando_entero.split(" ");
+                        System.out.println("Comando inválido.");
+                        break;
                     }
                     if(comando_entero.equals("bancarrota")) {
                         declararBancarrota(cobrador);
@@ -1783,26 +1781,27 @@ public class Menu {
 
 
 
-    public void hipotecar(String nombre){
-        Casilla casilla= tablero.encontrar_casilla(nombre);
-        Jugador jugador= obtenerTurno();
+    public void hipotecar(String nombre) {
+        Casilla casilla = tablero.encontrar_casilla(nombre);
+        Jugador jugador = obtenerTurno();
 
-        if(casilla==null){
+        if (casilla == null) {
             System.out.println("No existe esa casilla. No la puedes hipotecar.");
-        }
-        else{
-            if(casilla.getDuenho().equals(jugador)){
-                if(casilla.esHipotecable()){
-                    System.out.println("El jugador "+ jugador.getNombre()+" recibe "+ casilla.getHipoteca()+
-                            " por la hipoteca de " + casilla.getNombre()+
-                            ". No puede recibir alquileres ni edificar en el grupo "+ casilla.getGrupo().getColorGrupo());
-                    jugador.sumarFortuna(casilla.getHipoteca());
-                    
+        } else {
+            if (casilla.getDuenho().equals(jugador)) {
+                if (casilla.esHipotecable()) {
+                    if (casilla.getTipo().equals("Solar")) {
+                        System.out.println("El jugador " + jugador.getNombre() + " recibe " + casilla.getHipoteca() +
+                                " por la hipoteca de " + casilla.getNombre() +
+                                ". No puede recibir alquileres ni edificar en el grupo " + casilla.getGrupo().getColorGrupo());
+                        jugador.sumarFortuna(casilla.getHipoteca());
+
+                    } else {
+                        System.out.println("El jugador " + jugador.getNombre() + " no puede hipotecar "
+                                + casilla.getNombre() + ". No es una propiedad que le pertenezca.");
+                    }
                 }
-            }
-            else{
-                System.out.println("El jugador "+jugador.getNombre() +" no puede hipotecar "
-                        + casilla.getNombre()+". No es una propiedad que le pertenezca.");
+
             }
         }
     }
