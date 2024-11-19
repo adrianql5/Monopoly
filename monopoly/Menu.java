@@ -1358,15 +1358,11 @@ public class Menu {
                     //Siempre se pasa por la salida ya que no hay ninguna casilla Suerte entre la Salida y Trans1
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), 45-posicion);
                     cobrarSalida(jugadorActual);
-                    if(!evaluarCasilla(this.tablero.getCasilla(5))){
-                        evaluarSinDinero();
-                    }
+                    evaluarCasilla(this.tablero.getCasilla(5));
                     break;
                 case 2: //Ir a Solar15 (pos=26) sin pasar por la Salida (y por tanto sin cobrar)
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), posicion<26 ? 26-posicion : 66-posicion);
-                    if(!evaluarCasilla(this.tablero.getCasilla(26))){
-                        evaluarSinDinero();
-                    }
+                    evaluarCasilla(this.tablero.getCasilla(26));
                     break;
                 case 3: //Cobrar 500.000€
                     jugadorActual.sumarFortuna(500000);
@@ -1375,9 +1371,7 @@ public class Menu {
                     //Siempre se pasa por la salida ya que no hay ninguna casilla Suerte entre la Salida y Solar3
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), 46-posicion);
                     cobrarSalida(jugadorActual);
-                    if(!evaluarCasilla(this.tablero.getCasilla(6))){
-                        evaluarSinDinero();
-                    }
+                    evaluarCasilla(this.tablero.getCasilla(6));
                     break;
                 case 5: //Ir a la cárcel (encarcelado) sin pasar por la Salida (y por tanto sin cobrar)
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), posicion<10 ? 10-posicion : 50-posicion);
@@ -1710,58 +1704,6 @@ public class Menu {
                 tipo.equals("piscina");
     }
 
-    // ADRI'S WORK------------------------------------------------------------------------------------------------------
-    void evaluarSinDinero(){
-        Jugador jugador = obtenerTurno();
-
-        if (jugador.tienePropiedadesHipotecables()) {
-            System.out.println("Te has quedado sin dinero, tienes 2 opciones: declararte en bancarrota o hipotecar alguna de tus propiedades.");
-            Scanner scan = new Scanner(System.in);
-            String comando;
-
-            while (true) {
-                System.out.print("Escribe 'bancarrota' o 'hipotecar [nombre_casilla]': ");
-                comando = scan.nextLine();
-
-                if (comando.equalsIgnoreCase("bancarrota")) {
-                    declararBancarrota();
-                    System.out.println("Te has declarado en bancarrota.");
-                    break;
-                } else if (comando.startsWith("hipotecar ")) {
-                    String nombreCasilla = comando.substring(10).trim();
-                    Casilla casilla=tablero.encontrar_casilla(nombreCasilla);
-                    if (casilla.getDuenho().equals(jugador)) {
-                        hipotecar(nombreCasilla);
-                        System.out.println("Has hipotecado la propiedad: " + nombreCasilla);
-                        break;
-                    } else {
-                        System.out.println("No tienes esa propiedad o no se puede hipotecar. Inténtalo de nuevo.");
-                    }
-                } else {
-                    System.out.println("Comando no válido. Debes escribir 'bancarrota' o 'hipotecar [nombre_casilla]'.");
-                }
-            }
-            scan.close();
-
-        } else {
-            System.out.println("Te has quedado sin dinero y no tienes propiedades hipotecables. Debes declararte en bancarrota.");
-            Scanner scan = new Scanner(System.in);
-            String comando;
-
-            while (true) {
-                System.out.print("Escribe 'bancarrota' para continuar: ");
-                comando = scan.nextLine();
-                if (comando.equalsIgnoreCase("bancarrota")) {
-                    declararBancarrota();
-                    System.out.println("Te has declarado en bancarrota.");
-                    break;
-                } else {
-                    System.out.println("Comando no válido. Debes escribir 'bancarrota' para continuar.");
-                }
-            }
-            scan.close();
-        }
-    }
 
 
     //SECCIÓN DE MÉTODOS QUE HIZO ADRI LA ÚLTIMA VEZ Y NO ESTÁN BIEN ORDENADOS------------------------------------------
