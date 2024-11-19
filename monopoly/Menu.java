@@ -833,7 +833,7 @@ public class Menu {
                             System.out.println("Ya conseguiste dinero para pagar! Realizas el pago.");
                             return true;
                         }
-                        System.out.println("No has podido hipotecar esa casilla, así que te declaras en bancarrota");
+                        System.out.println("No has podido hipotecar esa casilla o no te ha dado el dinero suficiente, así que te declaras en bancarrota");
                         declararBancarrota(cobrador);
                         return false;
                     }
@@ -846,12 +846,12 @@ public class Menu {
                                 System.out.println("Ya conseguiste dinero para pagar! Realizas el pago.");
                                 return true;
                             }
-                            System.out.println("No has podido hipotecar esa casilla, así que te declaras en bancarrota");
+                            System.out.println("No has podido vender ese edificio o no te ha dado el dinero suficiente, así que te declaras en bancarrota");
                             declararBancarrota(cobrador);
                             return false;
                             
                         }
-                        System.out.println("No has podido hipotecar esa casilla, así que te declaras en bancarrota");
+                        System.out.println("Caso raro");
                         declararBancarrota(cobrador);
                         return false;
                         
