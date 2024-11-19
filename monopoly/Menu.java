@@ -1734,7 +1734,10 @@ public class Menu {
             ArrayList<Casilla> propiedades = new ArrayList<>(jugador.getPropiedades());
 
             for (Casilla c : propiedades) {
-                c.eliminarTodosLosEds();
+                if(c.getTipo().equals("Solar")){
+                    c.eliminarTodosLosEds();
+                }
+
                 c.setDeshipotecada();
                 jugador.eliminarPropiedad(c);
             }
@@ -1744,7 +1747,10 @@ public class Menu {
             ArrayList<Casilla> propiedades = new ArrayList<>(jugador.getPropiedades());
 
             for (Casilla c : propiedades) {
-                c.eliminarTodosLosEds();
+
+                if (c.getTipo().equals("Solar")){
+                    c.eliminarTodosLosEds();
+                }
                 c.setDeshipotecada();
                 cobrador.anhadirPropiedad(c);
                 jugador.eliminarPropiedad(c);
