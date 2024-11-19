@@ -821,7 +821,6 @@ public class Menu {
                             comando[0].equals("vender") ) ) {
 
                         System.out.println("Comando inválido.");
-                        break;
                     }
                     if(comando_entero.equals("bancarrota")) {
                         declararBancarrota(cobrador);
