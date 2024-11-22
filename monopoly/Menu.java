@@ -37,6 +37,8 @@ public class Menu {
      * / 3->coche avanzado ya compró una propiedad.
      */
     private int controlComandos;
+    /**Atributo en el que se guardan los comandos que se quiere ejecutar de manera automática de un txt.*/
+    private ArrayList<String> comandosTXT;
 
 
 
@@ -60,6 +62,7 @@ public class Menu {
         this.dadosDoblesSeguidos = 0;
 
         this.controlComandos = 0;
+        this.comandosTXT = new ArrayList<String>();
     }
 
     /**Método para generar las cartas de tipo Suerte y de tipo Caja de comunidad (más la carta dada la vuelta).*/
@@ -213,25 +216,19 @@ public class Menu {
 
         while (!partidaTerminada) {
 
-            // DEJO ESTA PETADA COMENTADA POR SI ME HACE FALTA
-            /**
-            // Comprobamos si estamos en un estado especial
-            if(!movimientosPendientesActual().isEmpty()) {
-                // Caso especial 1: un avatar tipo coche no puede tirar los dados este turno.
-                if(movimientosPendientesActual().get(0)==0) {
-                    this.controlComandos=1;
-                }
-                // Caso especial 2: a un avatar tipo pelota le faltan casillas por moverYEvaluar.
-                else {
-                    // Recordar que esta maravillosa función ya llama a evaluarCasilla()
-                    moverYEvaluar(obtenerTurno(), movimientosPendientesActual().get(0));
-                    this.controlComandos=2; // En principio le voy a dar valores distintos por si no capan los mismo comandos
+            System.out.println();
+
+            // MASTERCLASS DE MIGUEL
+            if(this.comandosTXT.isEmpty()) {
+                analizarComando(scanTurno.nextLine());
+            }
+            else {
+                while(!this.comandosTXT.isEmpty()) {
+                    analizarComando(this.comandosTXT.get(0));
+                    this.comandosTXT.remove(0);
                 }
             }
-             */
 
-            System.out.println();
-            analizarComando(scanTurno.nextLine());
 
         }
     }
@@ -774,7 +771,6 @@ public class Menu {
                         " casillas desde " + origen.getNombre() + " hasta " + destino.getNombre() + ".");
             }
         }
-
 
         /*
         Si pasamos por la salida hay que cobrar!
