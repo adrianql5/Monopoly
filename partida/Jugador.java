@@ -261,6 +261,9 @@ public class Jugador {
         this.fortuna += valor;
     }
 
+
+
+
     /**
      * Método para restar fortuna a un jugador.
      * @param valor Valor a añadir
@@ -428,4 +431,3 @@ public class Jugador {
     }
     
 }
-

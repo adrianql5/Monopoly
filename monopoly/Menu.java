@@ -22,6 +22,7 @@ public class Menu {
     private Jugador banca; //El jugador banca.
     private boolean tirado; //Booleano para comprobar si el jugador que tiene el turno ha tirado o no.
     private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente (no tiene deudas).
+    private boolean turno_extra_coche; //turno extra coche
 
     private ArrayList<Carta> cartas_suerte;
     private ArrayList<Carta> cartas_caja;
@@ -52,6 +53,7 @@ public class Menu {
         this.dado2 = new Dado();
         this.tirado = false;
         this.solvente = true;
+        this.turno_extra_coche = false;
 
         anhadirBarajas();
         this.partidaTerminada = false;
@@ -270,7 +272,7 @@ public class Menu {
                 if(this.jugadores.size()==1) {
                     System.out.println("Increíble! Os ha dado tiempo a acabar una partida de Monopoly!" +
                             "\n¡¡Y el ganador es " + obtenerTurno().getNombre() + "!!");
-                    this.partidaTerminada=true;
+                    //this.partidaTerminada=true;
                 }
             }
         }
@@ -423,6 +425,11 @@ public class Menu {
 
                         // Estadísticas de un jugador
                         case "estadisticas": estadisticasJugador(comando[1]); break;
+
+                        case "setfortuna":
+                            float fortuna = Float.parseFloat(comando[1]);
+                            asignarFortuna(fortuna);
+                            break;
 
                         // Comando inválido
                         default: System.out.println(comando_entero + " no es un comando válido.");
@@ -635,6 +642,10 @@ public class Menu {
                     // Mensajes sobre dados dobles si toca
                     if(resultado1==resultado2) {
                         System.out.println("DOBLES!!");
+                        if(lanzamientos==4&&!turno_extra_coche){
+                            this.lanzamientos=3;
+                            turno_extra_coche=true;
+                        }
                         this.dadosDoblesSeguidos++;
                         if(this.dadosDoblesSeguidos==3) {
                             jugador.encarcelar(this.tablero.getPosiciones());
@@ -1091,6 +1102,7 @@ public class Menu {
         this.tirado = false; // Reiniciar el estado de "tirado"
         this.lanzamientos = 0; // Reiniciar los lanzamientos
         this.dadosDoblesSeguidos = 0; // Reiniciar el contador de dados dobles
+        this.turno_extra_coche = false;
 
         // Incrementar el turno y asegurar que no exceda el tamaño del array
         this.turno += 1;
@@ -1500,6 +1512,13 @@ public class Menu {
         Jugador jugador = obtenerTurno();
         jugador.sumarFortuna(1000000000); //mil millones
     }
+    private void asignarFortuna(float fortuna) {
+        for(Jugador j: jugadores){
+            j.setFortuna(fortuna);
+        }
+
+
+    }
 
     /**PRUEBA DE CÓMO QUEDAN LAS CARTAS*/
     private void probarCartas() {
@@ -1714,15 +1733,16 @@ public class Menu {
         }
 
         // Imprimir los resultados de las estadísticas
-        System.out.println("Casillas más visitadas: " + String.join(", ", nombresCasillas));
-        System.out.println("Casillas más rentables: " + String.join(", ", nombresRentables));
-        System.out.println("Grupos más rentables: " + String.join(", ", gruposRentables));
-        System.out.println("Jugadores con más vueltas: " + String.join(", ", jugadoresVueltas));
-        System.out.println("Jugadores con más tiradas: " + String.join(", ", jugadoresDados));
-        System.out.println("Jugadores con más fortuna: " + String.join(", ", jugadoresRicos));
+        System.out.println("casillaMasFrecuentada " + String.join(", ", nombresCasillas));
+        System.out.println("casillaMasRentable: " + String.join(", ", nombresRentables));
+        System.out.println("grupoMasRentable: " + String.join(", ", gruposRentables));
+        System.out.println("jugadorMasVueltas: " + String.join(", ", jugadoresVueltas));
+        System.out.println("jugadorMasVecesDados: " + String.join(", ", jugadoresDados));
+        System.out.println("jugadorEnCabeza: " + String.join(", ", jugadoresRicos));
 
         System.out.println("\n}");
     }
+
     public static boolean esEdificioValido(String tipo) {
         return tipo.equals("casa") ||
                 tipo.equals("hotel") ||
