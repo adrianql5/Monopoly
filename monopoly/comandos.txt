@@ -1,0 +1,29 @@
++ jugador1 > lanzar dados (3+3)
++ jugador1 > comprar Solar3
++ jugador1 > lanzar dados (1+1)
++ jugador1 > comprar Solar4
++ jugador1 > lanzar dados (1+3)
++ jugador1 > acabar turno
++ jugador2 > lanzar dados (1+1)
++ jugador2 > seleccionar carta 5
++ jugador2 > lanzar dados (2+2)
++ jugador2 > lanzar dados (1+2)
++ jugador2 > acabar turno
++ jugador1 > cambiar modo
++ jugador1 > lanzar dados (1+2)
++ jugador1 > avanzar
++ jugador1 > comprar Solar5
++ jugador1 > acabar turno
++ jugador2 > cambiar modo
++ jugador2 > lanzar dados (1+2)
++ jugador2 > avanzar
++ jugador2 > acabar turno
++ jugador1 > cambiar modo
++ jugador1 > edificar casa
++ jugador1 > edificar casa
++ jugador1 > edificar casa
++ jugador1 > lanzar dados (1+2)
++ jugador1 > acabar turno
++ jugador2 > cambiar modo
++ jugador2 > lanzar dados (1+2)
++ jugador2 > bancarrota
