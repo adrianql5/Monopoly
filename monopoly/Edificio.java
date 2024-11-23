@@ -1,7 +1,5 @@
 package monopoly;
 
-import java.util.ArrayList;
-
 import partida.Jugador;
 
 import java.util.Map;
@@ -42,10 +40,10 @@ public class Edificio {
             "PURPLE", Valor.GRUPO8/n
         );
         
-        Float valorGrupo = grupoValores.get(grupo);
+        Float valorInicialSolar = grupoValores.get(grupo);
 
-        if (valorGrupo != null) {
-            this.coste = calcularCoste(valorGrupo, tipo);
+        if (valorInicialSolar != null) {
+            this.coste = calcularCoste(valorInicialSolar, tipo);
         } else {
             this.coste = 0; 
         }
