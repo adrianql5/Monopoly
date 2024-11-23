@@ -5,6 +5,7 @@ import java.util.Scanner;
 import java.util.Iterator;
 import java.util.List;
 
+
 import partida.Avatar;
 import partida.Dado;
 import partida.Jugador;
@@ -20,9 +21,11 @@ public class Menu {
     private Dado dado1; //Dos dados para lanzar y avanzar casillas.
     private Dado dado2;
     private Jugador banca; //El jugador banca.
+    private Archivo archivo;
     private boolean tirado; //Booleano para comprobar si el jugador que tiene el turno ha tirado o no.
     private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente (no tiene deudas).
     private boolean turno_extra_coche; //turno extra coche
+    private int iterador_archivo;
 
     private ArrayList<Carta> cartas_suerte;
     private ArrayList<Carta> cartas_caja;
@@ -54,6 +57,9 @@ public class Menu {
         this.tirado = false;
         this.solvente = true;
         this.turno_extra_coche = false;
+        this.archivo = new Archivo("/monopoly/comandos.txt");
+
+        this.iterador_archivo= 1;
 
         anhadirBarajas();
         this.partidaTerminada = false;
@@ -229,9 +235,23 @@ public class Menu {
                 }
             }
              */
+            if(this.iterador_archivo > this.archivo.contarLineas()){
+                System.out.println();
+                analizarComando(scanTurno.nextLine());
+            }else{
+                String linea = this.archivo.leerLinea(this.iterador_archivo);
+                String linea_sin_depurar = linea;
+                linea = this.archivo.depurarLinea(linea);
+                System.out.println(Valor.RED + linea + Valor.RESET);
+                if (linea.equals("pausa")){
 
-            System.out.println();
-            analizarComando(scanTurno.nextLine());
+                }else{
+                    analizarComando(linea);
+                }
+            this.iterador_archivo++;
+
+            }
+
 
         }
     }
