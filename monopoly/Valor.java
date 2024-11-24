@@ -2,7 +2,7 @@ package monopoly;
 
 public class Valor {
     // Estos 3 venían dados
-   /public static final float FORTUNA_BANCA = 372642563;
+   public static final float FORTUNA_BANCA = 372642563;
    // public static final float FORTUNA_INICIAL = 9543076.28f; ORIGINAL
     public static final float FORTUNA_INICIAL = 2000000f;
   
