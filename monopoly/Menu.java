@@ -1819,19 +1819,27 @@ public class Menu {
         } else {
             if (casilla.getDuenho().equals(jugador)) {
                 if (casilla.esHipotecable()) {
-                    if (casilla.getTipo().equals("Solar")) {
-                        System.out.println("El jugador " + jugador.getNombre() + " recibe " + casilla.getHipoteca() +
-                                " por la hipoteca de " + casilla.getNombre() +
-                                ". No puede recibir alquileres ni edificar en el grupo " + casilla.getGrupo().getColorGrupo());
-                        jugador.sumarFortuna(casilla.getHipoteca());
+                        if(casilla.getTipo().equals("Solar")){
+                            System.out.println("El jugador " + jugador.getNombre() + " recibe " + casilla.getHipoteca() +                                " por la hipoteca de " + casilla.getNombre() +
+                            ". No puede recibir alquileres ni edificar en el grupo " + casilla.getGrupo().getColorGrupo());
+                            jugador.sumarFortuna(casilla.getHipoteca());
+                        }
+                        else{
+                            System.out.println("El jugador " + jugador.getNombre() + " recibe " + casilla.getHipoteca() +                                " por la hipoteca de " + casilla.getNombre() +
+                            ". No puede recibir alquileres." );
+                            jugador.sumarFortuna(casilla.getHipoteca());
+                        }
+                        
 
-                    } else {
-                        System.out.println("El jugador " + jugador.getNombre() + " no puede hipotecar "
-                                + casilla.getNombre() + ". No es una propiedad que le pertenezca.");
-                    }
                 }
+                
 
             }
+            else {
+                System.out.println("El jugador " + jugador.getNombre() + " no puede hipotecar "
+                    + casilla.getNombre() + ". No es una propiedad que le pertenezca.");
+            }
+    
         }
     }
 
@@ -1847,11 +1855,22 @@ public class Menu {
             if(casilla.getDuenho().equals(jugador)){
                 if(casilla.getHipoteca()<=jugador.getFortuna()){
                     if(casilla.esDesHipotecable()){
-                        System.out.println("El jugador "+ jugador.getNombre()+" paga "+ (casilla.getHipoteca()+casilla.getHipoteca()*0.10f)+
-                                " por la hipoteca de " + casilla.getNombre()+
-                                ". Ahora puede recibir alquileres y edificar en el grupo "+ casilla.getGrupo().getColorGrupo());
-                        jugador.sumarFortuna(-(casilla.getHipoteca()+casilla.getHipoteca()*0.10f));
-                        jugador.sumarGastos(casilla.getHipoteca()+casilla.getHipoteca()*0.10f);
+                        if(casilla.getTipo().equals("Solar")){
+                            System.out.println("El jugador "+ jugador.getNombre()+" paga "+ (casilla.getHipoteca()+casilla.getHipoteca()*0.10f)+
+                                    " por la hipoteca de " + casilla.getNombre()+
+                                    ". Ahora puede recibir alquileres y edificar en el grupo "+ casilla.getGrupo().getColorGrupo());
+                            jugador.sumarFortuna(-(casilla.getHipoteca()+casilla.getHipoteca()*0.10f));
+                            jugador.sumarGastos(casilla.getHipoteca()+casilla.getHipoteca()*0.10f);
+                        }
+
+                        else{
+                            System.out.println("El jugador "+ jugador.getNombre()+" paga "+ (casilla.getHipoteca()+casilla.getHipoteca()*0.10f)+
+                                    " por la hipoteca de " + casilla.getNombre()+
+                                    ". Ahora puede recibir alquileres");
+                            jugador.sumarFortuna(-(casilla.getHipoteca()+casilla.getHipoteca()*0.10f));
+                            jugador.sumarGastos(casilla.getHipoteca()+casilla.getHipoteca()*0.10f);
+                        }
+
                     }
                 }
                 else{

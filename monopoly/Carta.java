@@ -26,7 +26,7 @@ public class Carta {
         //Borde superior
         this.texto.add(Texto.CARTA_BORDESUP);
 
-        // CREAR LAS LÍNEAS DEL MEDIO: ESTO ES LO COMPLICADO
+        // CREAR LAS LÍNEAS DEL MzEDIO: ESTO ES LO COMPLICADO
         // Función addAll para añadir todos los elementos que contiene el ArrayList q devuelve ajustarTextoEnCarta()
         this.texto.addAll(ajustarTextoEnCarta(texto, Valor.NCHARS_CARTA));
 

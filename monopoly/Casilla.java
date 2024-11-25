@@ -123,6 +123,12 @@ public class Casilla {
         if (!estaHipotecada) { // Simplificación de la condición
             boolean sinEdificios = true;
 
+            if(!this.esTipoComprable()){
+                System.out.println("Este tipo de propiedades no es hipotecable.");;
+                return false;
+            }
+                
+
             if(this.tipo.equals("Solar")){
                 for (ArrayList<Edificio> tipoEdificio : this.edificios) {
                     if (!tipoEdificio.isEmpty()) {
@@ -146,6 +152,11 @@ public class Casilla {
     }
 
     public boolean esDesHipotecable() {
+        if(!this.esTipoComprable()){
+            System.out.println("Este tipo de propiedad no es deshipotecable");
+            return false;
+        }
+
         if(estaHipotecada){
             this.estaHipotecada = false;
             return true;
