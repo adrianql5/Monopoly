@@ -1,6 +1,9 @@
-package monopoly;
+package monopoly.cartas;
 
 import java.util.ArrayList;
+
+import monopoly.Texto;
+import monopoly.Valor;
 
 public class Carta {
     // ATRIBUTOS

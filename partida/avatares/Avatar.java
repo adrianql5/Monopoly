@@ -1,9 +1,10 @@
-package partida;
+package partida.avatares;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-import monopoly.Casilla;
+import monopoly.casillas.Casilla;
+import partida.Jugador;
 
 
 public class Avatar {

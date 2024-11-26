@@ -5,6 +5,8 @@ import partida.Jugador;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import monopoly.casillas.Casilla;
+
 
 public class Trato {
 
@@ -21,8 +23,8 @@ public class Trato {
 
     // Constructor
     public Trato(Jugador jugadorPropone, Jugador jugadorRecibe,
-                 ArrayList<Casilla> propiedadesOfrecidas, ArrayList<Casilla> propiedadesDemandadas,
-                 float dineroOfrecido, float dineroDemandado) {
+        ArrayList<Casilla> propiedadesOfrecidas, ArrayList<Casilla> propiedadesDemandadas,
+        float dineroOfrecido, float dineroDemandado) {
 
         this.id = "trato" + (++contadorTratos); // Asigna un ID único
         this.jugadorPropone = jugadorPropone;

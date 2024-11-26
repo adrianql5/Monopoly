@@ -1,8 +1,12 @@
-package monopoly;
+package monopoly.casillas;
 
 import java.util.ArrayList;
 
+import monopoly.Grupo;
+import monopoly.Valor;
+import monopoly.edificios.Edificio;
 import partida.*;
+import partida.avatares.Avatar;
 
 
 

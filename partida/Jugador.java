@@ -3,6 +3,9 @@ package partida;
 import java.util.ArrayList;
 
 import monopoly.*;
+import monopoly.casillas.Casilla;
+import monopoly.edificios.Edificio;
+import partida.avatares.Avatar;
 
 
 public class Jugador {

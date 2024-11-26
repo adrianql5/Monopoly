@@ -5,6 +5,7 @@ import static java.lang.Math.pow;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import monopoly.casillas.Casilla;
 import partida.Jugador;
 
 //cometario para probar como van las ramas

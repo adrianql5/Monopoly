@@ -2,6 +2,7 @@ package monopoly;
 
 import java.util.ArrayList;
 
+import monopoly.casillas.Casilla;
 import partida.Jugador;
 
 
