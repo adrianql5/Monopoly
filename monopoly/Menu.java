@@ -1718,6 +1718,33 @@ public class Menu {
         for (Jugador j : jugadores) {
             if (j.getFortuna() > maxFortuna) {
                 maxFortuna = j.getFortuna();
+                ArrayList<Casilla> propiedades= j.getPropiedades();
+                for(Casilla c: propiedades){
+                    maxFortuna+=c.getValor();
+                    if(c.getTipo().equals("Solar")){
+                        ArrayList<Edificio> casas = c.getCasas();
+                        ArrayList<Edificio> hoteles = c.getHoteles();
+                        ArrayList<Edificio> pisicinas=c.getPiscinas();
+                        ArrayList<Edificio> pistas = c.getPistasDeDeporte();
+                        
+                        for(Edificio ed: casas){
+                            maxFortuna+=ed.getCoste();
+                        }
+
+                        for(Edificio ed: hoteles){
+                            maxFortuna+=ed.getCoste();
+                        }
+
+                        for(Edificio ed: pisicinas){
+                            maxFortuna+=ed.getCoste();
+                        }
+                        
+                        for(Edificio ed: pistas){
+                            maxFortuna+=ed.getCoste();
+                        }
+                    }
+                }
+                
                 jugadoresRicos.clear();
                 jugadoresRicos.add(j.getNombre());
             } else if (j.getFortuna() == maxFortuna) {
