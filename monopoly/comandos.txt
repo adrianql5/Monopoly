@@ -8,7 +8,7 @@
 + jugador1 > lanzar dados (4+4)
 + jugador1 > lanzar dados (4+3)
 + jugador1 > acabar turno
-+ jugador2 > cambiar modo
++ jugador 2 > cambiar modo
 + jugador2 > lanzar dados (5+4)
 + jugador2 > avanzar
 + jugador2 > seleccionar carta 3

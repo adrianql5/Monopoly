@@ -6,9 +6,11 @@ import java.util.Iterator;
 import java.util.List;
 
 
+
 import partida.Avatar;
 import partida.Dado;
 import partida.Jugador;
+import java.util.HashMap;
 
 public class Menu {
 
@@ -139,8 +141,11 @@ public class Menu {
                 else {
                     System.out.println(Texto.M_PROHIBIDO_MAS_DE_6_JUGADORES);
                 }
-            }
-            else if ("empezar partida".equals(comando_entero)) {
+            } else if (comando.length ==2 && comando[0].equals("setfortuna")) {
+                float fortuna = Float.parseFloat(comando[1]);
+                asignarFortuna(fortuna);
+                System.out.println("jajajaj pues va");
+            } else if ("empezar partida".equals(comando_entero)) {
 
                 //Si hay al menos 2 jugadores empezamos
                 if(this.avatares.isEmpty()) {
@@ -345,6 +350,8 @@ public class Menu {
             case "listar jugadores": listarJugadores(); break;
             case "listar avatares": listarAvatares(); break;
             case "listar edificios": listarEdificios(null); break;
+            // Comando para listar tratos
+            case "listar tratos": listarTratosJugadorActual(); break;
 
             // Comandos que no se pueden ejecutar en ciertos casos-----------------------
             case "lanzar dados":
@@ -416,6 +423,7 @@ public class Menu {
                 //Dividimos el comando en partes
                 String[] comando=comando_entero.split(" ");
 
+
                 // IMPORTANTE: hacer las comprobaciones en función del número de palabras del comando
                 // Si no podríamos querer acceder a un índice que no existe
                 if(comando.length==1) {
@@ -436,6 +444,10 @@ public class Menu {
                             else {
                                 System.out.println(Texto.M_UNA_CASILLA_POR_TURNO);
                             }
+                            break;
+                        //comando de tratos
+                        case "aceptar":
+                            aceptarTrato(comando[1]);
                             break;
 
                         // Comandos de edificar, hipotecar, deshipotecar (para pista de deporte en length==4)
@@ -505,8 +517,10 @@ public class Menu {
                     else{
                         System.out.println(comando_entero + " no es un comando válido.");
                     }
-                }
-                else {
+                } else if (comando.length > 5 && comando[0].equals("trato")) {
+                    proponerTrato(comando_entero);
+
+                } else {
                     System.out.println(comando_entero + " no es un comando válido.");
                 }
         }
@@ -2068,6 +2082,168 @@ public class Menu {
         System.out.println("- dados [valor1] [valor2]: Lanza dados con valores específicos.");
         System.out.println("- vender [nombre_propiedad] [tipo_edificio] [cantidad]: Vende edificios.");
         System.out.println("- edificar/deshipotecar/hipotecar [Tipo edificio]e: Gestiona pistas de deporte.");
+    }
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /*
+    METODOS DE LOS TRATOS
+
+    ACEPTAR TRATO
+    PROPONER TRATO
+    LISTAR TRATOS
+
+     */
+    private void aceptarTrato(String idTrato) {
+        // Obtener el jugador actual
+        Jugador jugador = obtenerTurno();
+
+        // Buscar el trato por ID en los tratos pendientes del jugador
+        Trato trato = jugador.buscarTratoPorId(idTrato);
+
+        // Validar si el trato existe
+        if (trato == null) {
+            System.out.printf("No existe un trato con ID %s.\n", idTrato);
+            return;
+        }
+
+        // Intentar aceptar el trato
+        if (trato.aceptar()) {
+            jugador.eliminarTrato(trato); // Eliminar el trato tras ser aceptado
+            System.out.printf("Se ha aceptado el trato con éxito: %s\n", trato);
+        } else {
+            System.out.printf("No se pudo aceptar el trato: %s\n", trato);
+        }
+    }
+
+
+
+    private void listarTratosJugadorActual() {
+        // Obtener el jugador actual
+        Jugador jugador = obtenerTurno();
+
+        // Obtener la lista de tratos pendientes
+        ArrayList<Trato> tratos = jugador.getTratosPendientes();
+
+        // Imprimir los tratos pendientes
+        if (tratos.isEmpty()) {
+            System.out.println("No tienes tratos pendientes.");
+        } else {
+            System.out.println("Tus tratos pendientes:");
+            for (Trato trato : tratos) {
+                System.out.println(trato.toString());
+            }
+        }
+    }
+
+    private void proponerTrato(String detalleTrato) {
+        // Dividir el comando para extraer el jugador y el detalle del trato
+        String[] partes = detalleTrato.split(": cambiar ");
+        if (partes.length < 2) {
+            System.out.println("Formato inválido para proponer trato. Ejemplo: 'trato Maria: cambiar (Solar1, Solar2 y 300000)'.");
+            return;
+        }
+
+        // Extraer el nombre del jugador receptor y los detalles del trato
+        String nombreJugador = partes[0].replace("trato", "").trim();
+        String detalle = partes[1].trim();
+
+        // Buscar al jugador receptor
+        Jugador receptor = encontrarJugador(nombreJugador);
+        if (receptor == null) {
+            System.out.printf("El jugador %s no existe.\n", nombreJugador);
+            return;
+        }
+
+        // Dividir el detalle en dos partes entre paréntesis
+        String[] bloques = detalle.split("\\)\\s+por\\s+\\("); // Divide por ") por ("
+        if (bloques.length != 2) {
+            System.out.println("Formato inválido para el trato. Asegúrate de incluir 'por' entre los paréntesis.");
+            return;
+        }
+
+        // Quitar los paréntesis externos
+        bloques[0] = bloques[0].replace("(", "").trim();
+        bloques[1] = bloques[1].replace(")", "").trim();
+
+        // Desglosar las propiedades y dinero ofrecidos
+        HashMap<String, Object> ofrecido = desgranarComando(bloques[0]);
+        ArrayList<String> nombresOfrecidos = (ArrayList<String>) ofrecido.get("propiedades");
+        float dineroOfrecido = (float) ofrecido.get("dinero");
+
+        ArrayList<Casilla> casillasOfrecidas = new ArrayList<>();
+        for (String nombre : nombresOfrecidos) {
+            if ((this.tablero.encontrar_casilla(nombre)!= null)) {
+                casillasOfrecidas.add(this.tablero.encontrar_casilla(nombre));
+                System.out.println(nombre+"\n");
+            } else {
+                System.out.printf("La casilla %s no existe. Trato inválido.\n", nombre);
+                return;
+            }
+        }
+
+        // Desglosar las propiedades y dinero reclamados
+        HashMap<String, Object> reclamado = desgranarComando(bloques[1]);
+        ArrayList<String> nombresReclamados = (ArrayList<String>) reclamado.get("propiedades");
+        float dineroReclamado = (float) reclamado.get("dinero");
+
+        ArrayList<Casilla> casillasReclamadas = new ArrayList<>();
+        for (String nombre : nombresReclamados) {
+            if ((this.tablero.encontrar_casilla(nombre)!= null)) {
+                casillasReclamadas.add((this.tablero.encontrar_casilla(nombre)));
+                System.out.println(nombre+"\n");
+            } else {
+                System.out.printf("La casilla %s no existe. Trato inválido.\n", nombre);
+                return;
+            }
+        }
+
+        // Validar que al menos una casilla o cantidad de dinero esté presente en cada lado
+        if (casillasOfrecidas.isEmpty() && dineroOfrecido == 0) {
+            System.out.println("El lado ofrecido del trato debe incluir al menos una casilla o una cantidad de dinero.");
+            return;
+        }
+        if (casillasReclamadas.isEmpty() && dineroReclamado == 0) {
+            System.out.println("El lado reclamado del trato debe incluir al menos una casilla o una cantidad de dinero.");
+            return;
+        }
+
+        // Crear el objeto Trato
+        Jugador jugadorOfreciendo = obtenerTurno(); // Jugador actual
+        Trato trato = new Trato(jugadorOfreciendo, receptor, casillasOfrecidas, casillasReclamadas, dineroOfrecido, dineroReclamado);
+
+        // Agregar el trato a los pendientes del receptor
+        receptor.agregarTrato(trato);
+        jugadorOfreciendo.agregarTrato(trato);
+
+        System.out.printf("Se ha propuesto el trato a %s: %s\n", receptor.getNombre(), trato);
+    }
+    private HashMap<String, Object> desgranarComando(String comando) {
+        HashMap<String, Object> resultado = new HashMap<>();
+        ArrayList<String> propiedades = new ArrayList<>();
+        float dinero = 0;
+
+        comando = comando.replace("(", "").replace(")", "");
+        String[] partes = comando.split(" y ");
+
+        for (String parte : partes) {
+            parte = parte.trim();
+
+            try {
+                dinero += Float.parseFloat(parte.replace(",", "").trim());
+                if (dinero > 0 && resultado.containsKey("dinero")) {
+                    System.out.println("Solo se puede incluir una cantidad de dinero en el trato.");
+                    return null; // Invalidar el comando
+                }
+            } catch (NumberFormatException e) {
+                String[] props = parte.split(",");
+                for (String prop : props) {
+                    propiedades.add(prop.trim());
+                }
+            }
+        }
+
+        resultado.put("propiedades", propiedades);
+        resultado.put("dinero", dinero);
+        return resultado;
     }
 
 

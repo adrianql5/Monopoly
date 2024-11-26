@@ -18,6 +18,8 @@ public class Jugador {
     private ArrayList<Casilla> propiedades; //Propiedades que posee el jugador.
     private int vueltas_sin_comprar;
     private int bloqueado;
+    private ArrayList<Trato> tratosPendientes; // Lista de tratos pendientes propuestos a este jugador
+
     private Estadisticas estadisticas;
     /**Atributo para movimiento avanzado. Lo usa buclePartida() para comprobaciones antes de llamar a analizarComando().
      * Pelota: se almacenan los siguientes movimientos que tiene que hacer el avatar si hubiese (ej: [2, 2, 1])
@@ -70,6 +72,7 @@ public class Jugador {
         this.jugadorConElQueEstanEnDeuda=null;
         this.estadisticas = new Estadisticas();
         this.movimientos_pendientes = new ArrayList<Integer>();
+        this.tratosPendientes = new ArrayList<>(); // Inicializar la lista de tratos pendientes
 
     }
 
@@ -429,5 +432,38 @@ public class Jugador {
         System.out.printf("\tvecesEnLaCarcel: %d\n", this.estadisticas.getVecesEnLaCarcel());
         System.out.println("}");
     }
-    
+    public ArrayList<Trato> getTratosPendientes() {
+        return this.tratosPendientes;
+    }
+    public void agregarTrato(Trato trato) {
+        this.tratosPendientes.add(trato);
+        System.out.printf("Se ha añadido un nuevo trato pendiente: %s\n", trato.getId());
+    }
+    public void eliminarTrato(Trato trato) {
+        if (this.tratosPendientes.remove(trato)) {
+            System.out.printf("El trato %s ha sido eliminado de los pendientes.\n", trato.getId());
+        } else {
+            System.out.printf("No se encontró el trato %s en los pendientes.\n", trato.getId());
+        }
+    }
+    public Trato buscarTratoPorId(String id) {
+        for (Trato trato : tratosPendientes) {
+            if (trato.getId().equals(id)) {
+                return trato;
+            }
+        }
+        return null; // Devuelve null si no encuentra el trato
+    }
+    public void listarTratosPendientes() {
+        if (this.tratosPendientes.isEmpty()) {
+            System.out.println("No tienes tratos pendientes.");
+        } else {
+            System.out.println("Tus tratos pendientes son:");
+            for (Trato trato : tratosPendientes) {
+                System.out.println(trato);
+            }
+        }
+    }
+
+
 }
