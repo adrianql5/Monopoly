@@ -14,93 +14,17 @@ public class Casilla {
 
     //ATRIBUTOS
     private String nombre;//Nombre de la casilla
-    private String tipo; //Tipo de casilla (Solar, Especial, Transporte, Servicio, Comunidad).
-    private float valor; //Valor de esa casilla (en la mayoría será valor de compra, en la casilla parking se usará como el bote).
     private int posicion; //Posición que ocupa la casilla en el tablero (entero entre 1 y 40).
     private Jugador duenho; //Dueño de la casilla (por defecto sería la banca).
-    private Grupo grupo; //Grupo al que pertenece la casilla (si es solar).
-    private float impuesto; //Cantidad a pagar por caer en la casilla: el alquiler en solares/servicio/transportes o impuestos.
-    private float hipoteca; //Valor otorgado por hipotecar una casilla
     private ArrayList<Avatar> avatares; //Avatares que están situados en la casilla.
-    private ArrayList<ArrayList<Edificio>> edificios;
-    private boolean estaHipotecada;
-    private boolean ya_se_duplico;
-    private int veces_visitada;
-    private float dinero_recaudado;
 
-    private int veces_visitada_por_duenho;
-
-
-    //SECCIÓN DE CONSTRUCTORES DE CASILLA
-    /**Constructor para casillas tipo Solar, Servicio y Transporte.
-     * @param nombre Nombre de la casilla
-     * @param tipo Debe ser Solar, Servicio o Transporte
-     * @param posicion Posición en el tablero
-     * @param valor Valor de la casilla
-     * @param duenho Dueño de la casilla
-     */
-    public Casilla(String nombre, String tipo, int posicion, float valor, Jugador duenho) {
-        this.nombre = nombre;
-        this.tipo = tipo;
-        this.posicion = posicion;
-        this.valor = valor;
-        this.impuesto = valor * 0.10f;
-        this.hipoteca = valor/2f;
-        this.duenho = duenho;
-        this.avatares = new ArrayList<Avatar>();
-        if(this.tipo.equals("Solar")){ //solo se edifican los solares
-            this.edificios = new ArrayList<>(4); 
-            for (int i = 0; i < 4; i++) {
-                this.edificios.add(new ArrayList<Edificio>()); // Array de casas, hoteles, piscinas, pistas
-            }
-        } 
-        this.estaHipotecada = false;
-        this.dinero_recaudado = 0;
-        this.veces_visitada_por_duenho = 0;
-    }
-
-    /**Constructor para casillas de tipo Impuestos.
-     * @param nombre Nombre de la casilla
-     * @param posicion Posición en el tablero
-     * @param impuesto Impuesto establecido
-     * @param duenho Dueño de la casilla
-     */
-    public Casilla(String nombre, int posicion, float impuesto, Jugador duenho) {
+    
+    public Casilla(String nombre, int posicion, Jugador duenho) {
         this.nombre=nombre;
-        this.posicion= posicion;
-        this.tipo="Impuestos";
-        this.impuesto=impuesto;
-        this.duenho= duenho;
-        this.avatares=new ArrayList<Avatar>();
-        
-    }
-
-    /**Constructor para casillas tipo Suerte, Caja de comunidad y Especiales.
-     * @param nombre Nombre de la casilla
-     * @param tipo Suerte, Caja de comunidad o Especiales
-     * @param posicion Posición en el tablero
-     * @param duenho Dueño de la casilla
-     */
-    public Casilla(String nombre, String tipo, int posicion, Jugador duenho) {
-        this.nombre=nombre;
-        this.tipo= tipo;
         this.posicion= posicion;
         this.duenho= duenho;
         this.avatares= new ArrayList<Avatar>();
-    }    
-
-   
-
-
-    //SECCIÓN DE MÉTODOS ÚTILES DE CASILLA
-    public int getVecesVisitadaPorDuenho(){
-        return veces_visitada_por_duenho;
     }
-
-    public void sumarVecesVisitadaPorDuenho(int valor){
-        veces_visitada_por_duenho+=valor;
-    }
-
 
 
     /**Método utilizado para añadir un avatar al array de avatares en casilla.*/
@@ -113,63 +37,7 @@ public class Casilla {
         this.avatares.remove(av);
     }
 
-    //SECCION DE HIPOTECAR
-
-    public boolean estaHipotecada() {
-        return estaHipotecada;
-    }
-
-    public void setDeshipotecada(){
-        estaHipotecada=false;
-    }
-
-    public boolean esHipotecable() {
-        if (!estaHipotecada) { // Simplificación de la condición
-            boolean sinEdificios = true;
-
-            if(!this.esTipoComprable()){
-                System.out.println("Este tipo de propiedades no es hipotecable.");;
-                return false;
-            }
-                
-
-            if(this.tipo.equals("Solar")){
-                for (ArrayList<Edificio> tipoEdificio : this.edificios) {
-                    if (!tipoEdificio.isEmpty()) {
-                        sinEdificios = false;
-                        break;
-                    }
-                }
-            }
-            
-            if (!sinEdificios) {
-                System.out.println("No puedes hipotecar la casilla " + this.getNombre() + " porque tienes que vender todas tus edificaciones.");
-                return false; // Corregido: aquí debe devolver `false` para indicar que no se puede hipotecar
-            } else {
-                estaHipotecada = true;
-                return true; // Retorna `true` si la propiedad fue hipotecada exitosamente
-            }
-        } else {
-            System.out.println("No puedes hipotecar esta propiedad porque ya está hipotecada.");
-            return false;
-        }
-    }
-
-    public boolean esDesHipotecable() {
-        if(!this.esTipoComprable()){
-            System.out.println("Este tipo de propiedad no es deshipotecable");
-            return false;
-        }
-
-        if(estaHipotecada){
-            this.estaHipotecada = false;
-            return true;
-        }
-        else{
-            System.out.println("No puedes deshipotecar esta propiedad porque no está hipotecada.");
-            return false;
-        }
-    }
+ 
 
 
     //SECCION DE BUILDEAR Y COMPRAR EDIFICIOS---------------------------------------------------------------------------

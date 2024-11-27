@@ -2,17 +2,11 @@ package monopoly;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-
-import monopoly.cartas.Carta;
-import monopoly.casillas.Casilla;
-import monopoly.edificios.Edificio;
-
 import java.util.Iterator;
 import java.util.List;
 
-import partida.Dado;
-import partida.Jugador;
-import partida.avatares.Avatar;
+
+import partida.*;
 
 import java.util.HashMap;
 
@@ -87,8 +81,7 @@ public class Juego {
         cartas_caja.add(new Carta(Texto.CARTA_CAJA_6, "Caja", 6));
         this.carta_del_reves = new Carta();
     }
-
-
+    
 
     //SECCIÓN DE CONTROL DEL FLUJO DE LA PARTIDA------------------------------------------------------------------------
 
@@ -346,7 +339,7 @@ public class Juego {
                 else{
                     System.out.println("No se puede cambiar de modo una vez ya se ha tirado.");
                 }
-                 break;
+                break;
 
             // Comando que se usa para ir avanzando en el movimiento con paradas de la pelota
             case "siguiente":
@@ -1906,7 +1899,7 @@ public class Juego {
                     if (casilla.getDuenho().equals(jugador)) {
                         if (casilla.esEdificable(tipo, jugador)) {
                             Edificio edificio = new Edificio(tipo, casilla);
-
+                            
                             if (jugador.getFortuna() >= edificio.getCoste()) {
                                 casilla.anhadirEdificio(edificio); // Añadir el edificio a la casilla
                                 jugador.sumarGastos(edificio.getCoste()); // Restar el coste del edificio
