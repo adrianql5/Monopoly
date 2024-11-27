@@ -3,9 +3,14 @@ package partida;
 import java.util.ArrayList;
 
 import monopoly.*;
-import monopoly.casillas.Casilla;
-import monopoly.edificios.Edificio;
-import partida.avatares.Avatar;
+import partida.*;
+
+import monopoly.edificios.*;
+import monopoly.casillas.propiedades.*;
+import monopoly.casillas.*;
+
+import partida.avatares.*;
+
 
 
 public class Jugador {
@@ -242,20 +247,18 @@ public class Jugador {
         }
     }
 
-    /**Método para contar cuántas casillas posee un jugador de un tipo determinado
-     * Solo se usa para las propiedades de tipo Transportes de momento
-     * @param tipo Tipo de propiedad
-     */
-    public int numeroCasillasTipo(String tipo){
-        int contador=0;
-        for(Casilla c: propiedades){
-            if(c.getTipo().equals(tipo)){
+    // Método para contar las propiedades de un tipo específico
+    public int contarPropiedadesPorTipo(Class<? extends Propiedad> tipo) {
+        int contador = 0;
+        for (Casilla propiedad : this.propiedades) {
+            if (tipo.isInstance(propiedad)) {
                 contador++;
             }
         }
         return contador;
     }
-    
+
+
     //SECCIÓN DE MÉTODOS QUE GESTIONAN LA FORTUNA DEL JUGADOR-----------------------------------------------------------
 
     /**
@@ -294,10 +297,13 @@ public class Jugador {
         return this.fortuna > 0;
     }
 
+    
     public boolean tienePropiedadesHipotecables(){
         for(Casilla c: this.propiedades){
-            if(!c.estaHipotecada()){
-                return true;
+            if(c instanceof Propiedad){
+                if(!((Propiedad) c).estaHipotecada()){
+                    return true;
+                }
             }
         }
         return false;
@@ -368,9 +374,9 @@ public class Jugador {
         this.vueltas_sin_comprar = vueltas_sin_comprar;
     }
 
-
+    
     //SECCIÓN QUE DEVUELVE INFORMACIÓN DE JUGADOR
-    /**Método que devuelve la información de un jugador*/
+    //Método que devuelve la información de un jugador
     public void infoJugador() {
         System.out.println("{");
         // Imprimir nombre, avatar y fortuna con separador de miles para la fortuna
@@ -394,35 +400,37 @@ public class Jugador {
 
             // Imprimir edificios
             System.out.println("\tEdificios: {");
-            String[] tipos = {"casa", "hotel", "piscina", "pista de deporte"};
             for (int i = 0; i < this.getPropiedades().size(); i++) {
-                if( this.getPropiedades().get(i).getTipo().equals("Solar")){
-                    if (0 != this.getPropiedades().get(i).getNumeroEdificios()) {
-                        System.out.println("\t\t" + this.getPropiedades().get(i).getNombre() + ": {");
+                Propiedad propiedad = this.getPropiedades().get(i);
+                
+                if (propiedad.getNumeroEdificios() > 0) {
+                    System.out.println("\t\t" + propiedad.getNombre() + ": {");
 
-                        for (String tipo : tipos) {
-                            ArrayList<Edificio> edificios = this.getPropiedades().get(i).getEdificiosPorTipo(tipo);
-
-                            if (!edificios.isEmpty()) {
-                                System.out.print("\t\t\t" + tipo + ": [");
-                                for (int j = 0; j < edificios.size(); j++) {
-                                    System.out.print(edificios.get(j).getId());
-                                    if (j < edificios.size() - 1) {
-                                        System.out.print(", "); // Añade coma a todo menos a la última
-                                    }
-                                }
-                                System.out.println("]");
+                    // Mostrar edificios de la propiedad
+                    ArrayList<Edificio> edificios = propiedad.getEdificios();
+                    if (!edificios.isEmpty()) {
+                        System.out.print("\t\t\tEdificios: [");
+                        for (int j = 0; j < edificios.size(); j++) {
+                            System.out.print(edificios.get(j).getId());
+                            if (j < edificios.size() - 1) {
+                                System.out.print(", "); // Añade coma a todo menos a la última
                             }
                         }
-                        System.out.println("\t\t}");
+                        System.out.println("]");
                     }
-                    System.out.println("\t}");
+
+                    System.out.println("\t\t}");
                 }
             }
+            System.out.println("\t}");
         }
         System.out.println("}");
     }
 
+    
+
+
+    
     /**Método para mostrar las estadísticas de un jugador*/
     public void infoEstadisticas() {
         System.out.println("{");

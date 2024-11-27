@@ -1,117 +1,113 @@
 package monopoly;
 
 import java.util.ArrayList;
-
-import monopoly.casillas.Casilla;
+import monopoly.casillas.propiedades.Propiedad;
 import partida.Jugador;
-
 
 public class Grupo {
 
-    //Atributos
-    private ArrayList<Casilla> miembros; //Casillas miembros del grupo.
-    private String colorGrupo; //Color del grupo
-    private int numCasillas; //Número de casillas del grupo.
-    private float recaudacion_grupo; //lo que recauda el grupo
+    // Atributos
+    private ArrayList<Propiedad> miembros; // Propiedades miembros del grupo
+    private String colorGrupo; // Color del grupo
+    private int numCasillas; // Número de casillas del grupo
+    private float recaudacionGrupo; // Lo que recauda el grupo
 
+    // SECCIÓN DE CONSTRUCTORES DE GRUPOS
 
-    //SECCIÓN DE CONSTRUCTORES DE GRUPOS
-
-    /**Constructor para cuando el grupo está formado por DOS CASILLAS.
-     * @param cas1 Casilla miembro 1
-     * @param cas2 Casilla miembro 2
+    /** Constructor para cuando el grupo está formado por dos propiedades.
+     * @param prop1 Propiedad miembro 1
+     * @param prop2 Propiedad miembro 2
      * @param colorGrupo Color del grupo
      */
-    public Grupo(Casilla cas1, Casilla cas2, String colorGrupo) {
-        this.miembros= new ArrayList<Casilla>();
-        this.colorGrupo=colorGrupo;
-        miembros.add(cas1);
-        miembros.add(cas2);
-        this.numCasillas=2;
+    public Grupo(Propiedad prop1, Propiedad prop2, String colorGrupo) {
+        this.miembros = new ArrayList<Propiedad>();
+        this.colorGrupo = colorGrupo;
+        miembros.add(prop1);
+        miembros.add(prop2);
+        this.numCasillas = 2;
     }
 
-    /**Constructor para cuando el grupo está formado por TRES CASILLAS.
-     * @param cas1 Casilla miembro 1
-     * @param cas2 Casilla miembro 2
-     * @param cas3 Casilla miembro 3
+    /** Constructor para cuando el grupo está formado por tres propiedades.
+     * @param prop1 Propiedad miembro 1
+     * @param prop2 Propiedad miembro 2
+     * @param prop3 Propiedad miembro 3
      * @param colorGrupo Color del grupo
      */
-    public Grupo(Casilla cas1, Casilla cas2, Casilla cas3, String colorGrupo) {
-        this.miembros= new ArrayList<Casilla>();
-        this.colorGrupo=colorGrupo;
-        miembros.add(cas1);
-        miembros.add(cas2);
-        miembros.add(cas3);
-        this.numCasillas=3;
+    public Grupo(Propiedad prop1, Propiedad prop2, Propiedad prop3, String colorGrupo) {
+        this.miembros = new ArrayList<Propiedad>();
+        this.colorGrupo = colorGrupo;
+        miembros.add(prop1);
+        miembros.add(prop2);
+        miembros.add(prop3);
+        this.numCasillas = 3;
     }
 
+    // SECCIÓN DE MÉTODOS ÚTILES DE GRUPOS
 
-    //SECCIÓN DE MÉTODOS ÚTILES DE CRUPOS
-
-
-    public boolean estaHipotecadoGrupo(){
-        for(Casilla cas: this.miembros){
-            if(cas.estaHipotecada()){
+    /** Verifica si alguna de las propiedades del grupo está hipotecada.
+     * @return TRUE si alguna propiedad está hipotecada, FALSE en otro caso
+     */
+    public boolean estaHipotecadoGrupo() {
+        for (Propiedad propiedad : this.miembros) {
+            if (propiedad.estaHipotecada()) {
                 return true;
             }
         }
         return false;
     }
 
-
-    /** Método que añade una casilla al array de casillas miembro de un grupo.
-     * @param miembro Casilla que se quiere añadir
+    /** Método que añade una propiedad al array de propiedades del grupo.
+     * @param propiedad Propiedad que se quiere añadir
      */
-    public void anhadirCasilla(Casilla miembro) {
-        this.miembros.add(miembro);
+    public void anhadirPropiedad(Propiedad propiedad) {
+        this.miembros.add(propiedad);
         this.numCasillas++;
     }
 
-
-    /**Método que comprueba si el jugador pasado tiene en su haber todas las casillas del grupo.
+    /** Método que comprueba si el jugador tiene todas las propiedades del grupo.
      * @param jugador Jugador que se quiere evaluar
-     * @return TRUE si es dueño de todas las casillas del grupo, FALSE en otro caso
+     * @return TRUE si es dueño de todas las propiedades, FALSE en otro caso
      */
     public boolean esDuenhoGrupo(Jugador jugador) {
-        for(Casilla c: miembros){
-            if(c.getDuenho()!=jugador){
+        for (Propiedad propiedad : miembros) {
+            if (propiedad.getDuenho() != jugador) {
                 return false;
             }
         }
         return true;
     }
 
-    // SECCIÓN DE GETETRS Y SETTERS DE GRUPOS
-    
-    public ArrayList<Casilla> getMiembrosGrupo(){
+    // SECCIÓN DE GETTERS Y SETTERS DE GRUPOS
+
+    public ArrayList<Propiedad> getMiembrosGrupo() {
         return this.miembros;
     }
 
-    public void setMiembrosGrupos(ArrayList<Casilla> miembros){
-        this.miembros=miembros;
+    public void setMiembrosGrupo(ArrayList<Propiedad> miembros) {
+        this.miembros = miembros;
     }
 
-    public String getColorGrupo(){
+    public String getColorGrupo() {
         return this.colorGrupo;
     }
 
-    public void setColorGrupo(String colorgrupo){
-        this.colorGrupo=colorgrupo;
+    public void setColorGrupo(String colorGrupo) {
+        this.colorGrupo = colorGrupo;
     }
 
-    public int getNumCasillasGrupo(){
+    public int getNumCasillasGrupo() {
         return this.numCasillas;
     }
 
-    public void setNumCasillasGrupo(int numCasillas){
-        this.numCasillas=numCasillas;
+    public void setNumCasillasGrupo(int numCasillas) {
+        this.numCasillas = numCasillas;
     }
 
     public float getRecaudacionGrupo() {
-        return recaudacion_grupo;
-    }
-    public void sumarRecaudacionGrupo(float recaudacionGrupo) {
-        this.recaudacion_grupo += recaudacionGrupo;
+        return recaudacionGrupo;
     }
 
+    public void sumarRecaudacionGrupo(float recaudacionGrupo) {
+        this.recaudacionGrupo += recaudacionGrupo;
+    }
 }

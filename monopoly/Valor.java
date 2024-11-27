@@ -43,6 +43,14 @@ public class Valor {
     public static final float GRUPO7 = Valor.GRUPO6 * Valor.INCREMENTO;
     public static final float GRUPO8 = Valor.GRUPO7 * Valor.INCREMENTO;
 
+    public static final float FACTOR_HIPOTECA = 0.5f;
+    public static final float FACTOR_DESHIPOTECA = 1.1f;
+
+    public static final float FACTOR_ALQUILER_SOLAR = 0.1f;
+
+    public static final float VALOR_IMPUESTO_TRANSPORTE = SUMA_VUELTA;
+    public static final float VALOR_IMPUESTO_SERVICIO = SUMA_VUELTA/200f;
+
     // Constantes auxiliares para imprimir la tabla:
     /**Número de casillas por fila (incluyendo ambas esquinas).*/
     public static final int NCASILLAS_POR_FILA = 11;
