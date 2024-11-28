@@ -1,89 +1,107 @@
 package monopoly;
 
 import java.util.ArrayList;
-import monopoly.casillas.propiedades.Propiedad;
+import monopoly.casillas.propiedades.Solar;
 import partida.Jugador;
 
 public class Grupo {
 
     // Atributos
-    private ArrayList<Propiedad> miembros; // Propiedades miembros del grupo
+    private ArrayList<Solar> miembros; // Propiedades miembros del grupo
     private String colorGrupo; // Color del grupo
     private int numCasillas; // Número de casillas del grupo
-    private float recaudacionGrupo; // Lo que recauda el grupo
+    private float recaudacionGrupo; // Recaudación total del grupo
 
-    // SECCIÓN DE CONSTRUCTORES DE GRUPOS
+    // =======================
+    // SECCIÓN: CONSTRUCTORES
+    // =======================
 
-    /** Constructor para cuando el grupo está formado por dos propiedades.
-     * @param prop1 Propiedad miembro 1
-     * @param prop2 Propiedad miembro 2
+    /**
+     * Constructor para un grupo con dos propiedades.
+     * 
+     * @param prop1      Solar miembro 1
+     * @param prop2      Solar miembro 2
      * @param colorGrupo Color del grupo
      */
-    public Grupo(Propiedad prop1, Propiedad prop2, String colorGrupo) {
-        this.miembros = new ArrayList<Propiedad>();
+    public Grupo(Solar prop1, Solar prop2, String colorGrupo) {
+        this.miembros = new ArrayList<>();
         this.colorGrupo = colorGrupo;
-        miembros.add(prop1);
-        miembros.add(prop2);
+        this.miembros.add(prop1);
+        this.miembros.add(prop2);
         this.numCasillas = 2;
     }
 
-    /** Constructor para cuando el grupo está formado por tres propiedades.
-     * @param prop1 Propiedad miembro 1
-     * @param prop2 Propiedad miembro 2
-     * @param prop3 Propiedad miembro 3
+    /**
+     * Constructor para un grupo con tres propiedades.
+     * 
+     * @param prop1      Solar miembro 1
+     * @param prop2      Solar miembro 2
+     * @param prop3      Solar miembro 3
      * @param colorGrupo Color del grupo
      */
-    public Grupo(Propiedad prop1, Propiedad prop2, Propiedad prop3, String colorGrupo) {
-        this.miembros = new ArrayList<Propiedad>();
+    public Grupo(Solar prop1, Solar prop2, Solar prop3, String colorGrupo) {
+        this.miembros = new ArrayList<>();
         this.colorGrupo = colorGrupo;
-        miembros.add(prop1);
-        miembros.add(prop2);
-        miembros.add(prop3);
+        this.miembros.add(prop1);
+        this.miembros.add(prop2);
+        this.miembros.add(prop3);
         this.numCasillas = 3;
     }
 
-    // SECCIÓN DE MÉTODOS ÚTILES DE GRUPOS
+    // ====================
+    // SECCIÓN: MÉTODOS
+    // ====================
 
-    /** Verifica si alguna de las propiedades del grupo está hipotecada.
-     * @return TRUE si alguna propiedad está hipotecada, FALSE en otro caso
+    /**
+     * Verifica si alguna propiedad del grupo está hipotecada.
+     * 
+     * @return {@code true} si alguna solar está hipotecada; {@code false} en caso
+     *         contrario.
      */
     public boolean estaHipotecadoGrupo() {
-        for (Propiedad propiedad : this.miembros) {
-            if (propiedad.estaHipotecada()) {
+        for (Solar solar : this.miembros) {
+            if (solar.estaHipotecada()) {
                 return true;
             }
         }
         return false;
     }
 
-    /** Método que añade una propiedad al array de propiedades del grupo.
-     * @param propiedad Propiedad que se quiere añadir
+    /**
+     * Añade una propiedad al grupo.
+     * 
+     * @param solar Solar que se quiere añadir al grupo.
      */
-    public void anhadirPropiedad(Propiedad propiedad) {
-        this.miembros.add(propiedad);
+    public void anhadirPropiedad(Solar solar) {
+        this.miembros.add(solar);
         this.numCasillas++;
     }
 
-    /** Método que comprueba si el jugador tiene todas las propiedades del grupo.
-     * @param jugador Jugador que se quiere evaluar
-     * @return TRUE si es dueño de todas las propiedades, FALSE en otro caso
+    /**
+     * Comprueba si el jugador posee todas las propiedades del grupo.
+     * 
+     * @param jugador Jugador que se quiere evaluar.
+     * @return {@code true} si el jugador es dueño de todas las propiedades;
+     *         {@code false} en caso contrario.
      */
     public boolean esDuenhoGrupo(Jugador jugador) {
-        for (Propiedad propiedad : miembros) {
-            if (propiedad.getDuenho() != jugador) {
+        for (Solar solar : miembros) {
+            if (solar.getDuenho() != jugador) {
                 return false;
             }
         }
         return true;
     }
 
-    // SECCIÓN DE GETTERS Y SETTERS DE GRUPOS
+    // ==========================
+    // SECCIÓN: GETTERS/SETTERS
+    // ==========================
 
-    public ArrayList<Propiedad> getMiembrosGrupo() {
+    public ArrayList<Solar> getMiembrosGrupo() {
         return this.miembros;
     }
 
-    public void setMiembrosGrupo(ArrayList<Propiedad> miembros) {
+    public void setMiembrosGrupo(ArrayList<Solar> miembros) {
         this.miembros = miembros;
     }
 
@@ -104,9 +122,14 @@ public class Grupo {
     }
 
     public float getRecaudacionGrupo() {
-        return recaudacionGrupo;
+        return this.recaudacionGrupo;
     }
 
+    /**
+     * Suma un monto a la recaudación total del grupo.
+     * 
+     * @param recaudacionGrupo Cantidad a sumar.
+     */
     public void sumarRecaudacionGrupo(float recaudacionGrupo) {
         this.recaudacionGrupo += recaudacionGrupo;
     }

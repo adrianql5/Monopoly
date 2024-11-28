@@ -8,16 +8,16 @@ import monopoly.casillas.acciones.*;
 import monopoly.casillas.*;
 import partida.*;
 
-//cometario para probar como van las ramas
-public class Tablero {
 
-    //ATRIBUTOS
+public class Tablero {
     private ArrayList<ArrayList<Casilla>> posiciones; //Posiciones del tablero: se define como un arraylist de arraylists de casillas (uno por cada lado del tablero).
     private HashMap<String, Grupo> grupos; //Grupos del tablero, almacenados como un HashMap con clave String (será el color del grupo).
     private Jugador banca; //Un jugador que será la banca.
 
 
-    //Sección de Construir el Tablero y Sus Grupos
+    // =======================
+    // SECCIÓN: CONSTRUCTORES
+    // =======================
 
     //Constructor: únicamente le pasamos el jugador banca (que se creará desde el menú).
     public Tablero(Jugador banca) {
@@ -52,14 +52,14 @@ public class Tablero {
 
         posiciones.add(ladoSur);
 
-        this.grupos.put("WHITE",new Grupo(getPropiedad(1), getPropiedad(3),"WHITE"));
-        getPropiedad(1).setGrupo(grupos.get("WHITE"));
-        getPropiedad(3).setGrupo(grupos.get("WHITE"));
+        this.grupos.put("WHITE",new Grupo(getSolar(1), getSolar(3),"WHITE"));
+        getSolar(1).setGrupo(grupos.get("WHITE"));
+        getSolar(3).setGrupo(grupos.get("WHITE"));
 
-        this.grupos.put("CYAN",new Grupo(getPropiedad(6),getPropiedad(8),getPropiedad(9),"CYAN"));
-        getPropiedad(6).setGrupo(grupos.get("CYAN"));
-        getPropiedad(8).setGrupo(grupos.get("CYAN"));
-        getPropiedad(9).setGrupo(grupos.get("CYAN"));
+        this.grupos.put("CYAN",new Grupo(getSolar(6),getSolar(8),getSolar(9),"CYAN"));
+        getSolar(6).setGrupo(grupos.get("CYAN"));
+        getSolar(8).setGrupo(grupos.get("CYAN"));
+        getSolar(9).setGrupo(grupos.get("CYAN"));
     }
 
     /**Método auxiliar de generarCasillas() para insertar las casillas del lado oeste.*/
@@ -78,15 +78,15 @@ public class Tablero {
 
         posiciones.add(ladoOeste);
 
-        this.grupos.put("BLUE",new Grupo(getPropiedad(11), getPropiedad(13),getPropiedad(14),"BLUE"));
-        getPropiedad(11).setGrupo(grupos.get("BLUE"));
-        getPropiedad(13).setGrupo(grupos.get("BLUE"));
-        getPropiedad(14).setGrupo(grupos.get("BLUE"));
+        this.grupos.put("BLUE",new Grupo(getSolar(11), getSolar(13),getSolar(14),"BLUE"));
+        getSolar(11).setGrupo(grupos.get("BLUE"));
+        getSolar(13).setGrupo(grupos.get("BLUE"));
+        getSolar(14).setGrupo(grupos.get("BLUE"));
 
-        this.grupos.put("YELLOW",new Grupo(getPropiedad(16), getPropiedad(18),getPropiedad(19),"YELLOW"));
-        getPropiedad(16).setGrupo(grupos.get("YELLOW"));
-        getPropiedad(18).setGrupo(grupos.get("YELLOW"));
-        getPropiedad(19).setGrupo(grupos.get("YELLOW"));
+        this.grupos.put("YELLOW",new Grupo(getSolar(16), getSolar(18),getSolar(19),"YELLOW"));
+        getSolar(16).setGrupo(grupos.get("YELLOW"));
+        getSolar(18).setGrupo(grupos.get("YELLOW"));
+        getSolar(19).setGrupo(grupos.get("YELLOW"));
     }
 
     /**Método auxiliar de generarCasillas() para insertar las casillas del lado norte.*/
@@ -105,15 +105,15 @@ public class Tablero {
 
         posiciones.add(ladoNorte);
 
-        this.grupos.put("BLACK",new Grupo(getPropiedad(21), getPropiedad(23),getPropiedad(24),"BLACK"));
-        getPropiedad(21).setGrupo(grupos.get("BLACK"));
-        getPropiedad(23).setGrupo(grupos.get("BLACK"));
-        getPropiedad(24).setGrupo(grupos.get("BLACK"));
+        this.grupos.put("BLACK",new Grupo(getSolar(21), getSolar(23),getSolar(24),"BLACK"));
+        getSolar(21).setGrupo(grupos.get("BLACK"));
+        getSolar(23).setGrupo(grupos.get("BLACK"));
+        getSolar(24).setGrupo(grupos.get("BLACK"));
         
-        this.grupos.put("GREEN",new Grupo(getPropiedad(26), getPropiedad(27),getPropiedad(29),"GREEN"));
-        getPropiedad(26).setGrupo(grupos.get("GREEN"));
-        getPropiedad(27).setGrupo(grupos.get("GREEN"));
-        getPropiedad(29).setGrupo(grupos.get("GREEN"));
+        this.grupos.put("GREEN",new Grupo(getSolar(26), getSolar(27),getSolar(29),"GREEN"));
+        getSolar(26).setGrupo(grupos.get("GREEN"));
+        getSolar(27).setGrupo(grupos.get("GREEN"));
+        getSolar(29).setGrupo(grupos.get("GREEN"));
     }
 
     /**Método auxiliar de generarCasillas() para insertar las casillas del lado este.*/
@@ -132,23 +132,21 @@ public class Tablero {
 
         posiciones.add(ladoEste);
 
-        this.grupos.put("RED",new Grupo(getPropiedad(31), getPropiedad(32),getPropiedad(34),"RED"));
-        getPropiedad(31).setGrupo(grupos.get("RED"));
-        getPropiedad(32).setGrupo(grupos.get("RED"));
-        getPropiedad(34).setGrupo(grupos.get("RED"));
+        this.grupos.put("RED",new Grupo(getSolar(31), getSolar(32),getSolar(34),"RED"));
+        getSolar(31).setGrupo(grupos.get("RED"));
+        getSolar(32).setGrupo(grupos.get("RED"));
+        getSolar(34).setGrupo(grupos.get("RED"));
 
-        this.grupos.put("PURPLE",new Grupo(getPropiedad(37), getPropiedad(39),"PURPLE"));
-        getPropiedad(37).setGrupo(grupos.get("PURPLE"));
-        getPropiedad(39).setGrupo(grupos.get("PURPLE"));
+        this.grupos.put("PURPLE",new Grupo(getSolar(37), getSolar(39),"PURPLE"));
+        getSolar(37).setGrupo(grupos.get("PURPLE"));
+        getSolar(39).setGrupo(grupos.get("PURPLE"));
 
     }
 
     
-    //METODOS ÚTILES DEL TABLERO
-    public ArrayList<ArrayList<Casilla>> getPosiciones() {
-        return posiciones;
-    }
-
+    // =========================================
+    // SECCIÓN: MÉTODOD DE ACCESO Y MANIPULACIÓN
+    // =========================================
     public Casilla getCasilla(int posicion){
         if(posicion<40 && posicion>-1){
             return this.posiciones.get(posicion/10).get(posicion%10);
@@ -157,11 +155,11 @@ public class Tablero {
     }
 
 
-    public Propiedad getPropiedad(int posicion){
+    public Solar getSolar(int posicion){
         if(posicion<40 && posicion>-1){
             Casilla aux =this.posiciones.get(posicion/10).get(posicion%10);
-            if(aux instanceof Propiedad){
-                return (Propiedad) aux;
+            if(aux instanceof Solar){
+                return (Solar) aux;
             }
             else return null;
         }
@@ -174,8 +172,8 @@ public class Tablero {
     public Casilla encontrar_casilla(String nombre){
         int i;
         for(i=0; i<40; i++){
-            if(getPropiedad(i).getNombre().equals(nombre)){
-                return getPropiedad(i);
+            if(getSolar(i).getNombre().equals(nombre)){
+                return getCasilla(i);
             }
 
         }
@@ -186,7 +184,7 @@ public class Tablero {
     public void aumentarCoste(Jugador banca) {
         // Itera sobre todas las posiciones del tablero
         for (int i = 0; i < getPosiciones().size(); i++) {
-            Propiedad propiedad = getPropiedad(i);
+            Propiedad propiedad = getSolar(i);
 
             // Verifica si la casilla no tiene dueño (es decir, si su dueño es la banca)
             if (propiedad.getDuenho() == banca && propiedad instanceof Solar) {
@@ -198,17 +196,19 @@ public class Tablero {
         }
     }
     
-    
-    //SECCION DE IMPRIMIR EL TABLERO Y LOS AVATARES
+    // =========================================
+    // SECCIÓN: MÉTODO DE ACCESO Y MANIPULACIÓN
+    // =========================================
 
-    //ESTE MÉTODO TENDRA SENTIDO EN LA SEGUNDA ENTREGA CUANDO EL ALQUILER DEPENDE DE LAS CASAS Y DEMÁS
-    /**Método auxiliar para calcular el precio de un Solar.
-     * @param nsolares_grupo Número de solares que tiene el grupo (2 o 3)
-     * @param ngrupo Índice del grupo (se usa para la multiplicidad del incremento)
-     */
-    public float valorSolar(int nsolares_grupo, int ngrupo){
-        return (float) (Valor.GRUPO1/nsolares_grupo * pow(Valor.INCREMENTO, ngrupo));
+    public ArrayList<ArrayList<Casilla>> getPosiciones() {
+        return posiciones;
     }
+
+    
+
+    // ==============================
+    // SECCIÓN: IMPRESIÓN DE TABLERO
+    // ==============================
 
     /**Método para subrayar texto.
      * @param texto Texto que hay que subrayar
@@ -237,11 +237,11 @@ public class Tablero {
     /**Método que devuelve el nombre de una casilla coloreado si así le corresponde.
      * @param casilla Casilla cuyo nombre hay que colorear (se presupone que es un Solar)
      */
-    public String colorearNombre(Propiedad propiedad) {
+    public String colorearNombre(Solar solar) {
         String nombreColoreado;
 
         //Escogemos el color en función del grupo al que pertenece la casilla
-        switch (propiedad.getGrupo().getColorGrupo()) {
+        switch (solar.getGrupo().getColorGrupo()) {
             case "BLACK":
                 nombreColoreado = Valor.BLACK;
                 break;
@@ -267,12 +267,12 @@ public class Tablero {
                 nombreColoreado = Valor.WHITE;
                 break;
             default:
-                System.out.println(propiedad.getNombre() + " tiene un color de grupo inválido.\n");
+                System.out.println(solar.getNombre() + " tiene un color de grupo inválido.\n");
                 nombreColoreado = "";
                 break;
         }
 
-        nombreColoreado += propiedad.getNombre() + Valor.RESET;
+        nombreColoreado += solar.getNombre() + Valor.RESET;
 
         return nombreColoreado;
     }
@@ -312,7 +312,7 @@ public class Tablero {
         String nombreConFormato;
 
         if(casilla instanceof Solar) {
-            nombreConFormato = colorearNombre((Propiedad)casilla) + conEspacios(Valor.NCHARS_CASILLA-casilla.getNombre().length()) + Valor.BARRA;
+            nombreConFormato = colorearNombre((Solar)casilla) + conEspacios(Valor.NCHARS_CASILLA-casilla.getNombre().length()) + Valor.BARRA;
         }
         else {
             nombreConFormato = casilla.getNombre() + conEspacios(Valor.NCHARS_CASILLA-casilla.getNombre().length()) + Valor.BARRA;
@@ -360,16 +360,16 @@ public class Tablero {
         tabla += Valor.BARRA;   //Borde izquierdo (no equivale a una casilla)
         //Lado norte entero
         for (i=20; i<30; i++) {
-            tabla += formatoNombre(getPropiedad(i));
+            tabla += formatoNombre(getSolar(i));
         }
-        tabla += formatoNombre(getPropiedad(30)) + "\n";   //Primera casilla del lado este
+        tabla += formatoNombre(getSolar(30)) + "\n";   //Primera casilla del lado este
 
         //Imprimimos la TERCERA LÍNEA: parte inferior de la primera fila de casillas
         tabla += Valor.BARRA;
         for (i=20; i<30; i++) {
-            tabla += formatoFichas(getPropiedad(i));   //Lado norte entero
+            tabla += formatoFichas(getSolar(i));   //Lado norte entero
         }
-        tabla += formatoFichas(getPropiedad(30)) + "\n";   //Primera casilla del lado este
+        tabla += formatoFichas(getSolar(30)) + "\n";   //Primera casilla del lado este
 
         //De la LÍNEA Nº4 hasta la LÍNEA Nº20 se van imprimiendo con el siguiente FOR
         //Sobre el índice correspondiente de la casilla que toca imprimir en cada lado:
@@ -379,7 +379,7 @@ public class Tablero {
             if (i%2!=0) /**LÍNEAS IMPARES: parte superior de la fila de casillas correspondientes*/ {
 
                 tabla += Valor.BARRA;
-                tabla += formatoNombre(getPropiedad(20-(i-1)/2));  //Casilla de la izquierda
+                tabla += formatoNombre(getSolar(20-(i-1)/2));  //Casilla de la izquierda
 
                 //PETADA HISTORICA
                 //Si hubiese que imprimir algo de texto en el centro del tablero se imprime
@@ -400,13 +400,13 @@ public class Tablero {
                 }
 
                 //Barra + Casilla de la derecha
-                tabla += Valor.BARRA + formatoNombre(getPropiedad(30+(i-1)/2)) + "\n";
+                tabla += Valor.BARRA + formatoNombre(getSolar(30+(i-1)/2)) + "\n";
 
             }
             else /**LÍNEAS PARES: parte inferior de la fila de casillas correspondientes*/ {
 
                 tabla += Valor.BARRA;
-                tabla += formatoFichas(getPropiedad(21-i/2));  //Casilla de la izquierda
+                tabla += formatoFichas(getSolar(21-i/2));  //Casilla de la izquierda
 
                 //PETADA HISTORICA
                 //Si hubiese que imprimir algo de texto en el centro del tablero se imprime
@@ -426,37 +426,37 @@ public class Tablero {
                 }
 
                 //Barra + Casilla de la derecha
-                tabla += Valor.BARRA + formatoFichas(getPropiedad(29+i/2)) + "\n";
+                tabla += Valor.BARRA + formatoFichas(getSolar(29+i/2)) + "\n";
 
             }
         }
 
         //Imprimimos la LÍNEA 21: parte inferior de la penúltima fila de casillas
         tabla += Valor.BARRA;
-        tabla += formatoFichas(getPropiedad(11));  //Casilla de la izquierda
+        tabla += formatoFichas(getSolar(11));  //Casilla de la izquierda
         //Añadimos los espacios del medio: EN ESTE CASO LOS ESPACIO VAN SUBRAYADOS PARA HACER DE BORDE SUPERIOR
         for(i=0;i<Valor.NCASILLAS_POR_FILA-3;i++) {
             tabla += subrayar(Valor.CASILLA_VACIA) + " ";
         }
         tabla += subrayar(Valor.CASILLA_VACIA) + Valor.BARRA;   //El espacio más a la derecha va con barra
         //Barra + Casilla de la derecha
-        tabla += formatoFichas(getPropiedad(39)) + "\n";
+        tabla += formatoFichas(getSolar(39)) + "\n";
 
         //Imprimimos la LÍNEA 22: parte superior de última fila de casillas
         tabla += Valor.BARRA;
-        tabla += formatoNombre(getPropiedad(10));   //Primera casilla del lado oeste
+        tabla += formatoNombre(getSolar(10));   //Primera casilla del lado oeste
         //Lado Sur entero (nótese que está al revés)
         for (i=9; i>=0; i--) {
-            tabla += formatoNombre(getPropiedad(i));
+            tabla += formatoNombre(getSolar(i));
         }
         tabla += "\n";
 
         //Imprimimos la LÍNEA 23: parte inferior de la última fila de casillas
         tabla += Valor.BARRA;
-        tabla += formatoFichas(getPropiedad(10));   //Primera casilla del lado oeste
+        tabla += formatoFichas(getSolar(10));   //Primera casilla del lado oeste
         //Lado Sur entero (nótese que está al revés)
         for (i=9; i>=0; i--) {
-            tabla += formatoFichas(getPropiedad(i));
+            tabla += formatoFichas(getSolar(i));
         }
         tabla += "\n";
 

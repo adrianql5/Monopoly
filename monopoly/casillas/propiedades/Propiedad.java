@@ -15,7 +15,7 @@ public  abstract class Propiedad extends Casilla {
     protected float valorDeshipoteca;
     protected int vecesVisitadaPorDuenho;
     protected Jugador duenho;
-    protected Grupo grupo;
+
     // ==========================
     // SECCIÓN: CONSTRUCTORES
     // ==========================
@@ -51,37 +51,6 @@ public  abstract class Propiedad extends Casilla {
     public void sumarValor(float suma) {
         this.valor +=suma;
     }
-
-
-    public int contarTipoPropiedadesGrupos(String tipo) {
-        int index = getTipoIndex(tipo); // Obtener el índice del tipo de edificación
-        if (index == -1) {
-            return 0; // Retornar 0 si el tipo es inválido
-        }
-        int contador = 0;
-        // Contar todas las edificaciones del tipo especificado en cada casilla del grupo
-        for (Propiedad c : grupo.getMiembrosGrupo()) {
-            contador += c.contarTipoPropiedadesCasilla(tipo); // Usar la función para contar en cada casilla
-        }
-        return contador;
-    }
-
-    public Grupo getGrupo(){
-        return grupo;
-    }
-    
-    public void setGrupo(Grupo grupo_casilla) {
-        if (grupo_casilla != null) {
-            this.grupo = grupo_casilla;
-        }
-        else {
-            System.out.println("El grupo no puede ser nulo.\n");
-        }
-    }
-
-
-
-
 
 
     public abstract float calcularAlquiler();
