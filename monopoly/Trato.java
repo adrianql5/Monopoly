@@ -16,15 +16,15 @@ public class Trato {
     private String id; // Identificador único del trato
     private Jugador jugadorPropone; // Jugador que propone el trato
     private Jugador jugadorRecibe; // Jugador que recibe el trato
-    private ArrayList<Casilla> propiedadesOfrecidas; // Propiedades que ofrece el jugador que propone
-    private ArrayList<Casilla> propiedadesDemandadas; // Propiedades que solicita el jugador que propone
+    private ArrayList<Propiedad> propiedadesOfrecidas; // Propiedades que ofrece el jugador que propone
+    private ArrayList<Propiedad> propiedadesDemandadas; // Propiedades que solicita el jugador que propone
     private float dineroOfrecido; // Dinero que ofrece el jugador que propone
     private float dineroDemandado; // Dinero que solicita el jugador que propone
 
 
     // Constructor
     public Trato(Jugador jugadorPropone, Jugador jugadorRecibe,
-        ArrayList<Casilla> propiedadesOfrecidas, ArrayList<Casilla> propiedadesDemandadas,
+        ArrayList<Propiedad> propiedadesOfrecidas, ArrayList<Propiedad> propiedadesDemandadas,
         float dineroOfrecido, float dineroDemandado) {
 
         this.id = "trato" + (++contadorTratos); // Asigna un ID único
@@ -49,11 +49,11 @@ public class Trato {
         return jugadorRecibe;
     }
 
-    public ArrayList<Casilla> getPropiedadesOfrecidas() {
+    public ArrayList<Propiedad> getPropiedadesOfrecidas() {
         return propiedadesOfrecidas;
     }
 
-    public ArrayList<Casilla> getPropiedadesDemandadas() {
+    public ArrayList<Propiedad> getPropiedadesDemandadas() {
         return propiedadesDemandadas;
     }
 
@@ -88,24 +88,22 @@ public class Trato {
                     jugadorPropone.getNombre());
             return false;
         }
-        for (Casilla propiedad : propiedadesOfrecidas) {
-            if(propiedad instanceof Propiedad){
+        for (Propiedad propiedad : propiedadesOfrecidas) {
+        
 
-                if (!((Propiedad)propiedad).getDuenho().getNombre().equals( this.jugadorPropone.getNombre()) ) {
-                    System.out.printf("El trato no puede ser aceptado: %s no pertenece a %s.\n",
-                            propiedad.getNombre(), jugadorPropone.getNombre());
-                    return false;
-                }
+            if (!((Propiedad)propiedad).getDuenho().getNombre().equals( this.jugadorPropone.getNombre()) ) {
+                System.out.printf("El trato no puede ser aceptado: %s no pertenece a %s.\n",
+                        propiedad.getNombre(), jugadorPropone.getNombre());
+                return false;
             }
         }
         // Verificar propiedades demandadas
-        for (Casilla propiedad : propiedadesDemandadas) {
-            if(propiedad instanceof Propiedad){
-                if (!((Propiedad)propiedad).getDuenho().getNombre().equals( this.jugadorRecibe.getNombre()) ) {
-                    System.out.printf("El trato no puede ser aceptado: %s no pertenece a %s.\n",
-                            propiedad.getNombre(), jugadorRecibe.getNombre());
-                    return false;
-                }
+        for (Propiedad propiedad : propiedadesDemandadas) {
+
+            if (!((Propiedad)propiedad).getDuenho().getNombre().equals( this.jugadorRecibe.getNombre()) ) {
+                System.out.printf("El trato no puede ser aceptado: %s no pertenece a %s.\n",
+                        propiedad.getNombre(), jugadorRecibe.getNombre());
+                return false;
             }
         }
         // Transferencia de propiedades y dinero
@@ -122,10 +120,10 @@ public class Trato {
     /**
      * Transfiere propiedades entre dos jugadores.
      */
-    private void transferirPropiedades(ArrayList<Casilla> propiedades, Jugador de, Jugador a) {
-        Iterator<Casilla> iterator = propiedades.iterator();
+    private void transferirPropiedades(ArrayList<Propiedad> propiedades, Jugador de, Jugador a) {
+        Iterator<Propiedad> iterator = propiedades.iterator();
         while (iterator.hasNext()) {
-            Casilla propiedad = iterator.next();
+            Propiedad propiedad = iterator.next();
             de.eliminarPropiedad(propiedad);
             a.anhadirPropiedad(propiedad);
         }

@@ -4,6 +4,9 @@ import monopoly.Valor;
 import monopoly.casillas.Casilla;
 import partida.Jugador;
 
+import java.util.*;
+import monopoly.edificios.*;
+
 
 public  abstract class Propiedad extends Casilla {
     // Atributos
@@ -56,6 +59,11 @@ public  abstract class Propiedad extends Casilla {
     // ==========================
     // SECCIÓN: GETTERS Y SETTERS
     // ==========================
+
+    public float getDeshipoteca(){
+        return this.deshipoteca;
+    }
+
     /**Método para añadir valor a una casilla. Utilidad:
      * (1) Sumar valor a la casilla de parking.
      * (2) Sumar valor a las casillas de solar al no comprarlas tras cuatro vueltas de todos los jugadores.
@@ -154,64 +162,43 @@ public  abstract class Propiedad extends Casilla {
      * @return true si es hipotecable, false en caso contrario.
      */
 
-
-    //FALTA COMPROBAR LO DE LOS EDIFICIOS FUCK OFF
-
-    /*
-     * 
-     * 
-
     public boolean esHipotecable() {
-        if (!estaHipotecada) { // Simplificación de la condición
-            boolean sinEdificios = true;
-
-            if(!this.esTipoComprable()){
-                System.out.println("Este tipo de propiedades no es hipotecable.");;
-                return false;
-            }
-                
-
-            if(this instanceof Solar){
-                for (ArrayList<Edificio> tipoEdificio : this.edificios) {
-                    if (!tipoEdificio.isEmpty()) {
-                        sinEdificios = false;
+        if (!estaHipotecada) { // Verifica si la propiedad no está hipotecada
+            boolean sinEdificios = true; // Inicializa como que no hay edificaciones
+            
+            // Verifica si la propiedad es una instancia de Solar
+            if (this instanceof Solar) {
+                Solar solar = (Solar) this;  // Hacemos un cast a Solar para acceder a los atributos específicos de Solar
+                for (ArrayList<Edificio> tipoEdificio : solar.getEdificios()) {  // Accede a la lista de edificios
+                    if (!tipoEdificio.isEmpty()) {  // Si alguna lista de edificios no está vacía
+                        sinEdificios = false;  // Marca que no está vacío, por lo tanto no puede hipotecarse
                         break;
                     }
                 }
             }
             
+            // Si hay edificaciones, no se puede hipotecar
             if (!sinEdificios) {
                 System.out.println("No puedes hipotecar la casilla " + this.getNombre() + " porque tienes que vender todas tus edificaciones.");
-                return false; // Corregido: aquí debe devolver `false` para indicar que no se puede hipotecar
+                return false;  // Retorna false indicando que no puede hipotecarse
             } else {
-                estaHipotecada = true;
-                return true; // Retorna `true` si la propiedad fue hipotecada exitosamente
+                estaHipotecada = true;  // Marca como hipotecada
+                return true;  // Retorna true indicando que sí se puede hipotecar
             }
         } else {
             System.out.println("No puedes hipotecar esta propiedad porque ya está hipotecada.");
-            return false;
+            return false;  // Retorna false si ya está hipotecada
         }
     }
-     */
+    
 
-
-
-    public boolean esHipotecable() {
-        if (!estaHipotecada) {
-            estaHipotecada = true; // Hipoteca la propiedad
-            return true;
-        } else {
-            System.out.println("No puedes hipotecar esta propiedad porque ya está hipotecada.");
-            return false;
-        }
-    }
 
     /**
      * Determina si la casilla puede ser deshipotecada.
      * 
      * @return true si es deshipotecable, false en caso contrario.
      */
-    public boolean esDeshipotecable() {
+    public boolean esDesHipotecable() {
         if (estaHipotecada) {
             this.estaHipotecada = false;
             return true;

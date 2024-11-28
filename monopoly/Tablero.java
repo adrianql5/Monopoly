@@ -166,19 +166,54 @@ public class Tablero {
         else return null;
     }
 
+    public Propiedad getPropiedad(int posicion){
+        if(posicion<40 && posicion>-1){
+            Casilla aux =this.posiciones.get(posicion/10).get(posicion%10);
+            if(aux instanceof Propiedad){
+                return (Propiedad) aux;
+            }
+            else return null;
+        }
+        else return null;
+    }
+
     /**Método usado para buscar la casilla con el nombre pasado como argumento.
      * @param nombre Nombre de la casilla
      */
-    public Casilla encontrar_casilla(String nombre){
+    public Solar encontrar_solar(String nombre){
         int i;
         for(i=0; i<40; i++){
             if(getSolar(i).getNombre().equals(nombre)){
+                return getSolar(i);
+            }
+
+        }
+        return null;
+    }
+
+    public Propiedad encontrar_propiedad(String nombre){
+        int i;
+        for(i=0; i<40; i++){
+            if(getPropiedad(i).getNombre().equals(nombre)){
+                return getPropiedad(i);
+            }
+
+        }
+        return null;
+    }
+
+
+    public Casilla encontrar_casilla(String nombre){
+        int i;
+        for(i=0; i<40; i++){
+            if(getCasilla(i).getNombre().equals(nombre)){
                 return getCasilla(i);
             }
 
         }
         return null;
     }
+
 
     /**Método para aumentar el coste de los solares que pertenecen a la banca cuando todos dan 4 vueltas sin comprar.*/
     public void aumentarCoste(Jugador banca) {
@@ -360,16 +395,16 @@ public class Tablero {
         tabla += Valor.BARRA;   //Borde izquierdo (no equivale a una casilla)
         //Lado norte entero
         for (i=20; i<30; i++) {
-            tabla += formatoNombre(getSolar(i));
+            tabla += formatoNombre(getCasilla(i));
         }
-        tabla += formatoNombre(getSolar(30)) + "\n";   //Primera casilla del lado este
+        tabla += formatoNombre(getCasilla(30)) + "\n";   //Primera casilla del lado este
 
         //Imprimimos la TERCERA LÍNEA: parte inferior de la primera fila de casillas
         tabla += Valor.BARRA;
         for (i=20; i<30; i++) {
-            tabla += formatoFichas(getSolar(i));   //Lado norte entero
+            tabla += formatoFichas(getCasilla(i));   //Lado norte entero
         }
-        tabla += formatoFichas(getSolar(30)) + "\n";   //Primera casilla del lado este
+        tabla += formatoFichas(getCasilla(30)) + "\n";   //Primera casilla del lado este
 
         //De la LÍNEA Nº4 hasta la LÍNEA Nº20 se van imprimiendo con el siguiente FOR
         //Sobre el índice correspondiente de la casilla que toca imprimir en cada lado:
@@ -379,7 +414,7 @@ public class Tablero {
             if (i%2!=0) /**LÍNEAS IMPARES: parte superior de la fila de casillas correspondientes*/ {
 
                 tabla += Valor.BARRA;
-                tabla += formatoNombre(getSolar(20-(i-1)/2));  //Casilla de la izquierda
+                tabla += formatoNombre(getCasilla(20-(i-1)/2));  //Casilla de la izquierda
 
                 //PETADA HISTORICA
                 //Si hubiese que imprimir algo de texto en el centro del tablero se imprime
@@ -400,13 +435,13 @@ public class Tablero {
                 }
 
                 //Barra + Casilla de la derecha
-                tabla += Valor.BARRA + formatoNombre(getSolar(30+(i-1)/2)) + "\n";
+                tabla += Valor.BARRA + formatoNombre(getCasilla(30+(i-1)/2)) + "\n";
 
             }
             else /**LÍNEAS PARES: parte inferior de la fila de casillas correspondientes*/ {
 
                 tabla += Valor.BARRA;
-                tabla += formatoFichas(getSolar(21-i/2));  //Casilla de la izquierda
+                tabla += formatoFichas(getCasilla(21-i/2));  //Casilla de la izquierda
 
                 //PETADA HISTORICA
                 //Si hubiese que imprimir algo de texto en el centro del tablero se imprime
@@ -426,37 +461,37 @@ public class Tablero {
                 }
 
                 //Barra + Casilla de la derecha
-                tabla += Valor.BARRA + formatoFichas(getSolar(29+i/2)) + "\n";
+                tabla += Valor.BARRA + formatoFichas(getCasilla(29+i/2)) + "\n";
 
             }
         }
 
         //Imprimimos la LÍNEA 21: parte inferior de la penúltima fila de casillas
         tabla += Valor.BARRA;
-        tabla += formatoFichas(getSolar(11));  //Casilla de la izquierda
+        tabla += formatoFichas(getCasilla(11));  //Casilla de la izquierda
         //Añadimos los espacios del medio: EN ESTE CASO LOS ESPACIO VAN SUBRAYADOS PARA HACER DE BORDE SUPERIOR
         for(i=0;i<Valor.NCASILLAS_POR_FILA-3;i++) {
             tabla += subrayar(Valor.CASILLA_VACIA) + " ";
         }
         tabla += subrayar(Valor.CASILLA_VACIA) + Valor.BARRA;   //El espacio más a la derecha va con barra
         //Barra + Casilla de la derecha
-        tabla += formatoFichas(getSolar(39)) + "\n";
+        tabla += formatoFichas(getCasilla(39)) + "\n";
 
         //Imprimimos la LÍNEA 22: parte superior de última fila de casillas
         tabla += Valor.BARRA;
-        tabla += formatoNombre(getSolar(10));   //Primera casilla del lado oeste
+        tabla += formatoNombre(getCasilla(10));   //Primera casilla del lado oeste
         //Lado Sur entero (nótese que está al revés)
         for (i=9; i>=0; i--) {
-            tabla += formatoNombre(getSolar(i));
+            tabla += formatoNombre(getCasilla(i));
         }
         tabla += "\n";
 
         //Imprimimos la LÍNEA 23: parte inferior de la última fila de casillas
         tabla += Valor.BARRA;
-        tabla += formatoFichas(getSolar(10));   //Primera casilla del lado oeste
+        tabla += formatoFichas(getCasilla(10));   //Primera casilla del lado oeste
         //Lado Sur entero (nótese que está al revés)
         for (i=9; i>=0; i--) {
-            tabla += formatoFichas(getSolar(i));
+            tabla += formatoFichas(getCasilla(i));
         }
         tabla += "\n";
 

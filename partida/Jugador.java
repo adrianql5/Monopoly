@@ -231,7 +231,7 @@ public class Jugador {
     /**Método para eliminar una propiedad del arraylist de propiedades de jugador.
      * @param casilla Casilla a añadir
      */
-    public void eliminarPropiedad(Casilla casilla) {
+    public void eliminarPropiedad(Propiedad casilla) {
         if (propiedades.contains(casilla)) {
             this.propiedades.remove(casilla);
         }

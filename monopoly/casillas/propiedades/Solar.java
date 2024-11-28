@@ -136,5 +136,10 @@ public class Solar extends Propiedad {
         return str.toString(); // Convertir StringBuilder a String y retornarlo
     }
     
+    public void eliminarTodosLosEds() {
+        for (ArrayList<Edificio> lista : this.edificios) {
+            lista.clear();
+        }
+    }
 
 }
