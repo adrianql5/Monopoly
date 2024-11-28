@@ -7,15 +7,25 @@ import monopoly.edificios.*;
 public class Solar extends Propiedad {
     private ArrayList<ArrayList<Edificio>> edificios;
     protected Grupo grupo;
+    protected int vecesVisitadaPorDuenho;
 
     // Constructor
     public Solar(String nombre, int posicion) {
         super(nombre, posicion);
         this.grupo = null;
         this.edificios = new ArrayList<>(4);
+        this.vecesVisitadaPorDuenho = 0;
         for (int i = 0; i < 4; i++) {
             this.edificios.add(new ArrayList<>()); // Array de casas, hoteles, piscinas, pistas
         }
+    }
+
+    public void incrementarVecesVisitadaPorDueho() {
+        this.vecesVisitadaPorDuenho ++;
+    }
+
+    public int getVecesVisitadaPorDuenho() {
+        return vecesVisitadaPorDuenho;
     }
 
     public ArrayList<ArrayList<Edificio>> getEdificios(){

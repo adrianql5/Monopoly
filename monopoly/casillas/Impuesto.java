@@ -2,7 +2,8 @@ package monopoly.casillas;
 
 import static java.lang.Math.*;
 
-import monopoly.Valor;
+import monopoly.*;
+import partida.*;
 
 public class Impuesto extends Casilla{
     private float impuesto;
@@ -15,18 +16,22 @@ public class Impuesto extends Casilla{
         this.impuesto=calcularImpuesto();
     }
 
+    public float getImpuesto(){
+        return this.impuesto;
+    }
+
     public float calcularImpuesto(){
         switch (posicion) {
             case 38:
                 return Valor.SUMA_VUELTA;
             
-            case 4: 
+            case 4:
                 return Valor.SUMA_VUELTA/2;
         
             default:
                 return 0.0f;
         }
     }
-    
+
 
 }

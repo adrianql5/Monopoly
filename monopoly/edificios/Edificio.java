@@ -16,7 +16,7 @@ public abstract class Edificio {
     protected String id; // Identificador único del edificio
     protected Solar solar; // Solar asociado al edificio
     protected float coste; // Coste del edificio
-
+    protected float valorVenta;
     // =========================================
     // CONSTRUCTOR
     // =========================================
@@ -29,6 +29,7 @@ public abstract class Edificio {
         this.solar = solar;
         this.id = generarID();
         asignarValores();
+        this.valorVenta=this.coste * 0.5f;
     }
     
     //hacerlo abstracto

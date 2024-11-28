@@ -1,16 +1,17 @@
 package partida;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import monopoly.*;
 import partida.*;
 
-import monopoly.edificios.*;
-import monopoly.casillas.propiedades.*;
-import monopoly.casillas.*;
-
 import partida.avatares.*;
 
+import monopoly.casillas.*;
+import monopoly.casillas.propiedades.*;
+import monopoly.casillas.acciones.*;
+import monopoly.cartas.*;
+import monopoly.edificios.*;
 
 
 public class Jugador {
@@ -23,7 +24,7 @@ public class Jugador {
     private boolean enCarcel; //Será true si el jugador está en la carcel
     private int tiradasCarcel; //Cuenta las tiradas sin éxito que ha hecho el jugador para intentar salir.
     private int vueltas; //Cuenta las vueltas dadas al tablero.
-    private ArrayList<Casilla> propiedades; //Propiedades que posee el jugador.
+    private ArrayList<Propiedad> propiedades; //Propiedades que posee el jugador.
     private int vueltas_sin_comprar;
     private int bloqueado;
     private ArrayList<Trato> tratosPendientes; // Lista de tratos pendientes propuestos a este jugador
@@ -49,7 +50,7 @@ public class Jugador {
         this.enCarcel=false;
         this.tiradasCarcel=0;
         this.vueltas=0;
-        this.propiedades=new ArrayList<Casilla>();
+        this.propiedades=new ArrayList<Propiedad>();
         this.vueltas_sin_comprar=0;
         this.bloqueado=0;
         // No inicializamos ni las estadísticas ni los movimientos pendientes pa la banca!
@@ -74,7 +75,7 @@ public class Jugador {
         this.tiradasCarcel = 0;
         this.vueltas = 0;
         this.avatar.setJugador(this);
-        this.propiedades = new ArrayList<Casilla>();
+        this.propiedades = new ArrayList<Propiedad>();
         this.vueltas_sin_comprar=0;
         this.bloqueado=0;
         this.jugadorConElQueEstanEnDeuda=null;
@@ -186,6 +187,16 @@ public class Jugador {
 
     // GETTERS Y SETTERS------------------------------------------------------------------------------------------------
 
+    public ArrayList<Solar> getSolares(){
+        ArrayList<Solar> solares =new ArrayList<>();
+        for(Propiedad propiedad : this.propiedades){
+            if(propiedad instanceof Solar){
+                solares.add((Solar)propiedad);
+            }
+        }
+        return solares;
+    }
+
     public void setDeudaConJugador(Jugador jugador){
         this.jugadorConElQueEstanEnDeuda=jugador;
     }
@@ -211,9 +222,9 @@ public class Jugador {
     /**Método para añadir una propiedad al jugador.
      * @param casilla Casilla a añadir
      */
-    public void anhadirPropiedad(Casilla casilla) {
-        if (!propiedades.contains(casilla)) {
-            this.propiedades.add(casilla);
+    public void anhadirPropiedad(Propiedad propiedad) {
+        if (!propiedades.contains(propiedad)) {
+            this.propiedades.add(propiedad);
         }
     }
     
@@ -349,7 +360,7 @@ public class Jugador {
 
     public int getVueltas(){return this.vueltas;}
 
-    public ArrayList<Casilla> getPropiedades() {
+    public ArrayList<Propiedad> getPropiedades() {
         return propiedades;
     }
 

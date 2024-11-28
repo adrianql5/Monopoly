@@ -13,7 +13,7 @@ public  abstract class Propiedad extends Casilla {
     protected float deshipoteca;
     protected float alquiler;
     protected float valorDeshipoteca;
-    protected int vecesVisitadaPorDuenho;
+    
     protected Jugador duenho;
     
     // ==========================
@@ -34,7 +34,7 @@ public  abstract class Propiedad extends Casilla {
         this.estaHipotecada = false;
         
         this.dineroRecaudado = 0;
-        this.vecesVisitadaPorDuenho = 0;
+        
         
         this.duenho = new Jugador(); //les meto la banca como dueño
         
@@ -51,6 +51,8 @@ public  abstract class Propiedad extends Casilla {
 
     public abstract float calcularAlquiler();
     
+
+
     // ==========================
     // SECCIÓN: GETTERS Y SETTERS
     // ==========================
@@ -64,14 +66,8 @@ public  abstract class Propiedad extends Casilla {
         this.valor +=suma;
     }
 
-
-    public int getVecesVisitadaPorDuenho() {
-        return vecesVisitadaPorDuenho;
-    }
     
-    public void sumarVecesVisitadaPorDuenho(int valor) {
-        this.vecesVisitadaPorDuenho += valor;
-    }
+    
 
     public Jugador getDuenho() {
         return duenho;
