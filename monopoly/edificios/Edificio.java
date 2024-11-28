@@ -66,7 +66,7 @@ public abstract class Edificio {
     // =========================================
     protected abstract float calcularCoste(float valorGrupo);
         
-    /**
+        /**
      * Devuelve la información detallada del edificio en formato JSON.
      *
      * @return Cadena con la información del edificio.

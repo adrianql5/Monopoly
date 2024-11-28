@@ -79,6 +79,6 @@ public class Hotel extends Edificio {
 
     @Override
     protected float calcularCoste(float valorGrupo) {
-        return valorGrupo * 0.60f; 
+        return valorGrupo * 0.60f;
     }
 }

@@ -1,14 +1,17 @@
 package monopoly;
 
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.Iterator;
-import java.util.List;
-
+import java.util.*;
 
 import partida.*;
+import partida.avatares.*;
 
-import java.util.HashMap;
+import monopoly.*;
+import monopoly.cartas.*;
+import monopoly.casillas.*;
+import monopoly.casillas.acciones.*;
+import monopoly.casillas.propiedades.*;
+import monopoly.edificios.*;
+
 
 public class Juego {
     //Atributos
@@ -878,7 +881,7 @@ public class Juego {
         Jugador duenhoCasilla = casilla.getDuenho();
         float impuestoCasilla = casilla.getImpuesto();
         //sumamos en uno las veces visitadas
-        casilla.sumarVecesVisitada(1);
+        casilla.incrementarVecesVisitada();
 
         if (jugadorActual != duenhoCasilla) {
             switch (casilla.getTipo()) {

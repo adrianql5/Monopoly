@@ -105,7 +105,7 @@ public class Jugador {
         cobrador.getEstadisticas().sumarCobroDeAlquileres(alquiler);
 
         // Modificamos los atributos de la casilla
-        this.getAvatar().getLugar().sumarDinero_recaudado(alquiler);
+        this.getAvatar().getLugar().sumarDineroRecaudado(alquiler);
 
     }
 
@@ -376,7 +376,7 @@ public class Jugador {
 
     
     //SECCIÓN QUE DEVUELVE INFORMACIÓN DE JUGADOR
-    //Método que devuelve la información de un jugador
+    //Método que devuelve la información de un jugador da muchísmo asco pero me da pereza pensar, arreglar algo hecho por miguel se me complica(miguel tqm)
     public void infoJugador() {
         System.out.println("{");
         // Imprimir nombre, avatar y fortuna con separador de miles para la fortuna
@@ -401,25 +401,61 @@ public class Jugador {
             // Imprimir edificios
             System.out.println("\tEdificios: {");
             for (int i = 0; i < this.getPropiedades().size(); i++) {
-                Propiedad propiedad = this.getPropiedades().get(i);
-                
-                if (propiedad.getNumeroEdificios() > 0) {
-                    System.out.println("\t\t" + propiedad.getNombre() + ": {");
-
-                    // Mostrar edificios de la propiedad
-                    ArrayList<Edificio> edificios = propiedad.getEdificios();
-                    if (!edificios.isEmpty()) {
-                        System.out.print("\t\t\tEdificios: [");
-                        for (int j = 0; j < edificios.size(); j++) {
-                            System.out.print(edificios.get(j).getId());
-                            if (j < edificios.size() - 1) {
-                                System.out.print(", "); // Añade coma a todo menos a la última
+                if(this.getPropiedades().get(i) instanceof Solar){
+                    Solar solar = (Solar)this.getPropiedades().get(i);
+                    if (solar.getNumeroEdificios() > 0) {
+                        System.out.println("\t\t" + solar.getNombre() + ": {");
+                        // Mostrar edificios de la propiedad
+                        ArrayList<Edificio> edificios = solar.getCasas();
+                        if (!edificios.isEmpty()) {
+                            System.out.print("\t\t\tEdificios: [");
+                            for (int j = 0; j < edificios.size(); j++) {
+                                System.out.print(edificios.get(j).getId());
+                                if (j < edificios.size() - 1) {
+                                    System.out.print(", "); // Añade coma a todo menos a la última
+                                }
                             }
+                            System.out.println("]");
                         }
-                        System.out.println("]");
-                    }
 
-                    System.out.println("\t\t}");
+                        ArrayList<Edificio> edificios2 = solar.getHoteles();
+                        if (!edificios2.isEmpty()) {
+                            System.out.print("\t\t\tEdificios: [");
+                            for (int j = 0; j < edificios2.size(); j++) {
+                                System.out.print(edificios2.get(j).getId());
+                                if (j < edificios2.size() - 1) {
+                                    System.out.print(", "); // Añade coma a todo menos a la última
+                                }
+                            }
+                            System.out.println("]");
+                        }
+
+                        ArrayList<Edificio> edificios3 = solar.getPiscinas();
+                        if (!edificios3.isEmpty()) {
+                            System.out.print("\t\t\tEdificios: [");
+                            for (int j = 0; j < edificios3.size(); j++) {
+                                System.out.print(edificios3.get(j).getId());
+                                if (j < edificios3.size() - 1) {
+                                    System.out.print(", "); // Añade coma a todo menos a la última
+                                }
+                            }
+                            System.out.println("]");
+                        }
+
+                        ArrayList<Edificio> edificios4 = solar.getPistasDeDeporte();
+                        if (!edificios4.isEmpty()) {
+                            System.out.print("\t\t\tEdificios: [");
+                            for (int j = 0; j < edificios4.size(); j++) {
+                                System.out.print(edificios4.get(j).getId());
+                                if (j < edificios4.size() - 1) {
+                                    System.out.print(", "); // Añade coma a todo menos a la última
+                                }
+                            }
+                            System.out.println("]");
+                        }
+
+                        System.out.println("\t\t}");
+                    }
                 }
             }
             System.out.println("\t}");

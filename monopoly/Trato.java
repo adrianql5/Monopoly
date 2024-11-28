@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import monopoly.casillas.Casilla;
+import monopoly.casillas.propiedades.Propiedad;
 
 
 public class Trato {
@@ -88,18 +89,23 @@ public class Trato {
             return false;
         }
         for (Casilla propiedad : propiedadesOfrecidas) {
-            if (!propiedad.getDuenho().getNombre().equals( this.jugadorPropone.getNombre()) ) {
-                System.out.printf("El trato no puede ser aceptado: %s no pertenece a %s.\n",
-                        propiedad.getNombre(), jugadorPropone.getNombre());
-                return false;
+            if(propiedad instanceof Propiedad){
+
+                if (!((Propiedad)propiedad).getDuenho().getNombre().equals( this.jugadorPropone.getNombre()) ) {
+                    System.out.printf("El trato no puede ser aceptado: %s no pertenece a %s.\n",
+                            propiedad.getNombre(), jugadorPropone.getNombre());
+                    return false;
+                }
             }
         }
         // Verificar propiedades demandadas
         for (Casilla propiedad : propiedadesDemandadas) {
-            if (!propiedad.getDuenho().getNombre().equals( this.jugadorRecibe.getNombre()) ) {
-                System.out.printf("El trato no puede ser aceptado: %s no pertenece a %s.\n",
-                        propiedad.getNombre(), jugadorRecibe.getNombre());
-                return false;
+            if(propiedad instanceof Propiedad){
+                if (!((Propiedad)propiedad).getDuenho().getNombre().equals( this.jugadorRecibe.getNombre()) ) {
+                    System.out.printf("El trato no puede ser aceptado: %s no pertenece a %s.\n",
+                            propiedad.getNombre(), jugadorRecibe.getNombre());
+                    return false;
+                }
             }
         }
         // Transferencia de propiedades y dinero
