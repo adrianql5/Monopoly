@@ -1150,8 +1150,8 @@ public class Juego {
         Casilla casilla_aux;
         for (int i = 0; i < 40; i++) {
             casilla_aux = tablero.getCasilla(i);
-            if (casilla_aux.esTipoComprable() && casilla_aux.getDuenho() == banca) {
-                System.out.printf("%s - Precio: %,.0f€\n", casilla_aux.getNombre(), casilla_aux.getValor());
+            if (casilla_aux instanceof Propiedad && ((Propiedad)casilla_aux).getDuenho() == banca) {
+                System.out.printf("%s - Precio: %,.0f€\n", casilla_aux.getNombre(), ((Propiedad)casilla_aux).getValor());
             }
         }
     }
@@ -1168,7 +1168,6 @@ public class Juego {
      */
     private void comprar(String nombre) {
         Casilla c=tablero.encontrar_casilla(nombre);
-
         // Comprobamos si la casilla existe y ya se ha tirado (se hacen otras comprobaciones dentro de comprarCasilla)
         if(c != null) {
             if (this.tirado || lanzamientos > 0) {
