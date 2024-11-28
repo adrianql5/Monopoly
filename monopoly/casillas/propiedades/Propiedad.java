@@ -3,7 +3,7 @@ package monopoly.casillas.propiedades;
 import monopoly.Valor;
 import monopoly.casillas.Casilla;
 import partida.Jugador;
-import monopoly.*;
+
 
 public  abstract class Propiedad extends Casilla {
     // Atributos
@@ -15,7 +15,7 @@ public  abstract class Propiedad extends Casilla {
     protected float valorDeshipoteca;
     protected int vecesVisitadaPorDuenho;
     protected Jugador duenho;
-
+    
     // ==========================
     // SECCIÓN: CONSTRUCTORES
     // ==========================
@@ -25,43 +25,50 @@ public  abstract class Propiedad extends Casilla {
      * @param nombre   Nombre de la casilla.
      * @param posicion Posición en el tablero.
      */
-    public Propiedad(String nombre, int posicion, float valor) {
+    public Propiedad(String nombre, int posicion) {
         super(nombre, posicion); // Llama al constructor de la superclase Casilla
-        this.valor = valor;
+        this.valor = calcularValor();
         
         this.hipoteca = valor * Valor.FACTOR_HIPOTECA;
         this.deshipoteca = valor * Valor.FACTOR_DESHIPOTECA;
         this.estaHipotecada = false;
-
+        
         this.dineroRecaudado = 0;
         this.vecesVisitadaPorDuenho = 0;
         
         this.duenho = new Jugador(); //les meto la banca como dueño
-
+        
         this.alquiler= calcularAlquiler();
-
-        this.grupo=null;
     }
+    
+    
+    // ===========================
+    // SECCIÓN: MÉTODOS ABSTRACTOS
+    // ===========================
+    
+    //el tio la llama alquiler, es abstracto porque cada subclase lo calcula de forma difetente
+    public abstract float calcularValor();
 
+    public abstract float calcularAlquiler();
+    
+    // ==========================
+    // SECCIÓN: GETTERS Y SETTERS
+    // ==========================
     /**Método para añadir valor a una casilla. Utilidad:
      * (1) Sumar valor a la casilla de parking.
      * (2) Sumar valor a las casillas de solar al no comprarlas tras cuatro vueltas de todos los jugadores.
      * @param suma Cantidad a añadir al valor de la casilla
      */
+
     public void sumarValor(float suma) {
         this.valor +=suma;
     }
 
 
-    public abstract float calcularAlquiler();
-
-    // ==========================
-    // SECCIÓN: GETTERS Y SETTERS
-    // ==========================
     public int getVecesVisitadaPorDuenho() {
         return vecesVisitadaPorDuenho;
     }
-
+    
     public void sumarVecesVisitadaPorDuenho(int valor) {
         this.vecesVisitadaPorDuenho += valor;
     }
@@ -106,6 +113,7 @@ public  abstract class Propiedad extends Casilla {
         this.estaHipotecada = false;
     }
 
+    //El tio la llama  boolean perteneceAjugador(Jugador jugador)
     public boolean esDuenho(Jugador jugador) {
         return this.duenho == jugador;
     }
@@ -119,6 +127,7 @@ public  abstract class Propiedad extends Casilla {
      * @param solicitante Jugador que solicita la compra de la casilla.
      * @param banca       La banca es el dueño de las casillas no compradas aún.
      */
+    //otra de las funciones que pide el pavo
     public void comprarCasilla(Jugador solicitante, Jugador banca) {
         if (solicitante.getAvatar().getLugar() == this) {
             if (this.duenho == banca) {

@@ -1,75 +1,111 @@
 package monopoly.edificios;
 
 import monopoly.Valor;
+import monopoly.casillas.propiedades.Solar;
 
-import partida.Jugador;
-import monopoly.Grupo;
-import monopoly.casillas.Casilla;
 import java.util.Map;
 
+/**
+ * Clase abstracta que representa un edificio en el tablero de Monopoly.
+ */
 public abstract class Edificio {
-    private String id;
-    private String tipo;
-    private Jugador duenho;
-    private Casilla casilla;
-    private float coste;
-    private Grupo grupo;
 
-    public Edificio(Casilla lugar) {
-        this.id = lugar.generarID(tipo);
-        this.casilla = lugar;
-        this.duenho = casilla.getDuenho();
-        this.grupo = casilla.getGrupo();
+    // =========================================
+    // ATRIBUTOS
+    // =========================================
+    protected String id; // Identificador único del edificio
+    protected Solar solar; // Solar asociado al edificio
+    protected float coste; // Coste del edificio
+
+    // =========================================
+    // CONSTRUCTOR
+    // =========================================
+    /**
+     * Constructor para inicializar un edificio en un solar específico.
+     *
+     * @param solar Solar donde se construirá el edificio.
+     */
+    public Edificio(Solar solar) {
+        this.solar = solar;
+        this.id = generarID();
         asignarValores();
     }
+    
+    //hacerlo abstracto
+    // Genera un ID único basado en el tipo y los IDs ya presentes en el subarray de ese tipo
+    protected abstract String generarID();
 
+
+    // =========================================
+    // MÉTODOS PRINCIPALES
+    // =========================================
+    /**
+     * Asigna los valores iniciales al edificio según el grupo al que pertenece el solar.
+     */
     public void asignarValores() {
-        String grupo = this.casilla.getGrupo().getColorGrupo();
-        int n = this.casilla.getGrupo().getNumCasillasGrupo();
+        String grupo = this.solar.getGrupo().getColorGrupo();
+        int numCasillasGrupo = this.solar.getGrupo().getNumCasillasGrupo();
 
         Map<String, Float> grupoValores = Map.of(
-            "WHITE", Valor.GRUPO1 / n,
-            "CYAN", Valor.GRUPO2 / n,
-            "BLUE", Valor.GRUPO3 / n,
-            "YELLOW", Valor.GRUPO4 / n,
-            "BLACK", Valor.GRUPO5 / n,
-            "GREEN", Valor.GRUPO6 / n,
-            "RED", Valor.GRUPO7 / n,
-            "PURPLE", Valor.GRUPO8 / n
+            "WHITE", Valor.GRUPO1 / numCasillasGrupo,
+            "CYAN", Valor.GRUPO2 / numCasillasGrupo,
+            "BLUE", Valor.GRUPO3 / numCasillasGrupo,
+            "YELLOW", Valor.GRUPO4 / numCasillasGrupo,
+            "BLACK", Valor.GRUPO5 / numCasillasGrupo,
+            "GREEN", Valor.GRUPO6 / numCasillasGrupo,
+            "RED", Valor.GRUPO7 / numCasillasGrupo,
+            "PURPLE", Valor.GRUPO8 / numCasillasGrupo
         );
 
         Float valorInicialSolar = grupoValores.get(grupo);
-        if (valorInicialSolar != null) {
-            this.coste = calcularCoste(valorInicialSolar);
-        } else {
-            this.coste = 0;
-        }
+        this.coste = (valorInicialSolar != null) ? calcularCoste(valorInicialSolar) : 0;
     }
 
-    // Método abstracto que cada subclase implementará de forma distinta
+    // =========================================
+    // MÉTODOS ABSTRACTOS
+    // =========================================
     protected abstract float calcularCoste(float valorGrupo);
-
+        
+    /**
+     * Devuelve la información detallada del edificio en formato JSON.
+     *
+     * @return Cadena con la información del edificio.
+     */
     public String infoEdificio() {
         return "{\n" +
-                "\tid: " + this.id + ",\n" +
-                "\tpropietario: " + (this.duenho != null ? this.duenho.getNombre() : "N/A") + ",\n" +
-                "\tcasilla: " + this.casilla.getNombre() + ",\n" +
-                "\tgrupo: " + this.grupo.getColorGrupo() + ",\n" +
+                "\tid: \"" + this.id + "\",\n" +
+                "\tpropietario: \"" + (this.solar.getDuenho() != null ? this.solar.getDuenho().getNombre() : "N/A") + "\",\n" +
+                "\tsolar: \"" + this.solar.getNombre() + "\",\n" +
+                "\tgrupo: \"" + this.solar.getGrupo().getColorGrupo() + "\",\n" +
                 "\tcoste: " + this.coste + "\n" +
-                "},\n";
+                "}";
     }
 
-    // Getters y Setters
-    public String getId() { return this.id; }
-    public void setId(String id) { this.id = id; }
-    public Jugador getDuenho() { return this.duenho; }
-    public void setDuenho(Jugador duenho) { this.duenho = duenho; }
-    public Casilla getCasilla() { return this.casilla; }
-    public void setCasilla(Casilla casilla) { this.casilla = casilla; }
-    public Grupo getGrupo() { return this.grupo; }
-    public void setGrupo(Grupo grupo) { this.grupo = grupo; }
-    public float getCoste() { return this.coste; }
-    public void setCoste(float coste) { this.coste = coste; }
-    public String getTipo() { return this.tipo; }
-    public void setTipo(String tipo) { this.tipo = tipo; }
+    // =========================================
+    // GETTERS Y SETTERS
+    // =========================================
+    public String getId() {
+        return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Solar getSolar() {
+        return this.solar;
+    }
+
+    public void setSolar(Solar solar) {
+        this.solar = solar;
+    }
+
+    public float getCoste() {
+        return this.coste;
+    }
+
+    public void setCoste(float coste) {
+        this.coste = coste;
+    }
 }
+

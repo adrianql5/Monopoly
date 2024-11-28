@@ -1,13 +1,15 @@
 package monopoly.casillas.propiedades;
 
 import monopoly.Valor;
-import partida.Jugador;
 
 public class Servicio extends Propiedad{
 
-    public Servicio(String nombre,int posicion, float valor) {
-        super(nombre,posicion, valor);
-        this.valor=valor;
+    public Servicio(String nombre,int posicion) {
+        super(nombre,posicion);
+    }
+
+    public float calcularValor(){
+        return Valor.SERVICIO;
     }
 
     public float calcularAlquiler(){

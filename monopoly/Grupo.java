@@ -53,6 +53,58 @@ public class Grupo {
     // ====================
 
     /**
+     * Cuenta el total de casas en el grupo.
+     * 
+     * @return Número total de casas en el grupo.
+     */
+    public int contarCasasGrupo() {
+        int contador = 0;
+        for (Solar solar : this.miembros) {
+            contador += (solar.getCasas() != null ? solar.getCasas().size() : 0);
+        }
+        return contador;
+    }
+
+    /**
+     * Cuenta el total de hoteles en el grupo.
+     * 
+     * @return Número total de hoteles en el grupo.
+     */
+    public int contarHotelesGrupo() {
+        int contador = 0;
+        for (Solar solar : this.miembros) {
+            contador += (solar.getHoteles() != null ? solar.getHoteles().size() : 0);
+        }
+        return contador;
+    }
+
+    /**
+     * Cuenta el total de piscinas en el grupo.
+     * 
+     * @return Número total de piscinas en el grupo.
+     */
+    public int contarPiscinasGrupo() {
+        int contador = 0;
+        for (Solar solar : this.miembros) {
+            contador += (solar.getPiscinas() != null ? solar.getPiscinas().size() : 0);
+        }
+        return contador;
+    }
+
+    /**
+     * Cuenta el total de pistas de deporte en el grupo.
+     * 
+     * @return Número total de pistas de deporte en el grupo.
+     */
+    public int contarPistasGrupo() {
+        int contador = 0;
+        for (Solar solar : this.miembros) {
+            contador += (solar.getPistasDeDeporte() != null ? solar.getPistasDeDeporte().size() : 0);
+        }
+        return contador;
+    }
+
+    /**
      * Verifica si alguna propiedad del grupo está hipotecada.
      * 
      * @return {@code true} si alguna solar está hipotecada; {@code false} en caso
