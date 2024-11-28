@@ -40,7 +40,6 @@ public  abstract class Propiedad extends Casilla {
         
         
         this.duenho = new Jugador(); //les meto la banca como dueño
-        
         this.alquiler= calcularAlquiler();
     }
     

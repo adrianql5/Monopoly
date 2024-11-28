@@ -880,7 +880,7 @@ public class Juego {
         if(casilla instanceof Propiedad){
             Jugador duenhoCasilla = ((Propiedad)casilla).getDuenho();
             if(duenhoCasilla!=jugadorActual){
-                if (duenhoCasilla != this.banca) {
+                if (duenhoCasilla.equals(this.banca)) {
                     if (!((Propiedad)casilla).estaHipotecada()) {
                         if(casilla instanceof Solar){
                             float precio = ((Solar)casilla).evaluarAlquiler();
