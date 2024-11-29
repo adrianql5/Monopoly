@@ -83,7 +83,7 @@ public abstract class Casilla {
      * Método abstracto para obtener información específica de la casilla.
      * Este método debe ser implementado por las subclases.
      */
-    // public abstract String infoCasilla();
+    public abstract String infoCasilla();
 
 
 

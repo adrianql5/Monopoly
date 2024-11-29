@@ -28,4 +28,18 @@ public class Servicio extends Propiedad{
         
         return totalAlquiler;
     }
+
+    public String infoCasilla(){
+        String info = "{\n";
+        info += "\tTipo: Servicio\n";
+        info += "\tDueño: " + this.duenho.getNombre() + "\n";
+        info += String.format("\tPrecio: %,.0f€\n", this.valor);
+        info += String.format("\tPago por caer: dados * x * %,.0f€\n", this.alquiler);
+        info += "\t\t(x=4 si se posee una casilla de este tipo, x=10 si se poseen 2)\n";
+        info += String.format("\tHipoteca: %,.0f€\n", this.hipoteca);
+        info += jugadoresEnCasilla();
+        info += "}\n";
+        return info;
+    }
+
 }

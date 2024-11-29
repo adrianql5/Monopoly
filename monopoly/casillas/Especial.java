@@ -25,5 +25,15 @@ public class Especial extends Casilla{
     public void resetBote(){
         this.bote=0;
     }
+
+    public String infoCasilla(){
+        String info = "{\n";
+        info += "\tTipo: Especial\n";
+        info += String.format("\tPago por vuelta: %,.0f€\n", Valor.SUMA_VUELTA);
+        info += jugadoresEnCasilla();
+        info += "}\n";
+        return info;
+    }
+
 }
 

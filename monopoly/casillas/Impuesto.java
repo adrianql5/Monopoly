@@ -33,5 +33,12 @@ public class Impuesto extends Casilla{
         }
     }
 
-
+    public String infoCasilla(){
+        String info = "{\n";
+        info += "\tTipo: Impuestos\n";
+        info += String.format("\tA pagar: %,.0f€\n", this.impuesto);
+        info += jugadoresEnCasilla();
+        info += "}\n";
+        return info;
+    }
 }

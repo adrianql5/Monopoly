@@ -202,6 +202,9 @@ public  abstract class Propiedad extends Casilla {
             return false;
         }
     }
+
+
+
 }
 
 

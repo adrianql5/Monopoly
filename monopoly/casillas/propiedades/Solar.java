@@ -146,4 +146,37 @@ public class Solar extends Propiedad {
         this.getCasas().clear();
     }
 
+    public String infoCasilla(){
+        String info = "{\n";
+        info += "\tTipo: Solar\n";
+        info += "\tColor del grupo: " + this.grupo.getColorGrupo() + "\n";
+        info += "\tDueño: " + this.duenho.getNombre() + "\n";
+        info += String.format("\tPrecio: %,.0f€\n", this.valor);
+        info += String.format("\tAlquiler: %,.0f€\n", this.alquiler);
+        info += String.format("\tHipoteca: %,.0f€\n", this.hipoteca);
+        info += String.format("\tPrecio casa: %,.0f€\n", this.valor * 0.60f);
+        info += String.format("\tPrecio hotel: %,.0f€\n", this.valor * 0.60f);
+        info += String.format("\tPrecio piscina: %,.0f€\n", this.valor * 0.40f);
+        info += String.format("\tPrecio pista de deporte: %,.0f€\n", this.valor * 1.25f);
+        info += String.format("\tAlquiler de 1 casa: %,.0f€\n", this.alquiler * 5f);
+        info += String.format("\tAlquiler de 2 casas: %,.0f€\n", this.alquiler * 15f);
+        info += String.format("\tAlquiler de 3 casas: %,.0f€\n", this.alquiler * 35f);
+        info += String.format("\tAlquiler de 4 casas: %,.0f€\n", this.alquiler * 50f);
+        info += String.format("\tAlquiler hotel: %,.0f€\n", this.alquiler * 70f);
+        info += String.format("\tAlquiler piscina: %,.0f€\n", this.alquiler * 25f);
+        info += String.format("\tAlquiler pista de deporte: %,.0f€\n", this.alquiler * 25f);
+                
+        info += "\tEdificios: [";
+        for(ArrayList<Edificio> tipo: edificios){
+            for(Edificio ed: tipo){
+                info+= String.format(ed.getId())+" ";
+            }
+        }
+
+        info+="]\n";
+        info += jugadoresEnCasilla();
+        info += "}\n";
+        return info;
+    }
+
 }

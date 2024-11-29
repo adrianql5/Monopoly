@@ -1201,9 +1201,8 @@ public class Juego {
      * @param nombre_casilla Nombre de la casilla a describir
      */
     
-    /*
+    
     private void descCasilla(String nombre_casilla) {
-
         // Hay dos casos para los que no podemos llamar a infoCasilla: Carcel y Parking
         switch (nombre_casilla) {
             case "Carcel":
@@ -1219,7 +1218,7 @@ public class Juego {
             // ya que la fortuna de la banca es un valor que no se puede acceder desde la clase casilla
             case "Parking":
                 // Imprimir el bote
-                System.out.printf("{\n\tBote acumulado: %,.0f€\n", this.tablero.getCasilla(20).getValor());
+                System.out.printf("{\n\tBote acumulado: %,.0f€\n", ((Especial)this.tablero.getCasilla(20)).getBote());
 
                 // Imprimimos los jugadores de la casilla si los hubiera
                 // Línea jodida por como está implementado jugadoresEnCasilla pero confíen en el proceso
@@ -1244,7 +1243,7 @@ public class Juego {
                 }
         }
     }
-    */
+    
 
     /**Modificación del método jugadoresEnCasilla (Casilla.java) para la casilla Cárcel,
      * ya que se deben imprimir los turnos que llevan para salir o si están de visita.
