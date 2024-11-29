@@ -880,7 +880,7 @@ public class Juego {
         if(casilla instanceof Propiedad){
             Jugador duenhoCasilla = ((Propiedad)casilla).getDuenho();
             if(duenhoCasilla!=jugadorActual){
-                if (duenhoCasilla.equals(this.banca)) {
+                if (!duenhoCasilla.getNombre().equals("banca")) {
                     if (!((Propiedad)casilla).estaHipotecada()) {
                         if(casilla instanceof Solar){
                             float precio = ((Solar)casilla).evaluarAlquiler();
@@ -1150,7 +1150,7 @@ public class Juego {
         Casilla casilla_aux;
         for (int i = 0; i < 40; i++) {
             casilla_aux = tablero.getCasilla(i);
-            if (casilla_aux instanceof Propiedad && ((Propiedad)casilla_aux).getDuenho() == banca) {
+            if (casilla_aux instanceof Propiedad && ((Propiedad)casilla_aux).getDuenho().getNombre().equals("banca")) {
                 System.out.printf("%s - Precio: %,.0f€\n", casilla_aux.getNombre(), ((Propiedad)casilla_aux).getValor());
             }
         }
@@ -1173,7 +1173,7 @@ public class Juego {
             if (this.tirado || lanzamientos > 0) {
                 //le paso el jugador que tiene el turno y eljugador 0 (la banca)
                 Jugador jugador = obtenerTurno();
-                if(c.getDuenho() == banca && jugador.getAvatar().getLugar()==c &&
+                if(c.getDuenho().equals(banca) && jugador.getAvatar().getLugar().equals(c) &&
                         (c.getValor() <= jugador.getFortuna())) {
                     reiniciarVueltasSinCompras();
                 }
@@ -1914,7 +1914,7 @@ public class Juego {
                                             solar.anhadirEdificio(hotel); // Añadir el edificio a la casilla
                                             jugador.sumarGastos(hotel.getCoste()); // Restar el coste del edificio
                                             jugador.sumarFortuna(-hotel.getCoste()); // Reducir la fortuna del jugador
-            
+                                            solar.eliminarCasasDeCasilla();
                                             System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
                                                     hotel.getId() + " por " + hotel.getCoste());
                                         }

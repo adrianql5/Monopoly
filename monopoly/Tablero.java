@@ -183,8 +183,10 @@ public class Tablero {
     public Solar encontrar_solar(String nombre){
         int i;
         for(i=0; i<40; i++){
-            if(getSolar(i).getNombre().equals(nombre)){
-                return getSolar(i);
+            if(getSolar(i)!=null){
+                if(getSolar(i).getNombre().equals(nombre)){
+                    return getSolar(i);
+                }
             }
 
         }
@@ -194,8 +196,10 @@ public class Tablero {
     public Propiedad encontrar_propiedad(String nombre){
         int i;
         for(i=0; i<40; i++){
-            if(getPropiedad(i).getNombre().equals(nombre)){
-                return getPropiedad(i);
+            if(getPropiedad(i)!=null){
+                if(getPropiedad(i).getNombre().equals(nombre)){
+                    return getPropiedad(i);
+                }
             }
 
         }

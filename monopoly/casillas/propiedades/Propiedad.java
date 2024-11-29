@@ -30,6 +30,7 @@ public  abstract class Propiedad extends Casilla {
      */
     public Propiedad(String nombre, int posicion) {
         super(nombre, posicion); // Llama al constructor de la superclase Casilla
+        this.duenho = new Jugador();
         this.valor = calcularValor();
         
         this.hipoteca = valor * Valor.FACTOR_HIPOTECA;
@@ -38,8 +39,6 @@ public  abstract class Propiedad extends Casilla {
         
         this.dineroRecaudado = 0;
         
-        
-        this.duenho = new Jugador(); //les meto la banca como dueño
         this.alquiler= calcularAlquiler();
     }
     
@@ -72,9 +71,6 @@ public  abstract class Propiedad extends Casilla {
     public void sumarValor(float suma) {
         this.valor +=suma;
     }
-
-    
-    
 
     public Jugador getDuenho() {
         return duenho;
@@ -118,12 +114,12 @@ public  abstract class Propiedad extends Casilla {
 
     //El tio la llama  boolean perteneceAjugador(Jugador jugador)
     public boolean esDuenho(Jugador jugador) {
-        return this.duenho == jugador;
+        return this.duenho.equals(jugador);
     }
 
-    // ==========================
+    // ============================
     // SECCIÓN: MÉTODOS PRINCIPALES
-    // ==========================
+    // ============================
     /**
      * Método usado para comprar una casilla determinada.
      * 
@@ -132,8 +128,8 @@ public  abstract class Propiedad extends Casilla {
      */
     //otra de las funciones que pide el pavo
     public void comprarCasilla(Jugador solicitante, Jugador banca) {
-        if (solicitante.getAvatar().getLugar() == this) {
-            if (this.duenho == banca) {
+        if (solicitante.getAvatar().getLugar().equals(this)) {
+            if(this.duenho.getNombre().equals("banca")) {
                 if (solicitante.getFortuna() >= this.valor) {
                     // Realiza la compra
                     solicitante.restarFortuna(this.valor);
@@ -206,18 +202,6 @@ public  abstract class Propiedad extends Casilla {
             return false;
         }
     }
-
-    // Nota: creo q esta no es la implementación que pedían pero de todos modos no lo usamos
-    /** Método para mostrar información de una casilla en venta.
-     * Valor devuelto: texto con esa información.
-     */
-    public String casEnVenta() {
-        if(this.duenho==null || this.duenho.getNombre().equals("Banca")){
-            return "La casilla" + this.nombre + "está en venta por un precio de " + this.valor +"\n";
-        }
-        return "Esta casilla no está en venta";
-    }
-
 }
 
 

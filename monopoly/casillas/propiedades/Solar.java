@@ -142,4 +142,8 @@ public class Solar extends Propiedad {
         }
     }
 
+    public void eliminarCasasDeCasilla() {
+        this.getCasas().clear();
+    }
+
 }
