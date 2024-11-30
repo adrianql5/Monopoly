@@ -396,7 +396,7 @@ public class Juego {
                     switch(comando[0]){
 
                         // Relacionados con casillas
-                        //case "describir": descCasilla(comando[1]); break;
+                        case "describir": descCasilla(comando[1]); break;
                         // Cuando el coche avanzado ya compró una propiedad este turno no puede comprar más
                         case "comprar":
                             if(this.controlComandos!=3) {
@@ -1203,75 +1203,12 @@ public class Juego {
     
     
     private void descCasilla(String nombre_casilla) {
-        // Hay dos casos para los que no podemos llamar a infoCasilla: Carcel y Parking
-        switch (nombre_casilla) {
-            case "Carcel":
-                // Imprimir el valor para salir de la cárcel
-                System.out.printf("{\n\tPago para salir: %,.0f€\n", Valor.SALIR_CARCEL);
-
-                // Si hubiera avatares se imprimen
-                jugadoresEnCarcel();
-                System.out.println("}");
-                break;
-
-            // Este caso hay que hacerlo desde aquí por no poder editar los argumentos de infoCasilla
-            // ya que la fortuna de la banca es un valor que no se puede acceder desde la clase casilla
-            case "Parking":
-                // Imprimir el bote
-                System.out.printf("{\n\tBote acumulado: %,.0f€\n", ((Especial)this.tablero.getCasilla(20)).getBote());
-
-                // Imprimimos los jugadores de la casilla si los hubiera
-                // Línea jodida por como está implementado jugadoresEnCasilla pero confíen en el proceso
-                System.out.print(tablero.encontrar_casilla(nombre_casilla).jugadoresEnCasilla());
-
-                System.out.println("}");
-                break;
-
-            case "IrCarcel": case "Caja": case "Suerte":
-                System.out.println("No se puede describir esta casilla.");
-                // No es necesario imprimir nada aquí
-                break;
-                
-            default:
-                // Usamos infoCasilla si el nombre es válido entre los que nos queda por comprobar
-                Casilla casilla = tablero.encontrar_casilla(nombre_casilla);
-                if(casilla!=null) {
-                    System.out.print(casilla.infoCasilla());
-                }
-                else {
-                    System.out.println(nombre_casilla + " no es un nombre de casilla válido.");
-                }
+        Casilla casilla = tablero.encontrar_casilla(nombre_casilla);
+        if(casilla!=null) {
+            System.out.print(casilla.infoCasilla());
         }
-    }
-    
-
-    /**Modificación del método jugadoresEnCasilla (Casilla.java) para la casilla Cárcel,
-     * ya que se deben imprimir los turnos que llevan para salir o si están de visita.
-     * Si no hay ningún jugador en la casilla no hace nada.
-     * Nota: los imprime con salto de línea al final.
-     */
-    private void jugadoresEnCarcel() {
-
-        // Obtenemos la lista de avatares que hay en la casilla cárcel (pos=10)
-        ArrayList<Avatar> avataresEnCasilla = tablero.getCasilla(10).getAvatares();
-
-        // Si hubiera avatares se imprimen
-        if(!avataresEnCasilla.isEmpty()) {
-
-            // Recorremos la lista de avatares y mostramos todos los jugadores en la misma línea
-            System.out.print("\tJugadores: ");
-            for (Avatar avatar : avataresEnCasilla) {
-                Jugador jugador = avatar.getJugador();
-                // Es diferente si está encarcelado que si está de visita
-                if (jugador.isEnCarcel()) {
-                    // Imprimimos el jugador que está encarcelado con el número de tiradas en la cárcel
-                    System.out.print("[" + jugador.getNombre() + ", " + jugador.getTiradasCarcel() + "]  ");
-                } else {
-                    // Imprimimos el jugador que está de visita
-                    System.out.print("[" + jugador.getNombre() + " (visita)]  ");
-                }
-            }
-            System.out.print("\n");
+        else {
+            System.out.println(nombre_casilla + " no es un nombre de casilla válido.");
         }
     }
 

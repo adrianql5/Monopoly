@@ -76,6 +76,12 @@ public abstract class Casilla {
         return jugadores.toString();
     }
 
+    //la pide nico aunq no la usemos (de momento)
+    public boolean estaAvatar(Avatar avatar){
+        return avatar.getLugar().equals(this);
+    }
+
+
     // =========================================
     // MÉTODOS ABSTRACTOS
     // =========================================
