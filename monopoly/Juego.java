@@ -11,9 +11,10 @@ import monopoly.casillas.*;
 import monopoly.casillas.acciones.*;
 import monopoly.casillas.propiedades.*;
 import monopoly.edificios.*;
+import monopoly.interfaces.Comandos;
 
 
-public class Juego {
+public class Juego implements Comandos{
     //Atributos
     private ArrayList<Jugador> jugadores; //Jugadores de la partida.
     private ArrayList<Avatar> avatares; //Avatares en la partida.
@@ -223,7 +224,7 @@ public class Juego {
     }
 
     /**Método para acabar la partida cuando alguien gana o no se quiere seguir.*/
-    private void acabarPartida() {
+    public void acabarPartida() {
         partidaTerminada = true;
     }
 
@@ -269,7 +270,7 @@ public class Juego {
      * Se presupone que el texto viene ya con los saltos de línea y cumple con el máximo de longitud de cada línea.
      * Si se intenta introducir un texto con más líneas de las posibles salta un error y no hace nada.
      */
-    public void setTextoTablero(String nuevo_texto) {
+    private void setTextoTablero(String nuevo_texto) {
         //Dividimos el String en partes en función de los saltos de línea
         String[] nuevo_texto_tablero = nuevo_texto.split("\n");
 
@@ -493,7 +494,7 @@ public class Juego {
     /**Método que ejecuta todas las acciones relacionadas con el comando 'jugador'.
      * Imprime la información del jugador que tiene el turno.
      */
-    private void infoJugadorTurno() {
+    public void infoJugadorTurno() {
         Jugador jugador = obtenerTurno(); // Obtener el jugador actual
 
         // Imprimir el nombre y el avatar en el formato requerido
@@ -563,7 +564,7 @@ public class Juego {
      * @param dadoTrucado1 Si se quiere obtener unos dados concretos se llama a la función con esos valores.
      *                     Si se quiere obtener unos dados aleatorios se llama con los valores (0,0)
      */
-    private void lanzarDados(int dadoTrucado1, int dadoTrucado2) {
+    public void lanzarDados(int dadoTrucado1, int dadoTrucado2) {
 
         //Obtenemos el avatar que tiene el turno
         Jugador jugador = obtenerTurno();
@@ -1014,7 +1015,7 @@ public class Juego {
      * CASO ESPECIAL: si es el tercer turno que tiras los dados para salir de la cárcel y no sacas dobles estás obligado
      *  a pagar la fianza. En ese caso el método lanzarDados() llama a este método haciendo primero this.tirado=false.
      */
-    private void salirCarcel() {
+    public void salirCarcel() {
         //Establecemos el jugador actual
         Jugador jugador = this.jugadores.get(this.turno);
         if (jugador.isEnCarcel()) {
@@ -1038,7 +1039,7 @@ public class Juego {
     }
 
     /**Método que realiza las acciones asociadas al comando 'acabar turno'.*/
-    private void acabarTurno() {
+    public void acabarTurno() {
         // Si aún no tiraste este turno...
         if(!this.tirado) {
             // ...a no ser que tengas el turno actual bloqueado (no puedes lanzar dados) no puedes acabar el turno
@@ -1104,7 +1105,7 @@ public class Juego {
     }
 
     /**Método para cambiar el modo de movimiento del avatar que tiene el turno*/
-    private void cambiarModo() {
+    public void cambiarModo() {
 
         Avatar avatar = obtenerTurno().getAvatar();
         if(avatar.getMovimientoAvanzado()) {
@@ -1124,19 +1125,19 @@ public class Juego {
     }
 
     /**Método que realiza las acciones asociadas al comando 'ver tablero'*/
-    private void verTablero() {
+    public void verTablero() {
         System.out.println(tablero.toString());
     }
 
     /**Método que realiza las acciones asociadas al comando 'listar jugadores'.*/
-    private void listarJugadores() {
+    public void listarJugadores() {
         for(Jugador j: jugadores){
             j.infoJugador();
         }
     }
 
     /**Método que realiza las acciones asociadas al comando 'listar avatares'.*/
-    private void listarAvatares() {
+    public void listarAvatares() {
         for (Avatar a : avatares) {
             if (a != null) {
                 a.infoAvatar(); // Llama a la función infoAvatar para imprimir los detalles del avatar
@@ -1145,7 +1146,7 @@ public class Juego {
     }
 
     /**Método que realiza las acciones asociadas al comando 'listar enventa'.*/
-    private void listarVenta() {
+    public void listarVenta() {
         System.out.println("Propiedades en venta:");
         Casilla casilla_aux;
         for (int i = 0; i < 40; i++) {
@@ -1166,7 +1167,7 @@ public class Juego {
     /**Método que ejecuta todas las acciones realizadas con el comando 'comprar nombre_casilla'.
      * @param nombre Cadena de caracteres con el nombre de la casilla.
      */
-    private void comprar(String nombre) {
+    public void comprar(String nombre) {
         Propiedad c=tablero.encontrar_propiedad(nombre);
         // Comprobamos si la casilla existe y ya se ha tirado (se hacen otras comprobaciones dentro de comprarCasilla)
         if(c != null) {
@@ -1202,7 +1203,7 @@ public class Juego {
      */
     
     
-    private void descCasilla(String nombre_casilla) {
+    public void descCasilla(String nombre_casilla) {
         Casilla casilla = tablero.encontrar_casilla(nombre_casilla);
         if(casilla!=null) {
             System.out.print(casilla.infoCasilla());
@@ -1234,7 +1235,7 @@ public class Juego {
     /**Método que realiza las acciones asociadas al comando 'describir jugador'.
      * @param partes comando introducido
      */
-    private void descJugador(String[] partes) {
+    public void descJugador(String[] partes) {
         String nombre_completo = "";
 
         // Construímos el nombre_completo a partir de las partes
@@ -1261,7 +1262,7 @@ public class Juego {
     /**Método que realiza las acciones asociadas al comando 'describir avatar'.
      * @param ID id del avatar a describir
      */
-    private void descAvatar(String ID) {
+    public void descAvatar(String ID) {
         // lista llamada avatares se recorre
         for (Avatar avatar : avatares) { // Busca el avatar en la lista
             if (avatar.getId().equals(ID)) {
@@ -1511,7 +1512,7 @@ public class Juego {
     }
 
     /**Método que imprime las estadísticas de un jugador de la partida.*/
-    private void estadisticasJugador(String nombre_jugador) {
+    public void estadisticasJugador(String nombre_jugador) {
         Jugador jugador=encontrarJugador(nombre_jugador);
 
         if(jugador!=null) {
@@ -1527,7 +1528,7 @@ public class Juego {
      * Muestra información como las casillas más visitadas, casillas más rentables,
      * grupos más rentables, jugadores con más vueltas, tiradas y fortuna.
      */
-    private void estadisticasGenerales() {
+    public void estadisticasGenerales() {
         System.out.println("{");
 
 
@@ -2006,7 +2007,7 @@ public class Juego {
     }
     
     
-    private void ayuda() {
+    public void ayuda() {
         System.out.println("Lista de comandos disponibles:");
         System.out.println("- terminar partida / acabar partida: Termina la partida.");
         System.out.println("- bancarrota: Declararse en bancarrota.");
@@ -2050,7 +2051,7 @@ public class Juego {
     LISTAR TRATOS
 
      */
-    private void aceptarTrato(String idTrato) {
+    public void aceptarTrato(String idTrato) {
         // Obtener el jugador actual
         Jugador jugador = obtenerTurno();
 
@@ -2074,7 +2075,7 @@ public class Juego {
 
 
 
-    private void listarTratosJugadorActual() {
+    public void listarTratosJugadorActual() {
         // Obtener el jugador actual
         Jugador jugador = obtenerTurno();
 
@@ -2092,7 +2093,7 @@ public class Juego {
         }
     }
 
-    private void proponerTrato(String detalleTrato) {
+    public void proponerTrato(String detalleTrato) {
         // Dividir el comando para extraer el jugador y el detalle del trato
         String[] partes = detalleTrato.split(": cambiar ");
         if (partes.length < 2) {
@@ -2174,6 +2175,8 @@ public class Juego {
 
         System.out.printf("Se ha propuesto el trato a %s: %s\n", receptor.getNombre(), trato);
     }
+
+
     private HashMap<String, Object> desgranarComando(String comando) {
         HashMap<String, Object> resultado = new HashMap<>();
         ArrayList<String> propiedades = new ArrayList<>();
