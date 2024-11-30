@@ -370,7 +370,7 @@ public class Juego {
             case "dinero infinito": dineroInfinito(); break;
             // AVANZAR 40 CASILLAS HASTA LA MISMA CASILLA
             case "dar vuelta": obtenerTurno().sumarVuelta(); break;
-            // PROBANDO LA IMPRESIÓN DE CARTAS
+            // PROBANDO LA IMPRESIÓN DE CARTAS esto creo q habría q boorarlo
             case "probar cartas": probarCartas(); break;
             case "coger carta caja": cogerCarta(this.cartas_caja); break;
             case "coger carta suerte": cogerCarta(this.cartas_suerte); break;
