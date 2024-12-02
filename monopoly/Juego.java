@@ -1772,16 +1772,12 @@ public class Juego implements Comandos{
                     case "casa":
                         solar.venderCasas(jugador, n);
                         break;
-                    
-
                     case "hotel":
                         solar.venderHoteles(jugador, n);
                         break;
-
                     case "piscina":
                         solar.venderPiscinas(jugador, n);
                         break;
-
                     case "pista de deporte":
                         solar.venderPistas(jugador, n);
                         break;
