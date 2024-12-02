@@ -1,6 +1,6 @@
 package monopoly.casillas.propiedades;
 
-import java.util.ArrayList;
+import java.util.*;
 import monopoly.*;
 import monopoly.edificios.*;
 import partida.*;
@@ -104,6 +104,189 @@ public class Solar extends Propiedad {
             System.out.println("El grupo no puede ser nulo.\n");
         }
     }
+
+    public void edificarCasa(Jugador jugador){
+        Casa casa =new Casa(this);
+        if(casa.esEdificableCasa()){
+            if (jugador.getFortuna() >= casa.getCoste()) {
+                this.anhadirEdificio(casa); // Añadir el edificio a la casilla
+                jugador.sumarGastos(casa.getCoste()); // Restar el coste del edificio
+                jugador.sumarFortuna(-casa.getCoste()); // Reducir la fortuna del jugador
+        
+                System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
+                    casa.getId() + " por " + casa.getCoste());
+                }
+                else{
+                    System.out.println("No tienes suficiente dinero para edificar.");
+                }
+        }
+    }
+
+    public void edificarHotel(Jugador jugador){
+        Hotel hotel =new Hotel(this);
+        if(hotel.esEdificableHotel()){
+            if (jugador.getFortuna() >= hotel.getCoste()) {
+                this.anhadirEdificio(hotel); // Añadir el edificio a la casilla
+                jugador.sumarGastos(hotel.getCoste()); // Restar el coste del edificio
+                jugador.sumarFortuna(-hotel.getCoste()); // Reducir la fortuna del jugador
+        
+                System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
+                    hotel.getId() + " por " + hotel.getCoste());
+                }
+                else{
+                    System.out.println("No tienes suficiente dinero para edificar.");
+                }
+        }
+    }
+
+
+    public void edificarPiscina(Jugador jugador){
+        Piscina piscina =new Piscina(this);
+        if(piscina.esEdificablePiscina()){
+            if (jugador.getFortuna() >= piscina.getCoste()) {
+                this.anhadirEdificio(piscina); // Añadir el edificio a la casilla
+                jugador.sumarGastos(piscina.getCoste()); // Restar el coste del edificio
+                jugador.sumarFortuna(-piscina.getCoste()); // Reducir la fortuna del jugador
+        
+                System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
+                    piscina.getId() + " por " + piscina.getCoste());
+                }
+                else{
+                    System.out.println("No tienes suficiente dinero para edificar.");
+                }
+        }
+    }
+
+
+    public void edificarPista(Jugador jugador){
+        PistaDeporte pista =new PistaDeporte(this);
+        if(pista.esEdificablePista()){
+            if (jugador.getFortuna() >= pista.getCoste()) {
+                this.anhadirEdificio(pista); // Añadir el edificio a la casilla
+                jugador.sumarGastos(pista.getCoste()); // Restar el coste del edificio
+                jugador.sumarFortuna(-pista.getCoste()); // Reducir la fortuna del jugador
+        
+                System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
+                    pista.getId() + " por " + pista.getCoste());
+                }
+                else{
+                    System.out.println("No tienes suficiente dinero para edificar.");
+                }
+        }
+    }
+
+    public void venderCasas(Jugador jugador, int n){
+        ArrayList<Edificio> eds= getCasas();
+        int tamanho = eds.size();
+        if (tamanho >= n){
+            float suma = 0.0f;
+            Iterator<Edificio> iterator = eds.iterator();
+            int count = 0;
+                        // Usamos el iterador para eliminar los edificios, motivo nº 01974182347123 de porqé odio java
+            while (iterator.hasNext() && count < n) {
+                Edificio edificio = iterator.next();
+                suma += (edificio.getCoste())/2;
+                iterator.remove();
+                count++;
+            }
+            jugador.sumarFortuna(suma);
+            System.out.println("El jugador " + jugador.getNombre() + " han vendido " +
+                n + " casas en " + this.nombre + ", recibiendo " + suma +
+                "€. En la propiedad quedan " + eds.size() + " casas.");
+        }
+        else if(tamanho==0){
+            System.out.println("No puedes vender ninguna propiedad del tipo casa porque no hay ninguna en la casilla "
+            + this.nombre);
+        }
+        else {
+            System.out.println("Solamente se pueden vender " + eds.size() + " casas, recibiendo " + (eds.size() > 0 ? (eds.get(0).getCoste() / 2) * eds.size() : 0) + "€.");
+        }
+    }
+
+    public void venderHoteles(Jugador jugador, int n){
+        ArrayList<Edificio> eds= getHoteles();
+        int tamanho = eds.size();
+        if (tamanho >= n){
+            float suma = 0.0f;
+            Iterator<Edificio> iterator = eds.iterator();
+            int count = 0;
+                        // Usamos el iterador para eliminar los edificios, motivo nº 01974182347123 de porqé odio java
+            while (iterator.hasNext() && count < n) {
+                Edificio edificio = iterator.next();
+                suma += (edificio.getCoste())/2;
+                iterator.remove();
+                count++;
+            }
+            jugador.sumarFortuna(suma);
+            System.out.println("El jugador " + jugador.getNombre() + " han vendido " +
+                n + " hoteles en " + this.nombre + ", recibiendo " + suma +
+                "€. En la propiedad quedan " + eds.size() + " hoteles.");
+        }
+        else if(tamanho==0){
+            System.out.println("No puedes vender ninguna propiedad del tipo hoteles porque no hay ninguna en la casilla "
+            + this.nombre);
+        }
+        else {
+            System.out.println("Solamente se pueden vender " + eds.size() + " hoteles, recibiendo " + (eds.size() > 0 ? (eds.get(0).getCoste() / 2) * eds.size() : 0) + "€.");
+        }
+    }
+
+    public void venderPiscinas(Jugador jugador, int n){
+        ArrayList<Edificio> eds= getPiscinas();
+        int tamanho = eds.size();
+        if (tamanho >= n){
+            float suma = 0.0f;
+            Iterator<Edificio> iterator = eds.iterator();
+            int count = 0;
+                        // Usamos el iterador para eliminar los edificios, motivo nº 01974182347123 de porqé odio java
+            while (iterator.hasNext() && count < n) {
+                Edificio edificio = iterator.next();
+                suma += (edificio.getCoste())/2;
+                iterator.remove();
+                count++;
+            }
+            jugador.sumarFortuna(suma);
+            System.out.println("El jugador " + jugador.getNombre() + " han vendido " +
+                n + " piscinas en " + this.nombre + ", recibiendo " + suma +
+                "€. En la propiedad quedan " + eds.size() + " piscinas.");
+        }
+        else if(tamanho==0){
+            System.out.println("No puedes vender ninguna propiedad del tipo casa porque no hay ninguna en la casilla "
+            + this.nombre);
+        }
+        else {
+            System.out.println("Solamente se pueden vender " + eds.size() + " piscinas, recibiendo " + (eds.size() > 0 ? (eds.get(0).getCoste() / 2) * eds.size() : 0) + "€.");
+        }
+    }
+
+    public void venderPistas(Jugador jugador, int n){
+        ArrayList<Edificio> eds= getPiscinas();
+        int tamanho = eds.size();
+        if (tamanho >= n){
+            float suma = 0.0f;
+            Iterator<Edificio> iterator = eds.iterator();
+            int count = 0;
+                        // Usamos el iterador para eliminar los edificios, motivo nº 01974182347123 de porqé odio java
+            while (iterator.hasNext() && count < n) {
+                Edificio edificio = iterator.next();
+                suma += (edificio.getCoste())/2;
+                iterator.remove();
+                count++;
+            }
+            jugador.sumarFortuna(suma);
+            System.out.println("El jugador " + jugador.getNombre() + " han vendido " +
+                n + " pistas en " + this.nombre + ", recibiendo " + suma +
+                "€. En la propiedad quedan " + eds.size() + " pistas.");
+        }
+        else if(tamanho==0){
+            System.out.println("No puedes vender ninguna propiedad del tipo pista porque no hay ninguna en la casilla "
+            + this.nombre);
+        }
+        else {
+            System.out.println("Solamente se pueden vender " + eds.size() + " pistas, recibiendo " + (eds.size() > 0 ? (eds.get(0).getCoste() / 2) * eds.size() : 0) + "€.");
+        }
+    }
+
 
     // Añadir una edificación al solar
     public void anhadirEdificio(Edificio ed) {

@@ -127,7 +127,7 @@ public  abstract class Propiedad extends Casilla {
      * @param banca       La banca es el dueño de las casillas no compradas aún.
      */
     //otra de las funciones que pide el pavo
-    public void comprarCasilla(Jugador solicitante, Jugador banca) {
+    public void comprarPropiedad(Jugador solicitante, Jugador banca) {
         if (solicitante.getAvatar().getLugar().equals(this)) {
             if(this.duenho.getNombre().equals("banca")) {
                 if (solicitante.getFortuna() >= this.valor) {
