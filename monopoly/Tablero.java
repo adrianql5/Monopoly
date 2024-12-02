@@ -1,7 +1,5 @@
 package monopoly;
 
-import static java.lang.Math.pow;
-
 import java.util.*;
 import monopoly.casillas.propiedades.*;
 import monopoly.casillas.acciones.*;
@@ -34,6 +32,7 @@ public class Tablero {
         this.insertarLadoOeste();
         this.insertarLadoNorte();
         this.insertarLadoEste();
+        //Esto es para que evaluarCasilla funcione correctamente
         ((Impuesto)getCasilla(4)).asignarParking((Especial)getCasilla(20));
         ((Impuesto)getCasilla(38)).asignarParking((Especial)getCasilla(20));
         ((Especial)getCasilla(30)).asignarCarcel((Especial)getCasilla(10));

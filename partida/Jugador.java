@@ -9,8 +9,6 @@ import partida.avatares.*;
 
 import monopoly.casillas.*;
 import monopoly.casillas.propiedades.*;
-import monopoly.casillas.acciones.*;
-import monopoly.cartas.*;
 import monopoly.edificios.*;
 
 

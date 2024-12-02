@@ -1,7 +1,5 @@
 package monopoly.casillas;
 
-import static java.lang.Math.*;
-
 import monopoly.*;
 import partida.*;
 

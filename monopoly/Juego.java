@@ -5,7 +5,6 @@ import java.util.*;
 import partida.*;
 import partida.avatares.*;
 
-import monopoly.*;
 import monopoly.cartas.*;
 import monopoly.casillas.*;
 import monopoly.casillas.acciones.*;

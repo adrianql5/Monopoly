@@ -2,8 +2,6 @@ package monopoly.interfaces;
 
 import partida.*;
 
-import monopoly.casillas.*;;
-
 
 public interface Comandos {
     void acabarPartida();

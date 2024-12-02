@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import monopoly.casillas.propiedades.Solar;
 import partida.avatares.Avatar;
 import partida.*;
-import monopoly.*;
+
 
 /**
  * Clase abstracta que representa una casilla del tablero en el juego de Monopoly.
