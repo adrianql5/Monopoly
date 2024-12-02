@@ -5,7 +5,7 @@ import partida.*;
 import monopoly.casillas.*;;
 
 
-public interface Comandos {    
+public interface Comandos {
     void acabarPartida();
     void declararBancarrota(Jugador jugador);
     void verTablero();

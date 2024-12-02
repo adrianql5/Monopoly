@@ -10,12 +10,18 @@ import java.util.*;
 public class Especial extends Casilla{
 
     public float bote;
+    public Especial carcel; //gitanada maxima pero así sabemos donde está la carcel en Ircarcel
     // ==========================
     // SECCIÓN: CONSTRUCTORES
     // ==========================
     public Especial(String nombre, int posicion){
         super(nombre,posicion);
         this.bote=0;
+        this.carcel=null;
+    }
+
+    public void asignarCarcel(Especial carcel){
+        this.carcel=carcel;
     }
 
     public void incrementarBote(float bote) {
@@ -61,6 +67,34 @@ public class Especial extends Casilla{
         }
     }
 
+    public boolean evaluarCasilla(Jugador jugadorActual, int tirada){
+        incrementarVecesVisitada();
+
+        switch (this.nombre) {
+            case "Carcel":
+                System.out.println("Has caído en la Cárcel. Disfruta de la visita.");
+                break;
+            case "Parking":
+                //v2: ahora el bote del Parking se guarda en Parking.valor
+                System.out.printf("Has ganado el bote del Parking: %,.0f€\n", bote);
+                jugadorActual.sumarFortuna(bote);
+                jugadorActual.getEstadisticas().sumarDineroRecaudadoBote(bote);
+                resetBote();
+                break;
+            case "IrCarcel":
+                System.out.println("Mala suerte, te vas a la cárcel.");
+                System.out.println("Vas directamente sin pasar por la Salida ni cobrar.");
+                jugadorActual.encarcelar(this.carcel);
+                break;
+            case "Salida":
+                System.out.println("Has llegado a la casilla de Salida.");
+                break;
+            default:
+                System.out.println("Error en evaluarCasilla.");
+                return false;
+        }
+        return true;
+    }
 
     public String infoCasilla(){
         String info = "{\n";

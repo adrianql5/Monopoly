@@ -3,6 +3,8 @@ package monopoly.casillas.propiedades;
 import java.util.ArrayList;
 import monopoly.*;
 import monopoly.edificios.*;
+import partida.*;
+
 
 public class Solar extends Propiedad {
     private ArrayList<ArrayList<Edificio>> edificios;
@@ -18,6 +20,34 @@ public class Solar extends Propiedad {
         for (int i = 0; i < 4; i++) {
             this.edificios.add(new ArrayList<>()); // Array de casas, hoteles, piscinas, pistas
         }
+    }
+
+
+    public boolean evaluarCasilla(Jugador jugadorActual, int tirada) {
+        if (duenho != jugadorActual) {
+            if (!duenho.getNombre().equals("banca")) {
+                if (!estaHipotecada) {
+                    float precioAlquiler = evaluarAlquiler();
+                    System.out.printf("%s debe pagarle el alquiler de %s a %s: %,.0f€\n",
+                            jugadorActual.getNombre(), this.nombre, duenho.getNombre(), precioAlquiler);
+                    if (precioAlquiler > jugadorActual.getFortuna()) {
+                        jugadorActual.setDeudaConJugador(duenho);
+                        jugadorActual.setDeuda(precioAlquiler);
+                        return false;
+                    }
+                    jugadorActual.pagar(duenho, precioAlquiler);
+                    return true;
+                } else {
+                    System.out.println("La casilla " + this.nombre + " está hipotecada. No hay que pagar.");
+                }
+            } else {
+                System.out.println("La casilla " + this.nombre + " está a la venta.\n");
+            }
+        } else {
+            System.out.println("Esta casilla te pertenece.");        
+            this.vecesVisitadaPorDuenho++;
+        }
+        return true;
     }
 
     public void incrementarVecesVisitadaPorDueho() {

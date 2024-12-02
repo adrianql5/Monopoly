@@ -91,7 +91,7 @@ public abstract class Casilla {
      */
     public abstract String infoCasilla();
 
-
+    public abstract boolean evaluarCasilla(Jugador jugadorActual, int tirada);
 
     // =========================================
     // MÉTODOS AUXILIARES

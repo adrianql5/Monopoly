@@ -34,6 +34,9 @@ public class Tablero {
         this.insertarLadoOeste();
         this.insertarLadoNorte();
         this.insertarLadoEste();
+        ((Impuesto)getCasilla(4)).asignarParking((Especial)getCasilla(20));
+        ((Impuesto)getCasilla(38)).asignarParking((Especial)getCasilla(20));
+        ((Especial)getCasilla(30)).asignarCarcel((Especial)getCasilla(10));
     }
 
     /**Método auxiliar de generarCasillas() para insertar las casillas del lado sur.*/

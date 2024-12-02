@@ -5,15 +5,21 @@ import static java.lang.Math.*;
 import monopoly.*;
 import partida.*;
 
+
 public class Impuesto extends Casilla{
     private float impuesto;
-    
+    private Especial parking;
     // ==========================
     // SECCIÓN: CONSTRUCTORES
     // ==========================
     public Impuesto(String nombre, int posicion) {
         super(nombre, posicion);
         this.impuesto=calcularImpuesto();
+        this.parking=null;
+    }
+
+    public void asignarParking(Especial parking){
+        this.parking=parking;
     }
 
     public float getImpuesto(){
@@ -31,6 +37,24 @@ public class Impuesto extends Casilla{
             default:
                 return 0.0f;
         }
+    }
+
+    public boolean evaluarCasilla(Jugador jugadorActual, int tirada){
+        incrementarVecesVisitada();
+        System.out.printf("Debes pagar tus impuestos a la banca: %,.0f€\n", impuesto);
+
+        // Si puede pagarlo de alguna manera se cobra
+        if(impuesto>jugadorActual.getFortuna()) {
+            jugadorActual.setDeudaConJugador(null);
+            jugadorActual.setDeuda(impuesto);
+            return false;
+        }
+            
+        jugadorActual.sumarFortuna(-impuesto);
+
+        parking.incrementarBote(impuesto);
+
+        return true;
     }
 
     public String infoCasilla(){

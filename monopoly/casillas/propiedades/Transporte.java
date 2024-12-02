@@ -1,6 +1,7 @@
 package monopoly.casillas.propiedades;
 
 import monopoly.Valor;
+import partida.*;
 
 public class Transporte extends Propiedad{
 
@@ -27,6 +28,36 @@ public class Transporte extends Propiedad{
         totalAlquiler *= 0.25f * this.duenho.contarPropiedadesPorTipo(Transporte.class);;
 
         return totalAlquiler;
+    }
+
+    public boolean evaluarCasilla(Jugador jugadorActual, int tirada) {
+        if (duenho != jugadorActual) {
+            if (!duenho.getNombre().equals("banca")) {
+                if (!estaHipotecada) {
+                    float precio = evaluarAlquiler();
+                    System.out.printf("%s debe pagar el servicio de transporte a %s: %,.0f€\n",
+                        jugadorActual.getNombre(), duenho.getNombre(), precio);
+    
+                    // Si puede pagarlo de alguna manera se cobra
+                    if(precio>jugadorActual.getFortuna()) {
+                        jugadorActual.setDeudaConJugador(duenho);
+                        jugadorActual.setDeuda(precio);
+                        return false;
+                    }
+                            
+                    jugadorActual.pagar(duenho, precio);
+
+                    return true;
+                } else {
+                    System.out.println("La casilla " + this.nombre + " está hipotecada. No hay que pagar.");
+                }
+            } else {
+                System.out.println("La casilla " + this.nombre + " está a la venta.\n");
+            }
+        } else {
+            System.out.println("Esta casilla te pertenece.");
+        }
+        return true;
     }
 
     public String infoCasilla(){

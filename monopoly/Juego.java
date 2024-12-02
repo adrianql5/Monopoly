@@ -644,7 +644,7 @@ public class Juego implements Comandos{
                         }
                         this.dadosDoblesSeguidos++;
                         if(this.dadosDoblesSeguidos==3) {
-                            jugador.encarcelar(this.tablero.getPosiciones());
+                            jugador.encarcelar(this.tablero.getCasilla(20));
                             System.out.println("Tres dobles son muchos, vas a la cárcel sin pasar por la salida.");
                             return;
                         }
@@ -796,8 +796,8 @@ public class Juego implements Comandos{
         }
 
         // EVALUAR
-        // FALTA AÑADIR AQUÍ EL BUCLE DE BANCARROTA :)
-        evaluarCasilla(avatar.getLugar());
+        Casilla c= avatar.getLugar();
+        if(!c.evaluarCasilla(jugador, this.dado1.getValor() + this.dado2.getValor())) bucleBancarrota();
     }
 
     /**Método para gestionar cuando un jugador no puede pagar un alquiler
@@ -811,7 +811,10 @@ public class Juego implements Comandos{
      * @param cantidad
      * @return true si se acaba pudiendo pagar, false si el jugador se tuvo que declarar en bancarrota
      */
-    public boolean bucleBancarrota(Jugador pagador, Jugador cobrador, float cantidad) {
+    public void bucleBancarrota() {
+        Jugador pagador= obtenerTurno();
+        Jugador cobrador = pagador.getDeudaConJugador();
+        float cantidad=pagador.getDeuda();
         if(cantidad>pagador.getFortuna()) {
             Scanner scannerBancarrota = new Scanner(System.in);
 
@@ -836,7 +839,6 @@ public class Juego implements Comandos{
                 }
                 if(comando_entero.equals("bancarrota")) {
                     declararBancarrota(cobrador);
-                    return false;
                 }
                 if(comando.length==2 && comando[0].equals("hipotecar")) {
                     hipotecar(comando[1]);
@@ -852,7 +854,7 @@ public class Juego implements Comandos{
                 // Si después de la operación (vender edificios/hipotecar) ya puede pagar devolvemos true
                 if(cantidad<=pagador.getFortuna()) {
                     System.out.println("Ya conseguiste dinero para pagar! Realizas el pago.");
-                    return true;
+                    pagador.pagar(cobrador,cantidad);
                 }
 
             }
@@ -861,10 +863,7 @@ public class Juego implements Comandos{
                 System.out.println(Texto.M_BANCARROTA_OBLIGATORIA);
             } while(!scannerBancarrota.nextLine().equals("bancarrota"));
             declararBancarrota(cobrador);
-            return false;
-        }
-        else {
-            return true;
+            
         }
     }
 
@@ -872,127 +871,18 @@ public class Juego implements Comandos{
      * @param casilla Casilla que tenemos que evaluar
      * @return TRUE en caso de ser solvente (es decir, de cumplir las deudas), y FALSE en caso de no serlo
      */
+    /* FALTA METER ESTO EN ACCION, PERO IMPLICA MOVER TODO LO DE CARTAS*/
     public boolean evaluarCasilla(Casilla casilla) {
-        casilla.incrementarVecesVisitada();
-        Jugador jugadorActual = obtenerTurno();
-        int tirada = this.dado1.getValor() + this.dado2.getValor();
-        // Atributos de casilla que se usan varias veces (pa no andar llamando getters constantemente)
-        String nombreCasilla = casilla.getNombre();
-        if(casilla instanceof Propiedad){
-            Jugador duenhoCasilla = ((Propiedad)casilla).getDuenho();
-            if(duenhoCasilla!=jugadorActual){
-                if (!duenhoCasilla.getNombre().equals("banca")) {
-                    if (!((Propiedad)casilla).estaHipotecada()) {
-                        if(casilla instanceof Solar){
-                            float precio = ((Solar)casilla).evaluarAlquiler();
-                            System.out.printf("%s debe pagarle el alquiler de %s a %s: %,.0f€\n",
-                                    jugadorActual.getNombre(), nombreCasilla, duenhoCasilla.getNombre(), precio);
-    
-                            // Si puede pagarlo de alguna manera se cobra
-                            if(bucleBancarrota(jugadorActual, duenhoCasilla, precio)) {
-                                jugadorActual.pagar(duenhoCasilla, precio);
-                                return true;
-                            }
-                            return false;
-    
-                        }
-                        else if( casilla instanceof Transporte){
-                            float precio = ((Transporte)casilla).evaluarAlquiler();
-                            System.out.printf("%s debe pagar el servicio de transporte a %s: %,.0f€\n",
-                                    jugadorActual.getNombre(), duenhoCasilla.getNombre(), precio);
-    
-                            // Si puede pagarlo de alguna manera se cobra
-                            if(bucleBancarrota(jugadorActual, duenhoCasilla, precio)) {
-                                jugadorActual.pagar(duenhoCasilla, precio);
-                                return true;
-                            }
-                            return false;
-                        }
-
-                        else if(casilla instanceof Servicio){
-                            float precio = ((Servicio)casilla).evaluarAlquiler(tirada);
-                            System.out.printf("%s debe pagar el servicio a %s: %,.0f€\n",
-                                    jugadorActual.getNombre(), duenhoCasilla.getNombre(), precio);
-                            // Si puede pagarlo de alguna manera se cobra
-                            if(bucleBancarrota(jugadorActual, duenhoCasilla, precio)) {
-                                jugadorActual.pagar(duenhoCasilla, precio);
-                                return true;
-                            }
-                            return false;
-                        }
-                    }
-                    else {
-                        System.out.println("La casilla " + nombreCasilla + " está hipotecada. No hay que pagar.");
-                    }
-                }
-                else {
-                    System.out.println("La casilla " + nombreCasilla + " está a la venta.\n");
-                }
-            }
-            else{
-                System.out.println("Esta casilla te pertenece.");
-                if(casilla instanceof Solar){
-                    ((Solar)casilla).incrementarVecesVisitadaPorDueho();
-                }
-            }
-        }
-
-        else if(casilla instanceof Impuesto){
-            float impuestoCasilla = ((Impuesto)casilla).getImpuesto();
-            System.out.printf("Debes pagar tus impuestos a la banca: %,.0f€\n", impuestoCasilla);
-
-            // Si puede pagarlo de alguna manera se cobra
-            if(bucleBancarrota(jugadorActual, this.banca, impuestoCasilla)) {
-                jugadorActual.pagar(impuestoCasilla, this.banca);
-                Casilla parking =this.tablero.getCasilla(20);
-                ((Especial)parking).incrementarBote(impuestoCasilla);
-                return true;
-            }
-            return false;
-        }
-
-        else if(casilla instanceof Especial){
-            switch (nombreCasilla) {
-                case "Carcel":
-                    System.out.println("Has caído en la Cárcel. Disfruta de la visita.");
-                    break;
-                case "Parking":
-                    //v2: ahora el bote del Parking se guarda en Parking.valor
-                    System.out.printf("Has ganado el bote del Parking: %,.0f€\n", ((Especial)casilla).getBote());
-                    jugadorActual.sumarFortuna((float)((Especial)casilla).getBote());
-                    jugadorActual.getEstadisticas().sumarDineroRecaudadoBote((float)((Especial)casilla).getBote());
-                    ((Especial)casilla).resetBote();
-                    break;
-                case "IrCarcel":
-                    System.out.println("Mala suerte, te vas a la cárcel.");
-                    System.out.println("Vas directamente sin pasar por la Salida ni cobrar.");
-                    jugadorActual.encarcelar(this.tablero.getPosiciones());
-                    break;
-                case "Salida":
-                    System.out.println("Has llegado a la casilla de Salida.");
-                    break;
-                default:
-                    System.out.println("Error en evaluarCasilla.");
-                    return false;
-            }
-        }
-
-        else if(casilla instanceof AccionCajaComunidad){
+        if(casilla instanceof AccionCajaComunidad){
             cogerCarta(cartas_caja);
         }
 
         else if(casilla instanceof AccionSuerte){
             cogerCarta(this.cartas_suerte);
-        }
-
-        else{
-            System.out.println("Error en evaluarCasilla(): tipo de casilla inválido.");
-            return false;
-        }
-        
+        }  
         return true;
     }
-
+    
 
 
     /**Método que resetea los atributos relacionados con la cárcel del jugador que se desencarcela.
@@ -1295,7 +1185,7 @@ public class Juego implements Comandos{
         System.out.println("Escoge una carta con un número del 1 al 6.");
         int n=leerDadoValido(); //Leemos input hasta que sea un número válido
         mostrarCartaEscogida(baraja, n); //Volvemos a mostrar las cartas con la escogida dada la vuelta
-        evaluarCarta(baraja.get(n-1)); //Ojo con los índices del ArrayList que empiezan en 0!!
+        if(!evaluarCarta(baraja.get(n-1))) bucleBancarrota(); //Ojo con los índices del ArrayList que empiezan en 0!!
     }
 
     /**
@@ -1314,11 +1204,11 @@ public class Juego implements Comandos{
                     //Siempre se pasa por la salida ya que no hay ninguna casilla Suerte entre la Salida y Trans1
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), 45-posicion);
                     cobrarSalida(jugadorActual);
-                    evaluarCasilla(this.tablero.getCasilla(5));
+                    if(!evaluarCasilla(this.tablero.getCasilla(5))) bucleBancarrota();
                     break;
                 case 2: //Ir a Solar15 (pos=26) sin pasar por la Salida (y por tanto sin cobrar)
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), posicion<26 ? 26-posicion : 66-posicion);
-                    evaluarCasilla(this.tablero.getCasilla(26));
+                    if(!evaluarCasilla(this.tablero.getCasilla(26))) bucleBancarrota();
                     break;
                 case 3: //Cobrar 500.000€
                     jugadorActual.sumarFortuna(500000);
@@ -1327,11 +1217,11 @@ public class Juego implements Comandos{
                     //Siempre se pasa por la salida ya que no hay ninguna casilla Suerte entre la Salida y Solar3
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), 46-posicion);
                     cobrarSalida(jugadorActual);
-                    evaluarCasilla(this.tablero.getCasilla(6));
+                    if(!evaluarCasilla(this.tablero.getCasilla(6))) bucleBancarrota();
                     break;
                 case 5: //Ir a la cárcel (encarcelado) sin pasar por la Salida (y por tanto sin cobrar)
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), posicion<10 ? 10-posicion : 50-posicion);
-                    jugadorActual.encarcelar(this.tablero.getPosiciones());
+                    jugadorActual.encarcelar(this.tablero.getCasilla(20));
                     break;
                 case 6: //Cobrar 1.000.000€
                     jugadorActual.sumarFortuna(1000000);
@@ -1339,18 +1229,22 @@ public class Juego implements Comandos{
             }
         }
         else if(carta.getTipo().equals("Caja")) {
+            Especial parking = (Especial)this.tablero.getCasilla(20);
             switch(carta.getID()) {
                 case 1: //Pagar 500.000€ (a la banca)
-                    if(bucleBancarrota(jugadorActual, this.banca, 500000f)) {
-                        jugadorActual.pagar(500000f, this.banca);
-                        Especial parking = (Especial)this.tablero.getCasilla(20);
-                        parking.incrementarBote(500000f);
-                        return true;
+                    if(500000f>jugadorActual.getFortuna()){
+                        jugadorActual.setDeuda(500000f);
+                        jugadorActual.setDeudaConJugador(this.banca);
+                        return false;
                     }
-                    return false;
+                    jugadorActual.sumarFortuna(-500000f);
+                    jugadorActual.sumarGastos(500000);
+                    jugadorActual.getEstadisticas().sumarPagoDeAlquileres(500000f);
+                    parking.incrementarBote(500000f);
+                    return true;
                 case 2: //Ir a la cárcel (encarcelado) sin pasar por la Salida (y por tanto sin cobrar)
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), posicion<10 ? 10-posicion : 50-posicion);
-                    jugadorActual.encarcelar(this.tablero.getPosiciones());
+                    jugadorActual.encarcelar(this.tablero.getCasilla(20));
                     break;
                 case 3: //Ir a Salida (pos=0=40) y cobrar
                     avatarActual.moverAvatar(this.tablero.getPosiciones(), 40-posicion);
@@ -1360,28 +1254,33 @@ public class Juego implements Comandos{
                     jugadorActual.sumarFortuna(2000000);
                     break;
                 case 5: //Pagar 1.000.000€ (a la banca)
-                    if(bucleBancarrota(jugadorActual, this.banca, 1000000f)) {
-                        jugadorActual.pagar(1000000f, this.banca);
-                        Especial parking = (Especial)this.tablero.getCasilla(20);
-                        parking.incrementarBote(1000000f);
-                        return true;
+                    if(1000000f>jugadorActual.getFortuna()){
+                        jugadorActual.setDeuda(500000f);
+                        jugadorActual.setDeudaConJugador(this.banca);
+                        return false;
                     }
-                    return false;
+                    jugadorActual.sumarFortuna(-1000000f);
+                    jugadorActual.sumarGastos(1000000f);
+                    jugadorActual.getEstadisticas().sumarPagoDeAlquileres(1000000f);
+                    parking.incrementarBote(1000000f);
+                    return true;
                 case 6: //Pagar 200.000€ a cada jugador
                     float total_a_pagar = 200000 * (this.jugadores.size()-1);
-                    if(bucleBancarrota(jugadorActual, this.banca, total_a_pagar)) {
-                        jugadorActual.restarFortuna(total_a_pagar);
-                        Especial parking = (Especial)this.tablero.getCasilla(20);
-                        parking.incrementarBote(500000f);
-                        //Recorremos el ArrayList de jugadoresda: si no es el jugador actual sumamos 200.000€
-                        for(Jugador j : this.jugadores) {
-                            if(!j.equals(jugadorActual)) {
-                                j.sumarFortuna(200000);
-                            }
-                        }
-                        return true;
+
+                    if(total_a_pagar>jugadorActual.getFortuna()){
+                        jugadorActual.setDeuda(total_a_pagar);
+                        jugadorActual.setDeudaConJugador(this.banca);
+                        return false;
                     }
-                    return false;
+                    jugadorActual.restarFortuna(total_a_pagar);
+                    parking.incrementarBote(500000f);
+                    //Recorremos el ArrayList de jugadoresda: si no es el jugador actual sumamos 200.000€
+                    for(Jugador j : this.jugadores) {
+                        if(!j.equals(jugadorActual)) {
+                            j.sumarFortuna(200000);
+                        }
+                    }
+                    return true;
             }
         }
         else {
@@ -1702,7 +1601,7 @@ public class Juego implements Comandos{
         Jugador jugador = obtenerTurno();
         ArrayList<Casilla> propiedades = new ArrayList<>(jugador.getPropiedades());
     
-        if (cobrador.equals(this.banca)) {
+        if (cobrador.equals(null)) {
             System.out.println("El jugador " + jugador.getNombre() + " se declara en bancarrota. " +
                     "Sus propiedades vuelven a estar a la venta al precio original.");
             
@@ -1963,6 +1862,7 @@ public class Juego implements Comandos{
                         }
                         
                         jugador.sumarFortuna(suma);
+                        
                         System.out.println("El jugador " + jugador.getNombre() + " ha vendido " +
                                 n + " " + tipo + " en " + solar + ", recibiendo " + suma +
                                 "€. En la propiedad queda " + eds.size() + " " + tipo + ".");

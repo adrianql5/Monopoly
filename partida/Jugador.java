@@ -37,7 +37,7 @@ public class Jugador {
     private ArrayList<Integer> movimientos_pendientes;
 
     private Jugador jugadorConElQueEstanEnDeuda;//si es true está en deuda con la banca, si es false con un jugador
-
+    private float deuda;
 
     //SECCIÓN DE CONSTRUCTORES DE JUGADOR
     
@@ -79,6 +79,7 @@ public class Jugador {
         this.vueltas_sin_comprar=0;
         this.bloqueado=0;
         this.jugadorConElQueEstanEnDeuda=null;
+        this.deuda=0.0f;
         this.estadisticas = new Estadisticas();
         this.movimientos_pendientes = new ArrayList<Integer>();
         this.tratosPendientes = new ArrayList<>(); // Inicializar la lista de tratos pendientes
@@ -110,23 +111,6 @@ public class Jugador {
 
     }
 
-
-    // SOBRECARGA DEL MÉTODO "pagar" para pagar a la banca
-    /**Método para pagar dinero a otro jugador.
-     * ESTA MANERA DE LLAMARLO SE USA PARA PAGAR A LA BANCA (IMPUESTOS O TASAS).
-     * CUANDO SE PAGAN IMPUESTOS O TASAS RECORDAR AÑADIR EL DINERO AL BOTE DEL PARKING EN EL MENÚ.
-     * @param cantidad Dinero que hay que pagar a la banca
-     * @param banca Estamos obligados a pasar la banca para actualizar sus atributos desde aquí
-     */
-    public void pagar(float cantidad, Jugador banca) {
-        // Modificamos los atributos del pagador
-        this.restarFortuna(cantidad);
-        this.sumarGastos(cantidad);
-        this.estadisticas.sumarImpuestosYTasasPagados(cantidad);
-
-        // Modificamos los atributos del cobrador
-        banca.sumarFortuna(cantidad);
-    }
 
     /**Método que elimina el primer elemento del ArrayList movimientos_pendientes.
      * Si el ArrayList está vacío no hace nada.
@@ -197,6 +181,14 @@ public class Jugador {
         return solares;
     }
 
+    public float getDeuda(){
+        return this.deuda;
+    }
+
+    public void setDeuda(float deuda){
+        this.deuda=deuda;
+    }
+
     public void setDeudaConJugador(Jugador jugador){
         this.jugadorConElQueEstanEnDeuda=jugador;
     }
@@ -240,9 +232,9 @@ public class Jugador {
     /**Método para establecer al jugador en la cárcel.
      * @param pos Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).
      */
-    public void encarcelar(ArrayList<ArrayList<Casilla>> pos) {
+    public void encarcelar(Casilla carcel) {
         this.avatar.getLugar().eliminarAvatar(this.avatar);
-        this.avatar.setLugar(pos.get(1).get(0));
+        this.avatar.setLugar(carcel);
         this.estadisticas.sumarVecesEnLaCarcel(1);
         this.enCarcel = true;
         this.avatar.getLugar().anhadirAvatar(this.avatar);
