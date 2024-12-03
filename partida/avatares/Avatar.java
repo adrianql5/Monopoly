@@ -7,7 +7,7 @@ import partida.Jugador;
 import monopoly.*;
 import monopoly.casillas.*;
 
-public class Avatar {
+public abstract class Avatar {
     
     //ATRIBUTOS
     private String id; //Identificador: una letra generada aleatoriamente.
@@ -29,8 +29,7 @@ public class Avatar {
      * @param lugar     Lugar en el que está ubicado
      * @param avCreados Arraylist con los avatares creados (usado para crear un ID distinto a los demás)
      */
-    public Avatar(String tipo, Jugador jugador, Casilla lugar, ArrayList<Avatar> avCreados) {
-        this.tipo = tipo;
+    public Avatar(Jugador jugador, Casilla lugar, ArrayList<Avatar> avCreados) {
         this.jugador = jugador;
         this.lugar = lugar;
         this.movimientoAvanzado = false;
@@ -72,15 +71,7 @@ public class Avatar {
     //SECCIÓN DE MÉTODOS ÚTILES DE AVATAR-------------------------------------------------------------------------------
 
     /**Método que imprime la información sobre el avatar.*/
-    public void infoAvatar() {
-        String str = "{\n\tID: " + this.id + "\n" +
-                "\tTipo: " + this.tipo + "\n" +
-                "\tJugador: " + this.jugador.getNombre() + "\n" +
-                "\tCasilla: " + this.lugar.getNombre() + "\n}";
-
-        // Imprimir directamente el string
-        System.out.println(str);
-    }
+    public abstract void infoAvatar();
 
     /**Método para cambiar el tipo de movimiento del avatar.*/
     public void cambiarMovimiento() {
@@ -131,24 +122,6 @@ public class Avatar {
         return id;
     }
     //El id no necesita setter porque se le asigna un valor al crear el Avatar y no hay que modificarlo nunca
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo_avatar) {
-        switch (tipo_avatar) {
-            case "sombrero":
-            case "esfinge":
-            case "pelota":
-            case "coche":
-                this.tipo = tipo_avatar;
-                break;
-            default:
-                System.out.println(tipo_avatar + " no es un tipo de avatar válido.\n");
-        }
-    }
-
     public Jugador getJugador() {
         return jugador;
     }

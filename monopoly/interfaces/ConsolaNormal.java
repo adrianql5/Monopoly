@@ -19,7 +19,7 @@ public class ConsolaNormal implements Consola{
 
 	@Override
 	public String leer(){
-    	String leido = scanner.nextLine();
+		String leido = scanner.nextLine();
 		return leido;
 	}
 

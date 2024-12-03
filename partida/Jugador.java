@@ -61,11 +61,11 @@ public class Jugador {
      * @param avCreados ArrayList de avatares creados (usado para dos propósitos:
      *                  evitar que dos jugadores tengan el mismo nombre y que dos avatares tengan mismo ID).
      */
-    public Jugador(String nombre, String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados) {
+    public Jugador(String nombre, Casilla inicio, ArrayList<Avatar> avCreados) {
 
         this.nombre = nombre;
-        this.avatar = new Avatar(tipoAvatar, this, inicio, avCreados);
-        this.avatar.setTipo(tipoAvatar);
+        this.avatar = null;
+        
         this.avatar.setLugar(inicio);
         this.fortuna = Valor.FORTUNA_INICIAL;
         this.gastos = 0;
@@ -82,6 +82,10 @@ public class Jugador {
         this.movimientos_pendientes = new ArrayList<Integer>();
         this.tratosPendientes = new ArrayList<>(); // Inicializar la lista de tratos pendientes
 
+    }
+
+    public void setAvatar(Avatar avatar){
+        this.avatar=avatar;
     }
 
     //FUNCIONES CLAVE DE LA CLASE JUGADOR-------------------------------------------------------------------------------
@@ -311,11 +315,11 @@ public class Jugador {
     }
 
     public boolean esCocheAvanzado() {
-        return this.avatar.getTipo().equals("coche") && this.avatar.getMovimientoAvanzado();
+        return this.avatar instanceof Coche && this.avatar.getMovimientoAvanzado();
     }
 
     public boolean esPelotaAvanzado() {
-        return this.avatar.getTipo().equals("pelota") && this.avatar.getMovimientoAvanzado();
+        return this.avatar instanceof Pelota && this.avatar.getMovimientoAvanzado();
     }
 
 

@@ -181,20 +181,34 @@ public class Juego implements Comandos{
      */
     @Override
     public void crearJugador(String nombre, String tipoAvatar) {
-
-        String tipo = tipoAvatar.trim().toLowerCase();  // Eliminar espacios y convertir a minúsculas
-
         // Definir la casilla de inicio.
         Casilla casillaInicio = tablero.getCasilla(0);
-
+        Avatar av;
+        Jugador nuevoJugador = new Jugador(nombre, casillaInicio, avatares);
         //Comprobamos que el tipo introducido es válido
-        if(!esTipoAvatar(tipo)){
-            System.out.println("Tipo de avatar incorrecto");
-            return;
+        switch (tipoAvatar) {
+            case "coche":
+                av=new Coche(nuevoJugador, casillaInicio, avatares);
+                break;
+            case "pelota":
+                av=new Pelota(nuevoJugador, casillaInicio, avatares);
+                break;
+
+            case "esfinge":
+                av=new Esfinge(nuevoJugador, casillaInicio, avatares);
+                break;
+
+            case "sombrero":
+                av=new Sombrero(nuevoJugador, casillaInicio, avatares);
+                break;
+            default:
+                System.out.print("Tipo de avatar inválido. Los tipos válidos son coche, pelota, esfinge y sombrero");
+                return;
         }
 
+        nuevoJugador.setAvatar(av);
+
         // Creamos el nuevo jugador con el tipo indicado
-        Jugador nuevoJugador = new Jugador(nombre, tipo, casillaInicio, avatares);
         nuevoJugador.setDeudaConJugador(banca);
         // Añadir el jugador a la lista de jugadores y a la casilla de inicio
         this.jugadores.add(nuevoJugador);
@@ -654,7 +668,7 @@ public class Juego implements Comandos{
                         // Vuelves a tirar a no ser: (1) que caigas en IrCarcel
                         // (2) que seas un avatar coche y sacases 2,2 o 1,1
                         else if(!avatar.getLugar().getNombre().equals("IrCarcel") &&
-                                !(avatar.getTipo().equals("coche") && (sumaDados==4 || sumaDados==2) ) ) {
+                                !(avatar instanceof Coche && (sumaDados==4 || sumaDados==2) ) ) {
                             System.out.println("Vuelves a tirar.");
                         }
                     }
@@ -696,7 +710,7 @@ public class Juego implements Comandos{
 
         // Comprobamos si el jugador está en movimiento avanzado
         if(avatar.getMovimientoAvanzado()) {
-            if(avatar.getTipo().equals("coche")) {
+            if(avatar instanceof Coche) {
                 /*
                 SOLO PUEDE COMPRAR 1 CASILLA EN ESOS 3 LANZAMIENTOS MAXIMOS
                  */
@@ -713,7 +727,7 @@ public class Juego implements Comandos{
                     System.out.println(Texto.M_DOS_TURNOS_SIN_TIRAR);
                 }
             }
-            else if(avatar.getTipo().equals("pelota")) {
+            else if(avatar instanceof Pelota) {
 
                 if(movimientosPendientesActual().isEmpty()) {
                     // Cuando se llama a moverYEvaluar() al tirar los dados calculamos los movimientos pendientes
@@ -1011,7 +1025,8 @@ public class Juego implements Comandos{
                 System.out.println("El avatar " + avatar.getId() + " no puede cambiar de modo ya que esta bloqueado.");
             }
         } else {
-            System.out.printf(Texto.M_ACTIVAR_MOVIMIENTO_AVANZADO + "\n", avatar.getId(), avatar.getTipo());
+            if(avatar instanceof Coche) System.out.printf(Texto.M_ACTIVAR_MOVIMIENTO_AVANZADO + "\n", avatar.getId(), "coche");
+            if(avatar instanceof Pelota) System.out.printf(Texto.M_ACTIVAR_MOVIMIENTO_AVANZADO + "\n", avatar.getId(), "pelota");
             obtenerTurno().getAvatar().cambiarMovimiento();
         }
     }
@@ -1078,7 +1093,7 @@ public class Juego implements Comandos{
                 c.comprarPropiedad(jugador, this.banca);
 
                 // Si un avatar tipo coche en modo avanzado compra ya no va a poder comprar más en el turno
-                if(jugador.getAvatar().getTipo().equals("coche") && jugador.getAvatar().getMovimientoAvanzado()) {
+                if(jugador.getAvatar() instanceof Coche && jugador.getAvatar().getMovimientoAvanzado()) {
                     this.controlComandos=3;
                 }
 
