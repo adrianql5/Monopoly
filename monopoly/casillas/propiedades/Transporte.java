@@ -8,8 +8,8 @@ public class Transporte extends Propiedad{
     private float impuesto;
 
 
-    public Transporte(String nombre,int posicion){
-        super(nombre,posicion);
+    public Transporte(String nombre,int posicion,Jugador duenho){
+        super(nombre,posicion,duenho);
     }
 
     public float calcularValor(){

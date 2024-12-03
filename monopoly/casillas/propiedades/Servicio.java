@@ -6,8 +6,8 @@ import partida.*;
 
 public class Servicio extends Propiedad{
 
-    public Servicio(String nombre,int posicion) {
-        super(nombre,posicion);
+    public Servicio(String nombre,int posicion, Jugador duenho) {
+        super(nombre,posicion,duenho);
     }
 
     public float calcularValor(){
@@ -55,7 +55,7 @@ public class Servicio extends Propiedad{
                 System.out.println("La casilla " + this.nombre + " está a la venta.\n");
             }
         } else {
-            System.out.println("Esta casilla te pertenece.");        
+            System.out.println("Esta casilla te pertenece.");
         }
         return true;
     }

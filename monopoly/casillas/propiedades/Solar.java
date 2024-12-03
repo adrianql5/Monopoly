@@ -12,8 +12,8 @@ public class Solar extends Propiedad {
     protected int vecesVisitadaPorDuenho;
 
     // Constructor
-    public Solar(String nombre, int posicion) {
-        super(nombre, posicion);
+    public Solar(String nombre, int posicion, Jugador duenho) {
+        super(nombre, posicion,duenho);
         this.grupo = null;
         this.edificios = new ArrayList<>(4);
         this.vecesVisitadaPorDuenho = 0;
