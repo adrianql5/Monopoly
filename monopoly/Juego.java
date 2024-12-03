@@ -947,6 +947,7 @@ public class Juego implements Comandos{
     }
 
     /**Método que realiza las acciones asociadas al comando 'acabar turno'.*/
+    @Override
     public void acabarTurno() {
         // Si aún no tiraste este turno...
         if(!this.tirado) {
