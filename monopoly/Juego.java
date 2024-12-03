@@ -179,7 +179,8 @@ public class Juego implements Comandos{
      * @param nombre Nombre del jugador
      * @param tipoAvatar Tipo de avatar
      */
-    private void crearJugador(String nombre, String tipoAvatar) {
+    @Override
+    public void crearJugador(String nombre, String tipoAvatar) {
 
         String tipo = tipoAvatar.trim().toLowerCase();  // Eliminar espacios y convertir a minúsculas
 
@@ -223,6 +224,7 @@ public class Juego implements Comandos{
     }
 
     /**Método para acabar la partida cuando alguien gana o no se quiere seguir.*/
+    @Override
     public void acabarPartida() {
         partidaTerminada = true;
     }
@@ -232,19 +234,19 @@ public class Juego implements Comandos{
     //SECCIÓN DE MÉTODOS ÚTILES DEL MENÚ--------------------------------------------------------------------------------
 
     /**Método que devuelve el jugador que tiene el turno.*/
-    public Jugador obtenerTurno() {
+    private Jugador obtenerTurno() {
         return this.jugadores.get(this.turno);
     }
 
     /**Método para obtener el ArrayList de los movimientos pendientes del jugador actual directamente*/
-    public ArrayList<Integer> movimientosPendientesActual() {
+    private ArrayList<Integer> movimientosPendientesActual() {
         return obtenerTurno().getMovimientos_pendientes();
     }
 
     /**Método que elimina al jugador correspondiente de la lista de jugadores.
      * Si se le pasa un jugador que no está en la lista de jugadores no hace nada.
      */
-    public void eliminarJugador(Jugador jugador) {
+    private void eliminarJugador(Jugador jugador) {
         Iterator<Jugador> iterator = this.jugadores.iterator();
         while (iterator.hasNext()) {
             Jugador j = iterator.next();
@@ -493,6 +495,7 @@ public class Juego implements Comandos{
     /**Método que ejecuta todas las acciones relacionadas con el comando 'jugador'.
      * Imprime la información del jugador que tiene el turno.
      */
+    @Override
     public void infoJugadorTurno() {
         Jugador jugador = obtenerTurno(); // Obtener el jugador actual
 
@@ -563,6 +566,7 @@ public class Juego implements Comandos{
      * @param dadoTrucado1 Si se quiere obtener unos dados concretos se llama a la función con esos valores.
      *                     Si se quiere obtener unos dados aleatorios se llama con los valores (0,0)
      */
+    @Override
     public void lanzarDados(int dadoTrucado1, int dadoTrucado2) {
 
         //Obtenemos el avatar que tiene el turno
@@ -810,7 +814,7 @@ public class Juego implements Comandos{
      * @param cantidad
      * @return true si se acaba pudiendo pagar, false si el jugador se tuvo que declarar en bancarrota
      */
-    public void bucleBancarrota() {
+    private void bucleBancarrota() {
         Jugador pagador= obtenerTurno();
         Jugador cobrador = pagador.getDeudaConJugador();
         float cantidad=pagador.getDeuda();
@@ -904,6 +908,7 @@ public class Juego implements Comandos{
      * CASO ESPECIAL: si es el tercer turno que tiras los dados para salir de la cárcel y no sacas dobles estás obligado
      *  a pagar la fianza. En ese caso el método lanzarDados() llama a este método haciendo primero this.tirado=false.
      */
+    @Override
     public void salirCarcel() {
         //Establecemos el jugador actual
         Jugador jugador = this.jugadores.get(this.turno);
@@ -994,8 +999,8 @@ public class Juego implements Comandos{
     }
 
     /**Método para cambiar el modo de movimiento del avatar que tiene el turno*/
+    @Override
     public void cambiarModo() {
-
         Avatar avatar = obtenerTurno().getAvatar();
         if(avatar.getMovimientoAvanzado()) {
             if(movimientosPendientesActual().isEmpty()){
@@ -1005,20 +1010,20 @@ public class Juego implements Comandos{
             }else{
                 System.out.println("El avatar " + avatar.getId() + " no puede cambiar de modo ya que esta bloqueado.");
             }
-
         } else {
             System.out.printf(Texto.M_ACTIVAR_MOVIMIENTO_AVANZADO + "\n", avatar.getId(), avatar.getTipo());
             obtenerTurno().getAvatar().cambiarMovimiento();
         }
-
     }
 
     /**Método que realiza las acciones asociadas al comando 'ver tablero'*/
+    @Override
     public void verTablero() {
         System.out.println(tablero.toString());
     }
 
     /**Método que realiza las acciones asociadas al comando 'listar jugadores'.*/
+    @Override
     public void listarJugadores() {
         for(Jugador j: jugadores){
             j.infoJugador();
@@ -1026,6 +1031,7 @@ public class Juego implements Comandos{
     }
 
     /**Método que realiza las acciones asociadas al comando 'listar avatares'.*/
+    @Override
     public void listarAvatares() {
         for (Avatar a : avatares) {
             if (a != null) {
@@ -1035,6 +1041,7 @@ public class Juego implements Comandos{
     }
 
     /**Método que realiza las acciones asociadas al comando 'listar enventa'.*/
+    @Override
     public void listarVenta() {
         System.out.println("Propiedades en venta:");
         Casilla casilla_aux;
@@ -1056,6 +1063,7 @@ public class Juego implements Comandos{
     /**Método que ejecuta todas las acciones realizadas con el comando 'comprar nombre_casilla'.
      * @param nombre Cadena de caracteres con el nombre de la casilla.
      */
+    @Override
     public void comprar(String nombre) {
         Propiedad c=tablero.encontrar_propiedad(nombre);
         // Comprobamos si la casilla existe y ya se ha tirado (se hacen otras comprobaciones dentro de comprarCasilla)
@@ -1091,7 +1099,7 @@ public class Juego implements Comandos{
      * @param nombre_casilla Nombre de la casilla a describir
      */
     
-    
+    @Override
     public void descCasilla(String nombre_casilla) {
         Casilla casilla = tablero.encontrar_casilla(nombre_casilla);
         if(casilla!=null) {
@@ -1124,6 +1132,7 @@ public class Juego implements Comandos{
     /**Método que realiza las acciones asociadas al comando 'describir jugador'.
      * @param partes comando introducido
      */
+    @Override
     public void descJugador(String[] partes) {
         String nombre_completo = "";
 
@@ -1151,6 +1160,7 @@ public class Juego implements Comandos{
     /**Método que realiza las acciones asociadas al comando 'describir avatar'.
      * @param ID id del avatar a describir
      */
+    @Override
     public void descAvatar(String ID) {
         // lista llamada avatares se recorre
         for (Avatar avatar : avatares) { // Busca el avatar en la lista
@@ -1166,11 +1176,6 @@ public class Juego implements Comandos{
 
 
     //SECCIÓN DE COMANDOS QUE DEPENDEN DE DOS INSTANCIAS----------------------------------------------------------------
-
-
-
-
-
     // SECCIÓN DE MÉTODOS RELACIONADOS CON LAS CARTAS TIPO SUERTE Y CAJA DE COMUNIDAD-----------------------------------
 
     /**Método para cuando se cae en una casilla de tipo Suerte o Caja de comunidad
@@ -1361,7 +1366,7 @@ public class Juego implements Comandos{
      * Si no es un número válido imprime un mensaje de error y devuelve 0.
      * Método auxiliar para leerDadoValido() pero también sirve para lanzarDados().
      */
-    public int dadoValido(String numero) {
+    private int dadoValido(String numero) {
         // Función .matches() para ver si los caracteres de un String son del tipo indicado
         // En nuestro caso "\\d" significa que el String debe contener un único dígito
         if(numero.matches("\\d")) {
@@ -1383,7 +1388,7 @@ public class Juego implements Comandos{
     }
 
     /**Método que lee input hasta que el valor introducido sea un número entre 1 y 6.*/
-    public int leerDadoValido() {
+    private int leerDadoValido() {
         // Creamos un escaneador para introducir el número
         Scanner scannerDado = new Scanner(System.in);
         int n=0;
@@ -1408,6 +1413,7 @@ public class Juego implements Comandos{
     }
 
     /**Método que imprime las estadísticas de un jugador de la partida.*/
+    @Override
     public void estadisticasJugador(String nombre_jugador) {
         Jugador jugador=encontrarJugador(nombre_jugador);
 
@@ -1424,6 +1430,7 @@ public class Juego implements Comandos{
      * Muestra información como las casillas más visitadas, casillas más rentables,
      * grupos más rentables, jugadores con más vueltas, tiradas y fortuna.
      */
+    @Override
     public void estadisticasGenerales() {
         System.out.println("{");
 
@@ -1587,7 +1594,7 @@ public class Juego implements Comandos{
     }
 
     
-    
+    @Override
     public void declararBancarrota(Jugador cobrador) {
         Jugador jugador = obtenerTurno();
         ArrayList<Casilla> propiedades = new ArrayList<>(jugador.getPropiedades());
@@ -1624,7 +1631,7 @@ public class Juego implements Comandos{
         eliminarJugador(jugador);
     }
     
-    
+    @Override
     public void hipotecar(String nombre) {
         Casilla casilla = tablero.encontrar_casilla(nombre);
         Jugador jugador = obtenerTurno();
@@ -1704,7 +1711,7 @@ public class Juego implements Comandos{
     }
     
     
-    public static boolean esEdificioValido(String tipo) {
+    private static boolean esEdificioValido(String tipo) {
         return tipo.equals("casa") ||
                 tipo.equals("hotel") ||
                 tipo.equals("pista de deporte") ||
@@ -1712,6 +1719,7 @@ public class Juego implements Comandos{
     }
     
     //se puede hacer más modular, como todo obiamente os lo dejo a vosotros
+    @Override
     public void edificar(String tipo) {
         if (esEdificioValido(tipo)){
             if (obtenerTurno().getAvatar().getLugar() instanceof Solar) {
@@ -1758,7 +1766,7 @@ public class Juego implements Comandos{
     }
 
 
-    
+    @Override
     public void venderEdificios(String tipo, String nombre, int n) {
         Jugador jugador = obtenerTurno(); // Obtener el jugador cuyo turno es
         Casilla casilla =tablero.encontrar_casilla(nombre);
@@ -1791,6 +1799,7 @@ public class Juego implements Comandos{
         }
     }
 
+    @Override
     public void listarEdificios(String color) {
         // Si no se proporciona un color, lista todos los edificios
         if (color == null) {
@@ -1813,7 +1822,7 @@ public class Juego implements Comandos{
         }
     }
     
-    
+    @Override
     public void ayuda() {
         System.out.println("Lista de comandos disponibles:");
         System.out.println("- terminar partida / acabar partida: Termina la partida.");
@@ -1858,6 +1867,7 @@ public class Juego implements Comandos{
     LISTAR TRATOS
 
      */
+    @Override
     public void aceptarTrato(String idTrato) {
         // Obtener el jugador actual
         Jugador jugador = obtenerTurno();
@@ -1881,7 +1891,7 @@ public class Juego implements Comandos{
     }
 
 
-
+    @Override
     public void listarTratosJugadorActual() {
         // Obtener el jugador actual
         Jugador jugador = obtenerTurno();
@@ -1900,6 +1910,7 @@ public class Juego implements Comandos{
         }
     }
 
+    @Override
     public void proponerTrato(String detalleTrato) {
         // Dividir el comando para extraer el jugador y el detalle del trato
         String[] partes = detalleTrato.split(": cambiar ");

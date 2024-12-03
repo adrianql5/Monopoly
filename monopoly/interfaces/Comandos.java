@@ -2,7 +2,6 @@ package monopoly.interfaces;
 
 import partida.*;
 
-
 public interface Comandos {
     void acabarPartida();
     void declararBancarrota(Jugador jugador);
@@ -30,4 +29,5 @@ public interface Comandos {
     void descAvatar(String avatar);
     void proponerTrato(String comando);
     void venderEdificios(String propiedad, String tipoEdificio, int cantidad);
+    void crearJugador(String nombre, String avatar);
 }
