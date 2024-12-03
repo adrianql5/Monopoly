@@ -3,7 +3,6 @@ package partida;
 import java.util.*;
 
 import monopoly.*;
-import partida.*;
 
 import partida.avatares.*;
 
@@ -24,7 +23,6 @@ public class Jugador {
     private int vueltas; //Cuenta las vueltas dadas al tablero.
     private ArrayList<Propiedad> propiedades; //Propiedades que posee el jugador.
     private int vueltas_sin_comprar;
-    private int bloqueado;
     private ArrayList<Trato> tratosPendientes; // Lista de tratos pendientes propuestos a este jugador
 
     private Estadisticas estadisticas;
@@ -50,7 +48,6 @@ public class Jugador {
         this.vueltas=0;
         this.propiedades=new ArrayList<Propiedad>();
         this.vueltas_sin_comprar=0;
-        this.bloqueado=0;
         // No inicializamos ni las estadísticas ni los movimientos pendientes pa la banca!
     }
     
@@ -75,7 +72,6 @@ public class Jugador {
         this.avatar.setJugador(this);
         this.propiedades = new ArrayList<Propiedad>();
         this.vueltas_sin_comprar=0;
-        this.bloqueado=0;
         this.jugadorConElQueEstanEnDeuda=null;
         this.deuda=0.0f;
         this.estadisticas = new Estadisticas();

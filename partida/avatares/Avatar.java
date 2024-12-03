@@ -4,19 +4,16 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import partida.Jugador;
-import monopoly.*;
 import monopoly.casillas.*;
 
 public abstract class Avatar {
     
     //ATRIBUTOS
     private String id; //Identificador: una letra generada aleatoriamente.
-    private String tipo; //Sombrero, Esfinge, Pelota, Coche
     private Jugador jugador; //Un jugador al que pertenece ese avatar.
     private Casilla lugar; //Los avatares se sitúan en casillas del tablero.
     private boolean movimientoAvanzado; //TRUE si el avatar está en modo de movimiento avanzado.
     private ArrayList<Avatar> avCreados;
-    private int bloqueado; //Valor para casos en los que hay que bloquear algún comando en el turno
 
 
     //SECCIÓN DE CONSTRUCTORES DE AVATAR--------------------------------------------------------------------------------
@@ -36,7 +33,6 @@ public abstract class Avatar {
         this.avCreados = avCreados;
         generarId(avCreados);
         this.avCreados.add(this);
-        this.bloqueado=0;
     }
 
     /**
