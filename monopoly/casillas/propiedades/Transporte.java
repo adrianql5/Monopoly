@@ -3,6 +3,8 @@ package monopoly.casillas.propiedades;
 import monopoly.Valor;
 import partida.*;
 
+import monopoly.*;
+
 public class Transporte extends Propiedad{
 
     private float impuesto;
@@ -35,8 +37,8 @@ public class Transporte extends Propiedad{
             if (!duenho.getNombre().equals("banca")) {
                 if (!estaHipotecada) {
                     float precio = evaluarAlquiler();
-                    System.out.printf("%s debe pagar el servicio de transporte a %s: %,.0f€\n",
-                        jugadorActual.getNombre(), duenho.getNombre(), precio);
+                    Juego.consola.imprimir(String.format("%s debe pagar el servicio de transporte a %s: %,.0f€\n",
+                        jugadorActual.getNombre(), duenho.getNombre(), precio));
     
                     // Si puede pagarlo de alguna manera se cobra
                     if(precio>jugadorActual.getFortuna()) {
@@ -49,13 +51,13 @@ public class Transporte extends Propiedad{
 
                     return true;
                 } else {
-                    System.out.println("La casilla " + this.nombre + " está hipotecada. No hay que pagar.");
+                    Juego.consola.imprimir("La casilla " + this.nombre + " está hipotecada. No hay que pagar.");
                 }
             } else {
-                System.out.println("La casilla " + this.nombre + " está a la venta.\n");
+                Juego.consola.imprimir("La casilla " + this.nombre + " está a la venta.\n");
             }
         } else {
-            System.out.println("Esta casilla te pertenece.");
+            Juego.consola.imprimir("Esta casilla te pertenece.");
         }
         return true;
     }

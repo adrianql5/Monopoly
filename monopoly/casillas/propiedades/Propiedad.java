@@ -6,6 +6,7 @@ import partida.Jugador;
 
 import java.util.*;
 import monopoly.edificios.*;
+import monopoly.Juego;
 
 
 public  abstract class Propiedad extends Casilla {
@@ -88,7 +89,7 @@ public  abstract class Propiedad extends Casilla {
         if (hipotecaCasilla > 0) {
             this.hipoteca = hipotecaCasilla;
         } else {
-            System.out.println("La hipoteca debe ser un valor positivo.");
+            Juego.consola.imprimir("La hipoteca debe ser un valor positivo.");
         }
     }
 
@@ -100,7 +101,7 @@ public  abstract class Propiedad extends Casilla {
         if (valorCasilla > 0) {
             this.valor = valorCasilla;
         } else {
-            System.out.println("El valor de la casilla debe ser positivo.");
+            Juego.consola.imprimir("El valor de la casilla debe ser positivo.");
         }
     }
 
@@ -138,16 +139,17 @@ public  abstract class Propiedad extends Casilla {
                     solicitante.anhadirPropiedad(this);
                     this.setDuenho(solicitante);
 
-                    System.out.printf("%s ha comprado la propiedad '%s' por el precio de %,.0f€.%n",
+                    String mensaje = String.format("%s ha comprado la propiedad '%s' por el precio de %,.0f€.%n",
                             solicitante.getNombre(), this.getNombre(), this.valor);
+                    Juego.consola.imprimir(mensaje);
                 } else {
-                    System.out.println("No tienes suficiente dinero para comprar esta casilla.");
+                    Juego.consola.imprimir("No tienes suficiente dinero para comprar esta casilla.");
                 }
             } else {
-                System.out.println("Esta casilla no está en venta.");
+                Juego.consola.imprimir("Esta casilla no está en venta.");
             }
         } else {
-            System.out.println("¡Debes estar en esta casilla para poder comprarla!");
+            Juego.consola.imprimir("¡Debes estar en esta casilla para poder comprarla!");
         }
     }
 
@@ -174,14 +176,14 @@ public  abstract class Propiedad extends Casilla {
             
             // Si hay edificaciones, no se puede hipotecar
             if (!sinEdificios) {
-                System.out.println("No puedes hipotecar la casilla " + this.getNombre() + " porque tienes que vender todas tus edificaciones.");
+                Juego.consola.imprimir("No puedes hipotecar la casilla " + this.getNombre() + " porque tienes que vender todas tus edificaciones.");
                 return false;  // Retorna false indicando que no puede hipotecarse
             } else {
                 estaHipotecada = true;  // Marca como hipotecada
                 return true;  // Retorna true indicando que sí se puede hipotecar
             }
         } else {
-            System.out.println("No puedes hipotecar esta propiedad porque ya está hipotecada.");
+            Juego.consola.imprimir("No puedes hipotecar esta propiedad porque ya está hipotecada.");
             return false;  // Retorna false si ya está hipotecada
         }
     }
@@ -198,7 +200,7 @@ public  abstract class Propiedad extends Casilla {
             this.estaHipotecada = false;
             return true;
         } else {
-            System.out.println("No puedes deshipotecar esta propiedad porque no está hipotecada.");
+            Juego.consola.imprimir("No puedes deshipotecar esta propiedad porque no está hipotecada.");
             return false;
         }
     }

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import monopoly.casillas.propiedades.Propiedad;
-
+import monopoly.*;
 
 public class Trato {
 
@@ -78,21 +78,19 @@ public class Trato {
     public boolean aceptar() {
         // Verificar dinero demandado
         if (dineroDemandado > 0 && jugadorRecibe.getFortuna() < dineroDemandado) {
-            System.out.printf("El trato no puede ser aceptado: %s no dispone de suficiente dinero.\n",
-                    jugadorRecibe.getNombre());
+            Juego.consola.imprimir("El trato no puede ser aceptado: " + jugadorRecibe.getNombre() + " no dispone de suficiente dinero.\n");
             return false;
         }
         if (dineroOfrecido > 0 && jugadorPropone.getFortuna() < dineroOfrecido) {
-            System.out.printf("El trato no puede ser aceptado: %s no dispone de suficiente dinero.\n",
-                    jugadorPropone.getNombre());
+            Juego.consola.imprimir("El trato no puede ser aceptado: " + jugadorPropone.getNombre() + " no dispone de suficiente dinero.\n");
             return false;
         }
         for (Propiedad propiedad : propiedadesOfrecidas) {
         
 
             if (!((Propiedad)propiedad).getDuenho().getNombre().equals( this.jugadorPropone.getNombre()) ) {
-                System.out.printf("El trato no puede ser aceptado: %s no pertenece a %s.\n",
-                        propiedad.getNombre(), jugadorPropone.getNombre());
+                Juego.consola.imprimir(String.format("El trato no puede ser aceptado: %s no pertenece a %s.\n",
+                        propiedad.getNombre(), jugadorPropone.getNombre()));
                 return false;
             }
         }
@@ -100,8 +98,7 @@ public class Trato {
         for (Propiedad propiedad : propiedadesDemandadas) {
 
             if (!((Propiedad)propiedad).getDuenho().getNombre().equals( this.jugadorRecibe.getNombre()) ) {
-                System.out.printf("El trato no puede ser aceptado: %s no pertenece a %s.\n",
-                        propiedad.getNombre(), jugadorRecibe.getNombre());
+                Juego.consola.imprimir("El trato no puede ser aceptado: " + propiedad.getNombre() + " no pertenece a " + jugadorRecibe.getNombre() + ".\n");
                 return false;
             }
         }
@@ -111,8 +108,7 @@ public class Trato {
         transferirDinero(dineroOfrecido, jugadorPropone, jugadorRecibe);
         transferirDinero(dineroDemandado, jugadorRecibe, jugadorPropone);
 
-        System.out.printf("Se ha aceptado el trato con éxito entre %s y %s.\n",
-                jugadorPropone.getNombre(), jugadorRecibe.getNombre());
+        Juego.consola.imprimir("Se ha aceptado el trato con éxito entre " + jugadorPropone.getNombre() + " y " + jugadorRecibe.getNombre() + ".\n");
         return true;
     }
 

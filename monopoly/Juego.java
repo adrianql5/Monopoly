@@ -10,7 +10,8 @@ import monopoly.casillas.*;
 import monopoly.casillas.acciones.*;
 import monopoly.casillas.propiedades.*;
 import monopoly.edificios.*;
-import monopoly.interfaces.Comandos;
+import monopoly.interfaces.*;
+
 
 
 public class Juego implements Comandos{
@@ -43,6 +44,8 @@ public class Juego implements Comandos{
      */
     private int controlComandos;
 
+
+    public final static Consola consola = new ConsolaNormal();
 
     public Juego(){
         this.jugadores = new ArrayList<Jugador>();
@@ -98,8 +101,7 @@ public class Juego implements Comandos{
      */
     public void iniciarPartida() {
         // Creamos un scanner para introducir comandos
-        Scanner scanIniciarPartida = new Scanner(System.in);
-
+        
         // Antes de empezar la partida hay que crear los jugadores
         setTextoTablero(Texto.BIENVENIDA);
         verTablero();
@@ -108,7 +110,7 @@ public class Juego implements Comandos{
         // Dentro del propio bucle se empieza la partida
         while(!partidaTerminada) {
 
-            String comando_entero = scanIniciarPartida.nextLine();
+            String comando_entero = consola.leer("Crea un jugador (crear jugador <nombre> <tipo_avatar>) y cuando tengas los suficientes escribe 'empezar partida': ");
             String[] comando = comando_entero.split(" ");
 
             // IMPORTANTE comprobar la longitud para no acceder a un índice que no existe
@@ -130,21 +132,21 @@ public class Juego implements Comandos{
                         crearJugador(nombre_completo, comando[comando.length-1]);
                     }
                     else {
-                        System.out.println(Texto.M_TIPO_AVATAR_INVALIDO);
+                        consola.imprimir(Texto.M_TIPO_AVATAR_INVALIDO);
                     }
                 }
                 else {
-                    System.out.println(Texto.M_PROHIBIDO_MAS_DE_6_JUGADORES);
+                    consola.imprimir(Texto.M_PROHIBIDO_MAS_DE_6_JUGADORES);
                 }
             } else if (comando.length ==2 && comando[0].equals("setfortuna")) {
                 float fortuna = Float.parseFloat(comando[1]);
                 asignarFortuna(fortuna);
-                System.out.println("jajajaj pues va");
+                consola.imprimir("jajajaj pues va");
             } else if ("empezar partida".equals(comando_entero)) {
 
                 //Si hay al menos 2 jugadores empezamos
                 if(this.avatares.isEmpty()) {
-                    System.out.println("Amig@ habrá que crear algún jugador antes de empezar no crees?");
+                    consola.imprimir("Amig@ habrá que crear algún jugador antes de empezar no crees?");
                 }
                 else if(this.avatares.size()!=1) {
                     this.turno = 0; //El primer jugador creado tiene el turno
@@ -160,17 +162,17 @@ public class Juego implements Comandos{
 
                 }
                 else {
-                    System.out.println("Creo que jugar una persona sola no tiene mucho sentido...");
+                    consola.imprimir("Creo que jugar una persona sola no tiene mucho sentido...");
                 }
 
             } else {
-                System.out.println(Texto.M_COMANDO_INVALIDO_INICIO);
+                consola.imprimir(Texto.M_COMANDO_INVALIDO_INICIO);
             }
 
         }
         //Acabouse, liberar memoria estaría duro
-        scanIniciarPartida.close();
-        System.out.println("La partida ha finalizado, esperamos que disfrutáseis la experiencia.");
+        
+        consola.imprimir("La partida ha finalizado, esperamos que disfrutáseis la experiencia.");
         System.exit(0);
     }
 
@@ -230,10 +232,10 @@ public class Juego implements Comandos{
      * [4] Una vez gestionados esos casos llama a analizarComando() con el int que toque.
      */
     private void bucleTurno() {
-        Scanner scanTurno = new Scanner(System.in);
+        
         while (!partidaTerminada) {
-                System.out.println();
-                analizarComando(scanTurno.nextLine());
+                consola.imprimir("");
+                analizarComando(consola.leer("Introduce un comando: "));
         }
     }
 
@@ -272,7 +274,7 @@ public class Juego implements Comandos{
                 }
                 // Si sólo queda un jugador se acabó la partida!!!
                 if(this.jugadores.size()==1) {
-                    System.out.println("Increíble! Os ha dado tiempo a acabar una partida de Monopoly!" +
+                    consola.imprimir("Increíble! Os ha dado tiempo a acabar una partida de Monopoly!" +
                             "\n¡¡Y el ganador es " + obtenerTurno().getNombre() + "!!");
                     //this.partidaTerminada=true;
                 }
@@ -297,7 +299,7 @@ public class Juego implements Comandos{
             }
         }
         else {
-            System.out.println("Se ha intentado meter más líneas de las que caben en el medio del tablero.");
+            consola.imprimir("Se ha intentado meter más líneas de las que caben en el medio del tablero.");
         }
     }
 
@@ -337,14 +339,14 @@ public class Juego implements Comandos{
                     lanzarDados(0, 0);
                 }
                 else {
-                    System.out.println(Texto.M_COMANDO_BLOQUEADO);
+                    consola.imprimir(Texto.M_COMANDO_BLOQUEADO);
                 }
                 break;
 
             case "acabar turno":
                 // La pelota no puede pasar el turno si tiene movimientos pendientes
                 if(this.controlComandos==1 && !movimientosPendientesActual().isEmpty()) {
-                    System.out.println(Texto.M_MOVIMIENTOS_PENDIENTES);
+                    consola.imprimir(Texto.M_MOVIMIENTOS_PENDIENTES);
                 }
                 else{
                     acabarTurno();
@@ -356,7 +358,7 @@ public class Juego implements Comandos{
                     cambiarModo();
                 }
                 else{
-                    System.out.println("No se puede cambiar de modo una vez ya se ha tirado.");
+                    consola.imprimir("No se puede cambiar de modo una vez ya se ha tirado.");
                 }
                 break;
 
@@ -368,15 +370,15 @@ public class Juego implements Comandos{
                     verTablero();
                     if(movimientosPendientesActual().isEmpty()) {
                         if(this.dado1.getValor()==this.dado2.getValor()) {
-                            System.out.println(Texto.M_YA_SE_HICIERON_TODOS_LOS_MOVIMIENTOS_TIRADA);
+                            consola.imprimir(Texto.M_YA_SE_HICIERON_TODOS_LOS_MOVIMIENTOS_TIRADA);
                         }
                         else {
-                            System.out.println(Texto.M_YA_SE_HICIERON_TODOS_LOS_MOVIMIENTOS_TURNO);
+                            consola.imprimir(Texto.M_YA_SE_HICIERON_TODOS_LOS_MOVIMIENTOS_TURNO);
                         }
                     }
                 }
                 else {
-                    System.out.println(Texto.M_COMANDO_BLOQUEADO);
+                    consola.imprimir(Texto.M_COMANDO_BLOQUEADO);
                 }
                 break;
 
@@ -392,7 +394,7 @@ public class Juego implements Comandos{
             case "coger carta suerte": cogerCarta(this.cartas_suerte); break;
 
             // Algunos mensajes concretos a comandos inválidos
-            case "empezar partida": System.out.println("¡La partida ya está empezada! \uD83D\uDE21"); break;
+            case "empezar partida": consola.imprimir("¡La partida ya está empezada! \uD83D\uDE21"); break;
 
 
             // SEGUNDO BLOQUE DE COMANDOS: dependen de una instancia------------------------------------------
@@ -404,7 +406,7 @@ public class Juego implements Comandos{
                 // IMPORTANTE: hacer las comprobaciones en función del número de palabras del comando
                 // Si no podríamos querer acceder a un índice que no existe
                 if(comando.length==1) {
-                    System.out.println(comando_entero + " no es un comando válido.");
+                    consola.imprimir(comando_entero + " no es un comando válido.");
                 }
                 else if(comando.length==2) {
 
@@ -419,7 +421,7 @@ public class Juego implements Comandos{
                                 comprar(comando[1]);
                             }
                             else {
-                                System.out.println(Texto.M_UNA_CASILLA_POR_TURNO);
+                                consola.imprimir(Texto.M_UNA_CASILLA_POR_TURNO);
                             }
                             break;
                         //comando de tratos
@@ -441,7 +443,7 @@ public class Juego implements Comandos{
                             break;
 
                         // Comando inválido
-                        default: System.out.println(comando_entero + " no es un comando válido.");
+                        default: consola.imprimir(comando_entero + " no es un comando válido.");
                     }
                 }
                 // Caso especial: describir jugador tiene un número variable por si el nombre es compuesto
@@ -451,7 +453,7 @@ public class Juego implements Comandos{
                 }
                 // Mensaje de error por si se intenta crear un jugador con la partida empezada
                 else if("crearjugador".equals(comando[0] + comando[1])){
-                    System.out.println("No se pueden crear más jugadores con la partida empezada.");
+                    consola.imprimir("No se pueden crear más jugadores con la partida empezada.");
                 }
                 else if(comando.length==3) {
 
@@ -475,12 +477,12 @@ public class Juego implements Comandos{
                             }
                         }
                         else {
-                            System.out.println(Texto.M_COMANDO_BLOQUEADO);
+                            consola.imprimir(Texto.M_COMANDO_BLOQUEADO);
                         }
 
                     }
                     else {
-                        System.out.println(comando_entero + " no es un comando válido.");
+                        consola.imprimir(comando_entero + " no es un comando válido.");
                     }
                 }
                 else if(comando.length==4){
@@ -492,13 +494,13 @@ public class Juego implements Comandos{
                         }
                     }
                     else{
-                        System.out.println(comando_entero + " no es un comando válido.");
+                        consola.imprimir(comando_entero + " no es un comando válido.");
                     }
                 } else if (comando.length > 5 && comando[0].equals("trato")) {
                     proponerTrato(comando_entero);
 
                 } else {
-                    System.out.println(comando_entero + " no es un comando válido.");
+                    consola.imprimir(comando_entero + " no es un comando válido.");
                 }
         }
     }
@@ -514,8 +516,8 @@ public class Juego implements Comandos{
         Jugador jugador = obtenerTurno(); // Obtener el jugador actual
 
         // Imprimir el nombre y el avatar en el formato requerido
-        System.out.println("{\n\tnombre: " + jugador.getNombre() + ",");
-        System.out.println("\tavatar: " + jugador.getAvatar().getId() + "\n}");
+        consola.imprimir("{\n\tnombre: " + jugador.getNombre() + ",");
+        consola.imprimir("\tavatar: " + jugador.getAvatar().getId() + "\n}");
     }
 
     /**Método para comprobar si los jugadores llevan cuatro vueltas al tablero sin comprar.
@@ -532,7 +534,7 @@ public class Juego implements Comandos{
         }
         if (todosCumplen) {
             this.tablero.aumentarCoste(banca);
-            System.out.println("Todos los jugadores han dado 4 vueltas sin comprar! El precio de los solares aumenta.");
+            consola.imprimir("Todos los jugadores han dado 4 vueltas sin comprar! El precio de los solares aumenta.");
             reiniciarVueltasSinCompras();
         }
     }
@@ -589,15 +591,15 @@ public class Juego implements Comandos{
 
         // Comprobamos si acaba de ser encarcelado
         if (this.tirado && jugador.isEnCarcel() && jugador.getTiradasCarcel()==0) {
-            System.out.println(Texto.M_RECIEN_ENCARCELADO);
+            consola.imprimir(Texto.M_RECIEN_ENCARCELADO);
         }
         // Un avatar coche puede llegar a tirar 4 veces en un mismo turno pero no más
         else if(this.lanzamientos==4) {
-            System.out.println("No puedes tirar más de cuatro veces en el mismo turno.");
+            consola.imprimir("No puedes tirar más de cuatro veces en el mismo turno.");
         }
         // Un avatar coche avanzado no puede tirar si sacó menos que 5
         else if(obtenerTurno().esCocheAvanzado() && this.tirado && this.dado1.getValor()+this.dado2.getValor()<5)  {
-            System.out.println("Sacaste menos que 5, no puedes volver a tirar.");
+            consola.imprimir("Sacaste menos que 5, no puedes volver a tirar.");
         }
         else {
             // Comprobamos si aún no se ha tirado en el turno o vienes de haber sacado dobles
@@ -618,7 +620,7 @@ public class Juego implements Comandos{
                     resultado2 = this.dado2.getValor();
                 }
                 // Imprimimos los dados
-                System.out.println("[" + resultado1 + "] [" + resultado2 + "]");
+                consola.imprimir("[" + resultado1 + "] [" + resultado2 + "]");
                 // Actualizamos las stats~
                 jugador.getEstadisticas().sumarVecesTirado(1);
                 // Se vuelve a asignar true en segundas/terceras tiradas a no ser que hagamos un caso a parte
@@ -629,21 +631,21 @@ public class Juego implements Comandos{
                 if(jugador.isEnCarcel()) {
                     // Si sacas dobles sales!
                     if(resultado1==resultado2) {
-                        System.out.println("DOBLES!!\nSales de la cárcel.");
+                        consola.imprimir("DOBLES!!\nSales de la cárcel.");
                         desencarcelar(jugador);
                     }
                     else {
                         // No sales a menos que sea la tercera vez que tiras, caso en el que estás obligado
                         // a pagar la fianza. Si no puedes te declaras en bancarrota
                         if(jugador.getTiradasCarcel()==2) {
-                            System.out.println("No ha habido suerte con los dados, toca pagar la fianza...");
+                            consola.imprimir("No ha habido suerte con los dados, toca pagar la fianza...");
                             //Por cómo está implementado salirCarcel(), el comando no se puede usar si ya tiraste
                             this.tirado=false;
                             //Pagas la fianza y sales de la cárcel
                             salirCarcel();
                         }
                         else {
-                            System.out.println("Continúas en la carcel.");
+                            consola.imprimir("Continúas en la carcel.");
                             jugador.setTiradasCarcel(1+jugador.getTiradasCarcel());
                         }
                     }
@@ -654,7 +656,7 @@ public class Juego implements Comandos{
 
                     // Mensajes sobre dados dobles si toca
                     if(resultado1==resultado2) {
-                        System.out.println("DOBLES!!");
+                        consola.imprimir("DOBLES!!");
                         if(lanzamientos==4&&!turno_extra_coche){
                             this.lanzamientos=3;
                             turno_extra_coche=true;
@@ -662,14 +664,14 @@ public class Juego implements Comandos{
                         this.dadosDoblesSeguidos++;
                         if(this.dadosDoblesSeguidos==3) {
                             jugador.encarcelar(this.tablero.getCasilla(20));
-                            System.out.println("Tres dobles son muchos, vas a la cárcel sin pasar por la salida.");
+                            consola.imprimir("Tres dobles son muchos, vas a la cárcel sin pasar por la salida.");
                             return;
                         }
                         // Vuelves a tirar a no ser: (1) que caigas en IrCarcel
                         // (2) que seas un avatar coche y sacases 2,2 o 1,1
                         else if(!avatar.getLugar().getNombre().equals("IrCarcel") &&
                                 !(avatar instanceof Coche && (sumaDados==4 || sumaDados==2) ) ) {
-                            System.out.println("Vuelves a tirar.");
+                            consola.imprimir("Vuelves a tirar.");
                         }
                     }
                     else{
@@ -682,14 +684,14 @@ public class Juego implements Comandos{
 
                     // Si un avatar pelota está en modo avanzado y tiene movimientos pendientes le avisamos
                     if(this.controlComandos==1 && !movimientosPendientesActual().isEmpty()) {
-                        System.out.println(Texto.M_MOVIMIENTOS_PENDIENTES);
+                        consola.imprimir(Texto.M_MOVIMIENTOS_PENDIENTES);
                     }
                 }
                 // Si se ha podido tirar los dados imprimimos el tablero
                 verTablero();
             }
             else {
-                System.out.println(Texto.M_YA_SE_TIRO);
+                consola.imprimir(Texto.M_YA_SE_TIRO);
             }
         }
     }
@@ -717,14 +719,14 @@ public class Juego implements Comandos{
                 if(tirada>4) {
                     // El jugador puede volver a tirar hasta un total de cuatro veces (lo limita lanzarDados())
                     avatar.moverAvatar(this.tablero.getPosiciones(), tirada);
-                    System.out.println("Has sacado más de 4! Vuelves a tirar!");
+                    consola.imprimir("Has sacado más de 4! Vuelves a tirar!");
                 }
                 else {
                     // Si saca menos de un 4 retrocede ese número de casillas
                     avatar.moverAvatar(this.tablero.getPosiciones(), -tirada);
                     // No puede lanzar los dados ni este turno ni los 2 siguientes
                     jugador.dosTurnosSinTirar();
-                    System.out.println(Texto.M_DOS_TURNOS_SIN_TIRAR);
+                    consola.imprimir(Texto.M_DOS_TURNOS_SIN_TIRAR);
                 }
             }
             else if(avatar instanceof Pelota) {
@@ -752,7 +754,7 @@ public class Juego implements Comandos{
                 }
             }
             else {
-                System.out.println("Modo avanzado de la esfinge y el sombrero no implementado. Movimiento normal.");
+                consola.imprimir("Modo avanzado de la esfinge y el sombrero no implementado. Movimiento normal.");
                 avatar.moverAvatar(this.tablero.getPosiciones(), tirada);
             }
         }
@@ -768,22 +770,22 @@ public class Juego implements Comandos{
         if(tirada > 4 || !jugador.getAvatar().getMovimientoAvanzado()){
             if(obtenerTurno().esPelotaAvanzado() && primerMovimientoPelota) {
                 // Si un avatar en modo avanzado saca 5 o más siempre avanza primero 1 casilla
-                System.out.println("El avatar " + avatar.getId() + " avanza 5 casillas desde " +
+                consola.imprimir("El avatar " + avatar.getId() + " avanza 5 casillas desde " +
                         origen.getNombre() + " hasta " + destino.getNombre() + ".");
             }
             else {
-                System.out.println("El avatar " + avatar.getId() + " avanza " + tirada +
+                consola.imprimir("El avatar " + avatar.getId() + " avanza " + tirada +
                         " casillas desde " + origen.getNombre() + " hasta " + destino.getNombre() + ".");
             }
         }
         else{
             if(obtenerTurno().esPelotaAvanzado() && primerMovimientoPelota) {
                 // Si un avatar en modo avanzado saca 4 o menos siempre retrocede primero 1 casilla
-                System.out.println("El avatar " + avatar.getId() + " retrocede 1 casilla desde" +
+                consola.imprimir("El avatar " + avatar.getId() + " retrocede 1 casilla desde" +
                         origen.getNombre() + " hasta " + destino.getNombre() + ".");
             }
             else {
-                System.out.println("El avatar " + avatar.getId() + " retrocede " + (tirada>0 ? tirada : -tirada) +
+                consola.imprimir("El avatar " + avatar.getId() + " retrocede " + (tirada>0 ? tirada : -tirada) +
                         " casillas desde " + origen.getNombre() + " hasta " + destino.getNombre() + ".");
             }
         }
@@ -833,25 +835,23 @@ public class Juego implements Comandos{
         Jugador cobrador = pagador.getDeudaConJugador();
         float cantidad=pagador.getDeuda();
         if(cantidad>pagador.getFortuna()) {
-            Scanner scannerBancarrota = new Scanner(System.in);
-
             // Mientras tenga propiedades hipotecables puede ganar dinero (también se puede declarar en bancarrota)
             while(pagador.tienePropiedadesHipotecables() && cantidad>pagador.getFortuna()) {
-                System.out.println(Texto.M_NO_HAY_DINERO_OPCIONES);
+                consola.imprimir(Texto.M_NO_HAY_DINERO_OPCIONES);
 
-                System.out.println();
-                String comando_entero = scannerBancarrota.nextLine();
+                consola.imprimir("");
+                String comando_entero = consola.leer("Introduce los comandos bancarrota, hipotecar o vender:");
                 String[] comando = comando_entero.split(" ");
 
                 // Mientras no sea uno de estos tres el comando no es válido
                 while( !( comando_entero.equals("bancarrota") || comando[0].equals("hipotecar") ||
                         comando[0].equals("vender") ) ) {
 
-                    System.out.println("Comando inválido.");
+                    consola.imprimir("Comando inválido.");
 
                     // Volvemos a pedir comandos hasta que sea uno válido
-                    System.out.println();
-                    comando_entero = scannerBancarrota.nextLine();
+                    consola.imprimir("");
+                    comando_entero = consola.leer("Introduce los comandos bancarrota, hipotecar o vender (has introducido " + comando_entero + "), que es inválido:");
                     comando = comando_entero.split(" ");
                 }
                 if(comando_entero.equals("bancarrota")) {
@@ -870,15 +870,15 @@ public class Juego implements Comandos{
 
                 // Si después de la operación (vender edificios/hipotecar) ya puede pagar devolvemos true
                 if(cantidad<=pagador.getFortuna()) {
-                    System.out.println("Ya conseguiste dinero para pagar! Realizas el pago.");
+                    consola.imprimir("Ya conseguiste dinero para pagar! Realizas el pago.");
                     pagador.pagar(cobrador,cantidad);
                 }
 
             }
             // No tiene ni dinero ni propiedades hipotecables
             do{
-                System.out.println(Texto.M_BANCARROTA_OBLIGATORIA);
-            } while(!scannerBancarrota.nextLine().equals("bancarrota"));
+                consola.imprimir(Texto.M_BANCARROTA_OBLIGATORIA);
+            } while(!consola.leer("Estas obligado a declararte en bancarrota.").equals("bancarrota"));
             declararBancarrota(cobrador);
             
         }
@@ -937,13 +937,13 @@ public class Juego implements Comandos{
                             jugador.getNombre(), Valor.SALIR_CARCEL);
                 }
                 else {
-                    System.out.println("¡No tienes dinero suficiente para pagar la fianza!");
+                    consola.imprimir("¡No tienes dinero suficiente para pagar la fianza!");
                 }
             } else {
-                System.out.println("Ya has lanzado los dados.");
+                consola.imprimir("Ya has lanzado los dados.");
             }
 
-        } else System.out.println("El jugador " + jugador.getNombre() + " no está en la cárcel.");
+        } else consola.imprimir("El jugador " + jugador.getNombre() + " no está en la cárcel.");
     }
 
     /**Método que realiza las acciones asociadas al comando 'acabar turno'.*/
@@ -954,7 +954,7 @@ public class Juego implements Comandos{
             // ...a no ser que tengas el turno actual bloqueado (no puedes lanzar dados) no puedes acabar el turno
             // IMPORTANTE: comprobar que el arraylist no esté vacío antes de intentar acceder a un elemento
             if( !(!movimientosPendientesActual().isEmpty() && movimientosPendientesActual().get(0)==0) ) {
-                System.out.println("Aún no has lanzado los dados este turno!");
+                consola.imprimir("Aún no has lanzado los dados este turno!");
                 return;
             }
         }
@@ -965,14 +965,14 @@ public class Juego implements Comandos{
                 // Si es un coche en modo avanzado el único caso en el que no puede pasar turno es si saca >4
                 // A no ser que ya lleve 4 lanzamientos
                 if(this.dado1.getValor()+this.dado2.getValor()>4 && this.lanzamientos!=4) {
-                    System.out.println("Sacaste más que 4, tienes que volver a tirar.");
+                    consola.imprimir("Sacaste más que 4, tienes que volver a tirar.");
                     return;
                 }
             }
             else {
                 // Si no es un coche en modo avanzado NO puede acabar el turno si sacó dobles
                 if (this.dado1.getValor()==this.dado2.getValor()) {
-                    System.out.println("¡Sacaste dobles! Tienes que volver a tirar.");
+                    consola.imprimir("¡Sacaste dobles! Tienes que volver a tirar.");
                     return;
                 }
             }
@@ -999,7 +999,7 @@ public class Juego implements Comandos{
         }
 
         // Imprimir el nombre del nuevo jugador actual
-        System.out.println("El jugador actual es: " + obtenerTurno().getNombre());
+        consola.imprimir("El jugador actual es: " + obtenerTurno().getNombre());
 
         // Actualizamos controlComandos para el nuevo jugador que tiene el turno
         this.controlComandos = 0;
@@ -1007,7 +1007,7 @@ public class Juego implements Comandos{
             // Si hay un 0 en movimientos_pendientes el jugador no va a poder mover este turno
             if(movimientosPendientesActual().get(0)==0) {
                 this.controlComandos = 2;
-                System.out.println("Este turno no puedes lanzar los dados.");
+                consola.imprimir("Este turno no puedes lanzar los dados.");
             }
         }
 
@@ -1019,11 +1019,11 @@ public class Juego implements Comandos{
         Avatar avatar = obtenerTurno().getAvatar();
         if(avatar.getMovimientoAvanzado()) {
             if(movimientosPendientesActual().isEmpty()){
-                System.out.println("El avatar " + avatar.getId() + " vuelve el movimiento normal.");
+                consola.imprimir("El avatar " + avatar.getId() + " vuelve el movimiento normal.");
                 this.controlComandos=0;
                 obtenerTurno().getAvatar().cambiarMovimiento();
             }else{
-                System.out.println("El avatar " + avatar.getId() + " no puede cambiar de modo ya que esta bloqueado.");
+                consola.imprimir("El avatar " + avatar.getId() + " no puede cambiar de modo ya que esta bloqueado.");
             }
         } else {
             if(avatar instanceof Coche) System.out.printf(Texto.M_ACTIVAR_MOVIMIENTO_AVANZADO + "\n", avatar.getId(), "coche");
@@ -1035,7 +1035,7 @@ public class Juego implements Comandos{
     /**Método que realiza las acciones asociadas al comando 'ver tablero'*/
     @Override
     public void verTablero() {
-        System.out.println(tablero.toString());
+        consola.imprimir(tablero.toString());
     }
 
     /**Método que realiza las acciones asociadas al comando 'listar jugadores'.*/
@@ -1059,7 +1059,7 @@ public class Juego implements Comandos{
     /**Método que realiza las acciones asociadas al comando 'listar enventa'.*/
     @Override
     public void listarVenta() {
-        System.out.println("Propiedades en venta:");
+        consola.imprimir("Propiedades en venta:");
         Casilla casilla_aux;
         for (int i = 0; i < 40; i++) {
             casilla_aux = tablero.getCasilla(i);
@@ -1100,11 +1100,11 @@ public class Juego implements Comandos{
 
             }
             else {
-                System.out.println("¡Primero tienes que tirar!");
+                consola.imprimir("¡Primero tienes que tirar!");
             }
         }
         else {
-            System.out.println("No hay ninguna casilla que se llame " + nombre);
+            consola.imprimir("No hay ninguna casilla que se llame " + nombre);
         }
     }
 
@@ -1122,7 +1122,7 @@ public class Juego implements Comandos{
             System.out.print(casilla.infoCasilla());
         }
         else {
-            System.out.println(nombre_casilla + " no es un nombre de casilla válido.");
+            consola.imprimir(nombre_casilla + " no es un nombre de casilla válido.");
         }
     }
 
@@ -1168,7 +1168,7 @@ public class Juego implements Comandos{
             jugador.infoJugador();
         }
         else {
-            System.out.println("No se ha encontrado al jugador buscado.");
+            consola.imprimir("No se ha encontrado al jugador buscado.");
         }
         
     }
@@ -1186,7 +1186,7 @@ public class Juego implements Comandos{
             }
         }
         // Si no encuentra el avatar, muestra un mensaje de error
-        System.out.println("Avatar con ID " + ID + " no encontrado.");
+        consola.imprimir("Avatar con ID " + ID + " no encontrado.");
     }
 
 
@@ -1199,10 +1199,10 @@ public class Juego implements Comandos{
      * [2] Le pide al usuario el número de la carta que quiere escoger (del 1 al 6)
      */
     public void cogerCarta(ArrayList<Carta> baraja) {
-        System.out.println("Barajando las cartas...");
+        consola.imprimir("Barajando las cartas...");
         //Collections.shuffle(baraja); //Barajamos las cartas //ESTÁ COMENTADO PORQUE EN ESTA ENTREGA NO SE BARAJAN
         cartasAlReves(); //Mostramos el reverso de las cartas
-        System.out.println("Escoge una carta con un número del 1 al 6.");
+        consola.imprimir("Escoge una carta con un número del 1 al 6.");
         int n=leerDadoValido(); //Leemos input hasta que sea un número válido
         mostrarCartaEscogida(baraja, n); //Volvemos a mostrar las cartas con la escogida dada la vuelta
         if(!evaluarCarta(baraja.get(n-1))) bucleBancarrota(); //Ojo con los índices del ArrayList que empiezan en 0!!
@@ -1304,7 +1304,7 @@ public class Juego implements Comandos{
             }
         }
         else {
-            System.out.println("Error en evaluarCarta(): esta carta tiene un tipo inválido.");
+            consola.imprimir("Error en evaluarCarta(): esta carta tiene un tipo inválido.");
         }
 
         // Si llega a aquí es que el jugador es solvente
@@ -1316,7 +1316,7 @@ public class Juego implements Comandos{
         // Vamos imprimiendo línea por línea
         for(int i=0; i<Valor.NLINEAS_CARTA; i++) {
             // Función repeat() muy útil pa este caso
-            System.out.println(this.carta_del_reves.getTexto().get(i).repeat(6));
+            consola.imprimir(this.carta_del_reves.getTexto().get(i).repeat(6));
         }
     }
 
@@ -1339,7 +1339,7 @@ public class Juego implements Comandos{
                     System.out.print(this.carta_del_reves.getTexto().get(i));
                 }
             }
-            System.out.println(); //Imprimimos un salto de línea al haber iterado las 6 cartas
+            consola.imprimir(""); //Imprimimos un salto de línea al haber iterado las 6 cartas
         }
     }
 
@@ -1365,14 +1365,14 @@ public class Juego implements Comandos{
             for(int i=0; i<6; i++) {
                 System.out.print(this.cartas_suerte.get(i).getTexto().get(j));
             }
-            System.out.println();
+            consola.imprimir("");
         }
         // CARTAS CAJA
         for(int j=0; j<11; j++) {
             for(int i=0; i<6; i++) {
                 System.out.print(this.cartas_caja.get(i).getTexto().get(j));
             }
-            System.out.println();
+            consola.imprimir("");
         }
     }
 
@@ -1393,12 +1393,12 @@ public class Juego implements Comandos{
                 return n;
             }
             else {
-                System.out.println("Número inválido.");
+                consola.imprimir("Número inválido.");
                 return 0;
             }
         }
         else {
-            System.out.println("Número inválido.");
+            consola.imprimir("Número inválido.");
             return 0;
         }
     }
@@ -1406,12 +1406,11 @@ public class Juego implements Comandos{
     /**Método que lee input hasta que el valor introducido sea un número entre 1 y 6.*/
     private int leerDadoValido() {
         // Creamos un escaneador para introducir el número
-        Scanner scannerDado = new Scanner(System.in);
         int n=0;
 
         // Bucle que para cuando metemos un número entre 1 y 6 por teclado
         while(n==0) {
-            String numero = scannerDado.nextLine();
+            String numero = consola.leer("Introduce un número entre 1 y 6:");
             // dadoValido() transforma el String en un número
             // Si no es un número válido devuelve 0
             n=dadoValido(numero);
@@ -1448,7 +1447,7 @@ public class Juego implements Comandos{
      */
     @Override
     public void estadisticasGenerales() {
-        System.out.println("{");
+        consola.imprimir("{");
 
 
         //.clear() limpia la lista
@@ -1599,14 +1598,14 @@ public class Juego implements Comandos{
         }
 
         // Imprimir los resultados de las estadísticas
-        System.out.println("casillaMasFrecuentada " + String.join(", ", nombresCasillas));
-        System.out.println("casillaMasRentable: " + String.join(", ", nombresRentables));
-        System.out.println("grupoMasRentable: " + String.join(", ", gruposRentables));
-        System.out.println("jugadorMasVueltas: " + String.join(", ", jugadoresVueltas));
-        System.out.println("jugadorMasVecesDados: " + String.join(", ", jugadoresDados));
-        System.out.println("jugadorEnCabeza: " + String.join(", ", jugadoresRicos));
+        consola.imprimir("casillaMasFrecuentada " + String.join(", ", nombresCasillas));
+        consola.imprimir("casillaMasRentable: " + String.join(", ", nombresRentables));
+        consola.imprimir("grupoMasRentable: " + String.join(", ", gruposRentables));
+        consola.imprimir("jugadorMasVueltas: " + String.join(", ", jugadoresVueltas));
+        consola.imprimir("jugadorMasVecesDados: " + String.join(", ", jugadoresDados));
+        consola.imprimir("jugadorEnCabeza: " + String.join(", ", jugadoresRicos));
 
-        System.out.println("\n}");
+        consola.imprimir("\n}");
     }
 
     
@@ -1616,7 +1615,7 @@ public class Juego implements Comandos{
         ArrayList<Casilla> propiedades = new ArrayList<>(jugador.getPropiedades());
         
         if (cobrador.equals(null)) {
-            System.out.println("El jugador " + jugador.getNombre() + " se declara en bancarrota. " +
+            consola.imprimir("El jugador " + jugador.getNombre() + " se declara en bancarrota. " +
             "Sus propiedades vuelven a estar a la venta al precio original.");
             
             for (Casilla c : propiedades) {
@@ -1629,7 +1628,7 @@ public class Juego implements Comandos{
                 jugador.eliminarPropiedad((Propiedad)c);
             }
         } else {
-            System.out.println("El jugador " + jugador.getNombre() + " se declara en bancarrota. " +
+            consola.imprimir("El jugador " + jugador.getNombre() + " se declara en bancarrota. " +
             "Sus propiedades pasan a ser de " + cobrador.getNombre());
             
             for (Casilla c : propiedades) {
@@ -1653,37 +1652,37 @@ public class Juego implements Comandos{
         Jugador jugador = obtenerTurno();
         
         if (casilla == null) {
-            System.out.println("No existe esa casilla. No la puedes hipotecar.");
+            consola.imprimir("No existe esa casilla. No la puedes hipotecar.");
             return;
         }
         
         if (!(casilla instanceof Propiedad)) {
-            System.out.println("No puedes hipotecar " + casilla.getNombre() + ", no es una propiedad.");
+            consola.imprimir("No puedes hipotecar " + casilla.getNombre() + ", no es una propiedad.");
             return;
         }
         
         Propiedad propiedad = (Propiedad) casilla;
         
         if (!propiedad.getDuenho().equals(jugador)) {
-            System.out.println("El jugador " + jugador.getNombre() + " no puede hipotecar " +
+            consola.imprimir("El jugador " + jugador.getNombre() + " no puede hipotecar " +
             propiedad.getNombre() + ". No es una propiedad que le pertenezca.");
             return;
         }
         
         if (propiedad.esHipotecable()) {
             if(propiedad instanceof Solar){
-                System.out.println("El jugador " + jugador.getNombre() + " recibe " + propiedad.getHipoteca() +                                " por la hipoteca de " + casilla.getNombre() +
+                consola.imprimir("El jugador " + jugador.getNombre() + " recibe " + propiedad.getHipoteca() +                                " por la hipoteca de " + casilla.getNombre() +
                             ". No puede recibir alquileres ni edificar en el grupo " + ((Solar)propiedad).getGrupo().getColorGrupo());
                             jugador.sumarFortuna(propiedad.getHipoteca());
                         }
                         else{
-                            System.out.println("El jugador " + jugador.getNombre() + " recibe " + propiedad.getHipoteca() +                                " por la hipoteca de " + casilla.getNombre() +
+                            consola.imprimir("El jugador " + jugador.getNombre() + " recibe " + propiedad.getHipoteca() +                                " por la hipoteca de " + casilla.getNombre() +
                             ". No puede recibir alquileres." );
                             jugador.sumarFortuna(propiedad.getHipoteca());
                         }
                         
                     } else {
-                        System.out.println("No puedes hipotecar " + propiedad.getNombre() + " en este momento.");
+                        consola.imprimir("No puedes hipotecar " + propiedad.getNombre() + " en este momento.");
                     }
                 }
                 
@@ -1692,19 +1691,19 @@ public class Juego implements Comandos{
         Jugador jugador = obtenerTurno();
     
         if (casilla == null) {
-            System.out.println("No puedes deshipotecar algo que no existe en el tablero.");
+            consola.imprimir("No puedes deshipotecar algo que no existe en el tablero.");
             return;
         }
         
         if (!(casilla instanceof Propiedad)) {
-            System.out.println("No puedes deshipotecar " + casilla.getNombre() + ", no es una propiedad.");
+            consola.imprimir("No puedes deshipotecar " + casilla.getNombre() + ", no es una propiedad.");
             return;
         }
         
         Propiedad propiedad = (Propiedad) casilla;
         
         if (!propiedad.getDuenho().equals(jugador)) {
-            System.out.println("El jugador " + jugador.getNombre() + " no puede deshipotecar " +
+            consola.imprimir("El jugador " + jugador.getNombre() + " no puede deshipotecar " +
             propiedad.getNombre() + ". No es una propiedad que le pertenezca.");
             return;
         }
@@ -1712,7 +1711,7 @@ public class Juego implements Comandos{
         float costoDeshipotecar = propiedad.getDeshipoteca();
         
         if (costoDeshipotecar > jugador.getFortuna()) {
-            System.out.println("No tienes suficiente dinero para deshipotecar " + propiedad.getNombre() + ".");
+            consola.imprimir("No tienes suficiente dinero para deshipotecar " + propiedad.getNombre() + ".");
             return;
         }
         
@@ -1722,7 +1721,7 @@ public class Juego implements Comandos{
             jugador.sumarFortuna(-costoDeshipotecar);
             jugador.sumarGastos(costoDeshipotecar);
         } else {
-            System.out.println("No puedes deshipotecar " + propiedad.getNombre() + " en este momento.");
+            consola.imprimir("No puedes deshipotecar " + propiedad.getNombre() + " en este momento.");
         }
     }
     
@@ -1768,16 +1767,16 @@ public class Juego implements Comandos{
                                 break;
                         }
                     } else {
-                        System.out.println("No puedes edificar en esta casilla porque no te pertenece.");
+                        consola.imprimir("No puedes edificar en esta casilla porque no te pertenece.");
                     }
                 } else {
-                    System.out.println("Para edificar debes ser dueño del grupo o haber caído más de dos veces en la casilla siendo el propietario.");
+                    consola.imprimir("Para edificar debes ser dueño del grupo o haber caído más de dos veces en la casilla siendo el propietario.");
                 }
             } else {
-                System.out.println("No puedes edificar en una casilla que no es de tipo solar.");
+                consola.imprimir("No puedes edificar en una casilla que no es de tipo solar.");
             }
         } else {
-            System.out.println("El tipo de edificio " + tipo + " no es válido para edificar.");
+            consola.imprimir("El tipo de edificio " + tipo + " no es válido para edificar.");
         }
     }
 
@@ -1788,7 +1787,7 @@ public class Juego implements Comandos{
         Casilla casilla =tablero.encontrar_casilla(nombre);
         Solar solar =tablero.encontrar_solar(casilla.getNombre());
         if(solar.equals(null)){
-            System.out.println("La casilla introducida no existe. O no es un Solar");
+            consola.imprimir("La casilla introducida no existe. O no es un Solar");
         }
         else{
             if (solar.getDuenho().equals(jugador)){
@@ -1810,7 +1809,7 @@ public class Juego implements Comandos{
                         return;
                 }
             } else {
-                System.out.println("No puedes vender las edificaciones de esta propiedad porque no te pertenece.");
+                consola.imprimir("No puedes vender las edificaciones de esta propiedad porque no te pertenece.");
             }
         }
     }
@@ -1822,7 +1821,7 @@ public class Juego implements Comandos{
             for (Jugador j : jugadores) {
                 for (Solar c : j.getSolares()) {
                     // Lista las edificaciones de la casilla
-                    System.out.println(c.listarEdificaciones());
+                    consola.imprimir(c.listarEdificaciones());
                 }
             }
         } else {
@@ -1831,7 +1830,7 @@ public class Juego implements Comandos{
                 for (Solar c : j.getSolares()) {
                     // Si el color del grupo coincide con el proporcionado, listar las edificaciones
                     if (c.getGrupo().getColorGrupo().equalsIgnoreCase(color)) {
-                        System.out.println(c.listarEdificaciones());
+                        consola.imprimir(c.listarEdificaciones());
                     }
                 }
             }
@@ -1840,39 +1839,39 @@ public class Juego implements Comandos{
     
     @Override
     public void ayuda() {
-        System.out.println("Lista de comandos disponibles:");
-        System.out.println("- terminar partida / acabar partida: Termina la partida.");
-        System.out.println("- bancarrota: Declararse en bancarrota.");
-        System.out.println("- ver tablero: Muestra el estado actual del tablero.");
-        System.out.println("- jugador: Muestra la información del jugador actual.");
-        System.out.println("- estadisticas: Muestra estadísticas generales.");
-        System.out.println("- salir carcel: Salir de la cárcel.");
-        System.out.println("- listar enventa: Lista las casillas en venta.");
-        System.out.println("- listar jugadores: Lista todos los jugadores.");
-        System.out.println("- listar avatares: Lista todos los avatares.");
-        System.out.println("- listar edificios: Lista todos los edificios.");
-        System.out.println("- lanzar dados: Lanza los dados (si está permitido).");
-        System.out.println("- acabar turno: Finaliza el turno del jugador actual.");
-        System.out.println("- cambiar modo: Cambia el modo del avatar.");
-        System.out.println("- siguiente: Realiza el siguiente movimiento.");
-        System.out.println("- dinero infinito: Activa el modo dinero infinito.");
-        System.out.println("- dar vuelta: Avanza 40 casillas.");
-        System.out.println("- probar cartas: Prueba la impresión de cartas.");
-        System.out.println("- coger carta caja: Coge una carta de Caja de Comunidad.");
-        System.out.println("- coger carta suerte: Coge una carta de Suerte.");
-        System.out.println("- describir [nombre_casilla]: Describe la casilla indicada.");
-        System.out.println("- comprar [nombre_casilla]: Compra la casilla indicada.");
-        System.out.println("- edificar [nombre_casilla]: Construye un edificio.");
-        System.out.println("- hipotecar [nombre_casilla]: Hipoteca una propiedad.");
-        System.out.println("- deshipotecar [nombre_casilla]: Deshipoteca una propiedad.");
-        System.out.println("- estadisticas [nombre_jugador]: Muestra estadísticas de un jugador.");
-        System.out.println("- describir jugador [nombre_jugador]: Describe un jugador.");
-        System.out.println("- crear jugador [nombre_avatar]: Crea un jugador (solo antes de empezar la partida).");
-        System.out.println("- describir avatar [Letra avatar]: Describe un avatar.");
-        System.out.println("- listar edificios [gruoi]: Lista edificios de un tipo.");
-        System.out.println("- dados [valor1] [valor2]: Lanza dados con valores específicos.");
-        System.out.println("- vender [nombre_propiedad] [tipo_edificio] [cantidad]: Vende edificios.");
-        System.out.println("- edificar/deshipotecar/hipotecar [Tipo edificio]e: Gestiona pistas de deporte.");
+        consola.imprimir("Lista de comandos disponibles:");
+        consola.imprimir("- terminar partida / acabar partida: Termina la partida.");
+        consola.imprimir("- bancarrota: Declararse en bancarrota.");
+        consola.imprimir("- ver tablero: Muestra el estado actual del tablero.");
+        consola.imprimir("- jugador: Muestra la información del jugador actual.");
+        consola.imprimir("- estadisticas: Muestra estadísticas generales.");
+        consola.imprimir("- salir carcel: Salir de la cárcel.");
+        consola.imprimir("- listar enventa: Lista las casillas en venta.");
+        consola.imprimir("- listar jugadores: Lista todos los jugadores.");
+        consola.imprimir("- listar avatares: Lista todos los avatares.");
+        consola.imprimir("- listar edificios: Lista todos los edificios.");
+        consola.imprimir("- lanzar dados: Lanza los dados (si está permitido).");
+        consola.imprimir("- acabar turno: Finaliza el turno del jugador actual.");
+        consola.imprimir("- cambiar modo: Cambia el modo del avatar.");
+        consola.imprimir("- siguiente: Realiza el siguiente movimiento.");
+        consola.imprimir("- dinero infinito: Activa el modo dinero infinito.");
+        consola.imprimir("- dar vuelta: Avanza 40 casillas.");
+        consola.imprimir("- probar cartas: Prueba la impresión de cartas.");
+        consola.imprimir("- coger carta caja: Coge una carta de Caja de Comunidad.");
+        consola.imprimir("- coger carta suerte: Coge una carta de Suerte.");
+        consola.imprimir("- describir [nombre_casilla]: Describe la casilla indicada.");
+        consola.imprimir("- comprar [nombre_casilla]: Compra la casilla indicada.");
+        consola.imprimir("- edificar [nombre_casilla]: Construye un edificio.");
+        consola.imprimir("- hipotecar [nombre_casilla]: Hipoteca una propiedad.");
+        consola.imprimir("- deshipotecar [nombre_casilla]: Deshipoteca una propiedad.");
+        consola.imprimir("- estadisticas [nombre_jugador]: Muestra estadísticas de un jugador.");
+        consola.imprimir("- describir jugador [nombre_jugador]: Describe un jugador.");
+        consola.imprimir("- crear jugador [nombre_avatar]: Crea un jugador (solo antes de empezar la partida).");
+        consola.imprimir("- describir avatar [Letra avatar]: Describe un avatar.");
+        consola.imprimir("- listar edificios [gruoi]: Lista edificios de un tipo.");
+        consola.imprimir("- dados [valor1] [valor2]: Lanza dados con valores específicos.");
+        consola.imprimir("- vender [nombre_propiedad] [tipo_edificio] [cantidad]: Vende edificios.");
+        consola.imprimir("- edificar/deshipotecar/hipotecar [Tipo edificio]e: Gestiona pistas de deporte.");
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /*
@@ -1917,11 +1916,11 @@ public class Juego implements Comandos{
 
         // Imprimir los tratos pendientes
         if (tratos.isEmpty()) {
-            System.out.println("No tienes tratos pendientes.");
+            consola.imprimir("No tienes tratos pendientes.");
         } else {
-            System.out.println("Tus tratos pendientes:");
+            consola.imprimir("Tus tratos pendientes:");
             for (Trato trato : tratos) {
-                System.out.println(trato.toString());
+                consola.imprimir(trato.toString());
             }
         }
     }
@@ -1931,7 +1930,7 @@ public class Juego implements Comandos{
         // Dividir el comando para extraer el jugador y el detalle del trato
         String[] partes = detalleTrato.split(": cambiar ");
         if (partes.length < 2) {
-            System.out.println("Formato inválido para proponer trato. Ejemplo: 'trato Maria: cambiar (Solar1, Solar2 y 300000)'.");
+            consola.imprimir("Formato inválido para proponer trato. Ejemplo: 'trato Maria: cambiar (Solar1, Solar2 y 300000)'.");
             return;
         }
 
@@ -1949,7 +1948,7 @@ public class Juego implements Comandos{
         // Dividir el detalle en dos partes entre paréntesis
         String[] bloques = detalle.split("\\)\\s+por\\s+\\("); // Divide por ") por ("
         if (bloques.length != 2) {
-            System.out.println("Formato inválido para el trato. Asegúrate de incluir 'por' entre los paréntesis.");
+            consola.imprimir("Formato inválido para el trato. Asegúrate de incluir 'por' entre los paréntesis.");
             return;
         }
 
@@ -1966,7 +1965,7 @@ public class Juego implements Comandos{
         for (String nombre : nombresOfrecidos) {
             if ((this.tablero.encontrar_casilla(nombre)!= null)) {
                 casillasOfrecidas.add(this.tablero.encontrar_propiedad(nombre));
-                System.out.println(nombre+"\n");
+                consola.imprimir(nombre+"\n");
             } else {
                 System.out.printf("La casilla %s no existe. Trato inválido.\n", nombre);
                 return;
@@ -1982,7 +1981,7 @@ public class Juego implements Comandos{
         for (String nombre : nombresReclamados) {
             if ((this.tablero.encontrar_casilla(nombre)!= null)) {
                 casillasReclamadas.add((this.tablero.encontrar_propiedad(nombre)));
-                System.out.println(nombre+"\n");
+                consola.imprimir(nombre+"\n");
             } else {
                 System.out.printf("La casilla %s no existe. Trato inválido.\n", nombre);
                 return;
@@ -1991,11 +1990,11 @@ public class Juego implements Comandos{
 
         // Validar que al menos una casilla o cantidad de dinero esté presente en cada lado
         if (casillasOfrecidas.isEmpty() && dineroOfrecido == 0) {
-            System.out.println("El lado ofrecido del trato debe incluir al menos una casilla o una cantidad de dinero.");
+            consola.imprimir("El lado ofrecido del trato debe incluir al menos una casilla o una cantidad de dinero.");
             return;
         }
         if (casillasReclamadas.isEmpty() && dineroReclamado == 0) {
-            System.out.println("El lado reclamado del trato debe incluir al menos una casilla o una cantidad de dinero.");
+            consola.imprimir("El lado reclamado del trato debe incluir al menos una casilla o una cantidad de dinero.");
             return;
         }
 
@@ -2025,7 +2024,7 @@ public class Juego implements Comandos{
             try {
                 dinero += Float.parseFloat(parte.replace(",", "").trim());
                 if (dinero > 0 && resultado.containsKey("dinero")) {
-                    System.out.println("Solo se puede incluir una cantidad de dinero en el trato.");
+                    consola.imprimir("Solo se puede incluir una cantidad de dinero en el trato.");
                     return null; // Invalidar el comando
                 }
             } catch (NumberFormatException e) {

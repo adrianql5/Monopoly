@@ -72,25 +72,25 @@ public class Especial extends Casilla{
 
         switch (this.nombre) {
             case "Carcel":
-                System.out.println("Has caído en la Cárcel. Disfruta de la visita.");
+                Juego.consola.imprimir("Has caído en la Cárcel. Disfruta de la visita.");
                 break;
             case "Parking":
                 //v2: ahora el bote del Parking se guarda en Parking.valor
-                System.out.printf("Has ganado el bote del Parking: %,.0f€\n", bote);
+                Juego.consola.imprimir(String.format("Has ganado el bote del Parking: %,.0f€\n", bote));
                 jugadorActual.sumarFortuna(bote);
                 jugadorActual.getEstadisticas().sumarDineroRecaudadoBote(bote);
                 resetBote();
                 break;
             case "IrCarcel":
-                System.out.println("Mala suerte, te vas a la cárcel.");
-                System.out.println("Vas directamente sin pasar por la Salida ni cobrar.");
+                Juego.consola.imprimir("Mala suerte, te vas a la cárcel.");
+                Juego.consola.imprimir("Vas directamente sin pasar por la Salida ni cobrar.");
                 jugadorActual.encarcelar(this.carcel);
                 break;
             case "Salida":
-                System.out.println("Has llegado a la casilla de Salida.");
+                Juego.consola.imprimir("Has llegado a la casilla de Salida.");
                 break;
             default:
-                System.out.println("Error en evaluarCasilla.");
+                Juego.consola.imprimir("Error en evaluarCasilla.");
                 return false;
         }
         return true;

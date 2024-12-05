@@ -2,6 +2,8 @@ package monopoly.casillas.propiedades;
 
 import monopoly.Valor;
 
+import monopoly.*;
+
 import partida.*;
 
 public class Servicio extends Propiedad{
@@ -36,8 +38,7 @@ public class Servicio extends Propiedad{
             if (!duenho.getNombre().equals("banca")) {
                 if (!estaHipotecada) {
                     float precio = evaluarAlquiler(tirada);
-                    System.out.printf("%s debe pagar el servicio a %s: %,.0f€\n",
-                            jugadorActual.getNombre(), duenho.getNombre(), precio);
+                    Juego.consola.imprimir(jugadorActual.getNombre() + " debe pagar el servicio a " + duenho.getNombre() + ": " + String.format("%,.0f€\n", precio));
                     // Si puede pagarlo de alguna manera se cobra
                     if(precio>jugadorActual.getFortuna()) {
                         jugadorActual.setDeudaConJugador(duenho);
@@ -49,13 +50,13 @@ public class Servicio extends Propiedad{
 
                     return true;
                 } else {
-                    System.out.println("La casilla " + this.nombre + " está hipotecada. No hay que pagar.");
+                    Juego.consola.imprimir("La casilla " + this.nombre + " está hipotecada. No hay que pagar.");
                 }
             } else {
-                System.out.println("La casilla " + this.nombre + " está a la venta.\n");
+                Juego.consola.imprimir("La casilla " + this.nombre + " está a la venta.\n");
             }
         } else {
-            System.out.println("Esta casilla te pertenece.");
+            Juego.consola.imprimir("Esta casilla te pertenece.");
         }
         return true;
     }

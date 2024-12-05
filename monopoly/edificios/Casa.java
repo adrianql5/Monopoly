@@ -2,6 +2,7 @@ package monopoly.edificios;
 
 import java.util.ArrayList;
 import monopoly.casillas.propiedades.Solar;
+import monopoly.*;
 
 /**
  * Clase que representa una Casa, un tipo de Edificio en un Solar.
@@ -34,20 +35,20 @@ public class Casa extends Edificio {
         int maxPorGrupo = this.getSolar().getGrupo().getNumCasillasGrupo();
     
         if (this.getSolar().getGrupo().estaHipotecadoGrupo()) {
-            System.out.println("No puedes edificar porque alguna propiedad del grupo está hipotecada.");
+            Juego.consola.imprimir("No puedes edificar porque alguna propiedad del grupo está hipotecada.");
             return false;
         }
     
         if (maxHotelesGrupo >= maxPorGrupo) {
             if (maxCasasGrupo >= maxPorGrupo) {
-                System.out.println("Llegaste al máximo de casas en este grupo.");
+                Juego.consola.imprimir("Llegaste al máximo de casas en este grupo.");
                 return false;
             }
             return true; // Puede edificar más casas en el grupo
         }
     
         if (maxCasasSolar >= 4) {
-            System.out.println("Debes edificar un hotel, tienes 4 casas en esta casilla.");
+            Juego.consola.imprimir("Debes edificar un hotel, tienes 4 casas en esta casilla.");
             return false;
         }
     

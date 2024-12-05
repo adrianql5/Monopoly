@@ -28,8 +28,9 @@ public class Solar extends Propiedad {
             if (!duenho.getNombre().equals("banca")) {
                 if (!estaHipotecada) {
                     float precioAlquiler = evaluarAlquiler();
-                    System.out.printf("%s debe pagarle el alquiler de %s a %s: %,.0f€\n",
+                    String mensaje = String.format("%s debe pagarle el alquiler de %s a %s: %,.0f€\n",
                             jugadorActual.getNombre(), this.nombre, duenho.getNombre(), precioAlquiler);
+                    Juego.consola.imprimir(mensaje);
                     if (precioAlquiler > jugadorActual.getFortuna()) {
                         jugadorActual.setDeudaConJugador(duenho);
                         jugadorActual.setDeuda(precioAlquiler);
@@ -38,13 +39,13 @@ public class Solar extends Propiedad {
                     jugadorActual.pagar(duenho, precioAlquiler);
                     return true;
                 } else {
-                    System.out.println("La casilla " + this.nombre + " está hipotecada. No hay que pagar.");
+                    Juego.consola.imprimir("La casilla " + this.nombre + " está hipotecada. No hay que pagar.");
                 }
             } else {
-                System.out.println("La casilla " + this.nombre + " está a la venta.\n");
+                Juego.consola.imprimir("La casilla " + this.nombre + " está a la venta.\n");
             }
         } else {
-            System.out.println("Esta casilla te pertenece.");        
+            Juego.consola.imprimir("Esta casilla te pertenece.");        
             this.vecesVisitadaPorDuenho++;
         }
         return true;
@@ -101,7 +102,7 @@ public class Solar extends Propiedad {
         if (grupoCasilla != null) {
             this.grupo = grupoCasilla;
         } else {
-            System.out.println("El grupo no puede ser nulo.\n");
+            Juego.consola.imprimir("El grupo no puede ser nulo.\n");
         }
     }
 
@@ -113,11 +114,11 @@ public class Solar extends Propiedad {
                 jugador.sumarGastos(casa.getCoste()); // Restar el coste del edificio
                 jugador.sumarFortuna(-casa.getCoste()); // Reducir la fortuna del jugador
         
-                System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
+                Juego.consola.imprimir("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
                     casa.getId() + " por " + casa.getCoste());
                 }
                 else{
-                    System.out.println("No tienes suficiente dinero para edificar.");
+                    Juego.consola.imprimir("No tienes suficiente dinero para edificar.");
                 }
         }
     }
@@ -130,11 +131,11 @@ public class Solar extends Propiedad {
                 jugador.sumarGastos(hotel.getCoste()); // Restar el coste del edificio
                 jugador.sumarFortuna(-hotel.getCoste()); // Reducir la fortuna del jugador
         
-                System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
+                Juego.consola.imprimir("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
                     hotel.getId() + " por " + hotel.getCoste());
                 }
                 else{
-                    System.out.println("No tienes suficiente dinero para edificar.");
+                    Juego.consola.imprimir("No tienes suficiente dinero para edificar.");
                 }
         }
     }
@@ -148,11 +149,11 @@ public class Solar extends Propiedad {
                 jugador.sumarGastos(piscina.getCoste()); // Restar el coste del edificio
                 jugador.sumarFortuna(-piscina.getCoste()); // Reducir la fortuna del jugador
         
-                System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
+                Juego.consola.imprimir("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
                     piscina.getId() + " por " + piscina.getCoste());
                 }
                 else{
-                    System.out.println("No tienes suficiente dinero para edificar.");
+                    Juego.consola.imprimir("No tienes suficiente dinero para edificar.");
                 }
         }
     }
@@ -166,11 +167,11 @@ public class Solar extends Propiedad {
                 jugador.sumarGastos(pista.getCoste()); // Restar el coste del edificio
                 jugador.sumarFortuna(-pista.getCoste()); // Reducir la fortuna del jugador
         
-                System.out.println("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
+                Juego.consola.imprimir("El jugador " + jugador.getNombre() + " ha comprado el edificio " +
                     pista.getId() + " por " + pista.getCoste());
                 }
                 else{
-                    System.out.println("No tienes suficiente dinero para edificar.");
+                    Juego.consola.imprimir("No tienes suficiente dinero para edificar.");
                 }
         }
     }
@@ -190,16 +191,16 @@ public class Solar extends Propiedad {
                 count++;
             }
             jugador.sumarFortuna(suma);
-            System.out.println("El jugador " + jugador.getNombre() + " han vendido " +
+            Juego.consola.imprimir("El jugador " + jugador.getNombre() + " han vendido " +
                 n + " casas en " + this.nombre + ", recibiendo " + suma +
                 "€. En la propiedad quedan " + eds.size() + " casas.");
         }
         else if(tamanho==0){
-            System.out.println("No puedes vender ninguna propiedad del tipo casa porque no hay ninguna en la casilla "
+            Juego.consola.imprimir("No puedes vender ninguna propiedad del tipo casa porque no hay ninguna en la casilla "
             + this.nombre);
         }
         else {
-            System.out.println("Solamente se pueden vender " + eds.size() + " casas, recibiendo " + (eds.size() > 0 ? (eds.get(0).getCoste() / 2) * eds.size() : 0) + "€.");
+            Juego.consola.imprimir("Solamente se pueden vender " + eds.size() + " casas, recibiendo " + (eds.size() > 0 ? (eds.get(0).getCoste() / 2) * eds.size() : 0) + "€.");
         }
     }
 
@@ -218,16 +219,16 @@ public class Solar extends Propiedad {
                 count++;
             }
             jugador.sumarFortuna(suma);
-            System.out.println("El jugador " + jugador.getNombre() + " han vendido " +
+            Juego.consola.imprimir("El jugador " + jugador.getNombre() + " han vendido " +
                 n + " hoteles en " + this.nombre + ", recibiendo " + suma +
                 "€. En la propiedad quedan " + eds.size() + " hoteles.");
         }
         else if(tamanho==0){
-            System.out.println("No puedes vender ninguna propiedad del tipo hoteles porque no hay ninguna en la casilla "
+            Juego.consola.imprimir("No puedes vender ninguna propiedad del tipo hoteles porque no hay ninguna en la casilla "
             + this.nombre);
         }
         else {
-            System.out.println("Solamente se pueden vender " + eds.size() + " hoteles, recibiendo " + (eds.size() > 0 ? (eds.get(0).getCoste() / 2) * eds.size() : 0) + "€.");
+            Juego.consola.imprimir("Solamente se pueden vender " + eds.size() + " hoteles, recibiendo " + (eds.size() > 0 ? (eds.get(0).getCoste() / 2) * eds.size() : 0) + "€.");
         }
     }
 
@@ -246,16 +247,16 @@ public class Solar extends Propiedad {
                 count++;
             }
             jugador.sumarFortuna(suma);
-            System.out.println("El jugador " + jugador.getNombre() + " han vendido " +
+            Juego.consola.imprimir("El jugador " + jugador.getNombre() + " han vendido " +
                 n + " piscinas en " + this.nombre + ", recibiendo " + suma +
                 "€. En la propiedad quedan " + eds.size() + " piscinas.");
         }
         else if(tamanho==0){
-            System.out.println("No puedes vender ninguna propiedad del tipo casa porque no hay ninguna en la casilla "
+            Juego.consola.imprimir("No puedes vender ninguna propiedad del tipo casa porque no hay ninguna en la casilla "
             + this.nombre);
         }
         else {
-            System.out.println("Solamente se pueden vender " + eds.size() + " piscinas, recibiendo " + (eds.size() > 0 ? (eds.get(0).getCoste() / 2) * eds.size() : 0) + "€.");
+            Juego.consola.imprimir("Solamente se pueden vender " + eds.size() + " piscinas, recibiendo " + (eds.size() > 0 ? (eds.get(0).getCoste() / 2) * eds.size() : 0) + "€.");
         }
     }
 
@@ -274,16 +275,16 @@ public class Solar extends Propiedad {
                 count++;
             }
             jugador.sumarFortuna(suma);
-            System.out.println("El jugador " + jugador.getNombre() + " han vendido " +
+            Juego.consola.imprimir("El jugador " + jugador.getNombre() + " han vendido " +
                 n + " pistas en " + this.nombre + ", recibiendo " + suma +
                 "€. En la propiedad quedan " + eds.size() + " pistas.");
         }
         else if(tamanho==0){
-            System.out.println("No puedes vender ninguna propiedad del tipo pista porque no hay ninguna en la casilla "
+            Juego.consola.imprimir("No puedes vender ninguna propiedad del tipo pista porque no hay ninguna en la casilla "
             + this.nombre);
         }
         else {
-            System.out.println("Solamente se pueden vender " + eds.size() + " pistas, recibiendo " + (eds.size() > 0 ? (eds.get(0).getCoste() / 2) * eds.size() : 0) + "€.");
+            Juego.consola.imprimir("Solamente se pueden vender " + eds.size() + " pistas, recibiendo " + (eds.size() > 0 ? (eds.get(0).getCoste() / 2) * eds.size() : 0) + "€.");
         }
     }
 

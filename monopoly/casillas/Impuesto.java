@@ -39,7 +39,7 @@ public class Impuesto extends Casilla{
 
     public boolean evaluarCasilla(Jugador jugadorActual, int tirada){
         incrementarVecesVisitada();
-        System.out.printf("Debes pagar tus impuestos a la banca: %,.0f€\n", impuesto);
+        Juego.consola.imprimir(String.format("Debes pagar tus impuestos a la banca: %,.0f€\n", impuesto));
 
         // Si puede pagarlo de alguna manera se cobra
         if(impuesto>jugadorActual.getFortuna()) {

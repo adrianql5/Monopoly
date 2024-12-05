@@ -269,7 +269,7 @@ public class Tablero {
             }
         }
         else {
-            System.out.println("\nError en la función conEspacios: tiene que introducirse un número positivo de espacios.\n");
+            Juego.consola.imprimir("\nError en la función conEspacios: tiene que introducirse un número positivo de espacios.\n");
             //Nótese que igualmente devuelve una cadena vacía si se introduce un número negativo
         }
         return(cadena);
@@ -308,7 +308,7 @@ public class Tablero {
                 nombreColoreado = Valor.WHITE;
                 break;
             default:
-                System.out.println(solar.getNombre() + " tiene un color de grupo inválido.\n");
+                Juego.consola.imprimir(solar.getNombre() + " tiene un color de grupo inválido.\n");
                 nombreColoreado = "";
                 break;
         }

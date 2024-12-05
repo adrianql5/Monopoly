@@ -3,14 +3,11 @@ import java.util.Scanner;
 
 public class ConsolaNormal implements Consola{
 
-	//Atributos:
     private Scanner scanner;
 
- 	//Constructor.
     public ConsolaNormal(){
         this.scanner = new Scanner(System.in);
 	}
-
 
 	@Override
 	public void imprimir(String mensaje){
@@ -18,15 +15,8 @@ public class ConsolaNormal implements Consola{
 	}
 
 	@Override
-	public String leer(){
-		String leido = scanner.nextLine();
-		return leido;
+	public String leer(	String mensaje){
+		System.out.print(mensaje);
+		return scanner.nextLine();
 	}
-
-	public void cerrarScanner() {
-        if (scanner != null) {
-            scanner.close();
-        }
-    }
-
 }

@@ -1,7 +1,7 @@
 package monopoly.interfaces;
 
-public interface Consola{
-	public void imprimir(String mensaje);
-    
-	public String leer();
+public interface Consola {
+	void imprimir(String mensaje);
+	
+	String leer(String mensaje);
 }
