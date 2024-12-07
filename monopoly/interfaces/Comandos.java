@@ -1,33 +1,35 @@
 package monopoly.interfaces;
 
+import excepciones.NoExisteExcepcion.*;
+import excepciones.ComandoImposibleException.*;
 import partida.*;
 
 public interface Comandos {
     void acabarPartida();
-    void declararBancarrota(Jugador jugador);
+    void declararBancarrota(Jugador jugador) throws JugadorNoEncontrado;
     void verTablero();
     void infoJugadorTurno();
     void estadisticasGenerales();
-    void salirCarcel();
+    void salirCarcel() throws SalirCarcelImposibleExcepcion;
     void ayuda();
-    void edificar(String tipoEdificio);
+    void edificar(String tipoEdificio) throws EdificioNoEncontrado;
     void listarVenta();
     void listarJugadores();
     void listarAvatares();
     void listarEdificios(String filtro);
     void listarTratosJugadorActual();
     void lanzarDados(int dado1, int dado2);
-    void acabarTurno();
-    void cambiarModo();
-    void descCasilla(String casilla);
-    void comprar(String propiedad);
-    void aceptarTrato(String trato);
-    void hipotecar(String propiedad);
-    void deshipotecar(String propiedad);
-    void estadisticasJugador(String jugador);
-    void descJugador(String[] nombreCompleto);
-    void descAvatar(String avatar);
-    void proponerTrato(String comando);
-    void venderEdificios(String propiedad, String tipoEdificio, int cantidad);
+    void acabarTurno() throws AcabarTurnoImposibleExcepcion;
+    void cambiarModo() throws CambiarModoImposibleExcepcion;
+    void descCasilla(String casilla) throws CasillaNoEncontrada;
+    void comprar(String propiedad)throws CasillaNoEncontrada;
+    void aceptarTrato(String trato) throws TratoNoEncontrado;
+    void hipotecar(String propiedad) throws HipotecarImposibleExcepcion,CasillaNoEncontrada;
+    void deshipotecar(String propiedad) throws DeshipotecarImposibleExcepcion,CasillaNoEncontrada;
+    void estadisticasJugador(String jugador) throws JugadorNoEncontrado;
+    void descJugador(String[] nombreCompleto) throws JugadorNoEncontrado;
+    void descAvatar(String avatar) throws AvatarNoEncontrado;
+    void proponerTrato(String comando)throws CasillaNoEncontrada, JugadorNoEncontrado;
+    void venderEdificios(String propiedad, String tipoEdificio, int cantidad) throws  EdificioNoEncontrado, CasillaNoEncontrada;
     void crearJugador(String nombre, String avatar);
 }

@@ -102,6 +102,22 @@ public class Trato {
                 return false;
             }
         }
+        Juego.consola.imprimir("Detalles del trato:\n");
+        Juego.consola.imprimir(jugadorPropone.getNombre() + " DA:\n");
+        for (Propiedad propiedad : propiedadesOfrecidas) {
+            Juego.consola.imprimir("- Propiedad: " + propiedad.getNombre() + "\n");
+        }
+        if (dineroOfrecido > 0) {
+            Juego.consola.imprimir("- Dinero: " + dineroOfrecido + "€\n");
+        }
+
+        Juego.consola.imprimir(jugadorRecibe.getNombre() + " DA:\n");
+        for (Propiedad propiedad : propiedadesDemandadas) {
+            Juego.consola.imprimir("- Propiedad: " + propiedad.getNombre() + "\n");
+        }
+        if (dineroDemandado > 0) {
+            Juego.consola.imprimir("- Dinero: " + dineroDemandado + "€\n");
+        }
         // Transferencia de propiedades y dinero
         transferirPropiedades(propiedadesOfrecidas, jugadorPropone, jugadorRecibe);
         transferirPropiedades(propiedadesDemandadas, jugadorRecibe, jugadorPropone);
