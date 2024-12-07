@@ -3,17 +3,18 @@ package partida.avatares;
 import java.util.ArrayList;
 import java.util.Random;
 
+import monopoly.*;
 import partida.Jugador;
 import monopoly.casillas.*;
 
 public abstract class Avatar {
     
     //ATRIBUTOS
-    private String id; //Identificador: una letra generada aleatoriamente.
-    private Jugador jugador; //Un jugador al que pertenece ese avatar.
-    private Casilla lugar; //Los avatares se sitúan en casillas del tablero.
-    private boolean movimientoAvanzado; //TRUE si el avatar está en modo de movimiento avanzado.
-    private ArrayList<Avatar> avCreados;
+    protected String id; //Identificador: una letra generada aleatoriamente.
+    protected Jugador jugador; //Un jugador al que pertenece ese avatar.
+    protected Casilla lugar; //Los avatares se sitúan en casillas del tablero.
+    protected boolean movimientoAvanzado; //TRUE si el avatar está en modo de movimiento avanzado.
+    protected ArrayList<Avatar> avCreados;
 
 
     //SECCIÓN DE CONSTRUCTORES DE AVATAR--------------------------------------------------------------------------------
@@ -62,12 +63,22 @@ public abstract class Avatar {
         }
     }
 
+    //MÉTODOS ABSTRACTOS DE AVATAR--------------------------------------------------------------------------------------
 
     
     //SECCIÓN DE MÉTODOS ÚTILES DE AVATAR-------------------------------------------------------------------------------
 
     /**Método que imprime la información sobre el avatar.*/
-    public abstract void infoAvatar();
+    public void infoAvatar() {
+
+        String info = "{\n\tID: " + this.getId() + "\n" +
+                "\tTipo: " + this.getClass().getSimpleName() + "\n" +
+                "\tJugador: " + this.getJugador().getNombre() + "\n" +
+                "\tCasilla: " + this.getLugar().getNombre() + "\n}";
+
+        // Imprimir directamente el string
+        Juego.consola.imprimir(info);
+    }
 
     /**Método para cambiar el tipo de movimiento del avatar.*/
     public void cambiarMovimiento() {
@@ -75,7 +86,7 @@ public abstract class Avatar {
     }
 
     /**
-     * Método que permite mover a un avatar a una casilla concreta.
+     * Método que permite mover a un avatar a una casilla concreta en modo básico.
      * Este método no comprueba si se pasa por la Salida ni hace el ingreso correspondiente.
      * Versión 2: ya se admite que valorTirada sea un número negativo.
      * @param casillas    Array con las casillas del tablero. Es un arrayList de arrayList de casillas (uno por lado)
@@ -113,7 +124,9 @@ public abstract class Avatar {
         this.lugar.anhadirAvatar(this);
     }
 
+
     //SECCIÓN DE GETTERS Y SETTERS DE AVATAR----------------------------------------------------------------------------
+
     public String getId() {
         return id;
     }
