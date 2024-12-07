@@ -33,10 +33,6 @@ public class Juego implements Comandos {
     private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente (no tiene deudas).
     private boolean turno_extra_coche; //turno extra coche
 
-
-    private ArrayList<Carta> cartas_suerte;
-    private ArrayList<Carta> cartas_caja;
-    private Carta carta_del_reves;
     private boolean partidaTerminada; //Booleano para acabar la partida
     private int dadosDoblesSeguidos; //(DEL JUGADOR CON EL TURNO) Hay que diferenciar lanzamientos de este atributo
 
@@ -49,8 +45,9 @@ public class Juego implements Comandos {
      */
     private int controlComandos;
 
-
     public final static Consola consola = new ConsolaNormal();
+
+    // SECCIÓN DE CONSTRUCTOR DE JUEGO----------------------------------------------------------------------------------
 
     public Juego() {
         this.jugadores = new ArrayList<Jugador>();
@@ -65,34 +62,10 @@ public class Juego implements Comandos {
         this.solvente = true;
         this.turno_extra_coche = false;
 
-
-        anhadirBarajas();
         this.partidaTerminada = false;
         this.dadosDoblesSeguidos = 0;
 
         this.controlComandos = 0;
-    }
-
-
-    /**
-     * Método para generar las cartas de tipo Suerte y de tipo Caja de comunidad (más la carta dada la vuelta).
-     */
-    private void anhadirBarajas() {
-        this.cartas_suerte = new ArrayList<Carta>();
-        cartas_suerte.add(new Carta(Texto.CARTA_SUERTE_1, "Suerte", 1));
-        cartas_suerte.add(new Carta(Texto.CARTA_SUERTE_2, "Suerte", 2));
-        cartas_suerte.add(new Carta(Texto.CARTA_SUERTE_3, "Suerte", 3));
-        cartas_suerte.add(new Carta(Texto.CARTA_SUERTE_4, "Suerte", 4));
-        cartas_suerte.add(new Carta(Texto.CARTA_SUERTE_5, "Suerte", 5));
-        cartas_suerte.add(new Carta(Texto.CARTA_SUERTE_6, "Suerte", 6));
-        this.cartas_caja = new ArrayList<Carta>();
-        cartas_caja.add(new Carta(Texto.CARTA_CAJA_1, "Caja", 1));
-        cartas_caja.add(new Carta(Texto.CARTA_CAJA_2, "Caja", 2));
-        cartas_caja.add(new Carta(Texto.CARTA_CAJA_3, "Caja", 3));
-        cartas_caja.add(new Carta(Texto.CARTA_CAJA_4, "Caja", 4));
-        cartas_caja.add(new Carta(Texto.CARTA_CAJA_5, "Caja", 5));
-        cartas_caja.add(new Carta(Texto.CARTA_CAJA_6, "Caja", 6));
-        this.carta_del_reves = new Carta();
     }
 
 
@@ -453,16 +426,6 @@ public class Juego implements Comandos {
             // AVANZAR 40 CASILLAS HASTA LA MISMA CASILLA
             case "dar vuelta":
                 obtenerTurno().sumarVuelta();
-                break;
-            // PROBANDO LA IMPRESIÓN DE CARTAS esto creo q habría q boorarlo
-            case "probar cartas":
-                probarCartas();
-                break;
-            case "coger carta caja":
-                cogerCarta(this.cartas_caja);
-                break;
-            case "coger carta suerte":
-                cogerCarta(this.cartas_suerte);
                 break;
 
             // Algunos mensajes concretos a comandos inválidos
@@ -1027,23 +990,6 @@ public class Juego implements Comandos {
     }
 
     /**
-     * Método para evaluar qué hacer en una casilla concreta.
-     *
-     * @param casilla Casilla que tenemos que evaluar
-     * @return TRUE en caso de ser solvente (es decir, de cumplir las deudas), y FALSE en caso de no serlo
-     */
-    /* FALTA METER ESTO EN ACCION, PERO IMPLICA MOVER TODO LO DE CARTAS*/
-    public boolean evaluarCasilla(Casilla casilla) {
-        if (casilla instanceof AccionCajaComunidad) {
-            cogerCarta(cartas_caja);
-        } else if (casilla instanceof AccionSuerte) {
-            cogerCarta(this.cartas_suerte);
-        }
-        return true;
-    }
-
-
-    /**
      * Método que resetea los atributos relacionados con la cárcel del jugador que se desencarcela.
      * También resetea el boolean de la tirada y el número de lanzamientos del turno.
      * Nótese que por ese motivo al salir de la cárcel puedes tirar los dados como un turno normal.
@@ -1353,161 +1299,6 @@ public class Juego implements Comandos {
     }
 
 
-
-    //SECCIÓN DE COMANDOS QUE DEPENDEN DE DOS INSTANCIAS----------------------------------------------------------------
-    // SECCIÓN DE MÉTODOS RELACIONADOS CON LAS CARTAS TIPO SUERTE Y CAJA DE COMUNIDAD-----------------------------------
-
-    /**Método para cuando se cae en una casilla de tipo Suerte o Caja de comunidad
-     * [1] Reordena de manera aleatoria el ArrayList de cartas correspondiente
-     * [2] Le pide al usuario el número de la carta que quiere escoger (del 1 al 6)
-     */
-    public void cogerCarta(ArrayList<Carta> baraja) {
-        consola.imprimir("Barajando las cartas...");
-        //Collections.shuffle(baraja); //Barajamos las cartas //ESTÁ COMENTADO PORQUE EN ESTA ENTREGA NO SE BARAJAN
-        cartasAlReves(); //Mostramos el reverso de las cartas
-        consola.imprimir("Escoge una carta con un número del 1 al 6.");
-        int n=leerDadoValido(); //Leemos input hasta que sea un número válido
-        mostrarCartaEscogida(baraja, n); //Volvemos a mostrar las cartas con la escogida dada la vuelta
-        if(!evaluarCarta(baraja.get(n-1))) bucleBancarrota(); //Ojo con los índices del ArrayList que empiezan en 0!!
-    }
-
-    /**
-     * Función que dada una carta ejecuta las acciones que dice la misma.
-     * @param carta Carta que tenemos que evaluar
-     * @return TRUE si el jugador es solvente, FALSE en caso contrario
-     */
-    public boolean evaluarCarta(Carta carta) {
-        Jugador jugadorActual = obtenerTurno();
-        Avatar avatarActual = jugadorActual.getAvatar();
-        int posicion = avatarActual.getLugar().getPosicion();
-
-        if(carta.getTipo().equals("Suerte")) {
-            switch(carta.getID()) {
-                case 1: //Ir a Transportes1 (pos=5). Si pasas por la Salida cobrar
-                    //Siempre se pasa por la salida ya que no hay ninguna casilla Suerte entre la Salida y Trans1
-                    avatarActual.moverAvatar(this.tablero.getPosiciones(), 45-posicion);
-                    cobrarSalida(jugadorActual);
-                    if(!evaluarCasilla(this.tablero.getCasilla(5))) bucleBancarrota();
-                    break;
-                case 2: //Ir a Solar15 (pos=26) sin pasar por la Salida (y por tanto sin cobrar)
-                    avatarActual.moverAvatar(this.tablero.getPosiciones(), posicion<26 ? 26-posicion : 66-posicion);
-                    if(!evaluarCasilla(this.tablero.getCasilla(26))) bucleBancarrota();
-                    break;
-                case 3: //Cobrar 500.000€
-                    jugadorActual.sumarFortuna(500000);
-                    break;
-                case 4: //Ir a Solar3 (pos=6). Si pasas por la Salida cobrar
-                    //Siempre se pasa por la salida ya que no hay ninguna casilla Suerte entre la Salida y Solar3
-                    avatarActual.moverAvatar(this.tablero.getPosiciones(), 46-posicion);
-                    cobrarSalida(jugadorActual);
-                    if(!evaluarCasilla(this.tablero.getCasilla(6))) bucleBancarrota();
-                    break;
-                case 5: //Ir a la cárcel (encarcelado) sin pasar por la Salida (y por tanto sin cobrar)
-                    avatarActual.moverAvatar(this.tablero.getPosiciones(), posicion<10 ? 10-posicion : 50-posicion);
-                    jugadorActual.encarcelar(this.tablero.getCasilla(20));
-                    break;
-                case 6: //Cobrar 1.000.000€
-                    jugadorActual.sumarFortuna(1000000);
-                    break;
-            }
-        }
-        else if(carta.getTipo().equals("Caja")) {
-            Especial parking = (Especial)this.tablero.getCasilla(20);
-            switch(carta.getID()) {
-                case 1: //Pagar 500.000€ (a la banca)
-                    if(500000f>jugadorActual.getFortuna()){
-                        jugadorActual.setDeuda(500000f);
-                        jugadorActual.setDeudaConJugador(this.banca);
-                        return false;
-                    }
-                    jugadorActual.sumarFortuna(-500000f);
-                    jugadorActual.sumarGastos(500000);
-                    jugadorActual.getEstadisticas().sumarPagoDeAlquileres(500000f);
-                    parking.incrementarBote(500000f);
-                    return true;
-                case 2: //Ir a la cárcel (encarcelado) sin pasar por la Salida (y por tanto sin cobrar)
-                    avatarActual.moverAvatar(this.tablero.getPosiciones(), posicion<10 ? 10-posicion : 50-posicion);
-                    jugadorActual.encarcelar(this.tablero.getCasilla(20));
-                    break;
-                case 3: //Ir a Salida (pos=0=40) y cobrar
-                    avatarActual.moverAvatar(this.tablero.getPosiciones(), 40-posicion);
-                    cobrarSalida(jugadorActual);
-                    break;
-                case 4: //Cobrar 2.000.000€
-                    jugadorActual.sumarFortuna(2000000);
-                    break;
-                case 5: //Pagar 1.000.000€ (a la banca)
-                    if(1000000f>jugadorActual.getFortuna()){
-                        jugadorActual.setDeuda(500000f);
-                        jugadorActual.setDeudaConJugador(this.banca);
-                        return false;
-                    }
-                    jugadorActual.sumarFortuna(-1000000f);
-                    jugadorActual.sumarGastos(1000000f);
-                    jugadorActual.getEstadisticas().sumarPagoDeAlquileres(1000000f);
-                    parking.incrementarBote(1000000f);
-                    return true;
-                case 6: //Pagar 200.000€ a cada jugador
-                    float total_a_pagar = 200000 * (this.jugadores.size()-1);
-
-                    if(total_a_pagar>jugadorActual.getFortuna()){
-                        jugadorActual.setDeuda(total_a_pagar);
-                        jugadorActual.setDeudaConJugador(this.banca);
-                        return false;
-                    }
-                    jugadorActual.restarFortuna(total_a_pagar);
-                    parking.incrementarBote(500000f);
-                    //Recorremos el ArrayList de jugadoresda: si no es el jugador actual sumamos 200.000€
-                    for(Jugador j : this.jugadores) {
-                        if(!j.equals(jugadorActual)) {
-                            j.sumarFortuna(200000);
-                        }
-                    }
-                    return true;
-            }
-        }
-        else {
-            consola.imprimir("Error en evaluarCarta(): esta carta tiene un tipo inválido.");
-        }
-
-        // Si llega a aquí es que el jugador es solvente
-        return true;
-    }
-
-    /**Método para imprimir 6 cartas al revés en fila.*/
-    private void cartasAlReves() {
-        // Vamos imprimiendo línea por línea
-        for(int i=0; i<Valor.NLINEAS_CARTA; i++) {
-            // Función repeat() muy útil pa este caso
-            consola.imprimir(this.carta_del_reves.getTexto().get(i).repeat(6));
-        }
-    }
-
-    /**
-     * Método para imprimir 6 cartas, todas al revés menos la que indica el índice
-     * @param baraja Baraja de cartas de entre las cuales se escoge
-     * @param n Posición de la carta que se escoge en el ArrayList
-     */
-    private void mostrarCartaEscogida(ArrayList<Carta> baraja, int n) {
-        // Para cada línea...
-        for(int i=0; i<Valor.NLINEAS_CARTA; i++) {
-            // ...iteramos para cada carta (en total 6)...
-            for(int j=0; j<6; j++) {
-                // ...vemos si la carta es la que escogió el jugador o no
-                // Nótese que el jugador escoge del 1 al 6 pero los índices empiezan en 0
-                if(j==n-1) {
-                    System.out.print(baraja.get(n-1).getTexto().get(i));
-                }
-                else {
-                    System.out.print(this.carta_del_reves.getTexto().get(i));
-                }
-            }
-            consola.imprimir(""); //Imprimimos un salto de línea al haber iterado las 6 cartas
-        }
-    }
-
-
-
     //SECCIÓN DE CHEATS DE MENÚ-----------------------------------------------------------------------------------------
 
     /**Método para conseguir mucho dinero.*/
@@ -1520,24 +1311,7 @@ public class Juego implements Comandos {
             j.setFortuna(fortuna);
         }
     }
-
-    /**PRUEBA DE CÓMO QUEDAN LAS CARTAS*/
-    private void probarCartas() {
-        // CARTAS SUERTE
-        for(int j=0; j<11; j++) {
-            for(int i=0; i<6; i++) {
-                System.out.print(this.cartas_suerte.get(i).getTexto().get(j));
-            }
-            consola.imprimir("");
-        }
-        // CARTAS CAJA
-        for(int j=0; j<11; j++) {
-            for(int i=0; i<6; i++) {
-                System.out.print(this.cartas_caja.get(i).getTexto().get(j));
-            }
-            consola.imprimir("");
-        }
-    }
+    
 
     // MÉTODOS SIN GRUPO:
 
@@ -1626,13 +1400,13 @@ public class Juego implements Comandos {
             Casilla casillaAux = tablero.getCasilla(i);
 
             // Si la casilla tiene más visitas que el máximo actual, se actualiza el máximo
-            if (casillaAux.getVecesVisitada() > vecesMaxima) {
-                vecesMaxima = casillaAux.getVecesVisitada();
+            if (casillaAux.frecuenciaVisita() > vecesMaxima) {
+                vecesMaxima = casillaAux.frecuenciaVisita();
                 nombresCasillas.clear(); // Reinicia la lista con la nueva casilla más visitada
                 nombresCasillas.add(casillaAux.getNombre());
             }
             // Si tiene el mismo número de visitas que el máximo, se añade a la lista
-            else if (casillaAux.getVecesVisitada() == vecesMaxima) {
+            else if (casillaAux.frecuenciaVisita() == vecesMaxima) {
                 nombresCasillas.add(casillaAux.getNombre());
             }
         }
@@ -2020,9 +1794,6 @@ public class Juego implements Comandos {
         consola.imprimir("- siguiente: Realiza el siguiente movimiento.");
         consola.imprimir("- dinero infinito: Activa el modo dinero infinito.");
         consola.imprimir("- dar vuelta: Avanza 40 casillas.");
-        consola.imprimir("- probar cartas: Prueba la impresión de cartas.");
-        consola.imprimir("- coger carta caja: Coge una carta de Caja de Comunidad.");
-        consola.imprimir("- coger carta suerte: Coge una carta de Suerte.");
         consola.imprimir("- describir [nombre_casilla]: Describe la casilla indicada.");
         consola.imprimir("- comprar [nombre_casilla]: Compra la casilla indicada.");
         consola.imprimir("- edificar [nombre_casilla]: Construye un edificio.");
