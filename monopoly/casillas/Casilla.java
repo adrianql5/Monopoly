@@ -138,6 +138,3 @@ public abstract class Casilla {
 
 
 }
-
-
-}
