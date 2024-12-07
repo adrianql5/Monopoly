@@ -11,18 +11,15 @@ import monopoly.*;
  */
 public abstract class Casilla {
 
-    // =========================================
-    // ATRIBUTOS
-    // =========================================
-    protected String nombre; // Nombre de la casilla
-    protected int posicion; // Posición en el tablero (1-40)
+    // ATRIBUTOS--------------------------------------------------------------------------------------------------------
+    protected final String nombre; // Nombre de la casilla
+    protected final int posicion; // Posición en el tablero (1-40)
     protected ArrayList<Avatar> avatares; // Avatares situados en la casilla
     protected int vecesVisitada; // Número de veces que se visitó la casilla
     protected float dineroRecaudado; // Dinero recaudado por la casilla
 
-    // =========================================
-    // CONSTRUCTORES
-    // =========================================
+
+    // CONSTRUCTORES----------------------------------------------------------------------------------------------------
     /**
      * Constructor que inicializa una casilla con su nombre y posición.
      *
@@ -37,9 +34,8 @@ public abstract class Casilla {
         this.dineroRecaudado = 0;
     }
 
-    // =========================================
-    // MÉTODOS PARA MANEJO DE AVATARES
-    // =========================================
+
+    // MÉTODOS PARA MANEJO DE AVATARES----------------------------------------------------------------------------------
     /**
      * Añade un avatar a la lista de avatares de la casilla.
      *
@@ -76,29 +72,28 @@ public abstract class Casilla {
         return jugadores.toString();
     }
 
-    //la pide nico aunq no la usemos (de momento)
+    /**Método booleano que comprueba si un avatar está en la casilla*/
     public boolean estaAvatar(Avatar avatar){
         return avatar.getLugar().equals(this);
     }
 
 
-    // =========================================
-    // MÉTODOS ABSTRACTOS
-    // =========================================
+    // MÉTODOS ABSTRACTOS-----------------------------------------------------------------------------------------------
     /**
      * Método abstracto para obtener información específica de la casilla.
      * Este método debe ser implementado por las subclases.
      */
     public abstract String infoCasilla();
 
+    /**
+     * Método abstracto que realiza las acciones de la casilla.
+     * Este método debe ser implementado por las subclases.
+     */
     public abstract boolean evaluarCasilla(Jugador jugadorActual, int tirada);
 
-    // =========================================
-    // MÉTODOS AUXILIARES
-    // =========================================
-    /**
-     * Incrementa en 1 el contador de veces que se visitó la casilla.
-     */
+
+    // MÉTODOS AUXILIARES-----------------------------------------------------------------------------------------------
+    /**Incrementa en 1 el contador de veces que se visitó la casilla.*/
     public void incrementarVecesVisitada() {
         this.vecesVisitada++;
     }
@@ -118,9 +113,8 @@ public abstract class Casilla {
         }
     }
 
-    // =========================================
-    // GETTERS Y SETTERS
-    // =========================================
+
+    // GETTERS----------------------------------------------------------------------------------------------------------
     public String getNombre() {
         return nombre;
     }
@@ -129,20 +123,8 @@ public abstract class Casilla {
         return posicion;
     }
 
-    /**
-     * Establece una nueva posición para la casilla, validando que esté dentro del rango (1-40).
-     *
-     * @param nuevaPosicion Nueva posición de la casilla.
-     */
-    public void setPosicion(int nuevaPosicion) {
-        if (nuevaPosicion >= 1 && nuevaPosicion <= 40) {
-            this.posicion = nuevaPosicion;
-        } else {
-            Juego.consola.imprimir(nuevaPosicion + " no es una posición válida.\n");
-        }
-    }
-
-    public int getVecesVisitada() {
+    // Equivale a getVecesVisitada pero la quieren con este nombre
+    public int frecuenciaVisita() {
         return vecesVisitada;
     }
 
@@ -153,6 +135,9 @@ public abstract class Casilla {
     public float getDineroRecaudado() {
         return dineroRecaudado;
     }
+
+
+}
 
 
 }
