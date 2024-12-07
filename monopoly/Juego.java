@@ -2,16 +2,13 @@ package monopoly;
 
 import java.util.*;
 
-import excepciones.*;
 import excepciones.NoExisteExcepcion.*;
 import excepciones.ComandoImposibleException.*;
 
 import partida.*;
 import partida.avatares.*;
 
-import monopoly.cartas.*;
 import monopoly.casillas.*;
-import monopoly.casillas.acciones.*;
 import monopoly.casillas.propiedades.*;
 import monopoly.edificios.*;
 import monopoly.interfaces.*;
@@ -19,7 +16,7 @@ import monopoly.interfaces.*;
 
 
 public class Juego implements Comandos {
-    //Atributos
+    // ATRIBUTOS
     private ArrayList<Jugador> jugadores; //Jugadores de la partida.
     private ArrayList<Avatar> avatares; //Avatares en la partida.
     private int turno; //Índice de la posición en el arrayList del jugador (y el avatar) que tienen el turno.
@@ -91,13 +88,13 @@ public class Juego implements Comandos {
         // Dentro del propio bucle se empieza la partida
         while (!partidaTerminada) {
 
-            String comando_entero = consola.leer("Crea un jugador (crear jugador <nombre> <tipo_avatar>) y cuando tengas los suficientes escribe 'empezar partida': ");
+            String comando_entero = consola.leer(Texto.M_COMANDO_INVALIDO_INICIO);
             String[] comando = comando_entero.split(" ");
 
             // IMPORTANTE comprobar la longitud para no acceder a un índice que no existe
             if (comando.length >= 4 && "crearjugador".equals(comando[0] + comando[1])) {
                 // Si no tenemos ya 6 jugadores se deja crear un nuevo jugador
-                if (this.jugadores.size() < 7) {
+                if (this.jugadores.size() < 6) {
                     // Comprobamos si se ha introducido un tipo de avatar válido
                     if (esTipoAvatar(comando[comando.length - 1])) {
                         // El nombre del jugador puede contener varias palabras
@@ -120,7 +117,6 @@ public class Juego implements Comandos {
             } else if (comando.length == 2 && comando[0].equals("setfortuna")) {
                 float fortuna = Float.parseFloat(comando[1]);
                 asignarFortuna(fortuna);
-                consola.imprimir("jajajaj pues va");
             } else if ("empezar partida".equals(comando_entero)) {
 
                 //Si hay al menos 2 jugadores empezamos
@@ -142,8 +138,6 @@ public class Juego implements Comandos {
                     consola.imprimir("Creo que jugar una persona sola no tiene mucho sentido...");
                 }
 
-            } else {
-                consola.imprimir(Texto.M_COMANDO_INVALIDO_INICIO);
             }
 
         }
@@ -162,35 +156,37 @@ public class Juego implements Comandos {
      */
     @Override
     public void crearJugador(String nombre, String tipoAvatar) {
-        // Definir la casilla de inicio.
-        Casilla casillaInicio = tablero.getCasilla(0);
-        Avatar av;
-        Jugador nuevoJugador = new Jugador(nombre, casillaInicio, avatares);
-        //Comprobamos que el tipo introducido es válido
+        // Lo primero que hacemos es crear el avatar, así si el tipo es incorrecto no hace nada la función
+        Avatar avatar;
+        Casilla casillaInicio = this.tablero.getCasilla(0);
         switch (tipoAvatar) {
             case "coche":
-                av = new Coche(nuevoJugador, casillaInicio, avatares);
+                avatar = new Coche(null, casillaInicio, this.avatares);
                 break;
             case "pelota":
-                av = new Pelota(nuevoJugador, casillaInicio, avatares);
+                avatar = new Pelota(null, casillaInicio, this.avatares);
                 break;
 
             case "esfinge":
-                av = new Esfinge(nuevoJugador, casillaInicio, avatares);
+                avatar = new Esfinge(null, casillaInicio, this.avatares);
                 break;
 
             case "sombrero":
-                av = new Sombrero(nuevoJugador, casillaInicio, avatares);
+                avatar = new Sombrero(null, casillaInicio, this.avatares);
                 break;
             default:
                 System.out.print("Tipo de avatar inválido. Los tipos válidos son coche, pelota, esfinge y sombrero");
                 return;
         }
 
-        nuevoJugador.setAvatar(av);
+        // El tipo de avatar es válido, creamos el jugador
+        Jugador nuevoJugador = new Jugador(nombre, avatar);
+        // Enlazamos el jugador con el avatar
+        avatar.setJugador(nuevoJugador);
 
-        // Creamos el nuevo jugador con el tipo indicado
+        // ESTO NO HACE FALTA @ADRI
         nuevoJugador.setDeudaConJugador(banca);
+
         // Añadir el jugador a la lista de jugadores y a la casilla de inicio
         this.jugadores.add(nuevoJugador);
         casillaInicio.anhadirAvatar(nuevoJugador.getAvatar());
@@ -407,9 +403,9 @@ public class Juego implements Comandos {
                     verTablero();
                     if (movimientosPendientesActual().isEmpty()) {
                         if (this.dado1.getValor() == this.dado2.getValor()) {
-                            consola.imprimir(Texto.M_YA_SE_HICIERON_TODOS_LOS_MOVIMIENTOS_TIRADA);
+                            consola.imprimir(Texto.M_YA_SE_HICIERON_LOS_MOVIMIENTOS_TIRADA);
                         } else {
-                            consola.imprimir(Texto.M_YA_SE_HICIERON_TODOS_LOS_MOVIMIENTOS_TURNO);
+                            consola.imprimir(Texto.M_YA_SE_HICIERON_LOS_MOVIMIENTOS_TURNO);
                         }
                     }
                 } else {
@@ -1338,23 +1334,6 @@ public class Juego implements Comandos {
             consola.imprimir("Número inválido.");
             return 0;
         }
-    }
-
-    /**Método que lee input hasta que el valor introducido sea un número entre 1 y 6.*/
-    private int leerDadoValido() {
-        // Creamos un escaneador para introducir el número
-        int n=0;
-
-        // Bucle que para cuando metemos un número entre 1 y 6 por teclado
-        while(n==0) {
-            String numero = consola.leer("Introduce un número entre 1 y 6:");
-            // dadoValido() transforma el String en un número
-            // Si no es un número válido devuelve 0
-            n=dadoValido(numero);
-        }
-
-        //scannerDado.close();
-        return n;
     }
 
     private boolean esTipoAvatar(String tipo) {

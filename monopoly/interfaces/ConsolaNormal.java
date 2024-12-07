@@ -16,7 +16,7 @@ public class ConsolaNormal implements Consola{
 
 	@Override
 	public String leer(	String mensaje){
-		System.out.print(mensaje);
+		System.out.println(mensaje);
 		return scanner.nextLine();
 	}
 }

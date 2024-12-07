@@ -32,7 +32,7 @@ public class Jugador {
      */
     private ArrayList<Integer> movimientos_pendientes;
 
-    private Jugador jugadorConElQueEstanEnDeuda;//si es true está en deuda con la banca, si es false con un jugador
+    private Jugador jugadorConElQueEstanEnDeuda;
     private float deuda;
 
     //SECCIÓN DE CONSTRUCTORES DE JUGADOR
@@ -53,36 +53,28 @@ public class Jugador {
     
     /**Constructor principal. Desde este constructor también se crea el avatar.
      * @param nombre Nombre del jugador
-     * @param tipoAvatar Tipo del avatar que tendrá
-     * @param inicio Casilla en la que empezará
-     * @param avCreados ArrayList de avatares creados (usado para dos propósitos:
-     *                  evitar que dos jugadores tengan el mismo nombre y que dos avatares tengan mismo ID).
+     * @param avatar avatar
      */
-    public Jugador(String nombre, Casilla inicio, ArrayList<Avatar> avCreados) {
+    public Jugador(String nombre, Avatar avatar) {
 
         this.nombre = nombre;
-        this.avatar = null;
-        
-        this.avatar.setLugar(inicio);
+        this.avatar = avatar;
+
         this.fortuna = Valor.FORTUNA_INICIAL;
         this.gastos = 0;
         this.enCarcel = false;
         this.tiradasCarcel = 0;
         this.vueltas = 0;
-        this.avatar.setJugador(this);
         this.propiedades = new ArrayList<Propiedad>();
-        this.vueltas_sin_comprar=0;
-        this.jugadorConElQueEstanEnDeuda=null;
-        this.deuda=0.0f;
+        this.vueltas_sin_comprar = 0;
+        this.jugadorConElQueEstanEnDeuda = null;
+        this.deuda = 0.0f;
         this.estadisticas = new Estadisticas();
         this.movimientos_pendientes = new ArrayList<Integer>();
-        this.tratosPendientes = new ArrayList<>(); // Inicializar la lista de tratos pendientes
+        this.tratosPendientes = new ArrayList<Trato>(); // Inicializar la lista de tratos pendientes
 
     }
 
-    public void setAvatar(Avatar avatar){
-        this.avatar=avatar;
-    }
 
     //FUNCIONES CLAVE DE LA CLASE JUGADOR-------------------------------------------------------------------------------
 

@@ -1,12 +1,13 @@
 package monopoly.casillas.acciones;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
+import monopoly.*;
 import monopoly.casillas.*;
 import monopoly.cartas.*;
 import partida.*;
-import monopoly.Texto;
-import monopoly.*;
+import monopoly.interfaces.*;
 
 public  abstract class Accion extends Casilla {
     // ATRIBUTO EXTRA: independientemente de la baraja necesitan la carta al revés para cuando se muestran las cartas
@@ -46,12 +47,12 @@ public  abstract class Accion extends Casilla {
      * [2] Le pide al usuario el número de la carta que quiere escoger (del 1 al 6)
      */
     public void cogerCarta() {
-        consola.imprimir("Barajando las cartas...");
+        Juego.consola.imprimir("Barajando las cartas...");
         Collections.shuffle(getBaraja()); //Barajamos las cartas
         cartasAlReves(); //Mostramos el reverso de las cartas
-        consola.imprimir("Escoge una carta con un número del 1 al 6.");
-        int n=leerDadoValido(); //Leemos input hasta que sea un número válido
-        mostrarCartaEscogida(getBaraja(), n); //Volvemos a mostrar las cartas con la escogida dada la vuelta
+        Juego.consola.imprimir("Escoge una carta con un número del 1 al 6.");
+        int n=leerNumValido(); //Leemos input hasta que sea un número válido
+        mostrarCartaEscogida(n); //Volvemos a mostrar las cartas con la escogida dada la vuelta
         //if(!evaluarCarta(getBaraja().get(n-1))) bucleBancarrota(); //Ojo con los índices del ArrayList que empiezan en 0!!
     }
 
@@ -70,13 +71,12 @@ public  abstract class Accion extends Casilla {
         // Vamos imprimiendo línea por línea
         for(int i=0; i<Valor.NLINEAS_CARTA; i++) {
             // Función repeat() muy útil pa este caso
-            consola.imprimir(this.carta_del_reves.getTexto().get(i).repeat(6));
+            Juego.consola.imprimir(this.carta_del_reves.getTexto().get(i).repeat(6));
         }
     }
 
     /**
      * Método auxiliar (por eso privado) para imprimir 6 cartas, todas al revés menos la que indica el índice
-     * @param baraja Baraja de cartas de entre las cuales se escoge
      * @param n Posición de la carta que se escoge en el ArrayList
      */
     private void mostrarCartaEscogida(int n) {
@@ -95,6 +95,36 @@ public  abstract class Accion extends Casilla {
             }
             Juego.consola.imprimir(""); //Imprimimos un salto de línea al haber iterado las 6 cartas
         }
+    }
+
+    /**Método que lee input hasta que el valor introducido sea un número entre 1 y 6.*/
+    private int leerNumValido() {
+        // Creamos un escaneador para introducir el número
+        boolean invalido = true;
+        int n=0;
+
+        // Bucle que para cuando metemos un número entre 1 y 6 por teclado
+        while(invalido) {
+            String numero = Juego.consola.leer("Introduce un número entre 1 y 6:");
+
+            // Comprobamos si es número entre 1 y 6
+            if(numero.matches("\\d")) {
+                // Convertimos el String a int si es un dígito y vemos que esté entre 1 y 6
+                n = Integer.parseInt(numero);
+                if(0<n && n<=6) {
+                    n = Integer.parseInt(numero);
+                    invalido = false;
+                }
+                else {
+                    Juego.consola.imprimir("Número inválido.");
+                }
+            }
+            else {
+                Juego.consola.imprimir("Número inválido.");
+            }
+        }
+
+        return n;
     }
 
 }

@@ -22,7 +22,6 @@ public abstract class Avatar {
     /**
      * Constructor principal.
      *
-     * @param tipo      Tipo del avatar
      * @param jugador   Jugador al que pertenece
      * @param lugar     Lugar en el que está ubicado
      * @param avCreados Arraylist con los avatares creados (usado para crear un ID distinto a los demás)

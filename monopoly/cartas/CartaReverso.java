@@ -10,8 +10,7 @@ import monopoly.Valor;
 public class CartaReverso {
 
     // ATRIBUTOS
-    protected final ArrayList<String> texto;
-    protected final int ID;
+    private final ArrayList<String> texto;
 
     // CONSTRUCTOR
     public CartaReverso() {
@@ -25,9 +24,10 @@ public class CartaReverso {
         }
 
         this.texto.add(Texto.CARTA_BORDEINF);
+    }
 
-        //Inicializamos el resto de atributos a unos valores por defecto
-        this.ID = 0;
+    public ArrayList<String> getTexto() {
+        return this.texto;
     }
 
 }
