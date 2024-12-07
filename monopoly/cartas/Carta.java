@@ -4,14 +4,18 @@ import java.util.ArrayList;
 
 import monopoly.Texto;
 import monopoly.Valor;
+import monopoly.Juego;
 
-public class Carta {
+import partida.*;
+import partida.avatares.*;
+
+public abstract class Carta {
     // ATRIBUTOS
-    private ArrayList<String> texto;
-    String tipo;
-    int ID;
+    protected final ArrayList<String> texto;
+    protected final int ID;
 
-    // CONSTRUCTORES----------------------------------------------------------------------------------------------------
+
+    // CONSTRUCTOR
     /**
      * Constructor de la clase Carta que crea la carta en formato Ascii
      * a partir del mensaje que tiene que mostrar dentro.
@@ -21,40 +25,19 @@ public class Carta {
      * @param indice Número para diferenciar las cartas dentro de una baraja, en la función evaluarCasilla que es la
      *               que ejecuta las acciones de la carta hay un switch en función de este índice
      */
-    public Carta(String texto, String tipo, int indice) {
+    public Carta(String texto, int indice) {
         this.texto = new ArrayList<String>();
-        setTipo(tipo);
         this.ID = indice;
 
         //Borde superior
         this.texto.add(Texto.CARTA_BORDESUP);
 
-        // CREAR LAS LÍNEAS DEL MzEDIO: ESTO ES LO COMPLICADO
+        // CREAR LAS LÍNEAS DEL MEDIO: ESTO ES LO COMPLICADO
         // Función addAll para añadir todos los elementos que contiene el ArrayList q devuelve ajustarTextoEnCarta()
         this.texto.addAll(ajustarTextoEnCarta(texto, Valor.NCHARS_CARTA));
 
         //Borde inferior
         this.texto.add(Texto.CARTA_BORDEINF);
-    }
-
-    /**Constructor vacío para el reverso de las cartas.*/
-    public Carta() {
-        this.texto = new ArrayList<String>();
-
-        //Borde superior
-        this.texto.add(Texto.CARTA_BORDESUP);
-
-        // Parte del medio (en total 9 líneas)
-        for(int i=0; i<9; i++) {
-            this.texto.add(Texto.CARTA_REVERSO);
-        }
-
-        //Borde inferior
-        this.texto.add(Texto.CARTA_BORDEINF);
-
-        //Inicializamos el resto de atributos a unos valores por defecto
-        this.tipo="";
-        this.ID =0;
     }
 
 
@@ -63,26 +46,25 @@ public class Carta {
         return this.texto;
     }
 
-    public String getTipo() {
-        return this.tipo;
-    }
-
-    public void setTipo(String tipo) {
-        if("Caja".equals(tipo) || "Suerte".equals(tipo)) {
-            this.tipo = tipo;
-        }
-        else {
-            System.out.println("Error al crear una carta: tipo inválido.");
-        }
-    }
-
     public int getID() {
         return this.ID;
     }
 
 
+    // MÉTODOS ABSTRACTOS-----------------------------------------------------------------------------------------------
+    /**
+     * Función que dada una carta ejecuta las acciones que dice la misma.
+     * @param carta Carta que tenemos que evaluar
+     * @return TRUE si el jugador es solvente, FALSE en caso contrario
+     */
+    public abstract boolean evaluarCarta(Jugador jugadorActual);
+
+    public void accion();
+
+
     //MÉTODOS ÚTILES DE CARTA-------------------------------------------------------------------------------------------
 
+    // HAY QUE MOVER ESTA FUNCIÓN A LA CLASE MÁS GENÉRICA DEL MONOPOLY
     /**Método para crear cadenas de espacios.
      * @param n Número de espacios en blanco que se quieren
      */
