@@ -59,7 +59,7 @@ public abstract class Carta {
      */
     public abstract boolean evaluarCarta(Jugador jugadorActual);
 
-    public void accion();
+    //public abstract void accion();
 
 
     //MÉTODOS ÚTILES DE CARTA-------------------------------------------------------------------------------------------
