@@ -7,11 +7,10 @@ import monopoly.*;
 import monopoly.casillas.*;
 import monopoly.cartas.*;
 import partida.*;
-import monopoly.interfaces.*;
 
 public  abstract class Accion extends Casilla {
     // ATRIBUTO EXTRA: independientemente de la baraja necesitan la carta al revés para cuando se muestran las cartas
-    private CartaReverso carta_del_reves;
+    private final CartaReverso carta_del_reves;
 
     // CONSTRUCTOR
     protected Accion(String nombre, int posicion) {

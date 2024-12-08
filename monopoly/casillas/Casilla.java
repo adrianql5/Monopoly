@@ -36,29 +36,18 @@ public abstract class Casilla {
 
 
     // MÉTODOS PARA MANEJO DE AVATARES----------------------------------------------------------------------------------
-    /**
-     * Añade un avatar a la lista de avatares de la casilla.
-     *
-     * @param avatar Avatar a añadir.
-     */
+
+    /**Añade al avatar a la lista de avatares de la casilla.*/
     public void anhadirAvatar(Avatar avatar) {
         this.avatares.add(avatar);
     }
 
-    /**
-     * Elimina un avatar de la lista de avatares de la casilla.
-     *
-     * @param avatar Avatar a eliminar.
-     */
+    /**Elimina al avatar de la lista de avatares de la casilla.*/
     public void eliminarAvatar(Avatar avatar) {
         this.avatares.remove(avatar);
     }
 
-    /**
-     * Devuelve una cadena con los jugadores situados en la casilla.
-     *
-     * @return Lista de jugadores o una cadena vacía si no hay avatares.
-     */
+    /**Devuelve una cadena con los jugadores situados en la casilla (cadena vacía si no hay avatares).*/
     public String jugadoresEnCasilla() {
         if (avatares.isEmpty()) {
             return "";

@@ -54,12 +54,17 @@ public abstract class Carta {
     // MÉTODOS ABSTRACTOS-----------------------------------------------------------------------------------------------
     /**
      * Función que dada una carta ejecuta las acciones que dice la misma.
-     * @param carta Carta que tenemos que evaluar
+     * @param jugadorActual Jugador al que se le tiene que aplicar las acciones de la carta.
      * @return TRUE si el jugador es solvente, FALSE en caso contrario
      */
     public abstract boolean evaluarCarta(Jugador jugadorActual);
 
-    //public abstract void accion();
+    /**
+     * Función que dada una carta ejecuta las acciones que dice la misma.
+     * //@param jugadorActual Jugador al que se le tiene que aplicar las acciones de la carta.
+     * @return TRUE si el jugador es solvente, FALSE en caso contrario
+     */
+    public abstract void accion();
 
 
     //MÉTODOS ÚTILES DE CARTA-------------------------------------------------------------------------------------------

@@ -208,11 +208,9 @@ public class Juego implements Comandos {
      */
     private void bucleTurno() {
         while (!partidaTerminada) {
-            consola.imprimir("");
-
             try {
                 // Intentar analizar el comando ingresado
-                analizarComando(consola.leer("Introduce un comando: "));
+                analizarComando(consola.leer("\nIntroduce un comando: "));
             } catch (NoExisteComandoException e) {
                 // Manejar la excepción y mostrar el mensaje al usuario
                 consola.imprimir(e.getMessage());
@@ -270,7 +268,6 @@ public class Juego implements Comandos {
     }
 
     //Se puede hacer desde aquí porque no existe encapsulación de sus elementos al ser un String[]
-
     /**
      * Método para cambiar el texto que se muestra en medio del tablero.
      * Se presupone que el texto viene ya con los saltos de línea y cumple con el máximo de longitud de cada línea.
@@ -643,24 +640,8 @@ public class Juego implements Comandos {
      * [3] Llama a cuatroVueltasSinCompras() para aumentar el precio de los solares si toca.
      */
     private void cobrarSalida(Jugador jugador) {
-        System.out.printf("¡Al pasar por la salida ganaste %,.0f€!\n", Valor.SUMA_VUELTA);
-        jugador.sumarFortuna(Valor.SUMA_VUELTA);
-        jugador.sumarVuelta();
-        jugador.sumarVueltas_sin_comprar();
-        jugador.getEstadisticas().sumarDineroSalidaRecaudado(Valor.SUMA_VUELTA);
+        jugador.cobrarSalida();
         cuatroVueltasSinCompras();
-    }
-
-    /**
-     * Método que se llama cada vez que se pasa por la Salida. Marcha atras
-     * [1] Avisa de la cantidad que se pierde y la resta a la fortuna del jugador correspondiente.
-     */
-    private void devolverCobrarSalida(Jugador jugador) {
-        System.out.printf("¡Al pasar por la salida marcha atras perdiste %,.0f€!\n", Valor.SUMA_VUELTA);
-        jugador.sumarFortuna(-Valor.SUMA_VUELTA);
-        jugador.restarVuelta();
-        jugador.setVueltas_sin_comprar(jugador.getVueltas_sin_comprar() - 1);
-        jugador.getEstadisticas().sumarDineroSalidaRecaudado(-Valor.SUMA_VUELTA);
     }
 
     /**
@@ -798,80 +779,60 @@ public class Juego implements Comandos {
         // Guardamos la casilla de salida para luego
         Casilla origen = avatar.getLugar();
 
-        // Boolean que nos va a servir para imprimir mejor los mensajes del movimiento que se realiza
-        boolean primerMovimientoPelota = false;
-
         // Comprobamos si el jugador está en movimiento avanzado
         if (avatar.getMovimientoAvanzado()) {
-            if (avatar instanceof Coche) {
-                /*
-                SOLO PUEDE COMPRAR 1 CASILLA EN ESOS 3 LANZAMIENTOS MAXIMOS
-                 */
-                if (tirada > 4) {
-                    // El jugador puede volver a tirar hasta un total de cuatro veces (lo limita lanzarDados())
-                    avatar.moverAvatar(this.tablero.getPosiciones(), tirada);
-                    consola.imprimir("Has sacado más de 4! Vuelves a tirar!");
-                } else {
-                    // Si saca menos de un 4 retrocede ese número de casillas
-                    avatar.moverAvatar(this.tablero.getPosiciones(), -tirada);
-                    // No puede lanzar los dados ni este turno ni los 2 siguientes
-                    jugador.dosTurnosSinTirar();
-                    consola.imprimir(Texto.M_DOS_TURNOS_SIN_TIRAR);
-                }
-            } else if (avatar instanceof Pelota) {
-
-                if (movimientosPendientesActual().isEmpty()) {
-                    // Cuando se llama a moverYEvaluar() al tirar los dados calculamos los movimientos pendientes
-                    jugador.calcularMovimientosPendientes(tirada);
-                    primerMovimientoPelota = true;
-                    avatar.moverAvatar(this.tablero.getPosiciones(), movimientosPendientesActual().get(0));
-                } else {
-                    // Si se llama a moverYEvaluar() para seguir moviendo se hace el movimiento que toca directamente
-                    avatar.moverAvatar(this.tablero.getPosiciones(), tirada);
-                }
-
-                obtenerTurno().eliminarMovimientoPendiente();
-
-                // Si aún tiene movimientos pendientes ponemos controlComandos a 1
-                // Si era el último movimiento pendiente ponemos el controlComandos a 0
-                if (movimientosPendientesActual().isEmpty()) {
-                    this.controlComandos = 0;
-                } else {
-                    this.controlComandos = 1;
-                }
-            } else {
-                consola.imprimir("Modo avanzado de la esfinge y el sombrero no implementado. Movimiento normal.");
-                avatar.moverAvatar(this.tablero.getPosiciones(), tirada);
-            }
+            avatar.moverEnAvanzado(this.tablero.getPosiciones(), tirada);
         } else {
-            // Si está en movimiento normal simplemente movemos el valor de la tirada y evaluamos la casilla
-            avatar.moverAvatar(this.tablero.getPosiciones(), tirada);
+            avatar.moverEnBasico(this.tablero.getPosiciones(), tirada);
         }
 
         // Guardamos la casilla de destino
         Casilla destino = avatar.getLugar();
 
-        // Avisamos del movimiento del jugador en el tablero
-        if (tirada > 4 || !jugador.getAvatar().getMovimientoAvanzado()) {
-            if (obtenerTurno().esPelotaAvanzado() && primerMovimientoPelota) {
-                // Si un avatar en modo avanzado saca 5 o más siempre avanza primero 1 casilla
-                consola.imprimir("El avatar " + avatar.getId() + " avanza 5 casillas desde " +
-                        origen.getNombre() + " hasta " + destino.getNombre() + ".");
+        // Gestionamos a la pelota por separado
+        if(jugador.esPelotaAvanzado()) {
+            // Hacemos cast del avatar a pelota pa comprobar un atributo booleano
+            Pelota pelota = (Pelota) avatar;
+            if(pelota.isPrimerMovimientoPelota()) {
+                if(tirada > 4) {
+                    consola.imprimir("El avatar " + avatar.getId() + " avanza 5 casillas desde " +
+                            origen.getNombre() + " hasta " + destino.getNombre() + ".");
+                }
+                else {
+                    consola.imprimir("El avatar " + avatar.getId() + " retrocede 1 casilla desde " +
+                            origen.getNombre() + " hasta " + destino.getNombre() + ".");
+                }
+                pelota.setPrimerMovimientoPelota(false);
+            }
+            else {
+                if (tirada > 4) {
+                    consola.imprimir("El avatar " + avatar.getId() + " avanza " + tirada +
+                            " casillas desde " + origen.getNombre() + " hasta " + destino.getNombre() + ".");
+                }
+                else {
+                    consola.imprimir("El avatar " + avatar.getId() + " retrocede " + (tirada > 0 ? tirada : -tirada) +
+                            " casillas desde " + origen.getNombre() + " hasta " + destino.getNombre() + ".");
+                }
+            }
+
+            // Si aún tiene movimientos pendientes ponemos controlComandos a 1
+            // Si era el último movimiento pendiente ponemos el controlComandos a 0
+            if (movimientosPendientesActual().isEmpty()) {
+                this.controlComandos = 0;
             } else {
+                this.controlComandos = 1;
+            }
+        }
+        else {
+            if (tirada > 4 || !avatar.getMovimientoAvanzado()) {
                 consola.imprimir("El avatar " + avatar.getId() + " avanza " + tirada +
                         " casillas desde " + origen.getNombre() + " hasta " + destino.getNombre() + ".");
             }
-        } else {
-            if (obtenerTurno().esPelotaAvanzado() && primerMovimientoPelota) {
-                // Si un avatar en modo avanzado saca 4 o menos siempre retrocede primero 1 casilla
-                consola.imprimir("El avatar " + avatar.getId() + " retrocede 1 casilla desde" +
-                        origen.getNombre() + " hasta " + destino.getNombre() + ".");
-            } else {
+            else {
                 consola.imprimir("El avatar " + avatar.getId() + " retrocede " + (tirada > 0 ? tirada : -tirada) +
                         " casillas desde " + origen.getNombre() + " hasta " + destino.getNombre() + ".");
             }
         }
-
 
         /*
         Si pasamos por la salida hay que cobrar!
@@ -892,7 +853,7 @@ public class Juego implements Comandos {
         if (destino.getPosicion() > origen.getPosicion() + 12 && jugador.getEstadisticas().getDineroSalidaRecaudado() > 0) {
             // Este if no hace falta pero nunca está mal la programación defensiva
             if (obtenerTurno().esCocheAvanzado() || obtenerTurno().esPelotaAvanzado()) {
-                devolverCobrarSalida(jugador);
+                jugador.devolverCobrarSalida();
             }
         }
 
@@ -923,7 +884,6 @@ public class Juego implements Comandos {
             while (pagador.tienePropiedadesHipotecables() && cantidad > pagador.getFortuna()) {
                 consola.imprimir(Texto.M_NO_HAY_DINERO_OPCIONES);
 
-                consola.imprimir("");
                 String comando_entero = consola.leer("Introduce los comandos bancarrota, hipotecar o vender:");
                 String[] comando = comando_entero.split(" ");
 
@@ -1206,10 +1166,6 @@ public class Juego implements Comandos {
 
 
 
-
-
-
-
     /** Método que realiza las acciones asociadas al comando 'describir nombre_casilla'.
      * Imprime la información sobre la casilla correspondiente si es descriptible
      *
@@ -1343,7 +1299,6 @@ public class Juego implements Comandos {
 
         if(jugador==null) {
             throw new NoExisteJugadorException("No se ha encontrado el jugador "+nombre_jugador+"\n");
-
         }
         jugador.infoEstadisticas();
 

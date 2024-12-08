@@ -101,6 +101,7 @@ public class Jugador {
 
     }
 
+    // MÉTODOS QUE GESTIONAN LOS MOVIMIENTOS PENDIENTES-----------------------------------------------------------------
 
     /**Método que elimina el primer elemento del ArrayList movimientos_pendientes.
      * Si el ArrayList está vacío no hace nada.
@@ -186,6 +187,7 @@ public class Jugador {
     public Jugador getDeudaConJugador(){
         return this.jugadorConElQueEstanEnDeuda;
     }
+
     public Estadisticas getEstadisticas() {
         return this.estadisticas;
     }
@@ -201,21 +203,17 @@ public class Jugador {
 
     //SECCIÓN DE MÉTODOS ÚTILES DE JUGADOR------------------------------------------------------------------------------
 
-    /**Método para añadir una propiedad al jugador.
-     * @param casilla Casilla a añadir
-     */
+    /**Método para añadir una propiedad al jugador.*/
     public void anhadirPropiedad(Propiedad propiedad) {
         if (!propiedades.contains(propiedad)) {
             this.propiedades.add(propiedad);
         }
     }
     
-    /**Método para eliminar una propiedad del arraylist de propiedades de jugador.
-     * @param casilla Casilla a añadir
-     */
-    public void eliminarPropiedad(Propiedad casilla) {
-        if (propiedades.contains(casilla)) {
-            this.propiedades.remove(casilla);
+    /**Método para eliminar una propiedad del Arraylist de propiedades de jugador.*/
+    public void eliminarPropiedad(Propiedad propiedad) {
+        if (propiedades.contains(propiedad)) {
+            this.propiedades.remove(propiedad);
         }
     }
     
@@ -228,7 +226,6 @@ public class Jugador {
         this.estadisticas.sumarVecesEnLaCarcel(1);
         this.enCarcel = true;
         this.avatar.getLugar().anhadirAvatar(this.avatar);
-
 
         // Si el avatar tiene movimientos pendientes (DISTINTOS DE 0) se eliminan
         // Nótese que con el caso actual del coche si el primer elemento es 0 el resto (si los hay) también lo son
@@ -254,24 +251,43 @@ public class Jugador {
 
     //SECCIÓN DE MÉTODOS QUE GESTIONAN LA FORTUNA DEL JUGADOR-----------------------------------------------------------
 
-    /**
-     * Método para añadir fortuna a un jugador.
+    /**Método para sumar fortuna a un jugador.
      * Si hay que restar fortuna, se pasaría un valor negativo (o también puedes usar restarFortuna si eres Adrián).
-     * @param valor Valor a añadir
      */
     public void sumarFortuna(float valor) {
         this.fortuna += valor;
     }
 
-
-
-
-    /**
-     * Método para restar fortuna a un jugador.
-     * @param valor Valor a añadir
-     */
+    /**Método para restar fortuna a un jugador.*/
     public void restarFortuna(float valor){
         this.fortuna -=valor;
+    }
+
+    /**
+     * Método que se llama cada vez que se pasa por la Salida.
+     * [1] Avisa de la cantidad que se cobra y la suma a la fortuna del jugador correspondiente.
+     * [2] Suma 1 vuelta y 1 vuelta sin comprar (la última se reinicia cuando se compra algo, claro).
+     * [3] Llama a cuatroVueltasSinCompras() para aumentar el precio de los solares si toca.
+     */
+    public void cobrarSalida() {
+        System.out.printf("¡Al pasar por la salida ganaste %,.0f€!\n", Valor.SUMA_VUELTA);
+        this.sumarFortuna(Valor.SUMA_VUELTA);
+        this.sumarVuelta();
+        this.sumarVueltas_sin_comprar();
+        this.getEstadisticas().sumarDineroSalidaRecaudado(Valor.SUMA_VUELTA);
+        //cuatroVueltasSinCompras(); // Esto es lo que no se me ocurre como gestionar de otra manera -Alberto
+    }
+
+    /**
+     * Método que se llama cada vez que se pasa por la Salida. Marcha atras
+     * [1] Avisa de la cantidad que se pierde y la resta a la fortuna del jugador correspondiente.
+     */
+    public void devolverCobrarSalida() {
+        System.out.printf("¡Al pasar por la salida marcha atrás perdiste %,.0f€!\n", Valor.SUMA_VUELTA);
+        this.sumarFortuna(-Valor.SUMA_VUELTA);
+        this.restarVuelta();
+        this.setVueltas_sin_comprar(this.getVueltas_sin_comprar() - 1);
+        this.getEstadisticas().sumarDineroSalidaRecaudado(-Valor.SUMA_VUELTA);
     }
 
     /**Método para sumar gastos a un jugador.

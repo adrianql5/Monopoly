@@ -24,19 +24,19 @@ public class Solar extends Propiedad {
 
     @Override
     public boolean evaluarCasilla(Jugador jugadorActual, int tirada) {
-        if (duenho != jugadorActual) {
-            if (!duenho.getNombre().equals("banca")) {
-                if (!estaHipotecada) {
+        if (this.duenho != jugadorActual) {
+            if (!this.duenho.getNombre().equals("banca")) {
+                if (!this.estaHipotecada) {
                     float precioAlquiler = evaluarAlquiler();
                     String mensaje = String.format("%s debe pagarle el alquiler de %s a %s: %,.0f€\n",
-                            jugadorActual.getNombre(), this.nombre, duenho.getNombre(), precioAlquiler);
+                            jugadorActual.getNombre(), this.nombre, this.duenho.getNombre(), precioAlquiler);
                     Juego.consola.imprimir(mensaje);
                     if (precioAlquiler > jugadorActual.getFortuna()) {
-                        jugadorActual.setDeudaConJugador(duenho);
+                        jugadorActual.setDeudaConJugador(this.duenho);
                         jugadorActual.setDeuda(precioAlquiler);
                         return false;
                     }
-                    jugadorActual.pagar(duenho, precioAlquiler);
+                    jugadorActual.pagar(this.duenho, precioAlquiler);
                     return true;
                 } else {
                     Juego.consola.imprimir("La casilla " + this.nombre + " está hipotecada. No hay que pagar.");

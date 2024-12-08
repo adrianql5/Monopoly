@@ -62,6 +62,7 @@ public abstract class Avatar {
         }
     }
 
+
     //MÉTODOS ABSTRACTOS DE AVATAR--------------------------------------------------------------------------------------
 
     
@@ -84,28 +85,11 @@ public abstract class Avatar {
         this.movimientoAvanzado = !this.movimientoAvanzado;
     }
 
-    /**
-     * Método que permite mover a un avatar a una casilla concreta en modo básico.
-     * Este método no comprueba si se pasa por la Salida ni hace el ingreso correspondiente.
-     * Versión 2: ya se admite que valorTirada sea un número negativo.
-     * @param casillas    Array con las casillas del tablero. Es un arrayList de arrayList de casillas (uno por lado)
-     * @param valorTirada Número de casillas a moverse (se llama valorTirada pero no depende de los dados siempre)
-     */
-    public void moverAvatar(ArrayList<ArrayList<Casilla>> casillas, int valorTirada) {
-        // Obtener la posición actual del avatar
-        int posicionActual = this.lugar.getPosicion();
 
-        // Calcular la nueva posición en el tablero después de la tirada
-        int nuevaPosicion;
-        // Si queremos avanzar un número positivo de casillas (o un número negativo sin pasar por la Salida hacia atrás)
-        if(valorTirada>=0 || posicionActual>=Math.abs(valorTirada)) {
-            nuevaPosicion = (posicionActual + valorTirada) % 40;
-        }
-        else {
-            //Nos queremos mover un número de casillas negativo (y pasamos hacia atrás por la casilla de Salida)
-            nuevaPosicion = 40 + ( (posicionActual + valorTirada) % 40 );
-        }
+    // MÉTODOS DE MOVIMIENTO DEL AVATAR---------------------------------------------------------------------------------
 
+    /**Método que "mueve" la ficha de una casilla a otra.*/
+    public void colocar(ArrayList<ArrayList<Casilla>> casillas, int nuevaPosicion) {
         // Eliminar el avatar de la casilla actual
         this.lugar.eliminarAvatar(this);
 
@@ -123,8 +107,35 @@ public abstract class Avatar {
         this.lugar.anhadirAvatar(this);
     }
 
+    /**
+     * Método que permite mover a un avatar a una casilla concreta en modo básico.
+     * Este método no comprueba si se pasa por la Salida ni hace el ingreso correspondiente.
+     * Versión 2: ya se admite que valorTirada sea un número negativo.
+     * @param casillas    Array con las casillas del tablero. Es un arrayList de arrayList de casillas (uno por lado)
+     * @param valorTirada Número de casillas a moverse (se llama valorTirada pero no depende de los dados siempre)
+     */
+    public void moverEnBasico(ArrayList<ArrayList<Casilla>> casillas, int valorTirada) {
+        int posicionActual = this.lugar.getPosicion();
 
-    //SECCIÓN DE GETTERS Y SETTERS DE AVATAR----------------------------------------------------------------------------
+        // Calcular la nueva posición en el tablero después de la tirada
+        int nuevaPosicion;
+        // Si queremos avanzar un número positivo de casillas (o un número negativo sin pasar por la Salida hacia atrás)
+        if(valorTirada>=0 || posicionActual>=Math.abs(valorTirada)) {
+            nuevaPosicion = (posicionActual + valorTirada) % 40;
+        }
+        else {
+            //Nos queremos mover un número de casillas negativo (y pasamos hacia atrás por la casilla de Salida)
+            nuevaPosicion = 40 + ( (posicionActual + valorTirada) % 40 );
+        }
+
+        this.colocar(casillas, nuevaPosicion);
+    }
+
+    /**Método abstracto que implementara cada tipo de avatar con su tipo de movimiento avanzado propio.*/
+    public abstract void moverEnAvanzado(ArrayList<ArrayList<Casilla>> casillas, int valorTirada);
+
+
+    // GETTERS, SETTERS Y MÉTODOS BOOLEANOS DE AVATAR-------------------------------------------------------------------
 
     public String getId() {
         return id;
