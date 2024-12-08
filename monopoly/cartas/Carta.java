@@ -25,7 +25,7 @@ public abstract class Carta {
      * @param indice Número para diferenciar las cartas dentro de una baraja, en la función evaluarCasilla que es la
      *               que ejecuta las acciones de la carta hay un switch en función de este índice
      */
-    public Carta(String texto, int indice) {
+    protected Carta(String texto, int indice) {
         this.texto = new ArrayList<String>();
         this.ID = indice;
 

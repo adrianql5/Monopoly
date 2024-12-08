@@ -36,6 +36,7 @@ public class PistaDeporte extends Edificio {
      *
      * @return Un ID único para la casa.
      */
+    @Override
     public String generarID() {
         ArrayList<Edificio> edificios = solar.getPistasDeDeporte();
         int maxId = 0;

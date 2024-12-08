@@ -9,8 +9,8 @@ import java.util.*;
 
 public class Especial extends Casilla{
 
-    public float bote;
-    public Especial carcel; //gitanada maxima pero así sabemos donde está la carcel en Ircarcel
+    private float bote;
+    private Especial carcel; //gitanada maxima pero así sabemos donde está la carcel en Ircarcel
     // ==========================
     // SECCIÓN: CONSTRUCTORES
     // ==========================
@@ -37,7 +37,7 @@ public class Especial extends Casilla{
     }
 
 
-        /**Modificación del método jugadoresEnCasilla (Casilla.java) para la casilla Cárcel,
+    /**Modificación del método jugadoresEnCasilla (Casilla.java) para la casilla Cárcel,
      * ya que se deben imprimir los turnos que llevan para salir o si están de visita.
      * Si no hay ningún jugador en la casilla no hace nada.
      * Nota: los imprime con salto de línea al final.
@@ -67,6 +67,7 @@ public class Especial extends Casilla{
         }
     }
 
+    @Override
     public boolean evaluarCasilla(Jugador jugadorActual, int tirada){
         incrementarVecesVisitada();
 
@@ -96,6 +97,7 @@ public class Especial extends Casilla{
         return true;
     }
 
+    @Override
     public String infoCasilla(){
         String info = "{\n";
         info += "\tTipo: Especial\n";

@@ -37,6 +37,7 @@ public class Impuesto extends Casilla{
         }
     }
 
+    @Override
     public boolean evaluarCasilla(Jugador jugadorActual, int tirada){
         incrementarVecesVisitada();
         Juego.consola.imprimir(String.format("Debes pagar tus impuestos a la banca: %,.0f€\n", impuesto));
@@ -55,6 +56,7 @@ public class Impuesto extends Casilla{
         return true;
     }
 
+    @Override
     public String infoCasilla(){
         String info = "{\n";
         info += "\tTipo: Impuestos\n";

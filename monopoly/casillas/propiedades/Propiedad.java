@@ -29,7 +29,7 @@ public  abstract class Propiedad extends Casilla {
      * @param nombre   Nombre de la casilla.
      * @param posicion Posición en el tablero.
      */
-    public Propiedad(String nombre, int posicion, Jugador duenho) {
+    protected Propiedad(String nombre, int posicion, Jugador duenho) {
         super(nombre, posicion); // Llama al constructor de la superclase Casilla
         this.duenho = duenho;
         this.valor = calcularValor();
@@ -53,6 +53,7 @@ public  abstract class Propiedad extends Casilla {
 
     public abstract float calcularAlquiler();
     
+
 
 
     // ==========================

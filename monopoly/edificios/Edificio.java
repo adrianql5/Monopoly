@@ -25,17 +25,13 @@ public abstract class Edificio {
      *
      * @param solar Solar donde se construirá el edificio.
      */
-    public Edificio(Solar solar) {
+    protected Edificio(Solar solar) {
         this.solar = solar;
         this.id = generarID();
         asignarValores();
         this.valorVenta=this.coste * 0.5f;
     }
     
-    //hacerlo abstracto
-    // Genera un ID único basado en el tipo y los IDs ya presentes en el subarray de ese tipo
-    protected abstract String generarID();
-
 
     // =========================================
     // MÉTODOS PRINCIPALES
@@ -66,8 +62,13 @@ public abstract class Edificio {
     // MÉTODOS ABSTRACTOS
     // =========================================
     protected abstract float calcularCoste(float valorGrupo);
-        
-        /**
+    
+    // Genera un ID único basado en el tipo y los IDs ya presentes en el subarray de ese tipo, es protected 
+    // porque solo se usa en esta clase y subclases
+    protected abstract String generarID();
+
+    
+    /**
      * Devuelve la información detallada del edificio en formato JSON.
      *
      * @return Cadena con la información del edificio.

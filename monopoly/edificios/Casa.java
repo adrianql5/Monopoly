@@ -63,6 +63,7 @@ public class Casa extends Edificio {
      *
      * @return Un ID único para la casa.
      */
+    @Override
     public String generarID() {
         ArrayList<Edificio> edificios = solar.getCasas();
         int maxId = 0;

@@ -14,10 +14,13 @@ public class Transporte extends Propiedad{
         super(nombre,posicion,duenho);
     }
 
+
+    @Override
     public float calcularValor(){
         return Valor.TRANSPORTE;
     }
 
+    @Override
     public float calcularAlquiler(){
         return Valor.VALOR_IMPUESTO_TRANSPORTE;
     }
@@ -32,6 +35,7 @@ public class Transporte extends Propiedad{
         return totalAlquiler;
     }
 
+    @Override
     public boolean evaluarCasilla(Jugador jugadorActual, int tirada) {
         if (duenho != jugadorActual) {
             if (!duenho.getNombre().equals("banca")) {
@@ -62,6 +66,7 @@ public class Transporte extends Propiedad{
         return true;
     }
 
+    @Override
     public String infoCasilla(){
         String info = "{\n";
         info += "\tTipo: Transporte\n";

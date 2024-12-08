@@ -43,6 +43,7 @@ public class Piscina extends Edificio {
      *
      * @return Un ID único para la casa.
      */
+    @Override
     public String generarID() {
         ArrayList<Edificio> edificios = solar.getPiscinas();
         int maxId = 0;

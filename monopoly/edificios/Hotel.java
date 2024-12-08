@@ -54,6 +54,7 @@ public class Hotel extends Edificio {
      *
      * @return Un ID único para la casa.
      */
+    @Override
     public String generarID() {
         ArrayList<Edificio> edificios = solar.getHoteles();
         int maxId = 0;

@@ -8,8 +8,8 @@ import partida.*;
 
 public class Solar extends Propiedad {
     private ArrayList<ArrayList<Edificio>> edificios;
-    protected Grupo grupo;
-    protected int vecesVisitadaPorDuenho;
+    private Grupo grupo;
+    private int vecesVisitadaPorDuenho;
 
     // Constructor
     public Solar(String nombre, int posicion, Jugador duenho) {
@@ -22,7 +22,7 @@ public class Solar extends Propiedad {
         }
     }
 
-
+    @Override
     public boolean evaluarCasilla(Jugador jugadorActual, int tirada) {
         if (duenho != jugadorActual) {
             if (!duenho.getNombre().equals("banca")) {
@@ -73,6 +73,7 @@ public class Solar extends Propiedad {
     }
 
     // Calcular el valor del solar según su posición
+    @Override
     public float calcularValor() {
         switch (posicion) {
             case 1, 3 -> { return Valor.GRUPO1 / 2; }
@@ -88,6 +89,7 @@ public class Solar extends Propiedad {
     }
 
     // Calcular el alquiler del solar
+    @Override
     public float calcularAlquiler() {
         return valor * Valor.FACTOR_ALQUILER_SOLAR;
     }
@@ -360,6 +362,7 @@ public class Solar extends Propiedad {
         this.getCasas().clear();
     }
 
+    @Override
     public String infoCasilla(){
         String info = "{\n";
         info += "\tTipo: Solar\n";

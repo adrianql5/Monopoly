@@ -324,7 +324,6 @@ public class Juego implements Comandos {
                 break;
             case "salir carcel":
                 try {
-
                     salirCarcel();
                 } catch (SalirCarcelImposibleExcepcion e) {
                     // Manejar la excepción y mostrar el mensaje al usuario
@@ -373,21 +372,15 @@ public class Juego implements Comandos {
             case "acabar turno":
                 // La pelota no puede pasar el turno si tiene movimientos pendientes
                 try {
-
                     acabarTurno();
                 } catch (AcabarTurnoImposibleExcepcion e) {
                     // Manejar la excepción y mostrar el mensaje al usuario
                     consola.imprimir(e.getMessage());
-
                 }
-
-
                 break;
 
             case "cambiar modo":
-
                 try {
-
                     cambiarModo();
                 } catch (CambiarModoImposibleExcepcion e) {
                     // Manejar la excepción y mostrar el mensaje al usuario

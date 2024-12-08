@@ -26,7 +26,7 @@ public abstract class Casilla {
      * @param nombre   Nombre de la casilla.
      * @param posicion Posición en el tablero (1-40).
      */
-    public Casilla(String nombre, int posicion) {
+    protected Casilla(String nombre, int posicion) {
         this.nombre = nombre;
         this.posicion = posicion;
         this.avatares = new ArrayList<>();

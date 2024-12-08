@@ -14,7 +14,7 @@ public  abstract class Accion extends Casilla {
     private CartaReverso carta_del_reves;
 
     // CONSTRUCTOR
-    public Accion(String nombre, int posicion) {
+    protected Accion(String nombre, int posicion) {
         super(nombre, posicion);
 
         // Añadimos la carta al revés
