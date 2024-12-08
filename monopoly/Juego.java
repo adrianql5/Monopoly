@@ -2,9 +2,8 @@ package monopoly;
 
 import java.util.*;
 
-import excepciones.NoExisteExcepcion.*;
-import excepciones.ComandoImposibleException.*;
-
+import excepciones.accionNoValida.*;
+import excepciones.noExisteObjeto.*;
 import partida.*;
 import partida.avatares.*;
 
@@ -214,7 +213,7 @@ public class Juego implements Comandos {
             try {
                 // Intentar analizar el comando ingresado
                 analizarComando(consola.leer("Introduce un comando: "));
-            } catch (ComandoNoEncontrado e) {
+            } catch (NoExisteComandoException e) {
                 // Manejar la excepción y mostrar el mensaje al usuario
                 consola.imprimir(e.getMessage());
             }
@@ -300,7 +299,7 @@ public class Juego implements Comandos {
      *
      * @param comando_entero Línea de comando que introduce el jugador
      */
-    private void analizarComando(String comando_entero) throws ComandoNoEncontrado {
+    private void analizarComando(String comando_entero) throws NoExisteComandoException {
 
         switch (comando_entero) {
             // PRIMER BLOQUE DE COMANDOS: no dependen de una instancia----------------------------------------
@@ -325,7 +324,7 @@ public class Juego implements Comandos {
             case "salir carcel":
                 try {
                     salirCarcel();
-                } catch (SalirCarcelImposibleExcepcion e) {
+                } catch (SalirCarcelException e) {
                     // Manejar la excepción y mostrar el mensaje al usuario
                     consola.imprimir(e.getMessage());
                 }
@@ -337,7 +336,7 @@ public class Juego implements Comandos {
             case "edificar pista de deporte":
             try{
                 edificar("pista de deporte");
-            } catch (EdificioNoEncontrado e) {
+            } catch (NoExisteEdificioException e) {
                 consola.imprimir(e.getMessage());
             }
             break;
@@ -373,7 +372,7 @@ public class Juego implements Comandos {
                 // La pelota no puede pasar el turno si tiene movimientos pendientes
                 try {
                     acabarTurno();
-                } catch (AcabarTurnoImposibleExcepcion e) {
+                } catch (AcabarTurnoException e) {
                     // Manejar la excepción y mostrar el mensaje al usuario
                     consola.imprimir(e.getMessage());
                 }
@@ -382,7 +381,7 @@ public class Juego implements Comandos {
             case "cambiar modo":
                 try {
                     cambiarModo();
-                } catch (CambiarModoImposibleExcepcion e) {
+                } catch (CambiarModoException e) {
                     // Manejar la excepción y mostrar el mensaje al usuario
                     consola.imprimir(e.getMessage());
                 }
@@ -442,7 +441,7 @@ public class Juego implements Comandos {
                         case "describir":
                             try {
                                 descCasilla(comando[1]);
-                            } catch (CasillaNoEncontrada e) {
+                            } catch (NoExisteCasillaException e) {
                                 consola.imprimir(e.getMessage());
                             }
 
@@ -452,7 +451,7 @@ public class Juego implements Comandos {
                             if (this.controlComandos != 3) {
                                 try{
                                     comprar(comando[1]);
-                                } catch (CasillaNoEncontrada e) {
+                                } catch (NoExisteCasillaException e) {
                                     consola.imprimir(e.getMessage());
                                 }
 
@@ -464,7 +463,7 @@ public class Juego implements Comandos {
                         case "aceptar":
                             try{
                                 aceptarTrato(comando[1]);
-                            } catch (TratoNoEncontrado e) {
+                            } catch (NoExisteTratoException e) {
                                 consola.imprimir(e.getMessage());
                             }
 
@@ -474,7 +473,7 @@ public class Juego implements Comandos {
                         case "edificar":
                             try{
                                 edificar(comando[1]);
-                            } catch (EdificioNoEncontrado e) {
+                            } catch (NoExisteEdificioException e) {
                                 consola.imprimir(e.getMessage());
                             }
 
@@ -482,7 +481,7 @@ public class Juego implements Comandos {
                         case "hipotecar":
                             try {
                                 hipotecar(comando[1]);
-                            } catch (CasillaNoEncontrada | HipotecarImposibleExcepcion e) {
+                            } catch (NoExisteCasillaException | HipotecarException e) {
                                 consola.imprimir(e.getMessage());
                             }
 
@@ -490,7 +489,7 @@ public class Juego implements Comandos {
                         case "deshipotecar":
                             try{
                                 deshipotecar(comando[1]);
-                            } catch (DeshipotecarImposibleExcepcion| CasillaNoEncontrada e) {
+                            } catch (DeshipotecarException| NoExisteCasillaException e) {
                                 consola.imprimir(e.getMessage());
                             }
 
@@ -500,7 +499,7 @@ public class Juego implements Comandos {
                         case "estadisticas":
                             try{
                                 estadisticasJugador(comando[1]);
-                            } catch (JugadorNoEncontrado e) {
+                            } catch (NoExisteJugadorException e) {
                                 consola.imprimir(e.getMessage());
                             }
 
@@ -521,7 +520,7 @@ public class Juego implements Comandos {
                 else if ("describirjugador".equals(comando[0] + comando[1])) {
                     try{
                         descJugador(comando);
-                    } catch (JugadorNoEncontrado e) {
+                    } catch (NoExisteJugadorException e) {
                         consola.imprimir(e.getMessage());
                     }
 
@@ -534,7 +533,7 @@ public class Juego implements Comandos {
                     if ("describiravatar".equals(comando[0] + comando[1])) {
                         try{
                             descAvatar(comando[2]);
-                        } catch (AvatarNoEncontrado e) {
+                        } catch (NoExisteAvatarException e) {
                             consola.imprimir(e.getMessage());
                         }
 
@@ -567,7 +566,7 @@ public class Juego implements Comandos {
                         if (num_edificios != 0) {
                             try{
                                 venderEdificios(comando[1], comando[2], num_edificios);
-                            } catch (CasillaNoEncontrada | EdificioNoEncontrado e) {
+                            } catch (NoExisteCasillaException | NoExisteEdificioException e) {
                                 consola.imprimir(e.getMessage());
                             }
 
@@ -578,13 +577,13 @@ public class Juego implements Comandos {
                 } else if (comando.length > 5 && comando[0].equals("trato")) {
                    try{
                        proponerTrato(comando_entero);
-                   } catch (JugadorNoEncontrado | CasillaNoEncontrada e) {
+                   } catch (NoExisteJugadorException | NoExisteCasillaException e) {
                        consola.imprimir(e.getMessage());
                    }
 
 
                 } else {
-                    throw new ComandoNoEncontrado();
+                    throw new NoExisteComandoException();
                 }
         }
     }
@@ -732,7 +731,7 @@ public class Juego implements Comandos {
                             try {
                                 salirCarcel();
 
-                            } catch (SalirCarcelImposibleExcepcion e) {
+                            } catch (SalirCarcelException e) {
                                 consola.imprimir(e.getMessage());
                             }
 
@@ -944,7 +943,7 @@ public class Juego implements Comandos {
                 if (comando.length == 2 && comando[0].equals("hipotecar")) {
                     try{
                         hipotecar(comando[1]);
-                    } catch (CasillaNoEncontrada| HipotecarImposibleExcepcion e) {
+                    } catch (NoExisteCasillaException| HipotecarException e) {
                         consola.imprimir(e.getMessage());
                     }
 
@@ -955,7 +954,7 @@ public class Juego implements Comandos {
                     if (num_edificios != 0) {
                         try{
                             proponerTrato(comando_entero);
-                        } catch (JugadorNoEncontrado | CasillaNoEncontrada e) {
+                        } catch (NoExisteJugadorException | NoExisteCasillaException e) {
                             consola.imprimir(e.getMessage());
                         }
 
@@ -1002,7 +1001,7 @@ public class Juego implements Comandos {
      * a pagar la fianza. En ese caso el método lanzarDados() llama a este método haciendo primero this.tirado=false.
      */
     @Override
-    public void salirCarcel() throws SalirCarcelImposibleExcepcion {//yo creo que falta comprobacion turno sin tirar
+    public void salirCarcel() throws SalirCarcelException {//yo creo que falta comprobacion turno sin tirar
         //Establecemos el jugador actual
         Jugador jugador = this.jugadores.get(this.turno);
         if (jugador.isEnCarcel()) {
@@ -1015,13 +1014,13 @@ public class Juego implements Comandos {
                     System.out.printf("%s paga la fianza de %,.0f € y sale de la cárcel. Puedes tirar los dados.\n",
                             jugador.getNombre(), Valor.SALIR_CARCEL);
                 } else {
-                    throw new SalirCarcelImposibleExcepcion("¡No tienes dinero suficiente para pagar la fianza!");
+                    throw new SalirCarcelException("¡No tienes dinero suficiente para pagar la fianza!");
                 }
             } else {
-                throw new SalirCarcelImposibleExcepcion("Ya has lanzado los dados.");
+                throw new SalirCarcelException("Ya has lanzado los dados.");
             }
 
-        } else throw new SalirCarcelImposibleExcepcion("El jugador " + jugador.getNombre() + " no está en la cárcel.");
+        } else throw new SalirCarcelException("El jugador " + jugador.getNombre() + " no está en la cárcel.");
 
     }
 
@@ -1029,17 +1028,17 @@ public class Juego implements Comandos {
      * Método que realiza las acciones asociadas al comando 'acabar turno'.
      */
     @Override
-    public void acabarTurno() throws AcabarTurnoImposibleExcepcion {
+    public void acabarTurno() throws AcabarTurnoException {
         // Si aún no tiraste este turno...
         if (this.controlComandos == 1 && !movimientosPendientesActual().isEmpty()) {
-            throw new AcabarTurnoImposibleExcepcion(Texto.M_MOVIMIENTOS_PENDIENTES);
+            throw new AcabarTurnoException(Texto.M_MOVIMIENTOS_PENDIENTES);
         }
 
         if (!this.tirado) {
             // ...a no ser que tengas el turno actual bloqueado (no puedes lanzar dados) no puedes acabar el turno
             // IMPORTANTE: comprobar que el arraylist no esté vacío antes de intentar acceder a un elemento
             if (!(!movimientosPendientesActual().isEmpty() && movimientosPendientesActual().get(0) == 0)) {
-                throw new AcabarTurnoImposibleExcepcion("Aún no has lanzado los dados este turno!");
+                throw new AcabarTurnoException("Aún no has lanzado los dados este turno!");
             }
         }
         // Si NO acabas de ser encarcelado...
@@ -1049,12 +1048,12 @@ public class Juego implements Comandos {
                 // Si es un coche en modo avanzado el único caso en el que no puede pasar turno es si saca >4
                 // A no ser que ya lleve 4 lanzamientos
                 if (this.dado1.getValor() + this.dado2.getValor() > 4 && this.lanzamientos != 4) {
-                    throw new AcabarTurnoImposibleExcepcion("Sacaste más que 4, tienes que volver a tirar.");
+                    throw new AcabarTurnoException("Sacaste más que 4, tienes que volver a tirar.");
                 }
             } else {
                 // Si no es un coche en modo avanzado NO puede acabar el turno si sacó dobles
                 if (this.dado1.getValor() == this.dado2.getValor()) {
-                    throw new AcabarTurnoImposibleExcepcion("¡Sacaste dobles! Tienes que volver a tirar.");
+                    throw new AcabarTurnoException("¡Sacaste dobles! Tienes que volver a tirar.");
                 }
             }
         }
@@ -1098,9 +1097,9 @@ public class Juego implements Comandos {
      * Método para cambiar el modo de movimiento del avatar que tiene el turno
      */
     @Override
-    public void cambiarModo() throws CambiarModoImposibleExcepcion {
+    public void cambiarModo() throws CambiarModoException {
         if (this.tirado) {
-            throw new CambiarModoImposibleExcepcion();
+            throw new CambiarModoException();
         }// duda grande si hace falta el else creo que no lol
         Avatar avatar = obtenerTurno().getAvatar();
         if (avatar.getMovimientoAvanzado()) {
@@ -1179,11 +1178,11 @@ public class Juego implements Comandos {
      * @param nombre Cadena de caracteres con el nombre de la casilla.
      */
     @Override
-    public void comprar(String nombre) throws CasillaNoEncontrada {
+    public void comprar(String nombre) throws NoExisteCasillaException {
         Propiedad c = tablero.encontrar_propiedad(nombre);
         // Comprobamos si la casilla existe y ya se ha tirado (se hacen otras comprobaciones dentro de comprarCasilla)
         if (c == null) {
-            throw new CasillaNoEncontrada("No hay ninguna casilla que se llame " + nombre);
+            throw new NoExisteCasillaException("No hay ninguna casilla que se llame " + nombre);
         }
         if (this.tirado || lanzamientos > 0) {
             //le paso el jugador que tiene el turno y eljugador 0 (la banca)
@@ -1217,10 +1216,10 @@ public class Juego implements Comandos {
      */
     
     @Override
-    public void descCasilla(String nombre_casilla) throws CasillaNoEncontrada {
+    public void descCasilla(String nombre_casilla) throws NoExisteCasillaException {
         Casilla casilla = tablero.encontrar_casilla(nombre_casilla);
         if(casilla==null) {
-            throw new CasillaNoEncontrada(nombre_casilla + " no es un nombre de casilla válido.");
+            throw new NoExisteCasillaException(nombre_casilla + " no es un nombre de casilla válido.");
         }
         System.out.print(casilla.infoCasilla());
     }
@@ -1248,7 +1247,7 @@ public class Juego implements Comandos {
      * @param partes comando introducido
      */
     @Override
-    public void descJugador(String[] partes) throws JugadorNoEncontrado {
+    public void descJugador(String[] partes) throws NoExisteJugadorException {
         String nombre_completo = "";
 
         // Construímos el nombre_completo a partir de las partes
@@ -1264,7 +1263,7 @@ public class Juego implements Comandos {
 
         // Si encontramos al jugador imprimimos su info; si no, avisamos al usuario
         if(jugador==null) {
-            throw new JugadorNoEncontrado("No se ha encontrado al jugador buscado.");
+            throw new NoExisteJugadorException("No se ha encontrado al jugador buscado.");
         }
         jugador.infoJugador();
 
@@ -1275,7 +1274,7 @@ public class Juego implements Comandos {
      * @param ID id del avatar a describir
      */
     @Override
-    public void descAvatar(String ID) throws AvatarNoEncontrado {
+    public void descAvatar(String ID) throws NoExisteAvatarException {
         // lista llamada avatares se recorre
         for (Avatar avatar : avatares) { // Busca el avatar en la lista
             if (avatar.getId().equals(ID)) {
@@ -1284,7 +1283,7 @@ public class Juego implements Comandos {
             }
         }
         // Si no encuentra el avatar, muestra un mensaje de error
-        throw  new AvatarNoEncontrado("Avatar con ID " + ID + " no encontrado.");
+        throw  new NoExisteAvatarException("Avatar con ID " + ID + " no encontrado.");
     }
 
 
@@ -1338,11 +1337,11 @@ public class Juego implements Comandos {
 
     /**Método que imprime las estadísticas de un jugador de la partida.*/
     @Override
-    public void estadisticasJugador(String nombre_jugador) throws JugadorNoEncontrado {
+    public void estadisticasJugador(String nombre_jugador) throws NoExisteJugadorException {
         Jugador jugador=encontrarJugador(nombre_jugador);
 
         if(jugador==null) {
-            throw new JugadorNoEncontrado("No se ha encontrado el jugador "+nombre_jugador+"\n");
+            throw new NoExisteJugadorException("No se ha encontrado el jugador "+nombre_jugador+"\n");
 
         }
         jugador.infoEstadisticas();
@@ -1556,12 +1555,12 @@ public class Juego implements Comandos {
     }
     
     @Override
-    public void hipotecar(String nombre) throws CasillaNoEncontrada, HipotecarImposibleExcepcion {
+    public void hipotecar(String nombre) throws NoExisteCasillaException, HipotecarException {
         Casilla casilla = tablero.encontrar_casilla(nombre);
         Jugador jugador = obtenerTurno();
         
         if (casilla == null) {
-            throw new CasillaNoEncontrada("No existe esa casilla. No la puedes hipotecar.");
+            throw new NoExisteCasillaException("No existe esa casilla. No la puedes hipotecar.");
 
         }
         
@@ -1591,16 +1590,16 @@ public class Juego implements Comandos {
                         }
                         
                     } else {
-                        throw new HipotecarImposibleExcepcion("No puedes hipotecar " + propiedad.getNombre() + " en este momento.");
+                        throw new HipotecarException("No puedes hipotecar " + propiedad.getNombre() + " en este momento.");
                     }
                 }
 
-    public void deshipotecar(String nombre) throws CasillaNoEncontrada, DeshipotecarImposibleExcepcion {
+    public void deshipotecar(String nombre) throws NoExisteCasillaException, DeshipotecarException {
         Casilla casilla = tablero.encontrar_casilla(nombre);
         Jugador jugador = obtenerTurno();
     
         if (casilla == null) {
-            throw new CasillaNoEncontrada("No puedes deshipotecar algo que no existe en el tablero.");
+            throw new NoExisteCasillaException("No puedes deshipotecar algo que no existe en el tablero.");
 
         }
         
@@ -1620,7 +1619,7 @@ public class Juego implements Comandos {
         float costoDeshipotecar = propiedad.getDeshipoteca();
         
         if (costoDeshipotecar > jugador.getFortuna()) {
-            throw new DeshipotecarImposibleExcepcion("No tienes suficiente dinero para deshipotecar " + propiedad.getNombre() + ".");
+            throw new DeshipotecarException("No tienes suficiente dinero para deshipotecar " + propiedad.getNombre() + ".");
 
         }
         
@@ -1630,7 +1629,7 @@ public class Juego implements Comandos {
             jugador.sumarFortuna(-costoDeshipotecar);
             jugador.sumarGastos(costoDeshipotecar);
         } else {
-            throw new DeshipotecarImposibleExcepcion("No puedes deshipotecar " + propiedad.getNombre() + " en este momento.");
+            throw new DeshipotecarException("No puedes deshipotecar " + propiedad.getNombre() + " en este momento.");
         }
     }
     
@@ -1644,7 +1643,7 @@ public class Juego implements Comandos {
 
     //se puede hacer más modular, como todo obiamente os lo dejo a vosotros
     @Override
-    public void edificar(String tipo) throws EdificioNoEncontrado {
+    public void edificar(String tipo) throws NoExisteEdificioException {
         if (esEdificioValido(tipo)){
             if (obtenerTurno().getAvatar().getLugar() instanceof Solar) {
                 Jugador jugador = obtenerTurno(); // Obtener el jugador cuyo turno es actualmente
@@ -1691,12 +1690,12 @@ public class Juego implements Comandos {
 
 
     @Override
-    public void venderEdificios(String tipo, String nombre, int n) throws EdificioNoEncontrado, CasillaNoEncontrada {
+    public void venderEdificios(String tipo, String nombre, int n) throws NoExisteEdificioException, NoExisteCasillaException {
         Jugador jugador = obtenerTurno(); // Obtener el jugador cuyo turno es
         Casilla casilla =tablero.encontrar_casilla(nombre);
         Solar solar =tablero.encontrar_solar(casilla.getNombre());
         if(solar == null){
-           throw new CasillaNoEncontrada("La casilla no existe o no es un solar \n");
+           throw new NoExisteCasillaException("La casilla no existe o no es un solar \n");
         }
         else{
             if (solar.getDuenho().equals(jugador)){
@@ -1715,7 +1714,7 @@ public class Juego implements Comandos {
                         break;
                     default:
 
-                        throw new EdificioNoEncontrado("El tipo de edificio introducido es incorrecto.");
+                        throw new NoExisteEdificioException("El tipo de edificio introducido es incorrecto.");
 
                 }
             } else {
@@ -1790,7 +1789,7 @@ public class Juego implements Comandos {
 
      */
     @Override
-    public void aceptarTrato(String idTrato) throws TratoNoEncontrado {
+    public void aceptarTrato(String idTrato) throws NoExisteTratoException {
         // Obtener el jugador actual
         Jugador jugador = obtenerTurno();
 
@@ -1805,7 +1804,7 @@ public class Juego implements Comandos {
 
         // Validar si el trato existe
         if (trato.getId() == null) {
-            throw new TratoNoEncontrado("En ese Trato no estas involucrado o no existe");
+            throw new NoExisteTratoException("En ese Trato no estas involucrado o no existe");
 
         }
 
@@ -1839,7 +1838,7 @@ public class Juego implements Comandos {
     }
 
     @Override
-    public void proponerTrato(String detalleTrato) throws JugadorNoEncontrado, CasillaNoEncontrada {
+    public void proponerTrato(String detalleTrato) throws NoExisteJugadorException, NoExisteCasillaException {
         // Dividir el comando para extraer el jugador y el detalle del trato
         String[] partes = detalleTrato.split(": cambiar ");
         if (partes.length < 2) {
@@ -1854,7 +1853,7 @@ public class Juego implements Comandos {
         // Buscar al jugador receptor
         Jugador receptor = encontrarJugador(nombreJugador);
         if (receptor == null) {
-            throw new JugadorNoEncontrado("El jugador "+nombreJugador+ " no existe.\n");
+            throw new NoExisteJugadorException("El jugador "+nombreJugador+ " no existe.\n");
 
         }
 
@@ -1880,14 +1879,14 @@ public class Juego implements Comandos {
                 casillasOfrecidas.add(this.tablero.encontrar_propiedad(nombre));
                 consola.imprimir(nombre+"\n");
             } else {
-                throw new CasillaNoEncontrada("La casilla " + nombre + " no existe. Trato inválido.\n");
+                throw new NoExisteCasillaException("La casilla " + nombre + " no existe. Trato inválido.\n");
 
             }
             if ((this.tablero.encontrar_propiedad(nombre).getDuenho().getNombre().equals(obtenerTurno().getNombre()))) {
                 casillasOfrecidas.add((this.tablero.encontrar_propiedad(nombre)));
                 System.out.println(nombre+"\n");
             } else {
-                throw new CasillaNoEncontrada("La casilla " + nombre + " no existe. Trato inválido.\n");
+                throw new NoExisteCasillaException("La casilla " + nombre + " no existe. Trato inválido.\n");
             }
         }
 
