@@ -4,6 +4,7 @@ import excepciones.accionNoValida.*;
 import excepciones.noExisteObjeto.*;
 import partida.*;
 
+
 public interface Comandos {
     void acabarPartida();
     void declararBancarrota(Jugador jugador) throws NoExisteJugadorException;

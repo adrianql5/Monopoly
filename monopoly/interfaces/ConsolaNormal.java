@@ -3,6 +3,7 @@ import java.util.Scanner;
 
 public class ConsolaNormal implements Consola{
 
+	
     private Scanner scanner;
 
     public ConsolaNormal(){
