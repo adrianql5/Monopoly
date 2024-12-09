@@ -1806,7 +1806,8 @@ public class Juego implements Comandos {
         // Dividir el comando para extraer el jugador y el detalle del trato
         String[] partes = detalleTrato.split(": cambiar ");
         if (partes.length < 2) {
-            consola.imprimir("Formato inválido para proponer trato. Ejemplo: 'trato Maria: cambiar (Solar1, Solar2 y 300000)'.");
+            consola.imprimir("Formato inválido para proponer trato." +
+                    " Ejemplo: 'trato Maria: cambiar (Solar1, Solar2 y 300000) por (Solar4 y 300000)");
             return;
         }
 
