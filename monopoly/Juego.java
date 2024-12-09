@@ -76,7 +76,7 @@ public class Juego implements Comandos {
      * [5] Cuando se sale de bucleTurno es porque la partida ha terminado.
      * [6] Mensaje de final de partida y cerramos todo lo que toca.
      */
-    public void iniciarPartida() {
+    public void iniciarPartida()   {
         // Creamos un scanner para introducir comandos
 
         // Antes de empezar la partida hay que crear los jugadores
@@ -429,7 +429,7 @@ public class Juego implements Comandos {
                 // IMPORTANTE: hacer las comprobaciones en función del número de palabras del comando
                 // Si no podríamos querer acceder a un índice que no existe
                 if (comando.length == 1) {
-                    consola.imprimir(comando_entero + " no es un comando válido.");
+                    throw new NoExisteComandoException(comando_entero + " no es un comando válido.");
                 } else if (comando.length == 2) {
 
                     // Podría ser uno de los siguientes:
@@ -440,6 +440,14 @@ public class Juego implements Comandos {
                             try {
                                 descCasilla(comando[1]);
                             } catch (NoExisteCasillaException e) {
+                                consola.imprimir(e.getMessage());
+                            }
+
+                            break;
+                        case "eliminar":
+                            try {
+                                eliminarTrato(comando[1]);
+                            } catch (NoExisteTratoException e) {
                                 consola.imprimir(e.getMessage());
                             }
 
@@ -510,7 +518,7 @@ public class Juego implements Comandos {
 
                         // Comando inválido
                         default:
-                            consola.imprimir(comando_entero + " no es un comando válido.");
+                            throw new NoExisteComandoException(comando_entero + " no es un comando válido.");
                     }
                 }
                 // Caso especial: describir jugador tiene un número variable por si el nombre es compuesto
@@ -555,7 +563,7 @@ public class Juego implements Comandos {
                         }
 
                     } else {
-                        consola.imprimir(comando_entero + " no es un comando válido.");
+                        throw new NoExisteComandoException(comando_entero + " no es un comando válido.");
                     }
                 } else if (comando.length == 4) {
                     if (comando[0].equals("vender")) {
@@ -570,7 +578,7 @@ public class Juego implements Comandos {
 
                         }
                     } else {
-                        consola.imprimir(comando_entero + " no es un comando válido.");
+                        throw new NoExisteComandoException(comando_entero + " no es un comando válido.");
                     }
                 } else if (comando.length > 5 && comando[0].equals("trato")) {
                    try{
@@ -581,7 +589,7 @@ public class Juego implements Comandos {
 
 
                 } else {
-                    throw new NoExisteComandoException();
+                    throw new NoExisteComandoException(comando_entero + "no es un comando valido");
                 }
         }
     }
@@ -1521,16 +1529,16 @@ public class Juego implements Comandos {
         }
         
         if (!(casilla instanceof Propiedad)) {
-            consola.imprimir("No puedes hipotecar " + casilla.getNombre() + ", no es una propiedad.");
-            return;
+            throw new HipotecarException("No puedes hipotecar " + casilla.getNombre() + ", no es una propiedad.");
+
         }
         
         Propiedad propiedad = (Propiedad) casilla;
         
         if (!propiedad.getDuenho().equals(jugador)) {
-            consola.imprimir("El jugador " + jugador.getNombre() + " no puede hipotecar " +
+            throw new HipotecarException("El jugador " + jugador.getNombre() + " no puede hipotecar " +
             propiedad.getNombre() + ". No es una propiedad que le pertenezca.");
-            return;
+
         }
         
         if (propiedad.esHipotecable()) {
@@ -1560,16 +1568,16 @@ public class Juego implements Comandos {
         }
         
         if (!(casilla instanceof Propiedad)) {
-            consola.imprimir("No puedes deshipotecar " + casilla.getNombre() + ", no es una propiedad.");
-            return;
+            throw new DeshipotecarException("No puedes deshipotecar " + casilla.getNombre() + ", no es una propiedad.");
+
         }
-        
+
         Propiedad propiedad = (Propiedad) casilla;
-        
+
         if (!propiedad.getDuenho().equals(jugador)) {
-            consola.imprimir("El jugador " + jugador.getNombre() + " no puede deshipotecar " +
+            throw new DeshipotecarException("El jugador " + jugador.getNombre() + " no puede deshipotecar " +
             propiedad.getNombre() + ". No es una propiedad que le pertenezca.");
-            return;
+
         }
         
         float costoDeshipotecar = propiedad.getDeshipoteca();
@@ -1751,6 +1759,9 @@ public class Juego implements Comandos {
 
         // Buscar el trato por ID en los tratos pendientes del jugador
         Trato trato = jugador.buscarTratoPorId(idTrato);
+
+
+
         Jugador jugador2 = trato.getJugadorPropone();
 
         if(jugador.getNombre().equals(jugador2.getNombre())){
@@ -1759,10 +1770,7 @@ public class Juego implements Comandos {
         }
 
         // Validar si el trato existe
-        if (trato.getId() == null) {
-            throw new NoExisteTratoException("En ese Trato no estas involucrado o no existe");
 
-        }
 
         // Intentar aceptar el trato
         if (trato.aceptar()) {
@@ -1831,18 +1839,12 @@ public class Juego implements Comandos {
 
         ArrayList<Propiedad> casillasOfrecidas = new ArrayList<>();
         for (String nombre : nombresOfrecidos) {
-            if ((this.tablero.encontrar_casilla(nombre)!= null)) {
-                casillasOfrecidas.add(this.tablero.encontrar_propiedad(nombre));
-                consola.imprimir(nombre+"\n");
-            } else {
-                throw new NoExisteCasillaException("La casilla " + nombre + " no existe. Trato inválido.\n");
+            Propiedad propiedad = this.tablero.encontrar_propiedad(nombre);
+            if (propiedad != null && propiedad.getDuenho().getNombre().equals(obtenerTurno().getNombre())) {
+                casillasOfrecidas.add(propiedad);
 
-            }
-            if ((this.tablero.encontrar_propiedad(nombre).getDuenho().getNombre().equals(obtenerTurno().getNombre()))) {
-                casillasOfrecidas.add((this.tablero.encontrar_propiedad(nombre)));
-                System.out.println(nombre+"\n");
             } else {
-                throw new NoExisteCasillaException("La casilla " + nombre + " no existe. Trato inválido.\n");
+                throw new NoExisteCasillaException("La casilla " + nombre + " no pertenece al jugador actual o no existe. Trato inválido.\n");
             }
         }
 
@@ -1851,21 +1853,14 @@ public class Juego implements Comandos {
         ArrayList<String> nombresReclamados = (ArrayList<String>) reclamado.get("propiedades");
         float dineroReclamado = (float) reclamado.get("dinero");
 
+
         ArrayList<Propiedad> casillasReclamadas = new ArrayList<>();
         for (String nombre : nombresReclamados) {
-            if ((this.tablero.encontrar_casilla(nombre)!= null)) {
-                casillasReclamadas.add((this.tablero.encontrar_propiedad(nombre)));
-                consola.imprimir(nombre+"\n");
+            Propiedad propiedad = this.tablero.encontrar_propiedad(nombre);
+            if (propiedad != null && propiedad.getDuenho().getNombre().equals(receptor.getNombre())) {
+                casillasReclamadas.add(propiedad);
             } else {
-                System.out.printf("La casilla %s no existe. Trato inválido.\n", nombre);
-                return;
-            }
-            if ((this.tablero.encontrar_propiedad(nombre).getDuenho().getNombre().equals(receptor.getNombre()))) {
-                casillasReclamadas.add((this.tablero.encontrar_propiedad(nombre)));
-                System.out.println(nombre+"\n");
-            } else {
-                System.out.printf("La casilla %s pertenece a las propiedades del jugador propuesto. Trato inválido.\n", nombre);
-                return;
+                throw new NoExisteCasillaException("La casilla " + nombre + " no pertenece al jugador receptor o no existe. Trato inválido.\n");
             }
         }
 
@@ -1941,14 +1936,11 @@ public class Juego implements Comandos {
 
         for (String parte : partes) {
             parte = parte.trim();
-
             try {
+                // Intentar parsear como dinero
                 dinero += Float.parseFloat(parte.replace(",", "").trim());
-                if (dinero > 0 && resultado.containsKey("dinero")) {
-                    consola.imprimir("Solo se puede incluir una cantidad de dinero en el trato.");
-                    return null; // Invalidar el comando
-                }
             } catch (NumberFormatException e) {
+                // Si no es dinero, asumir que es una propiedad
                 String[] props = parte.split(",");
                 for (String prop : props) {
                     propiedades.add(prop.trim());
@@ -1956,9 +1948,31 @@ public class Juego implements Comandos {
             }
         }
 
+        // Añadir resultados al HashMap
         resultado.put("propiedades", propiedades);
         resultado.put("dinero", dinero);
         return resultado;
     }
+
+
+    public void eliminarTrato(String idTrato) throws NoExisteTratoException {
+        // Obtener el jugador actual
+        Jugador jugadorActual = obtenerTurno();
+
+        // Buscar el trato por ID en los tratos pendientes del jugador actual
+        Trato trato = jugadorActual.buscarTratoPorId(idTrato);
+        if (trato != null) {
+            // Si no lo encuentra en el jugador actual, buscar en el otro jugador involucrado
+            consola.imprimir("El trato entre "+ trato.getJugadorRecibe().getNombre()+
+            " y "+  trato.getJugadorPropone().getNombre() + " se elimino \n");
+            trato.getJugadorPropone().eliminarTrato(trato);
+            trato.getJugadorRecibe().eliminarTrato(trato);
+
+            return;
+        }
+        throw new NoExisteTratoException("No se encontró un trato con el ID proporcionado en ningún jugador.");
+
+    }
+
 
 }
