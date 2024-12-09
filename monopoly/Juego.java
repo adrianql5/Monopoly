@@ -1742,6 +1742,10 @@ public class Juego implements Comandos {
         consola.imprimir("- dados [valor1] [valor2]: Lanza dados con valores específicos.");
         consola.imprimir("- vender [nombre_propiedad] [tipo_edificio] [cantidad]: Vende edificios.");
         consola.imprimir("- edificar/deshipotecar/hipotecar [Tipo edificio]e: Gestiona pistas de deporte.");
+        consola.imprimir("- aceptar [idtrato]: acepta un trato en el que estes involucrado");
+        consola.imprimir("- trato [nombre]: cambiar (propiedad y dinero) por (propiead) ");
+        consola.imprimir("- listar tratos ");
+        consola.imprimir("- eliminar [idtrato] ");
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /*
