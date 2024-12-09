@@ -2,8 +2,6 @@ package monopoly;
 
 import partida.Jugador;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import monopoly.casillas.propiedades.Propiedad;
 

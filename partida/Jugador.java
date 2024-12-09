@@ -2,9 +2,9 @@ package partida;
 
 import java.util.*;
 
-import excepciones.accionNoValida.HipotecarException;
+
 import excepciones.noExisteObjeto.NoExisteCasillaException;
-import excepciones.noExisteObjeto.NoExisteJugadorException;
+
 import monopoly.*;
 
 import partida.avatares.*;
