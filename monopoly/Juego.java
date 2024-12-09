@@ -1934,6 +1934,7 @@ public class Juego implements Comandos {
         }
     }
 
+    @Override
     public void eliminarTrato(String idTrato) throws NoExisteTratoException {
         // Obtener el jugador actual
         Jugador jugadorActual = obtenerTurno();
