@@ -493,7 +493,7 @@ public class Jugador {
     }
     public void agregarTrato(Trato trato) {
         this.tratosPendientes.add(trato);
-        System.out.printf("Se ha añadido un nuevo trato pendiente: %s\n", trato.getId());
+
     }
     public void eliminarTrato(Trato trato) {
         if (this.tratosPendientes.remove(trato)) {

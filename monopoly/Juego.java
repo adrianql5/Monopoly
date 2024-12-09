@@ -1851,8 +1851,8 @@ public class Juego implements Comandos {
 
         // Buscar al jugador receptor
         Jugador receptor = encontrarJugador(nombreJugador);
-        if (receptor == null) {
-            throw new NoExisteJugadorException("El jugador " + nombreJugador + " no existe.\n");
+        if (receptor == null || receptor.getNombre().equals(nombreJugador)) {
+            throw new NoExisteJugadorException("El jugador " + nombreJugador + " no existe o eres tu mismo.\n");
         }
 
         // Dividir el detalle en dos partes separadas por "por"
