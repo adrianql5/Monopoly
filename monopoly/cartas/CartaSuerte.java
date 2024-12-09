@@ -1,11 +1,8 @@
 package monopoly.cartas;
 
-import java.util.ArrayList;
+
 
 import monopoly.Tablero;
-import monopoly.Texto;
-import monopoly.Valor;
-import monopoly.Juego;
 
 import partida.*;
 import partida.avatares.*;

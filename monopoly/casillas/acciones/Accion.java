@@ -1,7 +1,6 @@
 package monopoly.casillas.acciones;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import monopoly.*;
 import monopoly.casillas.*;

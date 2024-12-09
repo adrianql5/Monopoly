@@ -2,9 +2,9 @@ package monopoly.casillas.acciones;
 
 import java.util.ArrayList;
 
-import monopoly.casillas.*;
+
 import monopoly.cartas.*;
-import partida.*;
+
 import monopoly.Texto;
 
 public class AccionSuerte extends Accion {
