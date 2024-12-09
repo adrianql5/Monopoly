@@ -2,6 +2,8 @@ package partida;
 
 import java.util.Random;
 
+import monopoly.Juego;
+
 public class Dado {
     //El dado solo tiene un atributo en nuestro caso: su valor.
     private int valor;
@@ -25,7 +27,7 @@ public class Dado {
             this.valor=valor;
         }
         else {
-            System.out.println("Intentas asignarle a un dado un valor que no es posible!");
+            Juego.consola.imprimir("Intentas asignarle a un dado un valor que no es posible!");
             this.valor= numeroRandom.nextInt(1,7);
         }
     }

@@ -131,7 +131,7 @@ public class Jugador {
     public void calcularMovimientosPendientes(int tirada) {
         // Checkeo por si se usa mal la función (si se quieren calcular los movimientos restantes cuando ya hay)
         if(!this.movimientos_pendientes.isEmpty()) {
-            System.out.println("Error en la función calcularMovimientosPendientes: ya hay movimientos pendientes.");
+            Juego.consola.imprimir("Error en la función calcularMovimientosPendientes: ya hay movimientos pendientes.");
             return;
         }
 
@@ -270,7 +270,7 @@ public class Jugador {
      * [3] Llama a cuatroVueltasSinCompras() para aumentar el precio de los solares si toca.
      */
     public void cobrarSalida() {
-        System.out.printf("¡Al pasar por la salida ganaste %,.0f€!\n", Valor.SUMA_VUELTA);
+        Juego.consola.imprimir(String.format("¡Al pasar por la salida ganaste %,.0f€!\n", Valor.SUMA_VUELTA));
         this.sumarFortuna(Valor.SUMA_VUELTA);
         this.sumarVuelta();
         this.sumarVueltas_sin_comprar();
@@ -283,7 +283,7 @@ public class Jugador {
      * [1] Avisa de la cantidad que se pierde y la resta a la fortuna del jugador correspondiente.
      */
     public void devolverCobrarSalida() {
-        System.out.printf("¡Al pasar por la salida marcha atrás perdiste %,.0f€!\n", Valor.SUMA_VUELTA);
+        Juego.consola.imprimir(String.format("¡Al pasar por la salida marcha atrás perdiste %,.0f€!\n", Valor.SUMA_VUELTA));
         this.sumarFortuna(-Valor.SUMA_VUELTA);
         this.restarVuelta();
         this.setVueltas_sin_comprar(this.getVueltas_sin_comprar() - 1);
@@ -387,89 +387,89 @@ public class Jugador {
     //SECCIÓN QUE DEVUELVE INFORMACIÓN DE JUGADOR
     //Método que devuelve la información de un jugador da muchísmo asco pero me da pereza pensar, arreglar algo hecho por miguel se me complica(miguel tqm)
     public void infoJugador() {
-        System.out.println("{");
+        Juego.consola.imprimir("{");
         // Imprimir nombre, avatar y fortuna con separador de miles para la fortuna
-        System.out.println("\tnombre: " + this.getNombre() + ",");
-        System.out.println("\tavatar: " + this.getAvatar().getId() + ",");
-        System.out.printf("\tfortuna: %,.0f,\n", this.getFortuna()); // Usar formato con separador de miles y sin decimales
+        Juego.consola.imprimir("\tnombre: " + this.getNombre() + ",");
+        Juego.consola.imprimir("\tavatar: " + this.getAvatar().getId() + ",");
+        Juego.consola.imprimir(String.format("\tfortuna: %,.0f,\n", this.getFortuna())); // Usar formato con separador de miles y sin decimales
 
         // Imprimir propiedades
-        System.out.print("\tpropiedades: ");
+        Juego.consola.imprimir("\tpropiedades: ");
         if (this.getPropiedades().isEmpty()) {
-            System.out.println("Ninguna");
+            Juego.consola.imprimir("Ninguna");
         } else {
-            System.out.print("[");
+            Juego.consola.imprimir("\t\t[");
             for (int i = 0; i < this.getPropiedades().size(); i++) {
-                System.out.print(this.getPropiedades().get(i).getNombre());
+                Juego.consola.imprimir("\t\t"+this.getPropiedades().get(i).getNombre());
                 if (i < this.getPropiedades().size() - 1) {
-                    System.out.print(", "); // Añade coma a todo menos a la última
+                    Juego.consola.imprimir(", "); // Añade coma a todo menos a la última
                 }
             }
-            System.out.println("]");
+            Juego.consola.imprimir("\t\t]");
 
             // Imprimir edificios
-            System.out.println("\tEdificios: {");
+            Juego.consola.imprimir("\tEdificios:\n {");
             for (int i = 0; i < this.getPropiedades().size(); i++) {
                 if(this.getPropiedades().get(i) instanceof Solar){
                     Solar solar = (Solar)this.getPropiedades().get(i);
                     if (solar.getNumeroEdificios() > 0) {
-                        System.out.println("\t\t" + solar.getNombre() + ": {");
+                        Juego.consola.imprimir("\t\t" + solar.getNombre() + ": {");
                         // Mostrar edificios de la propiedad
                         ArrayList<Edificio> edificios = solar.getCasas();
                         if (!edificios.isEmpty()) {
-                            System.out.print("\t\t\tEdificios: [");
+                            Juego.consola.imprimir("\t\t\tEdificios: [");
                             for (int j = 0; j < edificios.size(); j++) {
-                                System.out.print(edificios.get(j).getId());
+                                Juego.consola.imprimir(edificios.get(j).getId());
                                 if (j < edificios.size() - 1) {
-                                    System.out.print(", "); // Añade coma a todo menos a la última
+                                    Juego.consola.imprimir(", "); // Añade coma a todo menos a la última
                                 }
                             }
-                            System.out.println("]");
+                            Juego.consola.imprimir("]");
                         }
 
                         ArrayList<Edificio> edificios2 = solar.getHoteles();
                         if (!edificios2.isEmpty()) {
-                            System.out.print("\t\t\tEdificios: [");
+                            Juego.consola.imprimir("\t\t\tEdificios: [");
                             for (int j = 0; j < edificios2.size(); j++) {
-                                System.out.print(edificios2.get(j).getId());
+                                Juego.consola.imprimir(edificios2.get(j).getId());
                                 if (j < edificios2.size() - 1) {
-                                    System.out.print(", "); // Añade coma a todo menos a la última
+                                    Juego.consola.imprimir(", "); // Añade coma a todo menos a la última
                                 }
                             }
-                            System.out.println("]");
+                            Juego.consola.imprimir("]");
                         }
 
                         ArrayList<Edificio> edificios3 = solar.getPiscinas();
                         if (!edificios3.isEmpty()) {
-                            System.out.print("\t\t\tEdificios: [");
+                            Juego.consola.imprimir("\t\t\tEdificios: [");
                             for (int j = 0; j < edificios3.size(); j++) {
-                                System.out.print(edificios3.get(j).getId());
+                                Juego.consola.imprimir(edificios3.get(j).getId());
                                 if (j < edificios3.size() - 1) {
-                                    System.out.print(", "); // Añade coma a todo menos a la última
+                                    Juego.consola.imprimir(", "); // Añade coma a todo menos a la última
                                 }
                             }
-                            System.out.println("]");
+                            Juego.consola.imprimir("]");
                         }
 
                         ArrayList<Edificio> edificios4 = solar.getPistasDeDeporte();
                         if (!edificios4.isEmpty()) {
-                            System.out.print("\t\t\tEdificios: [");
+                            Juego.consola.imprimir("\t\t\tEdificios: [");
                             for (int j = 0; j < edificios4.size(); j++) {
-                                System.out.print(edificios4.get(j).getId());
+                                Juego.consola.imprimir(edificios4.get(j).getId());
                                 if (j < edificios4.size() - 1) {
-                                    System.out.print(", "); // Añade coma a todo menos a la última
+                                    Juego.consola.imprimir(", "); // Añade coma a todo menos a la última
                                 }
                             }
-                            System.out.println("]");
+                            Juego.consola.imprimir("]");
                         }
 
-                        System.out.println("\t\t}");
+                        Juego.consola.imprimir("\t\t}");
                     }
                 }
             }
-            System.out.println("\t}");
+            Juego.consola.imprimir("\t}");
         }
-        System.out.println("}");
+        Juego.consola.imprimir("}");
     }
 
     
@@ -478,15 +478,15 @@ public class Jugador {
     
     /**Método para mostrar las estadísticas de un jugador*/
     public void infoEstadisticas() {
-        System.out.println("{");
-        System.out.printf("\tdineroInvertido: %,.2f€,\n",this.getGastos());
-        System.out.printf("\tpagoTasasEImpuestos: %,.2f€,\n", this.estadisticas.getImpuestosYTasasPagados());
-        System.out.printf("\tpagoDeAlquileres: %,.2f€,\n", this.estadisticas.getPagoDeAlquileres());
-        System.out.printf("\tcobroDeAlquileres: %,.2f€,\n", this.estadisticas.getCobroDeAlquileres());
-        System.out.printf("\tpasarPorCasillaDeSalida: %,.2f€,\n", this.estadisticas.getDineroSalidaRecaudado());
-        System.out.printf("\tpremiosInversionesOBote: %,.2f€,\n", this.estadisticas.getDineroRecaudadoBote());
-        System.out.printf("\tvecesEnLaCarcel: %d\n", this.estadisticas.getVecesEnLaCarcel());
-        System.out.println("}");
+        Juego.consola.imprimir("{");
+        Juego.consola.imprimir(String.format("\tdineroInvertido: %,.2f€,\n", this.getGastos()));
+        Juego.consola.imprimir(String.format("\tpagoTasasEImpuestos: %,.2f€,\n", this.estadisticas.getImpuestosYTasasPagados()));
+        Juego.consola.imprimir(String.format("\tpagoDeAlquileres: %,.2f€,\n", this.estadisticas.getPagoDeAlquileres()));
+        Juego.consola.imprimir(String.format("\tcobroDeAlquileres: %,.2f€,\n", this.estadisticas.getCobroDeAlquileres()));
+        Juego.consola.imprimir(String.format("\tpasarPorCasillaDeSalida: %,.2f€,\n", this.estadisticas.getDineroSalidaRecaudado()));
+        Juego.consola.imprimir(String.format("\tpremiosInversionesOBote: %,.2f€,\n", this.estadisticas.getDineroRecaudadoBote()));
+        Juego.consola.imprimir(String.format("\tvecesEnLaCarcel: %d\n", this.estadisticas.getVecesEnLaCarcel()));
+        Juego.consola.imprimir("}");
     }
     public ArrayList<Trato> getTratosPendientes() {
         return this.tratosPendientes;
@@ -497,9 +497,9 @@ public class Jugador {
     }
     public void eliminarTrato(Trato trato) {
         if (this.tratosPendientes.remove(trato)) {
-            System.out.printf("El trato %s ha sido eliminado de los pendientes.\n", trato.getId());
+            Juego.consola.imprimir(String.format("El trato %s ha sido eliminado de los pendientes.\n", trato.getId()));
         } else {
-            System.out.printf("No se encontró el trato %s en los pendientes.\n", trato.getId());
+            Juego.consola.imprimir(String.format("No se encontró el trato %s en los pendientes.\n", trato.getId()));
         }
     }
     public Trato buscarTratoPorId(String id) {
@@ -512,11 +512,11 @@ public class Jugador {
     }
     public void listarTratosPendientes() {
         if (this.tratosPendientes.isEmpty()) {
-            System.out.println("No tienes tratos pendientes.");
+            Juego.consola.imprimir("No tienes tratos pendientes.");
         } else {
-            System.out.println("Tus tratos pendientes son:");
+            Juego.consola.imprimir("Tus tratos pendientes son:");
             for (Trato trato : tratosPendientes) {
-                System.out.println(trato);
+                Juego.consola.imprimir(trato.toString());
             }
         }
     }

@@ -3,6 +3,8 @@ package monopoly.edificios;
 import java.util.ArrayList;
 import monopoly.casillas.propiedades.Solar;
 
+import monopoly.Juego;
+
 public class Piscina extends Edificio {
     public Piscina(Solar solar) {
         super(solar);
@@ -24,14 +26,14 @@ public class Piscina extends Edificio {
         int max = solar.getGrupo().getNumCasillasGrupo();
     
         if (maxPiscinasG >= max) {
-            System.out.println("Has llegado al máximo de piscinas de este grupo.");
+            Juego.consola.imprimir("Has llegado al máximo de piscinas de este grupo.");
             return false;
         }
     
         if (maxHotelesC >= 1 && maxCasasC >= 2) {
             return true;
         } else {
-            System.out.println("Para construir una piscina en esta casilla necesitas mínimo un hotel y dos casas.");
+            Juego.consola.imprimir("Para construir una piscina en esta casilla necesitas mínimo un hotel y dos casas.");
             return false;
         }
     }

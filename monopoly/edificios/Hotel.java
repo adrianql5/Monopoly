@@ -3,6 +3,8 @@ package monopoly.edificios;
 import java.util.ArrayList;
 import monopoly.casillas.propiedades.Solar;
 
+import monopoly.Juego;
+
 public class Hotel extends Edificio {
     public Hotel(Solar solar) {
         super(solar);
@@ -20,23 +22,23 @@ public class Hotel extends Edificio {
         int max = solar.getGrupo().getNumCasillasGrupo();
     
         if (solar.getGrupo().estaHipotecadoGrupo()) {
-            System.out.println("No puedes edificar en un grupo hipotecado.");
+            Juego.consola.imprimir("No puedes edificar en un grupo hipotecado.");
             return false;
         }
 
     
         if (maxHotelesG >= max) {
-            System.out.println("Has llegado al máximo de hoteles de este grupo.");
+            Juego.consola.imprimir("Has llegado al máximo de hoteles de este grupo.");
             return false;
         }
     
         if (maxHotelesG == max - 1 && maxCasasG - 4 > max) {
-            System.out.println("No puedes edificar un hotel, debes vender alguna casa de tu grupo primero.");
+            Juego.consola.imprimir("No puedes edificar un hotel, debes vender alguna casa de tu grupo primero.");
             return false;
         }
     
         if (maxCasasC < 4) {
-            System.out.println("Debes tener al menos 4 casas en este solar para poder edificar un hotel.");
+            Juego.consola.imprimir("Debes tener al menos 4 casas en este solar para poder edificar un hotel.");
             return false;
         }
     

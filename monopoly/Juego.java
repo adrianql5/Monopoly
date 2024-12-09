@@ -1838,6 +1838,8 @@ public class Juego implements Comandos {
     @Override
     public void proponerTrato(String detalleTrato) throws NoExisteJugadorException, NoExisteCasillaException {
         // Dividir el comando para extraer el jugador y el detalle del trato
+
+        Jugador actual=obtenerTurno();
         String[] partes = detalleTrato.split(": cambiar ");
         if (partes.length < 2) {
             consola.imprimir("Formato inválido para proponer trato." +
@@ -1851,7 +1853,7 @@ public class Juego implements Comandos {
 
         // Buscar al jugador receptor
         Jugador receptor = encontrarJugador(nombreJugador);
-        if (receptor == null || receptor.getNombre().equals(nombreJugador)) {
+        if (receptor == null || actual.getNombre().equals(nombreJugador)) {
             throw new NoExisteJugadorException("El jugador " + nombreJugador + " no existe o eres tu mismo.\n");
         }
 

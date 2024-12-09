@@ -88,6 +88,14 @@ public class Trato {
         return propiedadPorPropiedad || propiedadPorDinero || dineroPorPropiedad
                 || propiedadPorPropiedadYDinero || propiedadYDineroPorPropiedad;
     }
+
+
+    private boolean confirmarPropiedadHipotecada(Propiedad propiedad) {
+        Juego.consola.imprimir("La propiedad " + propiedad.getNombre() + " está hipotecada. ¿Quieres aceptar el trato de todas formas? (Si/No)\n");
+        String respuesta = Juego.consola.leer("¿Seguro que aceptas el trato?").trim();
+        return respuesta.equalsIgnoreCase("Si");
+    }
+
     public boolean aceptar() {
         if (!esValido()) {
             Juego.consola.imprimir("El trato no es válido y no puede ser aceptado.\n");
@@ -114,6 +122,12 @@ public class Trato {
             return false;
         }
 
+        if (propiedadOfrecida != null && propiedadOfrecida.estaHipotecada()) {
+            if (!confirmarPropiedadHipotecada(propiedadOfrecida)) return false;
+        }
+        if (propiedadDemandada != null && propiedadDemandada.estaHipotecada()) {
+            if (!confirmarPropiedadHipotecada(propiedadDemandada)) return false;
+        }
         // Realizar el intercambio
         if (propiedadOfrecida != null) {
             transferirPropiedad(propiedadOfrecida, jugadorPropone, jugadorRecibe);
