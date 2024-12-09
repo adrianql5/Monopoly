@@ -51,19 +51,19 @@ public class Especial extends Casilla{
         if(!avataresEnCasilla.isEmpty()) {
 
             // Recorremos la lista de avatares y mostramos todos los jugadores en la misma línea
-            System.out.print("\tJugadores: ");
+            Juego.consola.imprimir("\tJugadores: ");
             for (Avatar avatar : avataresEnCasilla) {
                 Jugador jugador = avatar.getJugador();
                 // Es diferente si está encarcelado que si está de visita
                 if (jugador.isEnCarcel()) {
                     // Imprimimos el jugador que está encarcelado con el número de tiradas en la cárcel
-                    System.out.print("[" + jugador.getNombre() + ", " + jugador.getTiradasCarcel() + "]  ");
+                    Juego.consola.imprimir("[" + jugador.getNombre() + ", " + jugador.getTiradasCarcel() + "]  ");
                 } else {
                     // Imprimimos el jugador que está de visita
-                    System.out.print("[" + jugador.getNombre() + " (visita)]  ");
+                    Juego.consola.imprimir("[" + jugador.getNombre() + " (visita)]  ");
                 }
             }
-            System.out.print("\n");
+            Juego.consola.imprimir("\n");
         }
     }
 

@@ -125,7 +125,7 @@ public class Juego implements Comandos {
                     this.turno = 0; //El primer jugador creado tiene el turno
 
                     // Avisamos del inicio de la partida y cambiamos el texto dentro del tablero
-                    System.out.printf(Texto.M_EMPIEZA_LA_PARTIDA + "\n", obtenerTurno().getNombre());
+                    consola.imprimir(Texto.M_EMPIEZA_LA_PARTIDA + "\n" + obtenerTurno().getNombre());
                     setTextoTablero(Texto.LISTA_COMANDOS);
 
                     //Este es el bucle de la partida básicamente: cada iteración es un turno
@@ -174,7 +174,7 @@ public class Juego implements Comandos {
                 avatar = new Sombrero(null, casillaInicio, this.avatares);
                 break;
             default:
-                System.out.print("Tipo de avatar inválido. Los tipos válidos son coche, pelota, esfinge y sombrero");
+                consola.imprimir("Tipo de avatar inválido. Los tipos válidos son coche, pelota, esfinge y sombrero");
                 return;
         }
 
@@ -980,8 +980,8 @@ public class Juego implements Comandos {
                     desencarcelar(jugador);
                     jugador.restarFortuna(Valor.SALIR_CARCEL);
                     this.banca.sumarFortuna(Valor.SALIR_CARCEL);
-                    System.out.printf("%s paga la fianza de %,.0f € y sale de la cárcel. Puedes tirar los dados.\n",
-                            jugador.getNombre(), Valor.SALIR_CARCEL);
+                    consola.imprimir(String.format("%s paga la fianza de %,.0f € y sale de la cárcel. Puedes tirar los dados.\n",
+                            jugador.getNombre(), Valor.SALIR_CARCEL));
                 } else {
                     throw new SalirCarcelException("¡No tienes dinero suficiente para pagar la fianza!");
                 }
@@ -1081,9 +1081,9 @@ public class Juego implements Comandos {
             }
         } else {
             if (avatar instanceof Coche)
-                System.out.printf(Texto.M_ACTIVAR_MOVIMIENTO_AVANZADO + "\n", avatar.getId(), "coche");
+                consola.imprimir(Texto.M_ACTIVAR_MOVIMIENTO_AVANZADO + "\n" + avatar.getId() + " coche");
             if (avatar instanceof Pelota)
-                System.out.printf(Texto.M_ACTIVAR_MOVIMIENTO_AVANZADO + "\n", avatar.getId(), "pelota");
+                consola.imprimir(Texto.M_ACTIVAR_MOVIMIENTO_AVANZADO + "\n" + avatar.getId() + " pelota");
             obtenerTurno().getAvatar().cambiarMovimiento();
         }
 
@@ -1129,7 +1129,7 @@ public class Juego implements Comandos {
         for (int i = 0; i < 40; i++) {
             casilla_aux = tablero.getCasilla(i);
             if (casilla_aux instanceof Propiedad && ((Propiedad) casilla_aux).getDuenho().getNombre().equals("banca")) {
-                System.out.printf("%s - Precio: %,.0f€\n", casilla_aux.getNombre(), ((Propiedad) casilla_aux).getValor());
+                consola.imprimir(String.format("%s - Precio: %,.0f€\n", casilla_aux.getNombre(), ((Propiedad) casilla_aux).getValor()));
             }
         }
     }
@@ -1186,7 +1186,7 @@ public class Juego implements Comandos {
         if(casilla==null) {
             throw new NoExisteCasillaException(nombre_casilla + " no es un nombre de casilla válido.");
         }
-        System.out.print(casilla.infoCasilla());
+        consola.imprimir(casilla.infoCasilla());
     }
 
     /**Método para encontrar a un jugador a partir de su nombre.
@@ -1588,8 +1588,8 @@ public class Juego implements Comandos {
         }
         
         if (propiedad.esDesHipotecable()) {
-            System.out.printf("El jugador %s paga %.2f para deshipotecar %s.%n",
-            jugador.getNombre(), costoDeshipotecar, propiedad.getNombre());
+            consola.imprimir(String.format("El jugador %s paga %.2f para deshipotecar %s.%n",
+            jugador.getNombre(), costoDeshipotecar, propiedad.getNombre()));
             jugador.sumarFortuna(-costoDeshipotecar);
             jugador.sumarGastos(costoDeshipotecar);
         } else {
