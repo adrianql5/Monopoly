@@ -1759,27 +1759,57 @@ public class Juego implements Comandos {
 
         // Buscar el trato por ID en los tratos pendientes del jugador
         Trato trato = jugador.buscarTratoPorId(idTrato);
-
-
+        if (trato == null) {
+            throw new NoExisteTratoException("Trato inexistente o no estás involucrado.");
+        }
 
         Jugador jugador2 = trato.getJugadorPropone();
 
-        if(jugador.getNombre().equals(jugador2.getNombre())){
-            consola.imprimir("No puedes aceptar un trato que propones tu ¡Tramposo!");
-            return;
+        if (jugador.getNombre().equals(jugador2.getNombre())) {
+            throw new NoExisteTratoException("No puedes aceptar un trato que tú mismo propusiste. ¡Tramposo!");
         }
-
-        // Validar si el trato existe
-
 
         // Intentar aceptar el trato
         if (trato.aceptar()) {
-            jugador.eliminarTrato(trato); // Eliminar el trato tras ser aceptado
-            System.out.printf("Se ha aceptado el trato con éxito: %s\n", trato);
+            // Eliminar el trato tras ser aceptado
+            jugador.eliminarTrato(trato);
+
+            // Construir el mensaje detallado
+            StringBuilder mensaje = new StringBuilder();
+            mensaje.append("Se ha aceptado el siguiente trato con ")
+                    .append(jugador2.getNombre()).append(": ");
+
+            if (trato.getPropiedadOfrecida() != null) {
+                mensaje.append("le doy ").append(trato.getPropiedadOfrecida().getNombre());
+            }
+
+            if (trato.getDineroOfrecido() > 0) {
+                if (trato.getPropiedadOfrecida() != null) {
+                    mensaje.append(" y ");
+                }
+                mensaje.append(trato.getDineroOfrecido()).append("€");
+            }
+
+            mensaje.append(" y ").append(jugador2.getNombre()).append(" me da ");
+
+            if (trato.getPropiedadDemandada() != null) {
+                mensaje.append(trato.getPropiedadDemandada().getNombre());
+            }
+
+            if (trato.getDineroDemandado() > 0) {
+                if (trato.getPropiedadDemandada() != null) {
+                    mensaje.append(" y ");
+                }
+                mensaje.append(trato.getDineroDemandado()).append("€");
+            }
+
+            mensaje.append(".");
+            consola.imprimir(mensaje.toString());
         } else {
-            System.out.printf("No se pudo aceptar el trato: %s\n", trato);
+            consola.imprimir("No se pudo aceptar el trato.");
         }
     }
+
 
 
     @Override
@@ -1788,7 +1818,7 @@ public class Juego implements Comandos {
         Jugador jugador = obtenerTurno();
 
         // Obtener la lista de tratos pendientes
-        ArrayList<Trato> tratos = jugador.getTratosPendientes();
+        ArrayList<Trato> tratos = jugador.getTratosPendientes(); // Cambiado de ArrayList a Set
 
         // Imprimir los tratos pendientes
         if (tratos.isEmpty()) {
@@ -1807,7 +1837,7 @@ public class Juego implements Comandos {
         String[] partes = detalleTrato.split(": cambiar ");
         if (partes.length < 2) {
             consola.imprimir("Formato inválido para proponer trato." +
-                    " Ejemplo: 'trato Maria: cambiar (Solar1, Solar2 y 300000) por (Solar4 y 300000)");
+                    " Ejemplo: 'trato Maria: cambiar (Solar1 y 300000) por (Solar4 y 300000)");
             return;
         }
 
@@ -1818,143 +1848,109 @@ public class Juego implements Comandos {
         // Buscar al jugador receptor
         Jugador receptor = encontrarJugador(nombreJugador);
         if (receptor == null) {
-            throw new NoExisteJugadorException("El jugador "+nombreJugador+ " no existe.\n");
-
+            throw new NoExisteJugadorException("El jugador " + nombreJugador + " no existe.\n");
         }
 
-        // Dividir el detalle en dos partes entre paréntesis
-        String[] bloques = detalle.split("\\)\\s+por\\s+\\("); // Divide por ") por ("
+        // Dividir el detalle en dos partes separadas por "por"
+        String[] bloques = detalle.split("\\)\\s+por\\s+\\(");
         if (bloques.length != 2) {
             consola.imprimir("Formato inválido para el trato. Asegúrate de incluir 'por' entre los paréntesis.");
             return;
         }
 
-        // Quitar los paréntesis externos
-        bloques[0] = bloques[0].replace("(", "").trim();
-        bloques[1] = bloques[1].replace(")", "").trim();
+        // Procesar el lado ofrecido
+        String ladoOfrecido = bloques[0].replace("(", "").trim();
+        String[] elementosOfrecidos = ladoOfrecido.split(" y ");
+        Propiedad propiedadOfrecida = null;
+        float dineroOfrecido = 0;
 
-        // Desglosar las propiedades y dinero ofrecidos
-        HashMap<String, Object> ofrecido = desgranarComando(bloques[0]);
-        ArrayList<String> nombresOfrecidos = (ArrayList<String>) ofrecido.get("propiedades");
-        float dineroOfrecido = (float) ofrecido.get("dinero");
-
-        ArrayList<Propiedad> casillasOfrecidas = new ArrayList<>();
-        for (String nombre : nombresOfrecidos) {
-            Propiedad propiedad = this.tablero.encontrar_propiedad(nombre);
-            if (propiedad != null && propiedad.getDuenho().getNombre().equals(obtenerTurno().getNombre())) {
-                casillasOfrecidas.add(propiedad);
-
+        for (String elemento : elementosOfrecidos) {
+            if (esDinero(elemento)) {
+                dineroOfrecido += Float.parseFloat(elemento.trim());
             } else {
-                throw new NoExisteCasillaException("La casilla " + nombre + " no pertenece al jugador actual o no existe. Trato inválido.\n");
+                propiedadOfrecida = this.tablero.encontrar_propiedad(elemento.trim());
+                if (propiedadOfrecida == null || !propiedadOfrecida.getDuenho().getNombre().equals(obtenerTurno().getNombre())) {
+                    throw new NoExisteCasillaException("La propiedad ofrecida " + elemento + " no pertenece al jugador actual o no existe.");
+                }
             }
         }
 
-        // Desglosar las propiedades y dinero reclamados
-        HashMap<String, Object> reclamado = desgranarComando(bloques[1]);
-        ArrayList<String> nombresReclamados = (ArrayList<String>) reclamado.get("propiedades");
-        float dineroReclamado = (float) reclamado.get("dinero");
+        // Procesar el lado reclamado
+        String ladoReclamado = bloques[1].replace(")", "").trim();
+        String[] elementosReclamados = ladoReclamado.split(" y ");
+        Propiedad propiedadReclamada = null;
+        float dineroReclamado = 0;
 
-
-        ArrayList<Propiedad> casillasReclamadas = new ArrayList<>();
-        for (String nombre : nombresReclamados) {
-            Propiedad propiedad = this.tablero.encontrar_propiedad(nombre);
-            if (propiedad != null && propiedad.getDuenho().getNombre().equals(receptor.getNombre())) {
-                casillasReclamadas.add(propiedad);
+        for (String elemento : elementosReclamados) {
+            if (esDinero(elemento)) {
+                dineroReclamado += Float.parseFloat(elemento.trim());
             } else {
-                throw new NoExisteCasillaException("La casilla " + nombre + " no pertenece al jugador receptor o no existe. Trato inválido.\n");
+                propiedadReclamada = this.tablero.encontrar_propiedad(elemento.trim());
+                if (propiedadReclamada == null || !propiedadReclamada.getDuenho().getNombre().equals(receptor.getNombre())) {
+                    throw new NoExisteCasillaException("La propiedad reclamada " + elemento + " no pertenece al jugador receptor o no existe.");
+                }
             }
         }
-
-        // Validar que al menos una casilla o cantidad de dinero esté presente en cada lado
-        if (casillasOfrecidas.isEmpty() && dineroOfrecido == 0) {
-            consola.imprimir("El lado ofrecido del trato debe incluir al menos una casilla o una cantidad de dinero.");
+        if(dineroReclamado > 0 && dineroOfrecido > 0){
+            consola.imprimir("No tiene sentido enviar cantidades de dinero por ambos lados" +
+                    " haz la resta si quieres enviarlo");
             return;
         }
-        if (casillasReclamadas.isEmpty() && dineroReclamado == 0) {
-            consola.imprimir("El lado reclamado del trato debe incluir al menos una casilla o una cantidad de dinero.");
+        // Validar que al menos una propiedad o cantidad de dinero esté presente en cada lado
+        if (propiedadOfrecida == null && dineroOfrecido == 0) {
+            consola.imprimir("El lado ofrecido del trato debe incluir al menos una propiedad o una cantidad de dinero.");
+            return;
+        }
+        if (propiedadReclamada == null && dineroReclamado == 0) {
+            consola.imprimir("El lado reclamado del trato debe incluir al menos una propiedad o una cantidad de dinero.");
             return;
         }
 
         // Crear el objeto Trato
         Jugador jugadorOfreciendo = obtenerTurno(); // Jugador actual
-        Trato trato = new Trato(jugadorOfreciendo, receptor, casillasOfrecidas, casillasReclamadas, dineroOfrecido, dineroReclamado);
+        Trato trato = new Trato(jugadorOfreciendo, receptor, propiedadOfrecida, propiedadReclamada, dineroOfrecido, dineroReclamado);
 
-        // Agregar el trato a los pendientes del receptor
+        // Agregar el trato a los pendientes del receptor y del jugador actual
         receptor.agregarTrato(trato);
         jugadorOfreciendo.agregarTrato(trato);
-
-
-
 
         // Construir el mensaje final del trato
         StringBuilder mensaje = new StringBuilder();
         mensaje.append(receptor.getNombre()).append(", ¿te doy ");
 
-        // Añadir propiedades ofrecidas
-        for (int i = 0; i < casillasOfrecidas.size(); i++) {
-            mensaje.append(casillasOfrecidas.get(i).getNombre());
-            if (i < casillasOfrecidas.size() - 1) {
-                mensaje.append(" y ");
-            }
+        if (propiedadOfrecida != null) {
+            mensaje.append(propiedadOfrecida.getNombre());
         }
-
-        // Añadir dinero ofrecido
         if (dineroOfrecido > 0) {
-            if (!casillasOfrecidas.isEmpty()) mensaje.append(" y ");
+            if (propiedadOfrecida != null) mensaje.append(" y ");
             mensaje.append(dineroOfrecido).append("€");
         }
 
         mensaje.append(" y tú me das ");
 
-        // Añadir propiedades reclamadas
-        for (int i = 0; i < casillasReclamadas.size(); i++) {
-            mensaje.append(casillasReclamadas.get(i).getNombre());
-            if (i < casillasReclamadas.size() - 1) {
-                mensaje.append(" y ");
-            }
+        if (propiedadReclamada != null) {
+            mensaje.append(propiedadReclamada.getNombre());
         }
-
-        // Añadir dinero reclamado
         if (dineroReclamado > 0) {
-            if (!casillasReclamadas.isEmpty()) mensaje.append(" y ");
+            if (propiedadReclamada != null) mensaje.append(" y ");
             mensaje.append(dineroReclamado).append("€");
         }
 
         mensaje.append("?");
 
         consola.imprimir(mensaje.toString());
-        consola.imprimir("Se ha propuesto el "+ trato.getId() +" a "+ receptor.getNombre() );
+        consola.imprimir("Se ha propuesto el trato con ID: " + trato.getId() + " a " + receptor.getNombre());
     }
 
-
-    private HashMap<String, Object> desgranarComando(String comando) {
-        HashMap<String, Object> resultado = new HashMap<>();
-        ArrayList<String> propiedades = new ArrayList<>();
-        float dinero = 0;
-
-        comando = comando.replace("(", "").replace(")", "");
-        String[] partes = comando.split(" y ");
-
-        for (String parte : partes) {
-            parte = parte.trim();
-            try {
-                // Intentar parsear como dinero
-                dinero += Float.parseFloat(parte.replace(",", "").trim());
-            } catch (NumberFormatException e) {
-                // Si no es dinero, asumir que es una propiedad
-                String[] props = parte.split(",");
-                for (String prop : props) {
-                    propiedades.add(prop.trim());
-                }
-            }
+    // Método auxiliar para determinar si un elemento es dinero
+    private boolean esDinero(String elemento) {
+        try {
+            Float.parseFloat(elemento.trim());
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
         }
-
-        // Añadir resultados al HashMap
-        resultado.put("propiedades", propiedades);
-        resultado.put("dinero", dinero);
-        return resultado;
     }
-
 
     public void eliminarTrato(String idTrato) throws NoExisteTratoException {
         // Obtener el jugador actual

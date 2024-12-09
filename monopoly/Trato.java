@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import monopoly.casillas.propiedades.Propiedad;
-import monopoly.*;
 
 public class Trato {
 
@@ -15,22 +14,21 @@ public class Trato {
     private String id; // Identificador único del trato
     private Jugador jugadorPropone; // Jugador que propone el trato
     private Jugador jugadorRecibe; // Jugador que recibe el trato
-    private ArrayList<Propiedad> propiedadesOfrecidas; // Propiedades que ofrece el jugador que propone
-    private ArrayList<Propiedad> propiedadesDemandadas; // Propiedades que solicita el jugador que propone
+    private Propiedad propiedadOfrecida; // Propiedad que ofrece el jugador que propone
+    private Propiedad propiedadDemandada; // Propiedad que solicita el jugador que propone
     private float dineroOfrecido; // Dinero que ofrece el jugador que propone
     private float dineroDemandado; // Dinero que solicita el jugador que propone
 
-
     // Constructor
     public Trato(Jugador jugadorPropone, Jugador jugadorRecibe,
-        ArrayList<Propiedad> propiedadesOfrecidas, ArrayList<Propiedad> propiedadesDemandadas,
-        float dineroOfrecido, float dineroDemandado) {
+                 Propiedad propiedadOfrecida, Propiedad propiedadDemandada,
+                 float dineroOfrecido, float dineroDemandado) {
 
         this.id = "trato" + (++contadorTratos); // Asigna un ID único
         this.jugadorPropone = jugadorPropone;
         this.jugadorRecibe = jugadorRecibe;
-        this.propiedadesOfrecidas = propiedadesOfrecidas != null ? propiedadesOfrecidas : new ArrayList<>();
-        this.propiedadesDemandadas = propiedadesDemandadas != null ? propiedadesDemandadas : new ArrayList<>();
+        this.propiedadOfrecida = propiedadOfrecida;
+        this.propiedadDemandada = propiedadDemandada;
         this.dineroOfrecido = dineroOfrecido;
         this.dineroDemandado = dineroDemandado;
     }
@@ -48,12 +46,12 @@ public class Trato {
         return jugadorRecibe;
     }
 
-    public ArrayList<Propiedad> getPropiedadesOfrecidas() {
-        return propiedadesOfrecidas;
+    public Propiedad getPropiedadOfrecida() {
+        return propiedadOfrecida;
     }
 
-    public ArrayList<Propiedad> getPropiedadesDemandadas() {
-        return propiedadesDemandadas;
+    public Propiedad getPropiedadDemandada() {
+        return propiedadDemandada;
     }
 
     public float getDineroOfrecido() {
@@ -75,8 +73,28 @@ public class Trato {
      *
      * @return true si el trato fue aceptado exitosamente, false en caso contrario.
      */
+    public boolean esValido() {
+        boolean propiedadPorPropiedad = propiedadOfrecida != null && propiedadDemandada != null
+                && dineroOfrecido == 0 && dineroDemandado == 0;
+        boolean propiedadPorDinero = propiedadOfrecida != null && propiedadDemandada == null
+                && dineroDemandado > 0 && dineroOfrecido == 0;
+        boolean dineroPorPropiedad = propiedadOfrecida == null && propiedadDemandada != null
+                && dineroOfrecido > 0 && dineroDemandado == 0;
+        boolean propiedadPorPropiedadYDinero = propiedadOfrecida != null && propiedadDemandada != null
+                && dineroDemandado > 0 && dineroOfrecido == 0;
+        boolean propiedadYDineroPorPropiedad = propiedadOfrecida != null && propiedadDemandada != null
+                && dineroOfrecido > 0 && dineroDemandado == 0;
+
+        return propiedadPorPropiedad || propiedadPorDinero || dineroPorPropiedad
+                || propiedadPorPropiedadYDinero || propiedadYDineroPorPropiedad;
+    }
     public boolean aceptar() {
-        // Verificar dinero demandado
+        if (!esValido()) {
+            Juego.consola.imprimir("El trato no es válido y no puede ser aceptado.\n");
+            return false;
+        }
+
+        // Verificar dinero
         if (dineroDemandado > 0 && jugadorRecibe.getFortuna() < dineroDemandado) {
             Juego.consola.imprimir("El trato no puede ser aceptado: " + jugadorRecibe.getNombre() + " no dispone de suficiente dinero.\n");
             return false;
@@ -85,42 +103,24 @@ public class Trato {
             Juego.consola.imprimir("El trato no puede ser aceptado: " + jugadorPropone.getNombre() + " no dispone de suficiente dinero.\n");
             return false;
         }
-        for (Propiedad propiedad : propiedadesOfrecidas) {
-        
 
-            if (!((Propiedad)propiedad).getDuenho().getNombre().equals( this.jugadorPropone.getNombre()) ) {
-                Juego.consola.imprimir(String.format("El trato no puede ser aceptado: %s no pertenece a %s.\n",
-                        propiedad.getNombre(), jugadorPropone.getNombre()));
-                return false;
-            }
+        // Verificar propiedades
+        if (propiedadOfrecida != null && !propiedadOfrecida.getDuenho().equals(jugadorPropone)) {
+            Juego.consola.imprimir("El trato no puede ser aceptado: " + propiedadOfrecida.getNombre() + " no pertenece a " + jugadorPropone.getNombre() + ".\n");
+            return false;
         }
-        // Verificar propiedades demandadas
-        for (Propiedad propiedad : propiedadesDemandadas) {
-
-            if (!((Propiedad)propiedad).getDuenho().getNombre().equals( this.jugadorRecibe.getNombre()) ) {
-                Juego.consola.imprimir("El trato no puede ser aceptado: " + propiedad.getNombre() + " no pertenece a " + jugadorRecibe.getNombre() + ".\n");
-                return false;
-            }
-        }
-        Juego.consola.imprimir("Detalles del trato:\n");
-        Juego.consola.imprimir(jugadorPropone.getNombre() + " DA:\n");
-        for (Propiedad propiedad : propiedadesOfrecidas) {
-            Juego.consola.imprimir("- Propiedad: " + propiedad.getNombre() + "\n");
-        }
-        if (dineroOfrecido > 0) {
-            Juego.consola.imprimir("- Dinero: " + dineroOfrecido + "€\n");
+        if (propiedadDemandada != null && !propiedadDemandada.getDuenho().equals(jugadorRecibe)) {
+            Juego.consola.imprimir("El trato no puede ser aceptado: " + propiedadDemandada.getNombre() + " no pertenece a " + jugadorRecibe.getNombre() + ".\n");
+            return false;
         }
 
-        Juego.consola.imprimir(jugadorRecibe.getNombre() + " DA:\n");
-        for (Propiedad propiedad : propiedadesDemandadas) {
-            Juego.consola.imprimir("- Propiedad: " + propiedad.getNombre() + "\n");
+        // Realizar el intercambio
+        if (propiedadOfrecida != null) {
+            transferirPropiedad(propiedadOfrecida, jugadorPropone, jugadorRecibe);
         }
-        if (dineroDemandado > 0) {
-            Juego.consola.imprimir("- Dinero: " + dineroDemandado + "€\n");
+        if (propiedadDemandada != null) {
+            transferirPropiedad(propiedadDemandada, jugadorRecibe, jugadorPropone);
         }
-        // Transferencia de propiedades y dinero
-        transferirPropiedades(propiedadesOfrecidas, jugadorPropone, jugadorRecibe);
-        transferirPropiedades(propiedadesDemandadas, jugadorRecibe, jugadorPropone);
         transferirDinero(dineroOfrecido, jugadorPropone, jugadorRecibe);
         transferirDinero(dineroDemandado, jugadorRecibe, jugadorPropone);
 
@@ -128,16 +128,9 @@ public class Trato {
         return true;
     }
 
-    /**
-     * Transfiere propiedades entre dos jugadores.
-     */
-    private void transferirPropiedades(ArrayList<Propiedad> propiedades, Jugador de, Jugador a) {
-        Iterator<Propiedad> iterator = propiedades.iterator();
-        while (iterator.hasNext()) {
-            Propiedad propiedad = iterator.next();
-            de.eliminarPropiedad(propiedad);
-            a.anhadirPropiedad(propiedad);
-        }
+    private void transferirPropiedad(Propiedad propiedad, Jugador de, Jugador a) {
+        de.eliminarPropiedad(propiedad);
+        a.anhadirPropiedad(propiedad);
     }
 
     /**
@@ -156,49 +149,33 @@ public class Trato {
         sb.append("{\n");
         sb.append(" id: ").append(this.id).append(",\n");
         sb.append(" jugadorPropone: ").append(this.jugadorPropone.getNombre()).append(",\n");
-        sb.append(" trato: cambiar (");
+        sb.append(" trato: cambiar ");
 
-        // Añadir propiedades ofrecidas
-        if (!this.propiedadesOfrecidas.isEmpty()) {
-            for (int i = 0; i < propiedadesOfrecidas.size(); i++) {
-                sb.append(propiedadesOfrecidas.get(i).getNombre());
-                if (i < propiedadesOfrecidas.size() - 1) {
-                    sb.append(", ");
-                }
-            }
+        if (propiedadOfrecida != null) {
+            sb.append(propiedadOfrecida.getNombre());
         }
-
-        // Añadir dinero ofrecido
         if (dineroOfrecido > 0) {
-            if (!this.propiedadesOfrecidas.isEmpty()) {
-                sb.append(", ");
+            if (propiedadOfrecida != null) {
+                sb.append(" y ");
             }
             sb.append(String.format("%,.2f€", dineroOfrecido));
         }
 
-        sb.append(") por (");
+        sb.append(" por ");
 
-        // Añadir propiedades demandadas
-        if (!this.propiedadesDemandadas.isEmpty()) {
-            for (int i = 0; i < propiedadesDemandadas.size(); i++) {
-                sb.append(propiedadesDemandadas.get(i).getNombre());
-                if (i < propiedadesDemandadas.size() - 1) {
-                    sb.append(", ");
-                }
-            }
+        if (propiedadDemandada != null) {
+            sb.append(propiedadDemandada.getNombre());
         }
-
-        // Añadir dinero demandado
         if (dineroDemandado > 0) {
-            if (!this.propiedadesDemandadas.isEmpty()) {
-                sb.append(", ");
+            if (propiedadDemandada != null) {
+                sb.append(" y ");
             }
             sb.append(String.format("%,.2f€", dineroDemandado));
         }
 
-        sb.append(")\n");
-        sb.append("}");
-
+        sb.append("\n}");
         return sb.toString();
     }
 }
+
+
