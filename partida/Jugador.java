@@ -445,7 +445,7 @@ public class Jugador {
     // MÉTODOS DE INFORMACIÓN SOBRE EL JUGADOR--------------------------------------------------------------------------
 
     // Método que devuelve la información de un jugador
-    // da muchísmo asco pero me da pereza pensar, arreglar algo hecho por miguel se me complica(miguel tqm)
+    // da muchísmo asco pero me daj pereza pensar, arreglar algo hecho por miguel se me complica(miguel tqm)
     public void infoJugador() {
         StringBuilder salida = new StringBuilder();
 
