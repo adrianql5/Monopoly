@@ -6,18 +6,13 @@ import partida.*;
 
 public class Impuesto extends Casilla{
     private float impuesto;
-    private Especial parking;
+
     // ==========================
     // SECCIÓN: CONSTRUCTORES
     // ==========================
     public Impuesto(String nombre, int posicion) {
         super(nombre, posicion);
         this.impuesto=calcularImpuesto();
-        this.parking=null;
-    }
-
-    public void asignarParking(Especial parking){
-        this.parking=parking;
     }
 
     public float getImpuesto(){
@@ -25,33 +20,26 @@ public class Impuesto extends Casilla{
     }
 
     public float calcularImpuesto(){
-        switch (posicion) {
-            case 38:
-                return Valor.SUMA_VUELTA;
-            
-            case 4:
-                return Valor.SUMA_VUELTA/2;
-        
-            default:
-                return 0.0f;
-        }
+        return this.posicion == 4 ? Valor.SUMA_VUELTA/2 : Valor.SUMA_VUELTA;
     }
 
     @Override
-    public boolean evaluarCasilla(Jugador jugadorActual, int tirada){
+    public boolean evaluarCasilla(Tablero tablero, Jugador jugadorActual, int tirada){
         incrementarVecesVisitada();
         Juego.consola.imprimir(String.format("Debes pagar tus impuestos a la banca: %,.0f€\n", impuesto));
 
         // Si puede pagarlo de alguna manera se cobra
-        if(impuesto>jugadorActual.getFortuna()) {
+        if(this.impuesto>jugadorActual.getFortuna()) {
             jugadorActual.setDeudaConJugador(null);
-            jugadorActual.setDeuda(impuesto);
+            jugadorActual.setDeuda(this.impuesto);
             return false;
         }
             
-        jugadorActual.sumarFortuna(-impuesto);
+        jugadorActual.sumarFortuna(-this.impuesto);
 
-        parking.incrementarBote(impuesto);
+        // Incrementamos el bote del parking
+        Especial parking = (Especial) tablero.getCasilla(20);
+        parking.incrementarBote(this.impuesto);
 
         return true;
     }

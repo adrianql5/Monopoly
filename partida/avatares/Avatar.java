@@ -26,7 +26,7 @@ public abstract class Avatar {
      * @param lugar     Lugar en el que está ubicado
      * @param avCreados Arraylist con los avatares creados (usado para crear un ID distinto a los demás)
      */
-    public Avatar(Jugador jugador, Casilla lugar, ArrayList<Avatar> avCreados) {
+    protected Avatar(Jugador jugador, Casilla lugar, ArrayList<Avatar> avCreados) {
         this.jugador = jugador;
         this.lugar = lugar;
         this.movimientoAvanzado = false;
@@ -61,9 +61,6 @@ public abstract class Avatar {
             }
         }
     }
-
-
-    //MÉTODOS ABSTRACTOS DE AVATAR--------------------------------------------------------------------------------------
 
     
     //SECCIÓN DE MÉTODOS ÚTILES DE AVATAR-------------------------------------------------------------------------------
@@ -115,6 +112,7 @@ public abstract class Avatar {
      * @param valorTirada Número de casillas a moverse (se llama valorTirada pero no depende de los dados siempre)
      */
     public void moverEnBasico(ArrayList<ArrayList<Casilla>> casillas, int valorTirada) {
+        // PASO 1: calcular la nueva posición
         int posicionActual = this.lugar.getPosicion();
 
         // Calcular la nueva posición en el tablero después de la tirada
@@ -128,6 +126,7 @@ public abstract class Avatar {
             nuevaPosicion = 40 + ( (posicionActual + valorTirada) % 40 );
         }
 
+        // PASO 2: colocar el avatar en la nueva posicion
         this.colocar(casillas, nuevaPosicion);
     }
 

@@ -2,6 +2,9 @@ package partida;
 
 import java.util.*;
 
+import excepciones.accionNoValida.HipotecarException;
+import excepciones.noExisteObjeto.NoExisteCasillaException;
+import excepciones.noExisteObjeto.NoExisteJugadorException;
 import monopoly.*;
 
 import partida.avatares.*;
@@ -297,7 +300,61 @@ public class Jugador {
         this.gastos += valor;
     }
 
-    //SECCÓN DE MÉTODOS BOOLEANOS DE JUGADOR----------------------------------------------------------------------------
+    // MÉTODOS RELACIONADOS CON LA BANCARROTA---------------------------------------------------------------------------
+
+    /**Sobrecarga del método para cuando el cobrador es la banca*/
+    public void declararBancarrota() {
+        Juego.consola.imprimir("El jugador " + this.nombre + " se declara en bancarrota.");
+        Juego.consola.imprimir("Sus propiedades vuelven a estar a la venta al precio original.");
+
+        for (Propiedad propiedad : this.propiedades) {
+            if (propiedad instanceof Solar) {
+                ((Solar) propiedad).eliminarTodosLosEds();
+            }
+            propiedad.setDeshipotecada();
+            this.eliminarPropiedad(propiedad);
+        }
+
+        //eliminarJugador(jugador); //SE HACE DESDE EL MENÚ
+    }
+
+    /**Sobrecarga del método para cuando el cobrador es un jugador*/
+    public void declararBancarrota(Jugador cobrador) {
+        Juego.consola.imprimir("El jugador " + this.nombre + " se declara en bancarrota.");
+        Juego.consola.imprimir("Sus propiedades pasan a ser de " + cobrador.getNombre());
+
+        for (Propiedad propiedad : this.propiedades) {
+            if (propiedad instanceof Solar) {
+                ((Solar) propiedad).eliminarTodosLosEds();
+            }
+            propiedad.setDeshipotecada();
+            cobrador.anhadirPropiedad(propiedad);
+            this.eliminarPropiedad(propiedad);
+        }
+
+        //eliminarJugador(jugador); //SE HACE DESDE EL MENÚ
+    }
+
+
+    // MÉTODOS PARA HIPOTECAR Y DESHIPOTECAR PROPIEDADES DEL JUGADOR----------------------------------------------------
+
+    public Propiedad encontrar_propiedad(Tablero tablero, String nombre) throws NoExisteCasillaException{
+        Casilla casilla = tablero.encontrar_casilla(nombre);
+
+        if (casilla == null) {
+            throw new NoExisteCasillaException("No existe esa casilla. No la puedes hipotecar.");
+        }
+
+        if (!(casilla instanceof Propiedad)) {
+            Juego.consola.imprimir("No puedes hipotecar " + casilla.getNombre() + ", no es una propiedad.");
+            return null;
+        }
+
+        return (Propiedad) casilla;
+    }
+
+    // SECCÓN DE MÉTODOS BOOLEANOS DE JUGADOR---------------------------------------------------------------------------
+
     public boolean isEnCarcel() {
         return this.enCarcel;
     }
@@ -305,7 +362,6 @@ public class Jugador {
     public boolean tieneDinero(){
         return this.fortuna > 0;
     }
-
     
     public boolean tienePropiedadesHipotecables(){
         for(Casilla c: this.propiedades){
@@ -327,7 +383,8 @@ public class Jugador {
     }
 
 
-    //SECCIÓN DE GETTERS Y SETTERS DE JUGADOR
+    // GETTERS Y SETTERS------------------------------------------------------------------------------------------------
+
     public String getNombre(){
         return this.nombre;
     }
@@ -356,14 +413,15 @@ public class Jugador {
         return tiradasCarcel;
     }
 
-    public int getVueltas(){return this.vueltas;}
+    public int getVueltas() {return this.vueltas;}
 
     public ArrayList<Propiedad> getPropiedades() {
         return propiedades;
     }
 
 
-    //SECCIÓN DE MÉTODOS QUE TIENE QUE VER CON VUELTAS EN EL TABLERO
+    // MÉTODOS QUE TIENE QUE VER CON VUELTAS EN EL TABLERO--------------------------------------------------------------
+
     public void sumarVuelta(){
         vueltas++;
     }
@@ -384,8 +442,10 @@ public class Jugador {
     }
 
     
-    //SECCIÓN QUE DEVUELVE INFORMACIÓN DE JUGADOR
-    //Método que devuelve la información de un jugador da muchísmo asco pero me da pereza pensar, arreglar algo hecho por miguel se me complica(miguel tqm)
+    // MÉTODOS DE INFORMACIÓN SOBRE EL JUGADOR--------------------------------------------------------------------------
+
+    // Método que devuelve la información de un jugador
+    // da muchísmo asco pero me da pereza pensar, arreglar algo hecho por miguel se me complica(miguel tqm)
     public void infoJugador() {
         Juego.consola.imprimir("{");
         // Imprimir nombre, avatar y fortuna con separador de miles para la fortuna
@@ -471,10 +531,6 @@ public class Jugador {
         }
         Juego.consola.imprimir("}");
     }
-
-    
-
-
     
     /**Método para mostrar las estadísticas de un jugador*/
     public void infoEstadisticas() {
@@ -488,13 +544,19 @@ public class Jugador {
         Juego.consola.imprimir(String.format("\tvecesEnLaCarcel: %d\n", this.estadisticas.getVecesEnLaCarcel()));
         Juego.consola.imprimir("}");
     }
+
+
+    // MÉTODOS RELACIONADOS CON LOS TRATOS------------------------------------------------------------------------------
+
     public ArrayList<Trato> getTratosPendientes() {
         return this.tratosPendientes;
     }
+
     public void agregarTrato(Trato trato) {
         this.tratosPendientes.add(trato);
 
     }
+
     public void eliminarTrato(Trato trato) {
         if (this.tratosPendientes.remove(trato)) {
             Juego.consola.imprimir(String.format("El trato %s ha sido eliminado de los pendientes.\n", trato.getId()));

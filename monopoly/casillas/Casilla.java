@@ -78,7 +78,7 @@ public abstract class Casilla {
      * Método abstracto que realiza las acciones de la casilla.
      * Este método debe ser implementado por las subclases.
      */
-    public abstract boolean evaluarCasilla(Jugador jugadorActual, int tirada);
+    public abstract boolean evaluarCasilla(Tablero tablero, Jugador jugadorActual, int tirada);
 
 
     // MÉTODOS AUXILIARES-----------------------------------------------------------------------------------------------

@@ -2,6 +2,7 @@ package monopoly.cartas;
 
 import java.util.ArrayList;
 
+import monopoly.Tablero;
 import monopoly.Texto;
 import monopoly.Valor;
 import monopoly.Juego;
@@ -52,19 +53,13 @@ public abstract class Carta {
 
 
     // MÉTODOS ABSTRACTOS-----------------------------------------------------------------------------------------------
-    /**
-     * Función que dada una carta ejecuta las acciones que dice la misma.
-     * @param jugadorActual Jugador al que se le tiene que aplicar las acciones de la carta.
-     * @return TRUE si el jugador es solvente, FALSE en caso contrario
-     */
-    public abstract boolean evaluarCarta(Jugador jugadorActual);
 
     /**
      * Función que dada una carta ejecuta las acciones que dice la misma.
      * //@param jugadorActual Jugador al que se le tiene que aplicar las acciones de la carta.
      * @return TRUE si el jugador es solvente, FALSE en caso contrario
      */
-    public abstract void accion();
+    public abstract boolean accion(Tablero tablero, Jugador jugadorActual, int tirada);
 
 
     //MÉTODOS ÚTILES DE CARTA-------------------------------------------------------------------------------------------

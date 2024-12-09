@@ -29,7 +29,6 @@ public class Texto {
     public static final String M_YA_SE_HICIERON_LOS_MOVIMIENTOS_TURNO = "Ya has realizado todos los movimientos" +
             " de este turno. Si no tienes nada más que hacer usa el comando " + Valor.BOLD_STRING + "acabar turno" +
             Valor.RESET;
-    public static final String M_ACTIVAR_MOVIMIENTO_AVANZADO = "El avatar %s activa al movimiento avanzado (tipo %s).";
     public static final String M_COMANDO_BLOQUEADO = "No se puede usar ese comando en este momento.";
     public static final String M_MOVIMIENTOS_PENDIENTES = "Aún tienes movimientos pendientes! Introduce " +
             Valor.BOLD_STRING + "siguiente" + Valor.RESET + " para desplazarte hasta la siguiente casilla :)";

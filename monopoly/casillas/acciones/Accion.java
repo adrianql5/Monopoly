@@ -33,37 +33,25 @@ public  abstract class Accion extends Casilla {
     }
 
     @Override
-    public boolean evaluarCasilla(Jugador jugadorActual, int tirada) {
-        cogerCarta();
-        return true;
-    }
-
-
-    // MÉTODOS SOBRE EL PROCESO DE ESCOGER LA CARTA---------------------------------------------------------------------
-
-    /**Método para cuando se cae en una casilla de tipo Suerte o Caja de comunidad
+    /**Implementación para cuando se cae en una casilla de tipo Suerte o Caja de comunidad (antes "cogerCarta")
      * [1] Reordena de manera aleatoria el ArrayList de cartas correspondiente
      * [2] Le pide al usuario el número de la carta que quiere escoger (del 1 al 6)
+     * @return TRUE si el jugador es solvente, FALSE si tiene deudas
      */
-    public void cogerCarta() {
+    public boolean evaluarCasilla(Tablero tablero, Jugador jugadorActual, int tirada) {
         Juego.consola.imprimir("Barajando las cartas...");
-        Collections.shuffle(getBaraja()); //Barajamos las cartas
+        //Collections.shuffle(getBaraja()); //Barajamos las cartas // COMENTADO PARA SABER LA CARTA QUE VA A SALIR
         cartasAlReves(); //Mostramos el reverso de las cartas
         Juego.consola.imprimir("Escoge una carta con un número del 1 al 6.");
         int n=leerNumValido(); //Leemos input hasta que sea un número válido
         mostrarCartaEscogida(n); //Volvemos a mostrar las cartas con la escogida dada la vuelta
-        //if(!evaluarCarta(getBaraja().get(n-1))) bucleBancarrota(); //Ojo con los índices del ArrayList que empiezan en 0!!
+
+        // Realizamos la acción de la carta y devolvemos el booleano de la solvencia del jugador
+        return getBaraja().get(n-1).accion(tablero, jugadorActual, tirada);
     }
 
-    /**
-     * Función que dada una carta ejecuta las acciones que dice la misma.
-     * @param carta Carta que tenemos que evaluar
-     * @return TRUE si el jugador es solvente, FALSE en caso contrario
-     */
-     public boolean evaluarCarta(Jugador jugadorActual, Carta carta) {
 
-        return true;
-     }
+    // MÉTODOS SOBRE EL PROCESO DE ESCOGER LA CARTA---------------------------------------------------------------------
 
     /**Método auxiliar (por eso privado) para imprimir 6 cartas al revés en fila.*/
     private void cartasAlReves() {

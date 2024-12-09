@@ -36,7 +36,7 @@ public class Servicio extends Propiedad{
     }
 
     @Override
-    public boolean evaluarCasilla(Jugador jugadorActual, int tirada) {
+    public boolean evaluarCasilla(Tablero tablero, Jugador jugadorActual, int tirada) {
         if (duenho != jugadorActual) {
             if (!duenho.getNombre().equals("banca")) {
                 if (!estaHipotecada) {

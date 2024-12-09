@@ -4,6 +4,7 @@ import java.util.*;
 
 import excepciones.accionNoValida.*;
 import excepciones.noExisteObjeto.*;
+import monopoly.casillas.acciones.AccionCajaComunidad;
 import partida.*;
 import partida.avatares.*;
 
@@ -26,7 +27,6 @@ public class Juego implements Comandos {
     private Jugador banca; //El jugador banca.
 
     private boolean tirado; //Booleano para comprobar si el jugador que tiene el turno ha tirado o no.
-    private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente (no tiene deudas).
     private boolean turno_extra_coche; //turno extra coche
 
     private boolean partidaTerminada; //Booleano para acabar la partida
@@ -55,7 +55,6 @@ public class Juego implements Comandos {
         this.dado1 = new Dado();
         this.dado2 = new Dado();
         this.tirado = false;
-        this.solvente = true;
         this.turno_extra_coche = false;
 
         this.partidaTerminada = false;
@@ -188,6 +187,11 @@ public class Juego implements Comandos {
 
         // Añadir el jugador a la lista de jugadores y a la casilla de inicio
         this.jugadores.add(nuevoJugador);
+        // Terrorismo pero necesario: CartaCajaComunidad necesita tener el ArrayList de jugadores
+        AccionCajaComunidad casillaCaja;
+        casillaCaja = (AccionCajaComunidad) this.tablero.getCasilla(2);
+        casillaCaja.getBaraja_caja_comunidad().get(5).setJugadoresPartida(this.jugadores);
+
         casillaInicio.anhadirAvatar(nuevoJugador.getAvatar());
 
         // Hacemos que sea el turno del jugador recién creado
@@ -288,7 +292,7 @@ public class Juego implements Comandos {
         }
     }
 
-    
+
     //SECCIÓN DE COMANDOS DEL MENÚ--------------------------------------------------------------------------------------
 
     /**
@@ -867,7 +871,7 @@ public class Juego implements Comandos {
 
         // EVALUAR
         Casilla c = avatar.getLugar();
-        if (!c.evaluarCasilla(jugador, this.dado1.getValor() + this.dado2.getValor())) bucleBancarrota();
+        if (!c.evaluarCasilla(this.tablero, jugador, this.dado1.getValor() + this.dado2.getValor())) bucleBancarrota();
     }
 
     /**
@@ -878,9 +882,9 @@ public class Juego implements Comandos {
      * [4] A cada propiedad que hipoteca se comprueba si ya puede pagar (y en ese caso devuelve TRUE).
      * [5] Si al acabar este proceso sigue sin poder pagar se le obliga a declararse en bancarrota.
      *
-     * @param pagador  Jugador que tiene que pagar la cantidad
-     * @param cobrador Jugador al que se tiene que pagar la cantidad
-     * @param cantidad
+     * @param //pagador  Jugador que tiene que pagar la cantidad
+     * @param //cobrador Jugador al que se tiene que pagar la cantidad
+     * @param //cantidad
      * @return true si se acaba pudiendo pagar, false si el jugador se tuvo que declarar en bancarrota
      */
     private void bucleBancarrota() {
@@ -903,7 +907,7 @@ public class Juego implements Comandos {
 
                     // Volvemos a pedir comandos hasta que sea uno válido
                     consola.imprimir("");
-                    comando_entero = consola.leer("Introduce los comandos bancarrota, hipotecar o vender (has introducido " + comando_entero + "), que es inválido:");
+                    comando_entero = consola.leer("Introduce los comandos bancarrota, hipotecar o vender:");
                     comando = comando_entero.split(" ");
                 }
                 if (comando_entero.equals("bancarrota")) {
@@ -1077,13 +1081,11 @@ public class Juego implements Comandos {
                 this.controlComandos = 0;
                 obtenerTurno().getAvatar().cambiarMovimiento();
             } else {
-                consola.imprimir("El avatar " + avatar.getId() + " no puede cambiar de modo ya que esta bloqueado.");
+                consola.imprimir("No se puede cambiar de modo en este momento.");
             }
         } else {
-            if (avatar instanceof Coche)
-                consola.imprimir(Texto.M_ACTIVAR_MOVIMIENTO_AVANZADO + "\n" + avatar.getId() + " coche");
-            if (avatar instanceof Pelota)
-                consola.imprimir(Texto.M_ACTIVAR_MOVIMIENTO_AVANZADO + "\n" + avatar.getId() + " pelota");
+            consola.imprimir("El avatar " + avatar.getId() + " activa el movimiento avanzado (tipo " +
+                    avatar.getClass().getSimpleName() + ")\n");
             obtenerTurno().getAvatar().cambiarMovimiento();
         }
 
@@ -1179,7 +1181,7 @@ public class Juego implements Comandos {
      *
      * @param nombre_casilla Nombre de la casilla a describir
      */
-    
+
     @Override
     public void descCasilla(String nombre_casilla) throws NoExisteCasillaException {
         Casilla casilla = tablero.encontrar_casilla(nombre_casilla);
@@ -1232,9 +1234,9 @@ public class Juego implements Comandos {
         }
         jugador.infoJugador();
 
-        
+
     }
-    
+
     /**Método que realiza las acciones asociadas al comando 'describir avatar'.
      * @param ID id del avatar a describir
      */
@@ -1264,7 +1266,7 @@ public class Juego implements Comandos {
             j.setFortuna(fortuna);
         }
     }
-    
+
 
     // MÉTODOS SIN GRUPO:
 
@@ -1416,7 +1418,7 @@ public class Juego implements Comandos {
                         ArrayList<Edificio> hoteles = ((Solar)c).getHoteles();
                         ArrayList<Edificio> pisicinas=((Solar)c).getPiscinas();
                         ArrayList<Edificio> pistas = ((Solar)c).getPistasDeDeporte();
-                        
+
                         for(Edificio ed: casas){
                             maxFortuna+=ed.getCoste();
                         }
@@ -1428,13 +1430,13 @@ public class Juego implements Comandos {
                         for(Edificio ed: pisicinas){
                             maxFortuna+=ed.getCoste();
                         }
-                        
+
                         for(Edificio ed: pistas){
                             maxFortuna+=ed.getCoste();
                         }
                     }
                 }
-                
+
                 jugadoresRicos.clear();
                 jugadoresRicos.add(j.getNombre());
             } else if (j.getFortuna() == maxFortuna) {
@@ -1480,83 +1482,57 @@ public class Juego implements Comandos {
         consola.imprimir("\n}");
     }
 
-    
+
     @Override
     public void declararBancarrota(Jugador cobrador) {
-        Jugador jugador = obtenerTurno();
-        ArrayList<Casilla> propiedades = new ArrayList<>(jugador.getPropiedades());
-        
-        if (cobrador.equals(null)) {
-            consola.imprimir("El jugador " + jugador.getNombre() + " se declara en bancarrota. " +
-            "Sus propiedades vuelven a estar a la venta al precio original.");
-            
-            for (Casilla c : propiedades) {
-                if (c instanceof Solar) {
-                    ((Solar) c).eliminarTodosLosEds();
-                }
-                if (c instanceof Propiedad) {
-                    ((Propiedad) c).setDeshipotecada();
-                }
-                jugador.eliminarPropiedad((Propiedad)c);
-            }
-        } else {
-            consola.imprimir("El jugador " + jugador.getNombre() + " se declara en bancarrota. " +
-            "Sus propiedades pasan a ser de " + cobrador.getNombre());
-            
-            for (Casilla c : propiedades) {
-                if (c instanceof Solar) {
-                    ((Solar) c).eliminarTodosLosEds();
-                }
-                if (c instanceof Propiedad) {
-                    ((Propiedad) c).setDeshipotecada();
-                }
-                cobrador.anhadirPropiedad((Propiedad)c);
-                jugador.eliminarPropiedad((Propiedad)c);
-            }
-        }
-    
-        eliminarJugador(jugador);
+        Jugador jugadorActual = obtenerTurno();
+
+        if(cobrador.equals(this.banca)) jugadorActual.declararBancarrota();
+        else jugadorActual.declararBancarrota(cobrador);
+
+        eliminarJugador(jugadorActual);
     }
-    
+
     @Override
     public void hipotecar(String nombre) throws NoExisteCasillaException, HipotecarException {
         Casilla casilla = tablero.encontrar_casilla(nombre);
         Jugador jugador = obtenerTurno();
-        
+
         if (casilla == null) {
             throw new NoExisteCasillaException("No existe esa casilla. No la puedes hipotecar.");
-
         }
-        
+
         if (!(casilla instanceof Propiedad)) {
             throw new HipotecarException("No puedes hipotecar " + casilla.getNombre() + ", no es una propiedad.");
 
         }
-        
+
         Propiedad propiedad = (Propiedad) casilla;
-        
+
         if (!propiedad.getDuenho().equals(jugador)) {
             throw new HipotecarException("El jugador " + jugador.getNombre() + " no puede hipotecar " +
             propiedad.getNombre() + ". No es una propiedad que le pertenezca.");
 
         }
-        
+
         if (propiedad.esHipotecable()) {
-            if(propiedad instanceof Solar){
+            if(propiedad instanceof Solar) {
                 consola.imprimir("El jugador " + jugador.getNombre() + " recibe " + propiedad.getHipoteca() +                                " por la hipoteca de " + casilla.getNombre() +
-                            ". No puede recibir alquileres ni edificar en el grupo " + ((Solar)propiedad).getGrupo().getColorGrupo());
-                            jugador.sumarFortuna(propiedad.getHipoteca());
-                        }
-                        else{
-                            consola.imprimir("El jugador " + jugador.getNombre() + " recibe " + propiedad.getHipoteca() +                                " por la hipoteca de " + casilla.getNombre() +
-                            ". No puede recibir alquileres." );
-                            jugador.sumarFortuna(propiedad.getHipoteca());
-                        }
-                        
-                    } else {
-                        throw new HipotecarException("No puedes hipotecar " + propiedad.getNombre() + " en este momento.");
-                    }
-                }
+                ". No puede recibir alquileres ni edificar en el grupo " + ((Solar)propiedad).getGrupo().getColorGrupo());
+                jugador.sumarFortuna(propiedad.getHipoteca());
+            }
+            else {
+                consola.imprimir("El jugador " + jugador.getNombre() + " recibe " + propiedad.getHipoteca() +                                " por la hipoteca de " + casilla.getNombre() +
+                ". No puede recibir alquileres." );
+                jugador.sumarFortuna(propiedad.getHipoteca());
+            }
+
+        }
+        else {
+            throw new HipotecarException("No puedes hipotecar " + propiedad.getNombre() + " en este momento.");
+        }
+    }
+
 
     public void deshipotecar(String nombre) throws NoExisteCasillaException, DeshipotecarException {
         Casilla casilla = tablero.encontrar_casilla(nombre);

@@ -11,6 +11,10 @@ public class AccionCajaComunidad extends Accion {
     // ATRIBUTO EXTRA: BARAJA CORRESPONDIENTE
     private ArrayList<CartaCajaComunidad> baraja_caja_comunidad;
 
+    public ArrayList<CartaCajaComunidad> getBaraja_caja_comunidad() {
+        return baraja_caja_comunidad;
+    }
+
     // CONSTRUCTOR
     public AccionCajaComunidad(String nombre, int posicion) {
         super(nombre, posicion);

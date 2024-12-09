@@ -23,7 +23,7 @@ public class Solar extends Propiedad {
     }
 
     @Override
-    public boolean evaluarCasilla(Jugador jugadorActual, int tirada) {
+    public boolean evaluarCasilla(Tablero tablero, Jugador jugadorActual, int tirada) {
         if (this.duenho != jugadorActual) {
             if (!this.duenho.getNombre().equals("banca")) {
                 if (!this.estaHipotecada) {

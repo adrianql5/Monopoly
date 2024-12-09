@@ -2,7 +2,6 @@ package partida.avatares;
 
 import java.util.*;
 
-import monopoly.Juego;
 import monopoly.casillas.*;
 import partida.*;
 
