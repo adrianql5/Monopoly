@@ -127,6 +127,8 @@ public class Juego implements Comandos {
                     consola.imprimir(Texto.M_EMPIEZA_LA_PARTIDA + "\n" + obtenerTurno().getNombre());
                     setTextoTablero(Texto.LISTA_COMANDOS);
 
+                    System.out.println("MENU: " + this.jugadores.size());
+
                     //Este es el bucle de la partida básicamente: cada iteración es un turno
                     while (!this.partidaTerminada) {
                         bucleTurno();
@@ -183,14 +185,10 @@ public class Juego implements Comandos {
         avatar.setJugador(nuevoJugador);
 
         // ESTO NO HACE FALTA @ADRI
-        nuevoJugador.setDeudaConJugador(banca);
+        //nuevoJugador.setDeudaConJugador(banca);
 
         // Añadir el jugador a la lista de jugadores y a la casilla de inicio
         this.jugadores.add(nuevoJugador);
-        // Terrorismo pero necesario: CartaCajaComunidad necesita tener el ArrayList de jugadores
-        AccionCajaComunidad casillaCaja;
-        casillaCaja = (AccionCajaComunidad) this.tablero.getCasilla(2);
-        casillaCaja.getBaraja_caja_comunidad().get(5).setJugadoresPartida(this.jugadores);
 
         casillaInicio.anhadirAvatar(nuevoJugador.getAvatar());
 
@@ -253,10 +251,12 @@ public class Juego implements Comandos {
      */
     private void eliminarJugador(Jugador jugador) {
         Iterator<Jugador> iterator = this.jugadores.iterator();
+
         while (iterator.hasNext()) {
             Jugador j = iterator.next();
             if (j.equals(jugador)) {
                 iterator.remove(); // Elimina de manera segura el jugador actual
+
                 // Si eliminamos al último jugador establecemos el turno del primero
                 if (this.turno == this.jugadores.size()) {
                     this.turno = 0;
@@ -871,6 +871,12 @@ public class Juego implements Comandos {
 
         // EVALUAR
         Casilla c = avatar.getLugar();
+        // Caso particular: hay que enviar la lista de jugadores
+        if(c instanceof AccionCajaComunidad) {
+            AccionCajaComunidad caja = (AccionCajaComunidad) c;
+            caja.getBaraja_caja_comunidad().get(5).setJugadoresPartida(this.jugadores);
+            System.out.println("Cajaa: " + caja.getBaraja_caja_comunidad().get(5).getJugadoresPartida().size());
+        }
         if (!c.evaluarCasilla(this.tablero, jugador, this.dado1.getValor() + this.dado2.getValor())) bucleBancarrota();
     }
 
@@ -1490,6 +1496,7 @@ public class Juego implements Comandos {
         if(cobrador.equals(this.banca)) jugadorActual.declararBancarrota();
         else jugadorActual.declararBancarrota(cobrador);
 
+        jugadorActual.getAvatar().getLugar().eliminarAvatar(jugadorActual.getAvatar());
         eliminarJugador(jugadorActual);
     }
 

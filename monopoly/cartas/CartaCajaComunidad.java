@@ -15,17 +15,18 @@ public class CartaCajaComunidad extends Carta {
 
     public CartaCajaComunidad(String texto, int indice) {
         super(texto, indice);
-        this.jugadoresPartida = new ArrayList<>();
+        this.jugadoresPartida = new ArrayList<Jugador>();
+    }
+
+    public ArrayList<Jugador> getJugadoresPartida() {
+        return jugadoresPartida;
     }
 
     public void setJugadoresPartida(ArrayList<Jugador> jugadoresPartida) {
         this.jugadoresPartida = jugadoresPartida;
     }
 
-    /**
-     * Función que dada una carta ejecuta las acciones que dice la misma.
-     * //@param jugadorActual Jugador al que se le tiene que aplicar las acciones de la carta.
-     */
+    /**Función que dada una carta ejecuta las acciones que dice la misma.*/
     public boolean accion(Tablero tablero, Jugador jugadorActual, int tirada) {
 
         Avatar avatarActual = jugadorActual.getAvatar();

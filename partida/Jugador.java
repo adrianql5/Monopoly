@@ -307,12 +307,14 @@ public class Jugador {
         Juego.consola.imprimir("El jugador " + this.nombre + " se declara en bancarrota.");
         Juego.consola.imprimir("Sus propiedades vuelven a estar a la venta al precio original.");
 
-        for (Propiedad propiedad : this.propiedades) {
+        Iterator<Propiedad> iterator = this.propiedades.iterator();
+        while (iterator.hasNext()) {
+            Propiedad propiedad = iterator.next();
             if (propiedad instanceof Solar) {
                 ((Solar) propiedad).eliminarTodosLosEds();
             }
             propiedad.setDeshipotecada();
-            this.eliminarPropiedad(propiedad);
+            iterator.remove(); // Removes the current element safely
         }
 
         //eliminarJugador(jugador); //SE HACE DESDE EL MENÚ
