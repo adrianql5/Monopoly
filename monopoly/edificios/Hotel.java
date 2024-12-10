@@ -45,12 +45,6 @@ public class Hotel extends Edificio {
         return true;
     }
     
-
-
-
-
-
-
     /**
      * Genera un ID único para la casa en el solar.
      *

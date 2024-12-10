@@ -1684,7 +1684,7 @@ public class Juego implements Comandos {
             // Si se proporciona un color, lista solo los edificios del grupo de ese color
             for (Jugador j : jugadores) {
                 for (Solar c : j.getSolares()) {
-                    // Si el color del grupo coincide con el proporcionado, listar las edificaciones
+                    // Si el color del grupo coincide con eld proporcionado, listar las edificaciones
                     if (c.getGrupo().getColorGrupo().equalsIgnoreCase(color)) {
                         consola.imprimir(c.listarEdificaciones());
                     }
@@ -1941,6 +1941,7 @@ public class Juego implements Comandos {
         }
     }
 
+    @Override
     public void eliminarTrato(String idTrato) throws NoExisteTratoException {
         // Obtener el jugador actual
         Jugador jugadorActual = obtenerTurno();

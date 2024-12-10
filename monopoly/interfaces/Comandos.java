@@ -20,6 +20,7 @@ public interface Comandos {
     void listarEdificios(String filtro);
     void listarTratosJugadorActual();
     void lanzarDados(int dado1, int dado2);
+    void eliminarTrato(String idTrato) throws NoExisteTratoException ;
     void acabarTurno() throws AcabarTurnoException;
     void cambiarModo() throws CambiarModoException;
     void descCasilla(String casilla) throws NoExisteCasillaException;

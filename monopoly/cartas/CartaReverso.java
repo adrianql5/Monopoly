@@ -3,7 +3,6 @@ package monopoly.cartas;
 import java.util.ArrayList;
 
 import monopoly.Texto;
-import monopoly.Valor;
 
 // No es subclase de carta porque habría que crear otra clase abstracta pa diferenciar las cartas que hacen algo de esta
 

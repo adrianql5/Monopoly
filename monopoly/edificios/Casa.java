@@ -56,8 +56,6 @@ public class Casa extends Edificio {
     }
 
 
-
-
     /**
      * Genera un ID único para la casa en el solar.
      *
