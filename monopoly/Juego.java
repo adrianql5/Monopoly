@@ -124,7 +124,9 @@ public class Juego implements Comandos {
                     this.turno = 0; //El primer jugador creado tiene el turno
 
                     // Avisamos del inicio de la partida y cambiamos el texto dentro del tablero
-                    consola.imprimir(Texto.M_EMPIEZA_LA_PARTIDA + "\n" + obtenerTurno().getNombre());
+                    consola.imprimir("¡Que comienze la partida!\nEs el turno de " + obtenerTurno().getNombre() +
+                            ". Puedes tirar los dados con el comando " + Valor.BOLD_STRING + "lanzar dados" +
+                            Valor.RESET + ".");
                     setTextoTablero(Texto.LISTA_COMANDOS);
 
                     //Este es el bucle de la partida básicamente: cada iteración es un turno
