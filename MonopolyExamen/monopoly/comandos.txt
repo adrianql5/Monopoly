@@ -1,0 +1,15 @@
++ jugador1 > cambiar modo
++ jugador1 > lanzar dados (3+2)
++ jugador1 > comprar Trans1
++ jugador1 > lanzar dados (3+3)
++ jugador1 > comprar Solar6
++ jugador1 > lanzar dados (3+2)
++ jugador1 > comprar Solar9
++ jugador1 > lanzar dados (4+4)
++ jugador1 > lanzar dados (4+3)
++ jugador1 > acabar turno
++ jugador2 > cambiar modo
++ jugador2 > lanzar dados (5+4)
++ jugador2 > avanzar
++ jugador2 > seleccionar carta 3
++ jugador2 > avanzar
