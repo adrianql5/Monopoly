@@ -1490,8 +1490,9 @@ public class Juego implements Comandos {
     public void declararBancarrota(Jugador cobrador) {
         Jugador jugadorActual = obtenerTurno();
 
-        if(cobrador.equals(this.banca)) jugadorActual.declararBancarrota();
-        else jugadorActual.declararBancarrota(cobrador);
+        jugadorActual.declararBancarrota(cobrador);
+        //if(cobrador.equals(this.banca)) jugadorActual.declararBancarrota();
+        //else jugadorActual.declararBancarrota(cobrador);
 
         jugadorActual.getAvatar().getLugar().eliminarAvatar(jugadorActual.getAvatar());
         eliminarJugador(jugadorActual);

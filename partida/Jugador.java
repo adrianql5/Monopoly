@@ -297,10 +297,9 @@ public class Jugador {
 
     // MÉTODOS RELACIONADOS CON LA BANCARROTA---------------------------------------------------------------------------
 
-    /**Sobrecarga del método para cuando el cobrador es la banca*/
-    public void declararBancarrota() {
+    public void declararBancarrota(Jugador cobrador) {
         Juego.consola.imprimir("El jugador " + this.nombre + " se declara en bancarrota.");
-        Juego.consola.imprimir("Sus propiedades vuelven a estar a la venta al precio original.");
+        Juego.consola.imprimir("Sus propiedades pasan a ser de " + cobrador.getNombre());
 
         Iterator<Propiedad> iterator = this.propiedades.iterator();
         while (iterator.hasNext()) {
@@ -309,24 +308,10 @@ public class Jugador {
                 ((Solar) propiedad).eliminarTodosLosEds();
             }
             propiedad.setDeshipotecada();
-            iterator.remove(); // Removes the current element safely
-        }
+            iterator.remove(); // Eliminamos la propiedad de la lista de propiedades del jugador de manera segura
 
-        //eliminarJugador(jugador); //SE HACE DESDE EL MENÚ
-    }
-
-    /**Sobrecarga del método para cuando el cobrador es un jugador*/
-    public void declararBancarrota(Jugador cobrador) {
-        Juego.consola.imprimir("El jugador " + this.nombre + " se declara en bancarrota.");
-        Juego.consola.imprimir("Sus propiedades pasan a ser de " + cobrador.getNombre());
-
-        for (Propiedad propiedad : this.propiedades) {
-            if (propiedad instanceof Solar) {
-                ((Solar) propiedad).eliminarTodosLosEds();
-            }
-            propiedad.setDeshipotecada();
             cobrador.anhadirPropiedad(propiedad);
-            this.eliminarPropiedad(propiedad);
+            propiedad.setDuenho(cobrador);
         }
 
         //eliminarJugador(jugador); //SE HACE DESDE EL MENÚ
