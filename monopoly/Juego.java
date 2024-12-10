@@ -929,8 +929,8 @@ public class Juego implements Comandos {
                     int num_edificios = dadoValido(comando[3]);
                     if (num_edificios != 0) {
                         try{
-                            proponerTrato(comando_entero);
-                        } catch (NoExisteJugadorException | NoExisteCasillaException e) {
+                            venderEdificios(comando[1], comando[2], num_edificios);
+                        } catch (NoExisteCasillaException | NoExisteEdificioException e) {
                             consola.imprimir(e.getMessage());
                         }
 
