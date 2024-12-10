@@ -311,6 +311,7 @@ public class Jugador {
             iterator.remove(); // Eliminamos la propiedad de la lista de propiedades del jugador de manera segura
 
             cobrador.anhadirPropiedad(propiedad);
+            cobrador.sumarFortuna(this.fortuna);
             propiedad.setDuenho(cobrador);
         }
 
