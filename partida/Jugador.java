@@ -2,9 +2,6 @@ package partida;
 
 import java.util.*;
 
-
-import excepciones.noExisteObjeto.NoExisteCasillaException;
-
 import monopoly.*;
 
 import partida.avatares.*;
@@ -335,24 +332,6 @@ public class Jugador {
         }
 
         //eliminarJugador(jugador); //SE HACE DESDE EL MENÚ
-    }
-
-
-    // MÉTODOS PARA HIPOTECAR Y DESHIPOTECAR PROPIEDADES DEL JUGADOR----------------------------------------------------
-
-    public Propiedad encontrar_propiedad(Tablero tablero, String nombre) throws NoExisteCasillaException{
-        Casilla casilla = tablero.encontrar_casilla(nombre);
-
-        if (casilla == null) {
-            throw new NoExisteCasillaException("No existe esa casilla. No la puedes hipotecar.");
-        }
-
-        if (!(casilla instanceof Propiedad)) {
-            Juego.consola.imprimir("No puedes hipotecar " + casilla.getNombre() + ", no es una propiedad.");
-            return null;
-        }
-
-        return (Propiedad) casilla;
     }
 
     // SECCÓN DE MÉTODOS BOOLEANOS DE JUGADOR---------------------------------------------------------------------------
