@@ -127,8 +127,6 @@ public class Juego implements Comandos {
                     consola.imprimir(Texto.M_EMPIEZA_LA_PARTIDA + "\n" + obtenerTurno().getNombre());
                     setTextoTablero(Texto.LISTA_COMANDOS);
 
-                    System.out.println("MENU: " + this.jugadores.size());
-
                     //Este es el bucle de la partida básicamente: cada iteración es un turno
                     while (!this.partidaTerminada) {
                         bucleTurno();
@@ -875,7 +873,6 @@ public class Juego implements Comandos {
         if(c instanceof AccionCajaComunidad) {
             AccionCajaComunidad caja = (AccionCajaComunidad) c;
             caja.getBaraja_caja_comunidad().get(5).setJugadoresPartida(this.jugadores);
-            System.out.println("Cajaa: " + caja.getBaraja_caja_comunidad().get(5).getJugadoresPartida().size());
         }
         if (!c.evaluarCasilla(this.tablero, jugador, this.dado1.getValor() + this.dado2.getValor())) bucleBancarrota();
     }
