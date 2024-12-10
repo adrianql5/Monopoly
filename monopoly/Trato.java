@@ -143,6 +143,7 @@ public class Trato {
     private void transferirPropiedad(Propiedad propiedad, Jugador de, Jugador a) {
         de.eliminarPropiedad(propiedad);
         a.anhadirPropiedad(propiedad);
+        propiedad.setDuenho(a);
     }
 
     /**
