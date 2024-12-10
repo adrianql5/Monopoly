@@ -207,6 +207,7 @@ public class Jugador {
     public void anhadirPropiedad(Propiedad propiedad) {
         if (!propiedades.contains(propiedad)) {
             this.propiedades.add(propiedad);
+
         }
     }
     
@@ -326,6 +327,7 @@ public class Jugador {
             }
             propiedad.setDeshipotecada();
             cobrador.anhadirPropiedad(propiedad);
+            propiedad.setDuenho(cobrador);
             this.eliminarPropiedad(propiedad);
         }
 
