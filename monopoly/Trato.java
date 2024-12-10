@@ -136,7 +136,7 @@ public class Trato {
         transferirDinero(dineroOfrecido, jugadorPropone, jugadorRecibe);
         transferirDinero(dineroDemandado, jugadorRecibe, jugadorPropone);
 
-        Juego.consola.imprimir("Se ha aceptado el trato con éxito entre " + jugadorPropone.getNombre() + " y " + jugadorRecibe.getNombre() + ".\n");
+
         return true;
     }
 

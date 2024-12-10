@@ -1761,6 +1761,7 @@ public class Juego implements Comandos {
         if (trato.aceptar()) {
             // Eliminar el trato tras ser aceptado
             jugador.eliminarTrato(trato);
+            trato.getJugadorPropone().eliminarTrato(trato);
 
             // Construir el mensaje detallado
             StringBuilder mensaje = new StringBuilder();

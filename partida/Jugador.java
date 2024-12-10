@@ -432,7 +432,7 @@ public class Jugador {
 
         salida.append("{\n")
                 .append("\tnombre: ").append(this.getNombre()).append(",\n")
-                .append("\tavatar: ").append(this.getAvatar()).append(",\n")
+                .append("\tavatar: ").append(this.getAvatar().getId()).append(",\n")
                 .append("\tfortuna: ").append(String.format("%,.2f", this.getFortuna())).append(",\n");
 
         // Imprimir propiedades
@@ -561,7 +561,7 @@ public class Jugador {
 
     public void eliminarTrato(Trato trato) {
         if (this.tratosPendientes.remove(trato)) {
-            Juego.consola.imprimir(String.format("El trato %s ha sido eliminado de los pendientes.\n", trato.getId()));
+            return;
         } else {
             Juego.consola.imprimir(String.format("No se encontró el trato %s en los pendientes.\n", trato.getId()));
         }
